@@ -1,0 +1,4 @@
+{
+    "cmake.sourceDirectory": "/Users/lc/Developer/kuzu-ui/kuzu/build/release/arrow-build/arrow/src/apache_arrow/cpp/src/arrow/compute",
+    "vue3snippets.enable-compile-vue-file-on-did-save-code": true
+}

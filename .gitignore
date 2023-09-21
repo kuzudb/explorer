@@ -128,3 +128,8 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# generated grammar
+src/utils/CypherParser/*.ts
+src/utils/CypherParser/*.interp
+src/utils/CypherParser/*.tokens
