@@ -50,6 +50,10 @@ export default {
     selectedNodeProperties: [],
     selectedNodeLabel: "",
     tableNameMap: {},
+    delta: 0.05, // used for zooming, copied from G6
+    zoomSensitivity: 2, // used for zooming, copied from G6
+    toolbarDebounceTimeout: 100,
+    toolbarDebounceTimer: null,
   }),
   props: {
     queryResult: {
@@ -338,6 +342,74 @@ export default {
       width -= 2 * this.borderWidth;
       this.graphWidth = width;
       return width;
+    },
+
+    // Toolbar actions copied from https://github.com/antvis/G6/blob/abca3c0845182c636b43163257f9439aa3d7e738/packages/plugin/src/toolBar/
+    // This ensures the same behavior as the original toolbar in G6 while 
+    // allowing us to customize the position and style of the toolbar.
+    zoomIn() {
+      if (!this.g6graph) {
+        return;
+      }
+
+      if (this.toolbarDebounceTimer) {
+        clearTimeout(this.toolbarDebounceTimer);
+      }
+      this.toolbarDebounceTimer = setTimeout(() => {
+        const graph = this.g6graph;
+        const currentZoom = graph.getZoom();
+        const ratioOut = 1 / (1 - this.delta * this.zoomSensitivity);
+        const maxZoom = graph.get('maxZoom');
+        if (ratioOut * currentZoom > maxZoom) {
+          return;
+        }
+        graph.zoomTo(currentZoom * ratioOut);
+      }, this.toolbarDebounceTimeout);
+    },
+
+
+    zoomOut() {
+      if (!this.g6graph) {
+        return;
+      }
+      if (this.toolbarDebounceTimer) {
+        clearTimeout(this.toolbarDebounceTimer);
+      }
+      this.toolbarDebounceTimer = setTimeout(() => {
+        const graph = this.g6graph;
+        const currentZoom = graph.getZoom();
+        const ratioIn = 1 - this.delta * this.zoomSensitivity;
+        const minZoom = graph.get('minZoom');
+        if (ratioIn * currentZoom < minZoom) {
+          return;
+        }
+        graph.zoomTo(currentZoom * ratioIn);
+      }, this.toolbarDebounceTimeout);
+    },
+
+
+    fitToView() {
+      if (!this.g6graph) {
+        return;
+      }
+      if (this.toolbarDebounceTimer) {
+        clearTimeout(this.toolbarDebounceTimer);
+      }
+      this.toolbarDebounceTimer = setTimeout(() => {
+        this.g6graph.fitView([20, 20]);
+      }, this.toolbarDebounceTimeout);
+    },
+
+    actualSize() {
+      if (!this.g6graph) {
+        return;
+      }
+      if (this.toolbarDebounceTimer) {
+        clearTimeout(this.toolbarDebounceTimer);
+      }
+      this.toolbarDebounceTimer = setTimeout(() => {
+        this.g6graph.zoomTo(1);
+      }, this.toolbarDebounceTimeout);
     },
   },
   mounted() {

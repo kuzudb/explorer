@@ -18,18 +18,19 @@
       <div class="result-container__tools_container--bottom" v-show="showGraph">
         <div class="result-container__button">
           <i class="fa-lg fa-solid fa-magnifying-glass-plus" data-bs-toggle="tooltip" data-bs-placement="right"
-            title="Zoom In"></i>
+            title="Zoom In" @click="$refs.resultGraph.zoomIn()"></i>
         </div>
         <div class="result-container__button">
           <i class="fa-lg fa-solid fa-magnifying-glass-minus" data-bs-toggle="tooltip" data-bs-placement="right"
-            title="Zoom Out"></i>
+            title="Zoom Out" @click="$refs.resultGraph.zoomOut()"></i>
         </div>
         <div class="result-container__button">
-          <i class="fa-lg fa-solid fa-compress" data-bs-toggle="tooltip" data-bs-placement="right"
-            title="Fit to View"></i>
+          <i class="fa-lg fa-solid fa-compress" data-bs-toggle="tooltip" data-bs-placement="right" title="Fit to View"
+            @click="$refs.resultGraph.fitToView()"></i>
         </div>
         <div class="result-container__button">
-          <i class="fa-lg fa-solid fa-expand" data-bs-toggle="tooltip" data-bs-placement="right" title="Actual Size"></i>
+          <i class="fa-lg fa-solid fa-expand" data-bs-toggle="tooltip" data-bs-placement="right" title="Actual Size"
+            @click="$refs.resultGraph.actualSize()"></i>
         </div>
 
       </div>

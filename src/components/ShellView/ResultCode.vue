@@ -19,9 +19,9 @@ export default {
       default: "",
     },
     containerHeight: {
-      type: Number,
+      type: String,
       required: false,
-      default: 0,
+      default: ""
     },
   },
   watch: {
