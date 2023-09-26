@@ -25,7 +25,6 @@
           </tr>
         </tbody>
       </table>
-
     </div>
   </div>
 </template>
@@ -98,6 +97,9 @@ export default {
         return;
       }
       const { nodes, edges, tableNameMap } = this.extractGraphFromQueryResult(this.queryResult);
+      if (nodes.length === 0) {
+        this.$emit("graphEmpty");
+      }
       this.tableNameMap = tableNameMap;
       const container = this.$refs.graph;
       const width = container.offsetWidth;
@@ -278,7 +280,6 @@ export default {
           this.g6graph.layout();
         }
       });
-
     },
 
     beautifyValue(value, type) {

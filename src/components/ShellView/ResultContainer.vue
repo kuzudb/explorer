@@ -2,7 +2,8 @@
   <div class="result-container__wrapper" ref="wrapper" :style="{ height: containerHeight }">
     <div class="result-container__tools_container" ref="toolsContainer" :style="{ minWidth: toolbarWidth + 'px' }"
       v-show="!errorMessage">
-      <div :class="`result-container__button` + (showGraph ? ` result-container__button--active` : ``)">
+      <div :class="`result-container__button` + (showGraph ? ` result-container__button--active` : ``)"
+        v-show="!isGraphEmpty">
         <i class="fa-lg fa-solid fa-circle-nodes" data-bs-toggle="tooltip" data-bs-placement="right" title="Graph View"
           @click="toggleGraphView"></i>
       </div>
@@ -37,7 +38,7 @@
     </div>
 
     <ResultGraph v-if="queryResult" v-show="showGraph" :queryResult="queryResult" :schema="schema"
-      :containerHeight="containerHeight" ref="resultGraph" />
+      :containerHeight="containerHeight" ref="resultGraph" @graphEmpty="handleGraphEmpty" />
     <ResultTable v-if="queryResult" v-show="showTable" :queryResult="queryResult" :schema="schema"
       :containerHeight="containerHeight" ref="resultTable" />
     <ResultCode v-if="queryResultString && showCode" :queryResultString="queryResultString" :schema="schema"
@@ -66,6 +67,7 @@ export default {
     showGraph: true,
     showTable: false,
     showCode: false,
+    isGraphEmpty: false,
   }),
   props: {
     queryResult: {
@@ -108,7 +110,9 @@ export default {
   },
   methods: {
     handleDataChange() {
+      this.isGraphEmpty = false;
       this.$refs.resultGraph.drawGraph();
+      this.$refs.resultTable.renderTable();
     },
     hideAll() {
       this.showGraph = false;
@@ -127,6 +131,10 @@ export default {
       this.hideAll();
       this.showCode = true;
     },
+    handleGraphEmpty() {
+      this.isGraphEmpty = true;
+      this.toggleTableView();
+    }
   },
   computed: {
     containerHeight() {
