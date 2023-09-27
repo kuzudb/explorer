@@ -1,5 +1,5 @@
 <template>
-  <div class="result-table__wrapper" :style="{ height: containerHeight }">
+  <div class="result-table__wrapper" :style="{ height: containerHeight, width: tableWidth + 'px' }">
     <div class="result-table__pagination__wrapper" v-if="totalPages > 1">
       <nav>
         <ul class="pagination">
@@ -54,6 +54,7 @@
 
 <script lang="js">
 import ValueFormatter from "../../utils/ValueFormatter";
+import { UI_SIZE } from "../../utils/Constants";
 export default {
   name: "ResultTable",
   data: () => ({
@@ -62,6 +63,7 @@ export default {
     maxLength: 8,
     rows: [],
     tableHeaders: [],
+    tableWidth: 0,
   }),
   props: {
     queryResult: {
@@ -158,7 +160,23 @@ export default {
           }
         }
       });
-    }
+    },
+
+    computeTableWidth() {
+      let width = document.documentElement.clientWidth || document.body.clientWidth;
+      width -= UI_SIZE.DEFAULT_MARGIN * 2;
+      width -= UI_SIZE.SHELL_TOOL_BAR_WIDTH;
+      width -= 2 * UI_SIZE.DEFAULT_BORDER_WIDTH;
+      this.tableWidth = width;
+      return width;
+    },
+  },
+  mounted() {
+    this.computeTableWidth();
+    window.addEventListener("resize", this.computeTableWidth);
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.computeTableWidth);
   },
 };
 </script>

@@ -336,7 +336,7 @@ export default {
     },
 
     computeGraphWidth() {
-      let width = window.innerWidth;
+      let width = document.documentElement.clientWidth || document.body.clientWidth;
       width -= this.margin * 2;
       width -= this.toolbarContainerWidth * 2;
       width -= this.isSidePanelOpen ? this.sidebarWidth : 0;
