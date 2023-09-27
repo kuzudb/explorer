@@ -9,32 +9,87 @@
     </div>
     <div class="result-container__side-panel" ref="sidePanel" v-show="isSidePanelOpen">
       <br>
-      <h5>
-        Node Properties
-      </h5>
-      <span class="badge bg-primary" :style="{ backgroundColor: ` ${getColor(selectedNodeLabel)} !important` }">{{
-        selectedNodeLabel }}</span>
-      <hr>
-      <table class="table table-sm table-bordered">
-        <tbody>
-          <tr v-for="property in selectedNodeProperties" :key="property.name">
-            <th scope="row">{{ property.name }}
-              <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
-            </th>
-            <td>{{ property.value }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div v-if="displayLabel">
+        <h5>
+          {{ sidePanelPropertyTitlePrefix }} Properties
+        </h5>
+        <span class="badge bg-primary" :style="{
+          backgroundColor: ` ${getColor(displayLabel)} !important`,
+          color: sidePanelPropertyTitlePrefix === 'Rel' ? 'black !important' : 'auto'
+        }">
+          {{ displayLabel }}</span>
+        <hr>
+        <table class="table table-sm table-bordered result-container__result-table">
+          <tbody>
+            <tr v-for="property in displayProperties" :key="property.name">
+              <th scope="row">{{ property.name }}
+                <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
+              </th>
+              <td>{{ property.value }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div v-else>
+        <h5>
+          Overview
+        </h5>
+        <div v-if="counters.total.node > 0">
+          <p>Showing {{ counters.total.node }} nodes</p>
+          <hr>
+          <table class="table table-sm table-bordered result-container__overview-table">
+            <tbody>
+              <tr v-for="label in Object.keys(counters.node)" :key="label">
+                <th scope="row">
+                  <span class="badge bg-primary" :style="{ backgroundColor: ` ${getColor(label)} !important` }">{{
+                    label }}</span>
+                </th>
+                <td>{{ counters.node[label] }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <br>
+        </div>
+
+        <div v-if="counters.total.rel > 0">
+          <p>Showing {{ counters.total.rel }} rels</p>
+          <hr>
+          <table class="table table-sm table-bordered result-container__overview-table">
+            <tbody>
+              <tr v-for="label in Object.keys(counters.rel)" :key="label">
+                <th scope="row">
+                  <span class="badge bg-primary" :style="{
+                    backgroundColor: ` ${getColor(label)} !important`,
+                    color: `black !important`
+                  }">
+                    {{ label }}
+                  </span>
+                </th>
+                <td>{{ counters.rel[label] }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div v-if="counters.total.node === 0 && counters.total.rel === 0">
+          <p>
+            <i class="fa-solid fa-circle-info"></i>
+            No nodes or rels to show.
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
   
 <script lang="js">
 import G6 from '@antv/g6';
-import Moment from 'moment';
 import { DATA_TYPES, UI_SIZE } from "../../utils/Constants";
 import ColorManger from "../../utils/ColorManager";
+import ValueFormatter from "../../utils/ValueFormatter";
 
+const DEFAULT_EDGE_COLOR = "#e2e2e2";
 export default {
   name: "ResultGraph",
   data: () => ({
@@ -46,13 +101,25 @@ export default {
     sidebarWidth: 500,
     graphWidth: 0,
     borderWidth: UI_SIZE.DEFAULT_BORDER_WIDTH,
-    selectedNodeProperties: [],
-    selectedNodeLabel: "",
-    tableNameMap: {},
+    hoveredProperties: [],
+    hoveredLabel: "",
+    hoveredIsNode: false,
+    clickedProperties: [],
+    clickedLabel: "",
+    clickedIsNode: false,
+    nodeTableNameMap: {},
     delta: 0.05, // used for zooming, copied from G6
     zoomSensitivity: 2, // used for zooming, copied from G6
     toolbarDebounceTimeout: 100,
     toolbarDebounceTimer: null,
+    counters: {
+      node: {},
+      rel: {},
+      total: {
+        node: 0,
+        rel: 0,
+      },
+    }
   }),
   props: {
     queryResult: {
@@ -84,10 +151,23 @@ export default {
     sidePanelButtonTitle() {
       return this.isSidePanelOpen ? "Close Side Panel" : "Open Side Panel";
     },
+    sidePanelPropertyTitlePrefix() {
+      const isNode = this.hoveredLabel ? this.hoveredIsNode : this.clickedIsNode;
+      return isNode ? "Node" : "Rel";
+    },
+    displayLabel() {
+      return this.hoveredLabel ? this.hoveredLabel : this.clickedLabel;
+    },
+    displayProperties() {
+      return this.hoveredProperties.length > 0 ? this.hoveredProperties : this.clickedProperties;
+    },
   },
   methods: {
     getColor(label) {
-      return ColorManger.getColor(label);
+      if (Object.values(this.nodeTableNameMap).includes(label)) {
+        return ColorManger.getColor(label);
+      }
+      return DEFAULT_EDGE_COLOR;
     },
     drawGraph() {
       if (this.graphCreated && this.g6graph) {
@@ -96,11 +176,12 @@ export default {
       if (!this.queryResult) {
         return;
       }
-      const { nodes, edges, tableNameMap } = this.extractGraphFromQueryResult(this.queryResult);
+      const { counters, nodes, edges, nodeTableNameMap } = this.extractGraphFromQueryResult(this.queryResult);
+      this.counters = counters;
       if (nodes.length === 0) {
         this.$emit("graphEmpty");
       }
-      this.tableNameMap = tableNameMap;
+      this.nodeTableNameMap = nodeTableNameMap;
       const container = this.$refs.graph;
       const width = container.offsetWidth;
       const height = container.offsetHeight;
@@ -134,15 +215,38 @@ export default {
         },
         nodeStateStyles: {
           hover: {
-            opacity: 0.5,
+            lineWidth: 3,
+            stroke: '#1890FF',
+          },
+          click: {
+            lineWidth: 3,
+            stroke: '#1848FF',
           },
         },
         defaultEdge: {
           size: 3,
-          color: '#e2e2e2',
+          color: DEFAULT_EDGE_COLOR,
           opacity: 1,
           style: {
             endArrow: true,
+          },
+          labelCfg: {
+            style: {
+              fontSize: 12,
+              fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif',
+              fontWeight: 600,
+            },
+            autoRotate: true,
+          }
+        },
+        edgeStateStyles: {
+          hover: {
+            lineWidth: 6,
+            stroke: '#1890FF',
+          },
+          click: {
+            lineWidth: 5,
+            stroke: '#1848FF',
           },
         },
         modes: {
@@ -150,20 +254,50 @@ export default {
         },
       });
 
-      this.g6graph.data({
-        nodes,
-        edges,
-      });
+      this.g6graph.data({ nodes, edges, });
 
       this.g6graph.on('node:mouseenter', (e) => {
         const nodeItem = e.item;
         this.g6graph.setItemState(nodeItem, 'hover', true);
-        this.handleNodeHover(nodeItem.getModel());
+        this.handleHover(nodeItem.getModel());
       });
 
       this.g6graph.on('node:mouseleave', (e) => {
         const nodeItem = e.item;
         this.g6graph.setItemState(nodeItem, 'hover', false);
+        this.resetHover();
+      });
+
+      this.g6graph.on('node:click', (e) => {
+        const nodeItem = e.item;
+        const nodeModel = nodeItem.getModel();
+        this.deselectAll();
+        this.g6graph.setItemState(nodeItem, 'click', true);
+        this.handleClick(nodeModel);
+      });
+
+      this.g6graph.on('edge:mouseenter', (e) => {
+        const edgeItem = e.item;
+        this.g6graph.setItemState(edgeItem, 'hover', true);
+        this.handleHover(edgeItem.getModel());
+      });
+
+      this.g6graph.on('edge:mouseleave', (e) => {
+        const edgeItem = e.item;
+        this.g6graph.setItemState(edgeItem, 'hover', false);
+        this.resetHover();
+      });
+
+      this.g6graph.on('edge:click', (e) => {
+        const edgeItem = e.item;
+        const edgeModel = edgeItem.getModel();
+        this.deselectAll();
+        this.g6graph.setItemState(edgeItem, 'click', true);
+        this.handleClick(edgeModel);
+      });
+
+      this.g6graph.on('canvas:click', () => {
+        this.deselectAll();
       });
 
       this.g6graph.render();
@@ -209,7 +343,7 @@ export default {
               node.id = nodeId;
               node.label = node[primaryKeyName];
               node.style = {
-                fill: this.getColor(node._label),
+                fill: ColorManger.getColor(node._label),
               };
               nodes[nodeId] = node;
               break;
@@ -219,6 +353,7 @@ export default {
               const relId = this.encodeRelId(rel._src, rel._dst);
               rel.source = this.encodeNodeId(rel._src);
               rel.target = this.encodeNodeId(rel._dst);
+              rel.label = rel._label;
               if (edges[relId]) {
                 break;
               }
@@ -262,12 +397,41 @@ export default {
           }
         }
       });
+      const nodeCounters = {
+      };
+      for (let key in nodes) {
+        const label = nodes[key]._label;
+        if (!nodeCounters[label]) {
+          nodeCounters[label] = 0;
+        }
+        nodeCounters[label] += 1;
+      }
+      const relCounters = {
+      };
+      for (let key in edges) {
+        const label = edges[key]._label;
+        if (!relCounters[label]) {
+          relCounters[label] = 0;
+        }
+        relCounters[label] += 1;
+      }
+      const totalNodeCount = Object.values(nodeCounters).reduce((a, b) => a + b, 0);
+      const totalRelCount = Object.values(relCounters).reduce((a, b) => a + b, 0);
+      const counters = {
+        node: nodeCounters,
+        rel: relCounters,
+        total: {
+          node: totalNodeCount,
+          rel: totalRelCount,
+        },
+      };
       return {
+        counters,
         nodes: Object.values(nodes),
         edges: Object.values(edges),
         nodesMap: nodes,
         edgesMap: edges,
-        tableNameMap: nodeLabels,
+        nodeTableNameMap: nodeLabels,
       };
     },
 
@@ -282,50 +446,41 @@ export default {
       });
     },
 
-    beautifyValue(value, type) {
-      if (type === DATA_TYPES.DATE) {
-        return Moment(value).format('YYYY-MM-DD');
-      } else if (type === DATA_TYPES.TIMESTAMP) {
-        return Moment(value).format('YYYY-MM-DD HH:mm:ss');
-      } else if (type === DATA_TYPES.FLOAT || type === DATA_TYPES.DOUBLE) {
-        return Number(value).toFixed(2);
-      } else {
-        [DATA_TYPES.FIXED_LIST, DATA_TYPES.VAR_LIST].forEach((dataType) => {
-          if (type.startsWith(dataType)) {
-            // TODO: beautify list recursively
-          }
-        });
-        [DATA_TYPES.STRUCT, DATA_TYPES.MAP, DATA_TYPES.UNION].forEach((dataType) => {
-          if (type.startsWith(dataType)) {
-            // TODO: beautify struct recursively
-          }
-        });
-        return value;
-      }
+    handleHover(model) {
+      const label = model._label;
+      this.hoveredLabel = label;
+      this.hoveredProperties = ValueFormatter.filterAndBeautifyProperties(model, this.schema);
+      this.hoveredIsNode = !(model._src && model._dst);
     },
 
-    handleNodeHover(model) {
+    handleClick(model) {
       const label = model._label;
-      this.selectedNodeLabel = label;
-      const properties = [];
-      const expectedProperties = this.schema.nodeTables.find((table) => table.name === label).properties;
-      expectedProperties.forEach((property) => {
-        let value = model[property.name];
-        if (value === null || value === undefined) {
-          value = "NULL";
-        } else {
-          value = this.beautifyValue(value, property.type);
-        }
-        if (value) {
-          properties.push({
-            name: property.name,
-            isPrimaryKey: property.isPrimaryKey,
-            type: property.type,
-            value,
-          });
-        }
-      });
-      this.selectedNodeProperties = properties;
+      this.clickedLabel = label;
+      this.clickedProperties = ValueFormatter.filterAndBeautifyProperties(model, this.schema);
+      this.clickedIsNode = !(model._src && model._dst);
+    },
+
+    deselectAll() {
+      if (!this.g6graph) {
+        return;
+      }
+      const currentSelectedNode = this.g6graph.findAllByState('node', 'click')[0];
+      if (currentSelectedNode) {
+        this.g6graph.setItemState(currentSelectedNode, 'click', false);
+      }
+      const currentSelectedEdge = this.g6graph.findAllByState('edge', 'click')[0];
+      if (currentSelectedEdge) {
+        this.g6graph.setItemState(currentSelectedEdge, 'click', false);
+      }
+      this.clickedLabel = "";
+      this.clickedProperties = [];
+      this.clickedIsNode = false;
+    },
+
+    resetHover() {
+      this.hoveredLabel = "";
+      this.hoveredProperties = [];
+      this.hoveredIsNode = false;
     },
 
     toggleSidePanel() {
@@ -476,8 +631,19 @@ export default {
     background-color: $gray-100;
 
     table {
-      font-family: 'Courier New', Courier, monospace;
       max-width: calc(100% - 20px);
+
+      &.result-container__overview-table {
+        table-layout: fixed;
+
+        td {
+          width: 120px;
+        }
+      }
+
+      &.result-container__result-table {
+        font-family: 'Courier New', Courier, monospace;
+      }
     }
   }
 }

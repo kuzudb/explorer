@@ -39,7 +39,7 @@
 
     <ResultGraph v-if="queryResult" v-show="showGraph" :queryResult="queryResult" :schema="schema"
       :containerHeight="containerHeight" ref="resultGraph" @graphEmpty="handleGraphEmpty" />
-    <ResultTable v-if="queryResult" v-show="showTable" :queryResult="queryResult" :schema="schema"
+    <ResultTable v-if="queryResult && showTable" :queryResult="queryResult" :schema="schema"
       :containerHeight="containerHeight" ref="resultTable" />
     <ResultCode v-if="queryResultString && showCode" :queryResultString="queryResultString" :schema="schema"
       :containerHeight="containerHeight" ref="resultCode" />
@@ -107,12 +107,21 @@ export default {
         this.$refs.resultGraph.handleResize();
       });
     },
+    showTable() {
+      this.$nextTick(() => {
+        if (this.showTable) {
+          this.$refs.resultTable.renderTable();
+        }
+      });
+    },
   },
   methods: {
     handleDataChange() {
       this.isGraphEmpty = false;
       this.$refs.resultGraph.drawGraph();
-      this.$refs.resultTable.renderTable();
+      if (this.showTable) {
+        this.$refs.resultTable.renderTable();
+      }
     },
     hideAll() {
       this.showGraph = false;
