@@ -51,6 +51,9 @@
 import SchemaViewMain from "./SchemaView/SchemaViewMain.vue";
 import ShellMainView from "./ShellView/ShellMainView.vue";
 import Axios from "axios";
+import { useSettingsStore } from "../store/SettingsStore";
+import { mapActions } from 'pinia'
+
 export default {
   name: "MainLayout",
   components: {
@@ -73,6 +76,7 @@ export default {
         table.dst = table.properties.dst;
         table.properties = table.properties.props;
       });
+      this.initDefaultSettings(this.schema);
     },
     hideAll() {
       this.showSchema = false;
@@ -94,6 +98,7 @@ export default {
     updateNavbarHeight() {
       this.navbarHeight = this.$refs.navbar.clientHeight;
     },
+    ...mapActions(useSettingsStore, ['initDefaultSettings']),
   },
   mounted() {
     this.updateNavbarHeight();

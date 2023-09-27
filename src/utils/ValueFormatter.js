@@ -24,14 +24,12 @@ class ValueFormatter {
       } else {
         value = this.beautifyValue(value, property.type);
       }
-      if (value) {
-        properties.push({
-          name: property.name,
-          isPrimaryKey: property.isPrimaryKey,
-          type: property.type,
-          value,
-        });
-      }
+      properties.push({
+        name: property.name,
+        isPrimaryKey: property.isPrimaryKey,
+        type: property.type,
+        value,
+      });
     });
     return properties;
   }

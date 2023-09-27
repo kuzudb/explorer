@@ -14,8 +14,8 @@
           {{ sidePanelPropertyTitlePrefix }} Properties
         </h5>
         <span class="badge bg-primary" :style="{
-          backgroundColor: ` ${getColor(displayLabel)} !important`,
-          color: sidePanelPropertyTitlePrefix === 'Rel' ? 'black !important' : 'auto'
+          backgroundColor: `${getColor(displayLabel)} !important`,
+          color: `${getTextColor(displayLabel)} !important`,
         }">
           {{ displayLabel }}</span>
         <hr>
@@ -86,10 +86,10 @@
 <script lang="js">
 import G6 from '@antv/g6';
 import { DATA_TYPES, UI_SIZE } from "../../utils/Constants";
-import ColorManger from "../../utils/ColorManager";
+import { useSettingsStore } from "../../store/SettingsStore";
+import { mapStores } from 'pinia'
 import ValueFormatter from "../../utils/ValueFormatter";
 
-const DEFAULT_EDGE_COLOR = "#e2e2e2";
 export default {
   name: "ResultGraph",
   data: () => ({
@@ -155,19 +155,26 @@ export default {
       const isNode = this.hoveredLabel ? this.hoveredIsNode : this.clickedIsNode;
       return isNode ? "Node" : "Rel";
     },
+    isNodeSelectedOrHovered() {
+      return this.hoveredLabel ? this.hoveredIsNode : this.clickedIsNode;
+    },
     displayLabel() {
       return this.hoveredLabel ? this.hoveredLabel : this.clickedLabel;
     },
     displayProperties() {
       return this.hoveredProperties.length > 0 ? this.hoveredProperties : this.clickedProperties;
     },
+    ...mapStores(useSettingsStore),
   },
   methods: {
     getColor(label) {
-      if (Object.values(this.nodeTableNameMap).includes(label)) {
-        return ColorManger.getColor(label);
+      return this.settingsStore.colorForLabel(label);
+    },
+    getTextColor(label) {
+      if (!Object.values(this.nodeTableNameMap).includes(label)) {
+        return "#000000"
       }
-      return DEFAULT_EDGE_COLOR;
+      return "#ffffff";
     },
     drawGraph() {
       if (this.graphCreated && this.g6graph) {
@@ -198,21 +205,7 @@ export default {
           nodeSize: 40,
           nodeSpacing: 10,
         },
-        defaultNode: {
-          labelCfg: {
-            style: {
-              fontSize: 12,
-              fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif',
-              fontWeight: 600,
-            },
-          },
-          size: 40,
-          color: '#5B8FF9',
-          style: {
-            lineWidth: 0,
-            fill: '#C6E5FF',
-          },
-        },
+        defaultNode: this.settingsStore.defaultNode,
         nodeStateStyles: {
           hover: {
             lineWidth: 3,
@@ -223,22 +216,7 @@ export default {
             stroke: '#1848FF',
           },
         },
-        defaultEdge: {
-          size: 3,
-          color: DEFAULT_EDGE_COLOR,
-          opacity: 1,
-          style: {
-            endArrow: true,
-          },
-          labelCfg: {
-            style: {
-              fontSize: 12,
-              fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif',
-              fontWeight: 600,
-            },
-            autoRotate: true,
-          }
-        },
+        defaultEdge: this.settingsStore.defaultRel,
         edgeStateStyles: {
           hover: {
             lineWidth: 6,
@@ -341,9 +319,9 @@ export default {
               }
               nodeLabels[node._id.table] = node._label;
               node.id = nodeId;
-              node.label = node[primaryKeyName];
+              node.label = String(node[primaryKeyName]);
               node.style = {
-                fill: ColorManger.getColor(node._label),
+                fill: this.settingsStore.colorForLabel(node._label),
               };
               nodes[nodeId] = node;
               break;

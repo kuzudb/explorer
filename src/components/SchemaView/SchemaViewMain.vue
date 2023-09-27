@@ -80,7 +80,6 @@
 <script lang="js">
 import { Network as VisNetwork } from "vis-network/peer";
 import Axios from "axios";
-import ColorManager from "../../utils/ColorManager.js";
 
 export default {
   data: () => ({
@@ -133,7 +132,6 @@ export default {
         nodes: this.schema.nodeTables.map((table) => ({
           id: table.name,
           label: table.name,
-          color: ColorManager.getColor(table.name),
         })),
         edges: this.schema.relTables.map((table) => ({
           from: table.src,
