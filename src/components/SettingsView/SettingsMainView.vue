@@ -136,9 +136,11 @@ export default {
       this.currentSettings = JSON.parse(JSON.stringify(settingState));
     },
     saveAndHideModal() {
-      this.settingsStore.updateSettings(this.currentSettings);
-      this.currentSettings = {};
       this.hideModal();
+      this.$nextTick(() => {
+        this.settingsStore.updateSettings(this.currentSettings);
+        this.currentSettings = {};
+      });
     },
     getCaptionOptions(entity, isNode) {
       const name = entity.name;
