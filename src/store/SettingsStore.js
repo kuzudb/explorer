@@ -55,6 +55,13 @@ export const useSettingsStore = defineStore("settings", {
       nodes: {},
       rels: {},
     },
+    performance: {
+      maxNumberOfNodes: 500,
+    },
+    tableView: {
+      rowsPerPage: 25,
+    },
+    colors: COLOR_PALETTE,
   }),
 
   getters: {
@@ -83,11 +90,17 @@ export const useSettingsStore = defineStore("settings", {
     defaultRel(state) {
       return state.graphViz.default.rel;
     },
+    allSettings(state) {
+      return {
+        graphViz: state.graphViz,
+        performance: state.performance,
+        tableView: state.tableView,
+      };
+    },
   },
 
   actions: {
     initDefaultSettings(schema) {
-      const colorPalette = COLOR_PALETTE;
       const nodeDefault = this.graphViz.default.node;
       const relDefault = this.graphViz.default.rel;
       this.graphViz.nodes = {};
@@ -95,7 +108,7 @@ export const useSettingsStore = defineStore("settings", {
       schema.nodeTables.forEach((node) => {
         const name = node.name;
         const g6Settings = JSON.parse(JSON.stringify(nodeDefault));
-        let color = colorPalette.pop();
+        let color = this.colors.pop();
         if (!color) {
           color = randomcolor({ luminosity: "dark", hue: "random" });
         }
@@ -124,6 +137,11 @@ export const useSettingsStore = defineStore("settings", {
         };
         this.graphViz.rels[name] = relSettings;
       });
+    },
+    updateSettings(settings) {
+      this.graphViz = settings.graphViz;
+      this.performance = settings.performance;
+      this.tableView = settings.tableView;
     },
   },
 });

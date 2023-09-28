@@ -30,7 +30,7 @@
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="#">
+              <a class="nav-link" href="#" @click="toggleSettings()">
                 <i class="fa-solid fa-cog"></i>
                 Settings
               </a>
@@ -43,13 +43,16 @@
     <div class="layout__main-content" :style="{ height: `calc(100vh - ${navbarHeight}px)` }">
       <SchemaViewMain v-show="showSchema" />
       <ShellMainView v-show="showShell" :schema="schema" :navbarHeight="navbarHeight" />
+      <SettingsMainView :schema="schema" ref="settings" />
     </div>
+
   </div>
 </template>
 
 <script lang="js">
 import SchemaViewMain from "./SchemaView/SchemaViewMain.vue";
 import ShellMainView from "./ShellView/ShellMainView.vue";
+import SettingsMainView from "./SettingsView/SettingsMainView.vue"
 import Axios from "axios";
 import { useSettingsStore } from "../store/SettingsStore";
 import { mapActions } from 'pinia'
@@ -59,6 +62,7 @@ export default {
   components: {
     SchemaViewMain,
     ShellMainView,
+    SettingsMainView,
   },
   data: () => ({
     showSchema: false,
@@ -94,6 +98,9 @@ export default {
     toggleLoader() {
       this.hideAll();
       this.showLoader = true;
+    },
+    toggleSettings() {
+      this.$refs.settings.showModal();
     },
     updateNavbarHeight() {
       this.navbarHeight = this.$refs.navbar.clientHeight;
