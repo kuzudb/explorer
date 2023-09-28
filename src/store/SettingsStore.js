@@ -59,7 +59,7 @@ export const useSettingsStore = defineStore("settings", {
       maxNumberOfNodes: 500,
     },
     tableView: {
-      rowsPerPage: 25,
+      rowsPerPage: 10,
     },
     colors: COLOR_PALETTE,
   }),

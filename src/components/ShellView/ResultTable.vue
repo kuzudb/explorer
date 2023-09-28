@@ -55,11 +55,12 @@
 <script lang="js">
 import ValueFormatter from "../../utils/ValueFormatter";
 import { UI_SIZE } from "../../utils/Constants";
+import { useSettingsStore } from "../../store/SettingsStore";
+import { mapStores } from 'pinia'
 export default {
   name: "ResultTable",
   data: () => ({
     page: 1,
-    itemsPerPage: 10,
     maxLength: 8,
     rows: [],
     tableHeaders: [],
@@ -119,9 +120,22 @@ export default {
     isNextDisabled() {
       return this.page === this.totalPages;
     },
+    itemsPerPage() {
+      return this.settingsStore && this.settingsStore.tableView ? this.settingsStore.tableView.rowsPerPage : 10;
+    },
+    ...mapStores(useSettingsStore),
   },
   watch: {
     page() {
+      this.renderTable();
+    },
+    itemsPerPage(newVal, oldVal) {
+      if (newVal > oldVal) {
+        const numberOfPagesNew = Math.ceil(this.queryResult.rows.length / newVal);
+        if (this.page > numberOfPagesNew) {
+          this.page = numberOfPagesNew;
+        }
+      }
       this.renderTable();
     }
   },
