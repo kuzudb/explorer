@@ -624,8 +624,9 @@ export default {
     },
 
     handleSettingsChange() {
-      const { nodes, edges } = this.extractGraphFromQueryResult(this.queryResult);
+      const { nodes, edges, counters } = this.extractGraphFromQueryResult(this.queryResult);
       this.g6graph.changeData({ nodes, edges });
+      this.counters = counters;
     }
   },
   mounted() {

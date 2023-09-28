@@ -55,7 +55,7 @@ export const useSettingsStore = defineStore("settings", {
       rels: {},
     },
     performance: {
-      maxNumberOfNodes: 500,
+      maxNumberOfNodes: 300,
     },
     tableView: {
       rowsPerPage: 10,
