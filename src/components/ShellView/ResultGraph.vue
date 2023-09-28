@@ -139,6 +139,12 @@ export default {
     },
   },
   computed: {
+    graphVizSettings() {
+      return this.settingsStore.graphVizSettings;
+    },
+    performanceSettings() {
+      return this.settingsStore.performance;
+    },
     maximizeButtonClass() {
       return (this.isEditorMaximized ? "fa-minimize" : "fa-maximize") + " fa-lg fa-solid";
     },
@@ -165,6 +171,38 @@ export default {
       return this.hoveredProperties.length > 0 ? this.hoveredProperties : this.clickedProperties;
     },
     ...mapStores(useSettingsStore),
+  },
+  watch: {
+    performanceSettings: {
+      handler(newVal, oldVal) {
+        if (newVal.maxNumberOfNodes !== oldVal.maxNumberOfNodes) {
+          this.handleSettingsChange();
+        }
+      },
+      deep: true,
+    },
+    graphVizSettings(newVal, oldVal) {
+      let isRerenderNeeded = false;
+      for (let key in this.counters.node) {
+        if (newVal.nodes[key] && JSON.stringify(newVal.nodes[key]) !== JSON.stringify(oldVal.nodes[key])) {
+          isRerenderNeeded = true;
+          break;
+        }
+      }
+      if (!isRerenderNeeded) {
+        for (let key in this.counters.rel) {
+          if (newVal.rels[key] && JSON.stringify(newVal.rels[key]) !== JSON.stringify(oldVal.rels[key])) {
+            isRerenderNeeded = true;
+            break;
+          }
+        }
+      }
+      if (!isRerenderNeeded) {
+        return;
+      }
+      this.handleSettingsChange();
+    },
+
   },
   methods: {
     getColor(label) {
@@ -219,11 +257,9 @@ export default {
         defaultEdge: this.settingsStore.defaultRel,
         edgeStateStyles: {
           hover: {
-            lineWidth: 6,
             stroke: '#1890FF',
           },
           click: {
-            lineWidth: 5,
             stroke: '#1848FF',
           },
         },
@@ -296,46 +332,76 @@ export default {
       const nodes = {};
       const edges = {};
       const nodeLabels = {};
-      const nodeTablePrimaryKeys = {};
+
+      const processNode = (node) => {
+        const nodeId = this.encodeNodeId(node._id);
+        if (nodes[nodeId]) {
+          return;
+        }
+        const expectedPropertiesType = {};
+        const expectedProperties = this.schema.nodeTables.find((table) => table.name === node._label).properties;
+        expectedProperties.forEach((property) => {
+          expectedPropertiesType[property.name] = property.type;
+        });
+        const nodeSettings = this.settingsStore.settingsForLabel(node._label);
+        for (let key in nodeSettings.g6Settings) {
+          node[key] = nodeSettings.g6Settings[key];
+        }
+        nodeLabels[node._id.table] = node._label;
+        node.id = nodeId;
+        const nodeLabelProp = nodeSettings.label;
+        if (!nodeLabelProp) {
+          node.label = "";
+        } else {
+          node.label = node[nodeLabelProp];
+          if (nodeLabelProp in expectedPropertiesType) {
+            node.label = ValueFormatter.beautifyValue(node[nodeLabelProp], expectedPropertiesType[nodeLabelProp]);
+          }
+          node.label = String(node.label);
+        }
+        nodes[nodeId] = node;
+      }
+
+      const processRel = (rel) => {
+        const relId = this.encodeRelId(rel._src, rel._dst);
+        rel.source = this.encodeNodeId(rel._src);
+        rel.target = this.encodeNodeId(rel._dst);
+        const expectedPropertiesType = {};
+        const expectedProperties = this.schema.relTables.find((table) => table.name === rel._label).properties;
+        expectedProperties.forEach((property) => {
+          expectedPropertiesType[property.name] = property.type;
+        });
+        const relSettings = this.settingsStore.settingsForLabel(rel._label);
+        for (let key in relSettings.g6Settings) {
+          rel[key] = relSettings.g6Settings[key];
+        }
+        const relLabelProp = relSettings.label;
+        if (!relLabelProp) {
+          rel.label = "";
+        } else {
+          rel.label = rel[relLabelProp];
+          if (relLabelProp in expectedPropertiesType) {
+            rel.label = ValueFormatter.beautifyValue(rel[relLabelProp], expectedPropertiesType[relLabelProp]);
+          }
+          rel.label = String(rel.label);
+        }
+        if (edges[relId]) {
+          return;
+        }
+        edges[relId] = rel;
+      }
       // Deduplicate nodes and edges
       rows.forEach((row) => {
         for (let key in row) {
           switch (dataTypes[key]) {
             case DATA_TYPES.NODE: {
               const node = row[key];
-              const nodeId = this.encodeNodeId(node._id);
-              if (nodes[nodeId]) {
-                break;
-              }
-              let primaryKeyName = nodeTablePrimaryKeys[node._label];
-              if (!primaryKeyName) {
-                const expectedProperties = this.schema.nodeTables.find((table) => table.name === node._label).properties;
-                expectedProperties.forEach((property) => {
-                  if (property.isPrimaryKey) {
-                    primaryKeyName = property.name;
-                    nodeTablePrimaryKeys[node._label] = primaryKeyName;
-                  }
-                });
-              }
-              nodeLabels[node._id.table] = node._label;
-              node.id = nodeId;
-              node.label = String(node[primaryKeyName]);
-              node.style = {
-                fill: this.settingsStore.colorForLabel(node._label),
-              };
-              nodes[nodeId] = node;
+              processNode(node);
               break;
             }
             case DATA_TYPES.REL: {
               const rel = row[key];
-              const relId = this.encodeRelId(rel._src, rel._dst);
-              rel.source = this.encodeNodeId(rel._src);
-              rel.target = this.encodeNodeId(rel._dst);
-              rel.label = rel._label;
-              if (edges[relId]) {
-                break;
-              }
-              edges[relId] = rel;
+              processRel(rel);
               break;
             }
             case DATA_TYPES.RECURSIVE_REL: {
@@ -350,9 +416,7 @@ export default {
                     delete node[key];
                   }
                 }
-                nodeLabels[node._id.table] = node._label;
-                node.id = nodeId;
-                nodes[nodeId] = node;
+                processNode(node);
               });
               recursiveRel._rels.forEach((rel) => {
                 const relId = this.encodeRelId(rel._src, rel._dst);
@@ -364,9 +428,7 @@ export default {
                     delete rel[key];
                   }
                 }
-                rel.source = this.encodeNodeId(rel._src);
-                rel.target = this.encodeNodeId(rel._dst);
-                edges[relId] = rel;
+                processRel(rel);
               });
               break;
             }
@@ -375,6 +437,21 @@ export default {
           }
         }
       });
+      if (Object.keys(nodes).length > this.settingsStore.performance.maxNumberOfNodes) {
+        const nodeIds = Object.keys(nodes);
+        while (nodeIds.length > this.settingsStore.performance.maxNumberOfNodes) {
+          const indexToRemove = Math.floor(Math.random() * nodeIds.length);
+          const nodeIdToRemove = nodeIds[indexToRemove];
+          delete nodes[nodeIdToRemove];
+          nodeIds.splice(indexToRemove, 1);
+        }
+        for (let key in edges) {
+          const edge = edges[key];
+          if (!nodes[edge.source] || !nodes[edge.target]) {
+            delete edges[key];
+          }
+        }
+      }
       const nodeCounters = {
       };
       for (let key in nodes) {
@@ -545,6 +622,11 @@ export default {
         this.g6graph.zoomTo(1);
       }, this.toolbarDebounceTimeout);
     },
+
+    handleSettingsChange() {
+      const { nodes, edges } = this.extractGraphFromQueryResult(this.queryResult);
+      this.g6graph.changeData({ nodes, edges });
+    }
   },
   mounted() {
     this.computeGraphWidth();

@@ -29,18 +29,17 @@ export const useSettingsStore = defineStore("settings", {
             },
           },
           size: 40,
-          color: "#5B8FF9",
           style: {
             lineWidth: 0,
-            fill: "#C6E5FF",
+            fill: "#FF0000",
           },
         },
         rel: {
           size: 3,
-          color: "#e2e2e2",
           opacity: 1,
           style: {
             endArrow: true,
+            stroke: "#e2e2e2",
           },
           labelCfg: {
             style: {
@@ -75,13 +74,29 @@ export const useSettingsStore = defineStore("settings", {
         }
         const node = state.graphViz.nodes[label];
         if (node) {
-          return node.g6Settings.color;
+          return node.g6Settings.style.fill;
         }
         const rel = state.graphViz.rels[label];
         if (rel) {
-          return rel.g6Settings.color;
+          return rel.g6Settings.style.stroke;
         }
         return NULL_COLOR;
+      };
+    },
+    settingsForLabel(state) {
+      return (label) => {
+        if (!label) {
+          return null;
+        }
+        const node = state.graphViz.nodes[label];
+        if (node) {
+          return node;
+        }
+        const rel = state.graphViz.rels[label];
+        if (rel) {
+          return rel;
+        }
+        return null;
       };
     },
     defaultNode(state) {
@@ -112,7 +127,7 @@ export const useSettingsStore = defineStore("settings", {
         if (!color) {
           color = randomcolor({ luminosity: "dark", hue: "random" });
         }
-        g6Settings.color = color;
+        g6Settings.style.fill = color;
         let primaryKey = node.properties.filter((p) => p.isPrimaryKey)[0];
         if (!primaryKey) {
           primaryKey = node.properties[0];

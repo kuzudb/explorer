@@ -8,9 +8,7 @@
         <b>
           {{ errorMessage }}
         </b>
-
       </div>
-
     </div>
   </div>
 </template>

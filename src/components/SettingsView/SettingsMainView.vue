@@ -20,7 +20,7 @@
               <tr v-for="(node, key, index) in currentSettings.graphViz.nodes" :key="index">
                 <td>{{ node.name }}</td>
                 <td>
-                  <input type="color" class="form-control form-control-color" v-model="node.g6Settings.color"
+                  <input type="color" class="form-control form-control-color" v-model="node.g6Settings.style.fill"
                     title="Choose color for node">
                 </td>
                 <td>
@@ -53,11 +53,11 @@
               <tr v-for="(rel, key, index) in currentSettings.graphViz.rels" :key="index">
                 <td>{{ rel.name }}</td>
                 <td>
-                  <input type="color" class="form-control form-control-color" v-model="rel.g6Settings.color"
+                  <input type="color" class="form-control form-control-color" v-model="rel.g6Settings.style.stroke"
                     title="Choose color for rel">
                 </td>
                 <td>
-                  <input type="number" class="form-control" v-model="rel.g6Settings.size" min="10" max="200"
+                  <input type="number" class="form-control" v-model="rel.g6Settings.size" min="1" max="20"
                     title="Choose size for rel">
                 </td>
                 <td>
