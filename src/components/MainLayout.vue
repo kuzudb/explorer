@@ -41,7 +41,7 @@
     </nav>
 
     <div class="layout__main-content" :style="{ height: `calc(100vh - ${navbarHeight}px)` }">
-      <SchemaViewMain v-show="showSchema" />
+      <SchemaViewMain v-show="showSchema" :schema="schema" ref="schemaView" :navbarHeight="navbarHeight" />
       <ShellMainView v-show="showShell" :schema="schema" :navbarHeight="navbarHeight" />
       <SettingsMainView :schema="schema" ref="settings" />
     </div>
@@ -80,7 +80,6 @@ export default {
         table.dst = table.properties.dst;
         table.properties = table.properties.props;
       });
-      this.initDefaultSettings(this.schema);
     },
     hideAll() {
       this.showSchema = false;
@@ -90,6 +89,7 @@ export default {
     toggleSchema() {
       this.hideAll();
       this.showSchema = true;
+      this.$refs.schemaView.handleResize();
     },
     toggleShell() {
       this.hideAll();
@@ -115,7 +115,10 @@ export default {
     window.removeEventListener("resize", this.updateNavbarHeight);
   },
   created() {
-    this.getSchema();
+    this.getSchema().then(() => {
+      this.initDefaultSettings(this.schema);
+      this.$refs.schemaView.drawGraph();
+    });
   },
 };
 </script>
