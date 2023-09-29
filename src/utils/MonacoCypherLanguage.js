@@ -1,3 +1,6 @@
+// Adapted from https://github.com/microsoft/monaco-editor/blob/main/src/basic-languages/cypher/cypher.ts
+// Replaced keywords with extractions from the grammar file
+
 import CypherLanguage from "./CypherLanguage";
 const getKeyWords = () => {
   const cypherLanguage = new CypherLanguage();
