@@ -3,22 +3,25 @@
     <div class="schema_graph__wrapper" ref="graph" :style="{ width: graphWidth + 'px' }"></div>
     <div class="schema_side-panel__wrapper" ref="sidePanel">
       <br>
-      <SchemaSidebarOverview :schema="schema" v-if="schema" />
+      <SchemaSidebarOverview :schema="schema" v-if="schema" v-show="!hoveredLabel" />
+      <SchemaSidebarHoverView :schema="schema" :hoveredLabel="hoveredLabel" :hoveredIsNode="hoveredIsNode"
+        v-if="hoveredLabel" />
     </div>
   </div>
 </template>
   
 <script lang="js">
 import G6 from '@antv/g6';
-import { UI_SIZE } from "../../utils/Constants";
+import { UI_SIZE, SHOW_REL_LABELS_OPTIONS } from "../../utils/Constants";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
 import SchemaSidebarOverview from './SchemaSidebarOverview.vue';
+import SchemaSidebarHoverView from './SchemaSidebarHoverView.vue';
 
 export default {
   name: "SchemaViewMain",
   components: {
-    SchemaSidebarOverview,
+    SchemaSidebarOverview, SchemaSidebarHoverView
   },
   data: () => ({
     graphCreated: false,
@@ -27,7 +30,6 @@ export default {
     graphWidth: 0,
     graphHeight: 0,
     borderWidth: UI_SIZE.DEFAULT_BORDER_WIDTH,
-    hoveredProperties: [],
     hoveredLabel: "",
     hoveredIsNode: false,
     clickedProperties: [],
@@ -58,9 +60,6 @@ export default {
     },
     displayLabel() {
       return this.hoveredLabel ? this.hoveredLabel : this.clickedLabel;
-    },
-    displayProperties() {
-      return this.hoveredProperties.length > 0 ? this.hoveredProperties : this.clickedProperties;
     },
     ...mapStores(useSettingsStore),
   },
@@ -158,13 +157,17 @@ export default {
       this.g6graph.data({ nodes, edges, });
 
       this.g6graph.on('node:mouseenter', (e) => {
-        console.log(e);
+        const nodeItem = e.item;
+        this.g6graph.setItemState(nodeItem, 'hover', true);
+        this.handleHover(nodeItem._cfg.model.label, true);
       });
 
       this.g6graph.on('node:mouseleave', (e) => {
-        console.log(e);
-
+        const nodeItem = e.item;
+        this.g6graph.setItemState(nodeItem, 'hover', false);
+        this.resetHover();
       });
+
 
       this.g6graph.on('node:click', (e) => {
         console.log(e);
@@ -172,13 +175,26 @@ export default {
       });
 
       this.g6graph.on('edge:mouseenter', (e) => {
-        console.log(e);
-
+        const edgeItem = e.item;
+        this.g6graph.setItemState(edgeItem, 'hover', true);
+        if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
+          this.g6graph.updateItem(edgeItem, {
+            label: edgeItem._cfg.model._label
+          });
+          edgeItem.toFront();
+        }
+        this.handleHover(edgeItem._cfg.model._label, false);
       });
 
       this.g6graph.on('edge:mouseleave', (e) => {
-        console.log(e);
-
+        const edgeItem = e.item;
+        this.g6graph.setItemState(edgeItem, 'hover', false);
+        if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
+          this.g6graph.updateItem(edgeItem, {
+            label: ""
+          });
+        }
+        this.resetHover();
       });
 
       this.g6graph.on('edge:click', (e) => {
@@ -224,7 +240,7 @@ export default {
           const edge = {
             source: r.src,
             target: r.dst,
-            label: r.name,
+            label: this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.ALWAYS ? r.name : "",
             _label: r.name,
             style: {
               stroke: this.getColor(r.name),
@@ -264,8 +280,9 @@ export default {
       });
     },
 
-    handleHover() {
-
+    handleHover(label, isNode) {
+      this.hoveredLabel = label;
+      this.hoveredIsNode = isNode;
     },
 
     handleClick() {
@@ -290,7 +307,6 @@ export default {
 
     resetHover() {
       this.hoveredLabel = "";
-      this.hoveredProperties = [];
       this.hoveredIsNode = false;
     },
 

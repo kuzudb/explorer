@@ -84,7 +84,7 @@
             <span class="input-group-text" id="addon-wrapping">Show rel labels</span>
             <select class="form-select" v-model="currentSettings.schemaView.showRelLabels">
               <option :value="showRelLabelsOptions.ALWAYS">Always</option>
-              <option :value="showRelLabelsOptions.HOVER">On Hover</option>
+              <option :value="showRelLabelsOptions.HOVER">On hover or click</option>
               <option :value="showRelLabelsOptions.NEVER">Never</option>
             </select>
           </div>
