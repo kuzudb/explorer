@@ -41,7 +41,8 @@
     </nav>
 
     <div class="layout__main-content" :style="{ height: `calc(100vh - ${navbarHeight}px)` }">
-      <SchemaViewMain v-show="showSchema" :schema="schema" ref="schemaView" :navbarHeight="navbarHeight" />
+      <SchemaViewMain v-show="showSchema" :schema="schema" ref="schemaView" :navbarHeight="navbarHeight"
+        @reloadSchema="getSchema" />
       <ShellMainView v-show="showShell" :schema="schema" :navbarHeight="navbarHeight" />
       <SettingsMainView :schema="schema" ref="settings" />
     </div>
@@ -74,12 +75,13 @@ export default {
   methods: {
     async getSchema() {
       const response = await Axios.get("/api/schema");
-      this.schema = response.data;
-      this.schema.relTables.forEach((table) => {
+      const schema = response.data;
+      schema.relTables.forEach((table) => {
         table.src = table.properties.src;
         table.dst = table.properties.dst;
         table.properties = table.properties.props;
       });
+      this.schema = schema;
     },
     hideAll() {
       this.showSchema = false;

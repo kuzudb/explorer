@@ -24,10 +24,11 @@
     <div class="schema_graph__wrapper" ref="graph" :style="{ width: graphWidth + 'px' }"></div>
     <div class="schema_side-panel__wrapper" ref="sidePanel">
       <br>
-      <SchemaSidebarOverview :schema="schema" v-if="schema" v-show="!hoveredLabel" />
+      <SchemaSidebarOverview :schema="schema" v-if="schema" v-show="!hoveredLabel" @dropTable="dropTable" />
       <SchemaSidebarHoverView :schema="schema" :hoveredLabel="hoveredLabel" :hoveredIsNode="hoveredIsNode"
         v-if="hoveredLabel" />
     </div>
+    <SchemaActionDialog ref="actionDialog" @reloadSchema="reloadSchema" />
   </div>
 </template>
   
@@ -39,11 +40,12 @@ import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
 import SchemaSidebarOverview from './SchemaSidebarOverview.vue';
 import SchemaSidebarHoverView from './SchemaSidebarHoverView.vue';
+import SchemaActionDialog from './SchemaActionDialog.vue';
 
 export default {
   name: "SchemaViewMain",
   components: {
-    SchemaSidebarOverview, SchemaSidebarHoverView
+    SchemaSidebarOverview, SchemaSidebarHoverView, SchemaActionDialog
   },
   data: () => ({
     graphCreated: false,
@@ -87,7 +89,12 @@ export default {
     graphVizSettings() {
       this.handleSettingsChange();
     },
-
+    schema() {
+      if (!this.graphCreated) {
+        return;
+      }
+      this.handleSettingsChange();
+    },
   },
   methods: {
     getColor(label) {
@@ -393,6 +400,15 @@ export default {
       const { nodes, edges, counters } = this.extractGraphFromSchema(this.schema);
       this.g6graph.changeData({ nodes, edges });
       this.counters = counters;
+    },
+
+    dropTable(tableName) {
+      console.log("dropTable", tableName);
+      this.$refs.actionDialog.dropTable(tableName);
+    },
+
+    reloadSchema() {
+      this.$emit("reloadSchema");
     }
   },
   mounted() {

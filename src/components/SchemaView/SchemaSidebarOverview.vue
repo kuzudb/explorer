@@ -26,7 +26,7 @@
                   <i class="fa-solid fa-pen-to-square"></i>
                 </button>
                 &nbsp;
-                <button class="btn btn-sm  btn-outline-danger">
+                <button class="btn btn-sm  btn-outline-danger" @click="dropTable(nodeTable.name)">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>
               </div>
@@ -63,7 +63,7 @@
                 <i class="fa-solid fa-pen-to-square"></i>
               </button>
               &nbsp;
-              <button class="btn btn-sm  btn-outline-danger">
+              <button class="btn btn-sm  btn-outline-danger" @click="dropTable(relTable.name)">
                 <i class="fa-solid fa-trash-can"></i>
               </button>
             </div>
@@ -91,6 +91,9 @@ export default {
   methods: {
     getColor(label) {
       return this.settingsStore.colorForLabel(label);
+    },
+    dropTable(tableName) {
+      this.$emit("dropTable", tableName);
     },
   },
 };

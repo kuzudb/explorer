@@ -69,8 +69,8 @@ export default {
             return;
           }
           this.errorMessage = error.response.data.error.trim();
-          console.log(error.response.data.error);
-          console.log(error.response.data.error.trim());
+          console.error(error.response.data.error);
+          console.error(error.response.data.error.trim());
         });
       if (!this.isEvaluated) {
         this.$emit("addCell");
