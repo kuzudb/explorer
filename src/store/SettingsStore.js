@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import randomcolor from "randomcolor";
+import { SHOW_REL_LABELS_OPTIONS } from "../utils/Constants";
 
 const COLOR_PALETTE = [
   "#4e79a7",
@@ -60,6 +61,9 @@ export const useSettingsStore = defineStore("settings", {
     tableView: {
       rowsPerPage: 10,
     },
+    schemaView: {
+      showRelLabels: SHOW_REL_LABELS_OPTIONS.HOVER,
+    },
     colors: COLOR_PALETTE,
   }),
 
@@ -110,6 +114,7 @@ export const useSettingsStore = defineStore("settings", {
         graphViz: state.graphViz,
         performance: state.performance,
         tableView: state.tableView,
+        schemaView: state.schemaView,
       };
     },
   },
@@ -157,6 +162,7 @@ export const useSettingsStore = defineStore("settings", {
       this.graphViz = settings.graphViz;
       this.performance = settings.performance;
       this.tableView = settings.tableView;
+      this.schemaView = settings.schemaView;
     },
   },
 });

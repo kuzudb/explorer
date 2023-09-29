@@ -30,3 +30,9 @@ export const UI_SIZE = {
   SHELL_TOOL_BAR_WIDTH: 32,
   DEFAULT_BORDER_WIDTH: 2,
 };
+
+export const SHOW_REL_LABELS_OPTIONS = {
+  ALWAYS: "ALWAYS",
+  HOVER: "HOVER",
+  NEVER: "NEVER",
+};

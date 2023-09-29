@@ -78,6 +78,18 @@
           </div>
 
           <br>
+          <h4>Schema View Options</h4>
+          <hr>
+          <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">Show rel labels</span>
+            <select class="form-select" v-model="currentSettings.schemaView.showRelLabels">
+              <option :value="showRelLabelsOptions.ALWAYS">Always</option>
+              <option :value="showRelLabelsOptions.HOVER">On Hover</option>
+              <option :value="showRelLabelsOptions.NEVER">Never</option>
+            </select>
+          </div>
+
+          <br>
           <h4>Table View Options</h4>
           <hr>
 
@@ -102,6 +114,7 @@
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia';
 import { Modal } from 'bootstrap';
+import { SHOW_REL_LABELS_OPTIONS } from "../../utils/Constants";
 
 export default {
   name: "SettingsMainView",
@@ -109,6 +122,7 @@ export default {
     filterKeyword: "",
     currentSettings: {},
     modal: null,
+    showRelLabelsOptions: SHOW_REL_LABELS_OPTIONS,
   }),
   props: {
     schema: {

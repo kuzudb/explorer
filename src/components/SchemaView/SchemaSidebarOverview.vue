@@ -1,0 +1,105 @@
+<template>
+  <div>
+    <div>
+      <div class="d-flex justify-content-between">
+        <h5>Node Tables
+        </h5>
+        <button class="btn  btn-sm btn-primary">
+          Add
+        </button>
+      </div>
+      <hr>
+      <table class="table table-sm table-bordered schema_side-panel__overview-table" v-if="schema">
+        <tbody>
+          <tr v-for="nodeTable in schema.nodeTables" :key="nodeTable.name">
+            <td scope="row">
+              <span class="badge bg-primary" :style="{ backgroundColor: ` ${getColor(nodeTable.name)} !important` }">{{
+                nodeTable.name }}</span>
+              <br>
+              <small>
+                {{ nodeTable.properties.length }} properties
+              </small>
+            </td>
+            <td class="schema_side-panel__overview-table-buttons-container">
+              <div>
+                <button class="btn btn-sm  btn-outline-primary">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                &nbsp;
+                <button class="btn btn-sm  btn-outline-danger">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+    </div>
+
+    <div class="d-flex justify-content-between">
+      <h5>Rel Tables
+      </h5>
+      <button class="btn  btn-sm btn-primary">
+        Add
+      </button>
+    </div>
+    <hr>
+    <table class="table table-sm table-bordered schema_side-panel__overview-table" v-if="schema">
+      <tbody>
+        <tr v-for="relTable in schema.relTables" :key="relTable.name">
+          <td scope="row">
+            <span class="badge bg-primary"
+              :style="{ backgroundColor: ` ${getColor(relTable.name)} !important`, color: '#000000' }">
+              {{ relTable.name }}</span>
+            <br>
+            <small>
+              {{ relTable.properties.length }} properties
+            </small>
+          </td>
+          <td class="schema_side-panel__overview-table-buttons-container">
+            <div>
+              <button class="btn btn-sm  btn-outline-primary">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              &nbsp;
+              <button class="btn btn-sm  btn-outline-danger">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</template>
+
+<script lang="js">
+import { useSettingsStore } from "../../store/SettingsStore";
+import { mapStores } from 'pinia'
+export default {
+  name: "SchemaSidebarOverview",
+  props: {
+    schema: {
+      type: Object,
+      required: true,
+    },
+  },
+  computed: {
+    ...mapStores(useSettingsStore),
+  },
+  methods: {
+    getColor(label) {
+      return this.settingsStore.colorForLabel(label);
+    },
+  },
+};
+</script>
+
+<style scoped lang="scss">
+.schema_side-panel__overview-table-buttons-container {
+  width: 90px;
+  text-align: center;
+  vertical-align: middle;
+}
+</style>
