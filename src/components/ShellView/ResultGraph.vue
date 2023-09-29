@@ -85,6 +85,7 @@
   
 <script lang="js">
 import G6 from '@antv/g6';
+import G6Utils from "../../utils/G6Utils";
 import { DATA_TYPES, UI_SIZE } from "../../utils/Constants";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
@@ -555,73 +556,42 @@ export default {
       return width;
     },
 
-    // Toolbar actions copied from https://github.com/antvis/G6/blob/abca3c0845182c636b43163257f9439aa3d7e738/packages/plugin/src/toolBar/
-    // This ensures the same behavior as the original toolbar in G6 while 
-    // allowing us to customize the position and style of the toolbar.
     zoomIn() {
-      if (!this.g6graph) {
-        return;
-      }
-
       if (this.toolbarDebounceTimer) {
         clearTimeout(this.toolbarDebounceTimer);
       }
       this.toolbarDebounceTimer = setTimeout(() => {
-        const graph = this.g6graph;
-        const currentZoom = graph.getZoom();
-        const ratioOut = 1 / (1 - this.delta * this.zoomSensitivity);
-        const maxZoom = graph.get('maxZoom');
-        if (ratioOut * currentZoom > maxZoom) {
-          return;
-        }
-        graph.zoomTo(currentZoom * ratioOut);
+        G6Utils.zoomIn(this.g6graph);
       }, this.toolbarDebounceTimeout);
     },
-
 
     zoomOut() {
-      if (!this.g6graph) {
-        return;
-      }
       if (this.toolbarDebounceTimer) {
         clearTimeout(this.toolbarDebounceTimer);
       }
       this.toolbarDebounceTimer = setTimeout(() => {
-        const graph = this.g6graph;
-        const currentZoom = graph.getZoom();
-        const ratioIn = 1 - this.delta * this.zoomSensitivity;
-        const minZoom = graph.get('minZoom');
-        if (ratioIn * currentZoom < minZoom) {
-          return;
-        }
-        graph.zoomTo(currentZoom * ratioIn);
+        G6Utils.zoomOut(this.g6graph);
       }, this.toolbarDebounceTimeout);
     },
 
-
     fitToView() {
-      if (!this.g6graph) {
-        return;
-      }
       if (this.toolbarDebounceTimer) {
         clearTimeout(this.toolbarDebounceTimer);
       }
       this.toolbarDebounceTimer = setTimeout(() => {
-        this.g6graph.fitView([20, 20]);
+        G6Utils.fitToView(this.g6graph);
       }, this.toolbarDebounceTimeout);
     },
 
     actualSize() {
-      if (!this.g6graph) {
-        return;
-      }
       if (this.toolbarDebounceTimer) {
         clearTimeout(this.toolbarDebounceTimer);
       }
       this.toolbarDebounceTimer = setTimeout(() => {
-        this.g6graph.zoomTo(1);
+        G6Utils.actualSize(this.g6graph);
       }, this.toolbarDebounceTimeout);
     },
+
 
     handleSettingsChange() {
       const { nodes, edges, counters } = this.extractGraphFromQueryResult(this.queryResult);
@@ -704,6 +674,10 @@ export default {
 
       &.result-container__result-table {
         font-family: 'Courier New', Courier, monospace;
+
+        td {
+          word-break: break-all;
+        }
       }
     }
   }

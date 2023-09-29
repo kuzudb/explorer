@@ -1,5 +1,26 @@
 <template>
   <div class="schema-view__wrapper" ref="wrapper">
+    <div class="schema-view__tools_container" ref="toolsContainer" :style="{ minWidth: toolbarWidth + 'px' }">
+      <div class="schema-view__tools_container--bottom">
+        <div class="schema-view__button">
+          <i class="fa-lg fa-solid fa-magnifying-glass-plus" data-bs-toggle="tooltip" data-bs-placement="right"
+            title="Zoom In" @click="zoomIn()"></i>
+        </div>
+        <div class="schema-view__button">
+          <i class="fa-lg fa-solid fa-magnifying-glass-minus" data-bs-toggle="tooltip" data-bs-placement="right"
+            title="Zoom Out" @click="zoomOut()"></i>
+        </div>
+        <div class="schema-view__button">
+          <i class="fa-lg fa-solid fa-compress" data-bs-toggle="tooltip" data-bs-placement="right" title="Fit to View"
+            @click="fitToView()"></i>
+        </div>
+        <div class="schema-view__button">
+          <i class="fa-lg fa-solid fa-expand" data-bs-toggle="tooltip" data-bs-placement="right" title="Actual Size"
+            @click="actualSize()"></i>
+        </div>
+
+      </div>
+    </div>
     <div class="schema_graph__wrapper" ref="graph" :style="{ width: graphWidth + 'px' }"></div>
     <div class="schema_side-panel__wrapper" ref="sidePanel">
       <br>
@@ -13,6 +34,7 @@
 <script lang="js">
 import G6 from '@antv/g6';
 import { UI_SIZE, SHOW_REL_LABELS_OPTIONS } from "../../utils/Constants";
+import G6Utils from "../../utils/G6Utils";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
 import SchemaSidebarOverview from './SchemaSidebarOverview.vue';
@@ -25,7 +47,7 @@ export default {
   },
   data: () => ({
     graphCreated: false,
-    toolbarContainerWidth: UI_SIZE.SHELL_TOOL_BAR_WIDTH,
+    toolbarWidth: UI_SIZE.SHELL_TOOL_BAR_WIDTH,
     sidebarWidth: 500,
     graphWidth: 0,
     graphHeight: 0,
@@ -35,8 +57,6 @@ export default {
     clickedProperties: [],
     clickedLabel: "",
     clickedIsNode: false,
-    delta: 0.05, // used for zooming, copied from G6
-    zoomSensitivity: 2, // used for zooming, copied from G6
     toolbarDebounceTimeout: 100,
     toolbarDebounceTimer: null,
   }),
@@ -320,7 +340,8 @@ export default {
     computeGraphWidth() {
       let width = document.documentElement.clientWidth || document.body.clientWidth;
       width -= this.sidebarWidth;
-      width -= UI_SIZE.DEFAULT_BORDER_WIDTH;
+      width -= UI_SIZE.DEFAULT_BORDER_WIDTH * 2;
+      width -= this.toolbarWidth;
       this.graphWidth = width;
       return width;
     },
@@ -333,21 +354,39 @@ export default {
     },
 
     zoomIn() {
-
+      if (this.toolbarDebounceTimer) {
+        clearTimeout(this.toolbarDebounceTimer);
+      }
+      this.toolbarDebounceTimer = setTimeout(() => {
+        G6Utils.zoomIn(this.g6graph);
+      }, this.toolbarDebounceTimeout);
     },
-
 
     zoomOut() {
-
+      if (this.toolbarDebounceTimer) {
+        clearTimeout(this.toolbarDebounceTimer);
+      }
+      this.toolbarDebounceTimer = setTimeout(() => {
+        G6Utils.zoomOut(this.g6graph);
+      }, this.toolbarDebounceTimeout);
     },
 
-
     fitToView() {
-
+      if (this.toolbarDebounceTimer) {
+        clearTimeout(this.toolbarDebounceTimer);
+      }
+      this.toolbarDebounceTimer = setTimeout(() => {
+        G6Utils.fitToView(this.g6graph);
+      }, this.toolbarDebounceTimeout);
     },
 
     actualSize() {
-
+      if (this.toolbarDebounceTimer) {
+        clearTimeout(this.toolbarDebounceTimer);
+      }
+      this.toolbarDebounceTimer = setTimeout(() => {
+        G6Utils.actualSize(this.g6graph);
+      }, this.toolbarDebounceTimeout);
     },
 
     handleSettingsChange() {
@@ -391,6 +430,50 @@ export default {
     flex-direction: column;
     border-left: 2px solid $gray-300;
     background-color: $gray-100;
+  }
+}
+
+.schema-view__tools_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: $gray-100;
+  border-right: 2px solid $gray-300;
+
+  .schema-view__tools_container--bottom {
+    margin-top: auto;
+    padding-bottom: 8px;
+
+    .schema-view__button {
+      >i {
+        color: $body-tertiary-color;
+      }
+    }
+  }
+}
+
+.schema-view__button {
+  padding-top: 4px;
+  padding-bottom: 4px;
+
+  i {
+    cursor: pointer;
+    color: $secondary;
+
+    &:hover {
+      opacity: 0.7;
+    }
+
+    &:active {
+      opacity: 0.5;
+    }
+  }
+
+  &--active {
+    i {
+      color: $primary;
+    }
   }
 }
 </style>

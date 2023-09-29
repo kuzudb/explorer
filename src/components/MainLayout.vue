@@ -10,19 +10,19 @@
         </button>
         <div class="collapse navbar-collapse navbar__buttons">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="#" @click="toggleSchema()">
-                <i class="fa-solid fa-circle-nodes"></i>
-                Schema
-              </a>
-            </li>
-            <li class="nav-item">
+            <li :class="['nav-item', { active: showShell }]">
               <a class="nav-link" href="#" @click="toggleShell()">
                 <i class="fa-solid fa-terminal"></i>
                 Shell
               </a>
             </li>
-            <li class="nav-item">
+            <li :class="['nav-item', { active: showSchema }]">
+              <a class="nav-link" href="#" @click="toggleSchema()">
+                <i class="fa-solid fa-circle-nodes"></i>
+                Schema
+              </a>
+            </li>
+            <li :class="['nav-item', { active: showLoader }]">
               <a class="nav-link" href="#" @click="toggleLoader()">
                 <i class="fa-solid fa-database"></i>
                 Datasets
@@ -124,6 +124,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
+nav.navbar {
+  >div.container {
+    max-width: 100%;
+  }
+}
+
 .navbar {
   .navbar__logo {
     width: 120px;
@@ -140,5 +146,13 @@ export default {
 .layout__main-content {
   overflow: hidden;
   width: 100%;
+}
+
+.nav-item {
+  &.active {
+    a {
+      color: $gray-300;
+    }
+  }
 }
 </style>
