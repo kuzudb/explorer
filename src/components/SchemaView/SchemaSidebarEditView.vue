@@ -2,6 +2,12 @@
   <div>
     <div>
       <h5>
+        <button type="button" class="btn btn-sm btn-outline-primary" title="Back" @click="$emit('back')">
+          <i class="fa-solid fa-long-arrow-left"></i>
+          Back
+        </button>
+        &nbsp;
+        Editing {{ clickedIsNode ? 'Node' : 'Rel' }} Table: &nbsp;
         <span class="badge bg-primary" :style="{
           backgroundColor: ` ${getColor(clickedLabel)} !important`,
           color: clickedIsNode ? '#ffffff' : '#000000'
@@ -29,6 +35,24 @@
         </h6>
         <br>
       </div>
+
+      <div class="schema_side-panel__edit-table-actions-container">
+        <button class="btn btn-sm btn-outline-primary" title="Add Property">
+          <i class="fa-solid fa-plus"></i>
+          Add Property
+        </button>
+        &nbsp;
+        <button class="btn btn-sm btn-outline-danger" title="Drop Table" @click="$emit('dropTable', clickedLabel)">
+          <i class="fa-solid fa-trash"></i>
+          Drop Table
+        </button>
+        &nbsp;
+        <button class="btn btn-sm btn-outline-secondary" title="Rename Table" v-if="false">
+          <i class="fa-solid fa-pencil"></i>
+          Rename Table
+        </button>
+      </div>
+      <br>
 
       <table class="table table-sm table-bordered schema_side-panel__edit-table" v-if="schema">
         <thead>
@@ -135,6 +159,10 @@ export default {
 </script>
   
 <style scoped lang="scss">
+.schema_side-panel__edit-table-actions-container {
+  width: 100%;
+}
+
 .schema_side-panel__edit-table-buttons-container {
   width: 90px;
   text-align: center;

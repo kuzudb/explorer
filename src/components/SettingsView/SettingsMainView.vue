@@ -150,10 +150,9 @@ export default {
       this.currentSettings = JSON.parse(JSON.stringify(settingState));
     },
     saveAndHideModal() {
-      this.hideModal();
+      this.settingsStore.updateSettings(this.currentSettings);
       this.$nextTick(() => {
-        this.settingsStore.updateSettings(this.currentSettings);
-        this.currentSettings = {};
+        this.hideModal();
       });
     },
     getCaptionOptions(entity, isNode) {
@@ -183,8 +182,14 @@ export default {
   },
   mounted() {
     this.modal = new Modal(this.$refs.modal);
+    this.$refs.modal.addEventListener('hidden.bs.modal', () => {
+      // Bootstrap modal can also be closed by clicking outside of the modal.
+      // This way ensures that we can get the event when the modal is closed.
+      this.currentSettings = {};
+    });
   },
   beforeUnmount() {
+    this.$refs.modal.removeEventListener('hidden.bs.modal');
     this.modal.dispose();
   },
 }

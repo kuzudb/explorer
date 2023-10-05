@@ -158,11 +158,27 @@ export const useSettingsStore = defineStore("settings", {
         this.graphViz.rels[name] = relSettings;
       });
     },
+
     updateSettings(settings) {
       this.graphViz = settings.graphViz;
       this.performance = settings.performance;
       this.tableView = settings.tableView;
       this.schemaView = settings.schemaView;
+    },
+
+    removeTablesBySchema(schema) {
+      const nodeTables = new Set(schema.nodeTables.map((node) => node.name));
+      for (let table in this.graphViz.nodes) {
+        if (!nodeTables.has(table)) {
+          delete this.graphViz.nodes[table];
+        }
+      }
+      const relTables = new Set(schema.relTables.map((rel) => rel.name));
+      for (let table in this.graphViz.rels) {
+        if (!relTables.has(table)) {
+          delete this.graphViz.rels[table];
+        }
+      }
     },
   },
 });

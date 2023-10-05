@@ -30,7 +30,7 @@
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="#" @click="toggleSettings()">
+              <a class="nav-link" href="#" @click="showSettingsModal()">
                 <i class="fa-solid fa-cog"></i>
                 Settings
               </a>
@@ -42,9 +42,9 @@
 
     <div class="layout__main-content" :style="{ height: `calc(100vh - ${navbarHeight}px)` }">
       <SchemaViewMain v-show="showSchema" :schema="schema" ref="schemaView" :navbarHeight="navbarHeight"
-        @reloadSchema="getSchema" />
+        @reloadSchema="reloadSchema" />
       <ShellMainView v-show="showShell" :schema="schema" :navbarHeight="navbarHeight" />
-      <SettingsMainView :schema="schema" ref="settings" />
+      <SettingsMainView :schema="schema" ref="settings" v-if="showSettings" />
     </div>
 
   </div>
@@ -69,6 +69,7 @@ export default {
     showSchema: false,
     showShell: true,
     showLoader: false,
+    showSettings: false,
     navbarHeight: 0,
     schema: null,
   }),
@@ -82,6 +83,10 @@ export default {
         table.properties = table.properties.props;
       });
       this.schema = schema;
+    },
+    async reloadSchema() {
+      await this.getSchema();
+      this.removeTablesBySchema(this.schema);
     },
     hideAll() {
       this.showSchema = false;
@@ -101,13 +106,16 @@ export default {
       this.hideAll();
       this.showLoader = true;
     },
-    toggleSettings() {
-      this.$refs.settings.showModal();
+    showSettingsModal() {
+      this.showSettings = true;
+      this.$nextTick(() => {
+        this.$refs.settings.showModal();
+      });
     },
     updateNavbarHeight() {
       this.navbarHeight = this.$refs.navbar.clientHeight;
     },
-    ...mapActions(useSettingsStore, ['initDefaultSettings']),
+    ...mapActions(useSettingsStore, ['initDefaultSettings', 'removeTablesBySchema']),
   },
   mounted() {
     this.updateNavbarHeight();
