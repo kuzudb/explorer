@@ -133,3 +133,6 @@ dist
 src/utils/CypherParser/*.ts
 src/utils/CypherParser/*.interp
 src/utils/CypherParser/*.tokens
+
+# VSCode settings
+.vscode/*
