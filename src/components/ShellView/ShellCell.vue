@@ -69,7 +69,6 @@ export default {
             return;
           }
           this.errorMessage = error.response.data.error.trim();
-          console.error(error.response.data.error);
           console.error(error.response.data.error.trim());
         });
       if (!this.isEvaluated) {

@@ -87,7 +87,6 @@ export default {
             return;
           }
           this.errorMessage = error.response.data.error.trim();
-          console.error(error.response.data.error);
           console.error(error.response.data.error.trim());
         });
     },
@@ -108,10 +107,17 @@ export default {
       this.modal.hide();
     },
     dropTable(tableName) {
+      this.reset();
       const statement = DataDefinitionLanguage.dropTable(tableName);
       this.statement = statement;
       this.showModal();
-    }
+    },
+    dropProperty(table, property) {
+      this.reset();
+      const statement = DataDefinitionLanguage.dropProperty(table, property);
+      this.statement = statement;
+      this.showModal();
+    },
   },
   mounted() {
     this.modal = new Modal(this.$refs.modal);

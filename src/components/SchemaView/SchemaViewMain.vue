@@ -24,9 +24,12 @@
     <div class="schema_graph__wrapper" ref="graph" :style="{ width: graphWidth + 'px' }"></div>
     <div class="schema_side-panel__wrapper" ref="sidePanel">
       <br>
-      <SchemaSidebarOverview :schema="schema" v-if="schema" v-show="!hoveredLabel" @dropTable="dropTable" />
+      <SchemaSidebarOverview :schema="schema" v-if="schema" v-show="!hoveredLabel && !clickedLabel" @dropTable="dropTable"
+        @editTable="editTable" />
       <SchemaSidebarHoverView :schema="schema" :hoveredLabel="hoveredLabel" :hoveredIsNode="hoveredIsNode"
-        v-if="hoveredLabel" />
+        v-if="hoveredLabel && !clickedLabel" />
+      <SchemaSidebarEditView :schema="schema" :clickedLabel="clickedLabel" :clickedIsNode="clickedIsNode"
+        v-if="clickedLabel" @dropProperty="dropProperty" />
     </div>
     <SchemaActionDialog ref="actionDialog" @reloadSchema="reloadSchema" />
   </div>
@@ -38,14 +41,15 @@ import { UI_SIZE, SHOW_REL_LABELS_OPTIONS } from "../../utils/Constants";
 import G6Utils from "../../utils/G6Utils";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
-import SchemaSidebarOverview from './SchemaSidebarOverview.vue';
+import SchemaSidebarEditView from './SchemaSidebarEditView.vue';
 import SchemaSidebarHoverView from './SchemaSidebarHoverView.vue';
+import SchemaSidebarOverview from './SchemaSidebarOverview.vue';
 import SchemaActionDialog from './SchemaActionDialog.vue';
 
 export default {
   name: "SchemaViewMain",
   components: {
-    SchemaSidebarOverview, SchemaSidebarHoverView, SchemaActionDialog
+    SchemaSidebarOverview, SchemaSidebarHoverView, SchemaSidebarEditView, SchemaActionDialog
   },
   data: () => ({
     graphCreated: false,
@@ -56,7 +60,6 @@ export default {
     borderWidth: UI_SIZE.DEFAULT_BORDER_WIDTH,
     hoveredLabel: "",
     hoveredIsNode: false,
-    clickedProperties: [],
     clickedLabel: "",
     clickedIsNode: false,
     toolbarDebounceTimeout: 100,
@@ -89,7 +92,21 @@ export default {
     graphVizSettings() {
       this.handleSettingsChange();
     },
-    schema() {
+    schema(value, oldValue) {
+      const oldNodes = oldValue ? oldValue.nodeTables.map(n => n.name) : [];
+      const newNodes = value ? value.nodeTables.map(n => n.name) : [];
+      const oldEdges = oldValue ? oldValue.relTables.map(n => n.name) : [];
+      const newEdges = value ? value.relTables.map(n => n.name) : [];
+
+      const areSetsEqual = (a, b) => a.size === b.size && [...a].every(value => b.has(value));
+      if (areSetsEqual(new Set(oldNodes), new Set(newNodes)) && areSetsEqual(new Set(oldEdges), new Set(newEdges))) {
+        console.log("Skip redraw")
+        return;
+      }
+      else {
+        console.log("Redraw")
+      }
+
       if (!this.graphCreated) {
         return;
       }
@@ -197,8 +214,12 @@ export default {
 
 
       this.g6graph.on('node:click', (e) => {
-        console.log(e);
-
+        this.resetClick();
+        const nodeItem = e.item;
+        this.g6graph.setItemState(nodeItem, 'click', true);
+        this.handleClick();
+        this.clickedLabel = nodeItem._cfg.model.label;
+        this.clickedIsNode = true;
       });
 
       this.g6graph.on('edge:mouseenter', (e) => {
@@ -216,21 +237,35 @@ export default {
       this.g6graph.on('edge:mouseleave', (e) => {
         const edgeItem = e.item;
         this.g6graph.setItemState(edgeItem, 'hover', false);
+        this.resetHover();
         if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
+          const currentSelectedEdge = this.g6graph.findAllByState('edge', 'click')[0];
+          if (currentSelectedEdge && currentSelectedEdge._cfg.id === edgeItem._cfg.id) {
+            return;
+          }
           this.g6graph.updateItem(edgeItem, {
             label: ""
           });
         }
-        this.resetHover();
       });
 
       this.g6graph.on('edge:click', (e) => {
-        console.log(e);
-
+        this.resetClick();
+        const edgeItem = e.item;
+        this.g6graph.setItemState(edgeItem, 'click', true);
+        this.handleClick();
+        if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
+          this.g6graph.updateItem(edgeItem, {
+            label: edgeItem._cfg.model._label
+          });
+          edgeItem.toFront();
+        }
+        this.clickedIsNode = false;
+        this.clickedLabel = edgeItem._cfg.model._label;
       });
 
       this.g6graph.on('canvas:click', () => {
-        this.deselectAll();
+        this.resetClick();
       });
 
       this.g6graph.render();
@@ -265,6 +300,7 @@ export default {
       const edges = schema.relTables.
         map(r => {
           const edge = {
+            id: r.name,
             source: r.src,
             target: r.dst,
             label: this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.ALWAYS ? r.name : "",
@@ -315,7 +351,7 @@ export default {
     handleClick() {
     },
 
-    deselectAll() {
+    resetClick() {
       if (!this.g6graph) {
         return;
       }
@@ -326,9 +362,13 @@ export default {
       const currentSelectedEdge = this.g6graph.findAllByState('edge', 'click')[0];
       if (currentSelectedEdge) {
         this.g6graph.setItemState(currentSelectedEdge, 'click', false);
+        if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
+          this.g6graph.updateItem(currentSelectedEdge, {
+            label: ""
+          });
+        }
       }
       this.clickedLabel = "";
-      this.clickedProperties = [];
       this.clickedIsNode = false;
     },
 
@@ -403,8 +443,31 @@ export default {
     },
 
     dropTable(tableName) {
-      console.log("dropTable", tableName);
       this.$refs.actionDialog.dropTable(tableName);
+    },
+
+    editTable(tableName) {
+      let isTableNode = false;
+      const table = this.schema.relTables.find(t => t.name === tableName);
+      if (!table) {
+        isTableNode = true;
+      }
+      this.clickedIsNode = isTableNode;
+      this.clickedLabel = tableName;
+      const g6Item = this.g6graph ? this.g6graph.findById(tableName) : null;
+      if (g6Item) {
+        this.g6graph.setItemState(g6Item, 'click', true);
+      }
+      if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
+        this.g6graph.updateItem(g6Item, {
+          label: tableName
+        });
+        g6Item.toFront();
+      }
+    },
+
+    dropProperty({ table, property }) {
+      this.$refs.actionDialog.dropProperty(table, property);
     },
 
     reloadSchema() {

@@ -22,8 +22,8 @@
             </td>
             <td class="schema_side-panel__overview-table-buttons-container">
               <div>
-                <button class="btn btn-sm  btn-outline-primary">
-                  <i class="fa-solid fa-pen-to-square"></i>
+                <button class="btn btn-sm  btn-outline-primary" @click="editTable(nodeTable.name)">
+                  <i class="fa-solid fa-pencil"></i>
                 </button>
                 &nbsp;
                 <button class="btn btn-sm  btn-outline-danger" @click="dropTable(nodeTable.name)">
@@ -59,8 +59,8 @@
           </td>
           <td class="schema_side-panel__overview-table-buttons-container">
             <div>
-              <button class="btn btn-sm  btn-outline-primary">
-                <i class="fa-solid fa-pen-to-square"></i>
+              <button class="btn btn-sm  btn-outline-primary" @click="editTable(relTable.name)">
+                <i class="fa-solid fa-pencil"></i>
               </button>
               &nbsp;
               <button class="btn btn-sm  btn-outline-danger" @click="dropTable(relTable.name)">
@@ -94,6 +94,9 @@ export default {
     },
     dropTable(tableName) {
       this.$emit("dropTable", tableName);
+    },
+    editTable(tableName) {
+      this.$emit("editTable", tableName);
     },
   },
 };
