@@ -68,28 +68,12 @@ export default {
     showTable: false,
     showCode: false,
     isGraphEmpty: false,
+    schema: null,
+    queryResult: null,
+    queryResultString: "",
+    errorMessage: "",
   }),
   props: {
-    queryResult: {
-      type: Object,
-      required: false,
-      default: null,
-    },
-    queryResultString: {
-      type: String,
-      required: false,
-      default: "",
-    },
-    schema: {
-      type: Object,
-      required: false,
-      default: null,
-    },
-    errorMessage: {
-      type: String,
-      required: false,
-      default: "",
-    },
     navbarHeight: {
       type: Number,
       required: false,
@@ -116,12 +100,21 @@ export default {
     },
   },
   methods: {
-    handleDataChange() {
+    handleDataChange(schema, queryResult, errorMessage) {
       this.isGraphEmpty = false;
-      this.$refs.resultGraph.drawGraph();
-      if (this.showTable) {
-        this.$refs.resultTable.renderTable();
+      this.schema = schema;
+      this.queryResult = queryResult;
+      this.queryResultString = JSON.stringify(queryResult, null, 2);
+      this.errorMessage = errorMessage;
+      if (this.errorMessage) {
+        return;
       }
+      this.$nextTick(() => {
+        this.$refs.resultGraph.drawGraph();
+        if (this.showTable) {
+          this.$refs.resultTable.renderTable();
+        }
+      });
     },
     hideAll() {
       this.showGraph = false;

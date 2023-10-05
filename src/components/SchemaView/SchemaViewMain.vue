@@ -128,6 +128,7 @@ export default {
       const container = this.$refs.graph;
       const width = container.offsetWidth;
       const height = container.offsetHeight;
+      const nodeSpacing = edges.length * 5;
 
       this.g6graph = new G6.Graph({
         container,
@@ -140,7 +141,7 @@ export default {
           linkDistance: 250,
           nodeStrength: -100,
           nodeSize: 100,
-          nodeSpacing: 150,
+          nodeSpacing,
         },
         defaultNode: {
           shape: "circle",
