@@ -38,6 +38,12 @@ export const INTERNAL_DATA_TYPES = [
   DATA_TYPES.ARROW_COLUMN,
 ];
 
+export const SCHEMA_ACTION_TYPES = {
+  DROP_TABLE: "dropTable",
+  DROP_PROPERTY: "dropProperty",
+  RENAME_PROPERTY: "renameProperty",
+};
+
 export const UI_SIZE = {
   DEFAULT_EDITOR_HEIGHT: 115,
   DEFAULT_MARGIN: 20,

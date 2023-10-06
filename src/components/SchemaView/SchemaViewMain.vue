@@ -29,15 +29,16 @@
       <SchemaSidebarHoverView :schema="schema" :hoveredLabel="hoveredLabel" :hoveredIsNode="hoveredIsNode"
         v-if="hoveredLabel && !clickedLabel" />
       <SchemaSidebarEditView :schema="schema" :clickedLabel="clickedLabel" :clickedIsNode="clickedIsNode"
-        v-if="clickedLabel" @dropProperty="dropProperty" @back="resetClick" @dropTable="dropTable" />
+        v-if="clickedLabel" @dropProperty="dropProperty" @back="resetClick" @dropTable="dropTable"
+        @renameProperty="renameProperty" ref="editView" />
     </div>
-    <SchemaActionDialog ref="actionDialog" @reloadSchema="reloadSchema" />
+    <SchemaActionDialog ref="actionDialog" @reloadSchema="reloadSchema" @actionCompleted="handleSchemaActionCompleted" />
   </div>
 </template>
   
 <script lang="js">
 import G6 from '@antv/g6';
-import { UI_SIZE, SHOW_REL_LABELS_OPTIONS } from "../../utils/Constants";
+import { UI_SIZE, SHOW_REL_LABELS_OPTIONS, SCHEMA_ACTION_TYPES } from "../../utils/Constants";
 import G6Utils from "../../utils/G6Utils";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
@@ -349,6 +350,12 @@ export default {
     handleClick() {
     },
 
+    handleSchemaActionCompleted(action) {
+      if (action.type === SCHEMA_ACTION_TYPES.RENAME_PROPERTY) {
+        this.$refs.editView.cancelEditMode();
+      }
+    },
+
     resetClick() {
       if (!this.g6graph) {
         return;
@@ -466,6 +473,14 @@ export default {
 
     dropProperty({ table, property }) {
       this.$refs.actionDialog.dropProperty(table, property);
+    },
+
+    renameProperty({ table, oldName, newName }) {
+      if (oldName === newName) {
+        this.$refs.editView.cancelEditMode();
+        return;
+      }
+      this.$refs.actionDialog.renameProperty(table, oldName, newName);
     },
 
     reloadSchema() {

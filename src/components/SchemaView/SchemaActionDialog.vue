@@ -45,6 +45,7 @@
 <script lang="js">
 import { Modal } from 'bootstrap';
 import DataDefinitionLanguage from "../../utils/DataDefinitionLanguage";
+import { SCHEMA_ACTION_TYPES } from "../../utils/Constants";
 import Axios from 'axios';
 export default {
   name: "SchemaActionDialog",
@@ -54,6 +55,7 @@ export default {
     isExecuting: false,
     isExecuted: false,
     remainingSeconds: 0,
+    currentAction: null,
   }),
   methods: {
     async execute() {
@@ -76,6 +78,9 @@ export default {
               this.hideModal();
             }
           }, 100);
+          if (this.currentAction) {
+            this.$emit("actionCompleted", this.currentAction);
+          }
         }).catch((error) => {
           this.isExecuting = false;
           if (!error.response) {
@@ -95,6 +100,8 @@ export default {
       this.errorMessage = "";
       this.isExecuting = false;
       this.isExecuted = false;
+      this.remainingSeconds = 0;
+      this.currentAction = null;
     },
     reloadSchema() {
       this.$emit("reloadSchema");
@@ -115,6 +122,18 @@ export default {
     dropProperty(table, property) {
       this.reset();
       const statement = DataDefinitionLanguage.dropProperty(table, property);
+      this.statement = statement;
+      this.showModal();
+    },
+    renameProperty(table, oldName, newName) {
+      this.reset();
+      this.currentAction = {
+        type: SCHEMA_ACTION_TYPES.RENAME_PROPERTY,
+        table,
+        oldName,
+        newName,
+      };
+      const statement = DataDefinitionLanguage.renameProperty(table, oldName, newName);
       this.statement = statement;
       this.showModal();
     },

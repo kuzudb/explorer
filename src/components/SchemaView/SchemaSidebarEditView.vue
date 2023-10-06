@@ -66,18 +66,18 @@
           </tr>
         </thead>
         <tbody v-if="tableProperties.length > 0">
-          <tr v-for="property in tableProperties" :key="property.name">
-            <td scope="row">
+          <tr v-for="(property, i) in tableProperties" :key="property.name">
+            <td scope="row" v-if="i !== editingPropertyIndex">
               {{ property.name }}
               <span class="badge bg-primary" v-if="property.isPrimaryKey">
                 PK
               </span>
             </td>
-            <td>
+            <td v-if="i !== editingPropertyIndex">
               {{ property.type }}
             </td>
-            <td class="schema_side-panel__edit-table-buttons-container">
-              <button type="button" class="btn btn-sm btn-outline-primary" title="Edit">
+            <td class="schema_side-panel__edit-table-buttons-container" v-if="i !== editingPropertyIndex">
+              <button type="button" class="btn btn-sm btn-outline-primary" title="Edit" @click="enterEditMode(i)">
                 <i class="fa-solid fa-pencil"></i>
               </button>
               &nbsp;
@@ -86,6 +86,10 @@
                 <i class="fa-solid fa-trash"></i>
               </button>
             </td>
+            <SchemaPropertyEditCell v-if="i === editingPropertyIndex" :property="property" :colspan="3"
+              :isNewProperty="false" :isNewTable="false" @cancel="cancelEditMode" @save="renameProperty">
+              {{ property.name }}
+            </SchemaPropertyEditCell>
           </tr>
         </tbody>
       </table>
@@ -97,8 +101,15 @@
 <script lang="js">
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
+import SchemaPropertyEditCell from "./SchemaPropertyEditCell.vue";
 export default {
   name: "SchemaSidebarEditView",
+  components: {
+    SchemaPropertyEditCell,
+  },
+  data: () => ({
+    editingPropertyIndex: -1,
+  }),
   props: {
     schema: {
       type: Object,
@@ -154,6 +165,21 @@ export default {
         property: propertyName,
       });
     },
+    enterEditMode(index) {
+      this.editingPropertyIndex = index;
+    },
+    cancelEditMode() {
+      this.editingPropertyIndex = -1;
+    },
+    renameProperty(oldProperty, newProperty) {
+      const oldName = oldProperty.name;
+      const newName = newProperty.name;
+      this.$emit("renameProperty", {
+        table: this.clickedLabel,
+        oldName,
+        newName,
+      });
+    }
   },
 };
 </script>

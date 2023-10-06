@@ -72,7 +72,7 @@
           </table>
           <h5>Performance Options</h5>
           <div class="input-group flex-nowrap">
-            <span class="input-group-text" id="addon-wrapping">Max number of nodes to draw for graph visualization</span>
+            <span class="input-group-text">Max number of nodes to draw for graph visualization</span>
             <input type="number" class="form-control" v-model="currentSettings.performance.maxNumberOfNodes"
               title="Choose max number of nodes to draw for graph visualization" min="100" max="2000">
           </div>
@@ -81,7 +81,7 @@
           <h4>Schema View Options</h4>
           <hr>
           <div class="input-group flex-nowrap">
-            <span class="input-group-text" id="addon-wrapping">Show rel labels</span>
+            <span class="input-group-text">Show rel labels</span>
             <select class="form-select" v-model="currentSettings.schemaView.showRelLabels">
               <option :value="showRelLabelsOptions.ALWAYS">Always</option>
               <option :value="showRelLabelsOptions.HOVER">On hover or click</option>
@@ -94,7 +94,7 @@
           <hr>
 
           <div class="input-group flex-nowrap">
-            <span class="input-group-text" id="addon-wrapping">Number of rows per page</span>
+            <span class="input-group-text">Number of rows per page</span>
             <input type="number" class="form-control" v-model="currentSettings.tableView.rowsPerPage"
               title="Choose number of rows per page" min="1" max="500">
           </div>
