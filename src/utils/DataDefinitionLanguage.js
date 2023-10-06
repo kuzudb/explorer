@@ -15,6 +15,22 @@ class DataDefinitionLanguage {
     }
     return `ALTER TABLE ${tableName} RENAME ${columnName} TO ${newColumnName};`;
   }
+
+  addProperty(tableName, columnName, columnType, defaultValue) {
+    if (columnType === "BOOL") {
+      // Temporary fix for inconsistent naming of boolean type
+      columnType = "BOOLEAN";
+    }
+    if (columnName.includes(" ")) {
+      columnName = `\`${columnName}\``;
+    }
+    let result = `ALTER TABLE ${tableName} ADD ${columnName} ${columnType}`;
+    if (defaultValue) {
+      result += ` DEFAULT ${defaultValue}`;
+    }
+    result += ";";
+    return result;
+  }
 }
 
 const ddl = new DataDefinitionLanguage();

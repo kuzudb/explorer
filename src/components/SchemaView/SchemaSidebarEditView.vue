@@ -37,7 +37,7 @@
       </div>
 
       <div class="schema_side-panel__edit-table-actions-container">
-        <button class="btn btn-sm btn-outline-primary" title="Add Property">
+        <button class="btn btn-sm btn-outline-primary" title="Add Property" @click="enterAddMode">
           <i class="fa-solid fa-plus"></i>
           Add Property
         </button>
@@ -66,6 +66,10 @@
           </tr>
         </thead>
         <tbody v-if="tableProperties.length > 0">
+          <tr>
+            <SchemaPropertyEditCell :property="defaultNewProperty" :colspan="3" :isNewProperty="true" :isNewTable="false"
+              @cancel="cancelAddMode" @save="addProperty" v-if="addingProperty" />
+          </tr>
           <tr v-for="(property, i) in tableProperties" :key="property.name">
             <td scope="row" v-if="i !== editingPropertyIndex">
               {{ property.name }}
@@ -102,6 +106,7 @@
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
 import SchemaPropertyEditCell from "./SchemaPropertyEditCell.vue";
+import { DATA_TYPES } from "../../utils/Constants";
 export default {
   name: "SchemaSidebarEditView",
   components: {
@@ -109,6 +114,11 @@ export default {
   },
   data: () => ({
     editingPropertyIndex: -1,
+    addingProperty: false,
+    defaultNewProperty: {
+      name: "",
+      type: DATA_TYPES.INT64,
+    }
   }),
   props: {
     schema: {
@@ -166,10 +176,24 @@ export default {
       });
     },
     enterEditMode(index) {
+      if (this.editingPropertyIndex === index) {
+        return;
+      }
+      this.cancelAddMode();
       this.editingPropertyIndex = index;
     },
     cancelEditMode() {
       this.editingPropertyIndex = -1;
+    },
+    enterAddMode() {
+      if (this.addingProperty) {
+        return;
+      }
+      this.cancelEditMode();
+      this.addingProperty = true;
+    },
+    cancelAddMode() {
+      this.addingProperty = false;
     },
     renameProperty(oldProperty, newProperty) {
       const oldName = oldProperty.name;
@@ -179,7 +203,14 @@ export default {
         oldName,
         newName,
       });
-    }
+    },
+    addProperty(_, property, defaultValue) {
+      this.$emit("addProperty", {
+        table: this.clickedLabel,
+        property,
+        defaultValue,
+      });
+    },
   },
 };
 </script>

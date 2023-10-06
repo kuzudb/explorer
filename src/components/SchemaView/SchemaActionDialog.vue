@@ -137,6 +137,17 @@ export default {
       this.statement = statement;
       this.showModal();
     },
+    addProperty(table, property, defaultValue) {
+      this.reset();
+      this.currentAction = {
+        type: SCHEMA_ACTION_TYPES.ADD_PROPERTY,
+        table,
+        property,
+      };
+      const statement = DataDefinitionLanguage.addProperty(table, property.name, property.type, defaultValue);
+      this.statement = statement;
+      this.showModal();
+    },
   },
   mounted() {
     this.modal = new Modal(this.$refs.modal);

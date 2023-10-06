@@ -164,7 +164,10 @@ export default {
       rowsForPage.forEach((row) => {
         this.rows.push([]);
         for (let key in row) {
-          if (row[key]._label) {
+          if (!row[key]) {
+            this.rows[this.rows.length - 1].push('NULL');
+          }
+          else if (row[key]._label) {
             // Value is a complex type
             this.rows[this.rows.length - 1].push(ValueFormatter.filterAndBeautifyProperties(row[key], this.schema));
           }

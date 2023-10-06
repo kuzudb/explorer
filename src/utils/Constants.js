@@ -42,6 +42,7 @@ export const SCHEMA_ACTION_TYPES = {
   DROP_TABLE: "dropTable",
   DROP_PROPERTY: "dropProperty",
   RENAME_PROPERTY: "renameProperty",
+  ADD_PROPERTY: "addProperty",
 };
 
 export const UI_SIZE = {

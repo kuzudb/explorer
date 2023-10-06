@@ -30,7 +30,7 @@
         v-if="hoveredLabel && !clickedLabel" />
       <SchemaSidebarEditView :schema="schema" :clickedLabel="clickedLabel" :clickedIsNode="clickedIsNode"
         v-if="clickedLabel" @dropProperty="dropProperty" @back="resetClick" @dropTable="dropTable"
-        @renameProperty="renameProperty" ref="editView" />
+        @renameProperty="renameProperty" @addProperty="addProperty" ref="editView" />
     </div>
     <SchemaActionDialog ref="actionDialog" @reloadSchema="reloadSchema" @actionCompleted="handleSchemaActionCompleted" />
   </div>
@@ -354,6 +354,9 @@ export default {
       if (action.type === SCHEMA_ACTION_TYPES.RENAME_PROPERTY) {
         this.$refs.editView.cancelEditMode();
       }
+      if (action.type === SCHEMA_ACTION_TYPES.ADD_PROPERTY) {
+        this.$refs.editView.cancelAddMode();
+      }
     },
 
     resetClick() {
@@ -481,6 +484,10 @@ export default {
         return;
       }
       this.$refs.actionDialog.renameProperty(table, oldName, newName);
+    },
+
+    addProperty({ table, property, defaultValue }) {
+      this.$refs.actionDialog.addProperty(table, property, defaultValue);
     },
 
     reloadSchema() {

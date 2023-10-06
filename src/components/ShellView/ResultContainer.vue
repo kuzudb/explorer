@@ -111,7 +111,7 @@ export default {
       }
       this.$nextTick(() => {
         this.$refs.resultGraph.drawGraph();
-        if (this.showTable) {
+        if (this.showTable && this.$refs.resultTable) {
           this.$refs.resultTable.renderTable();
         }
       });
