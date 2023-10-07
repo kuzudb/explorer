@@ -3,7 +3,9 @@
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" v-if="!isExecuting && !isExecuted">Confirm DDL Statement</h5>
+          <h5 class="modal-title" v-if="!isExecuting && !isExecuted">
+            Confirm DDL Statement
+          </h5>
           <h5 class="modal-title" v-if="isExecuting">Executing...</h5>
           <h5 class="modal-title" v-if="isExecuted">Result</h5>
         </div>
@@ -26,7 +28,8 @@
             </div>
             <div v-else class="alert alert-success" role="alert">
               <i class="fa-solid fa-check-circle"></i>
-              The statement has been executed successfully. This dialog will be closed automatically in
+              The statement has been executed successfully. This dialog will be closed
+              automatically in
               {{ remainingSeconds.toFixed(1) }} seconds.
             </div>
           </div>
@@ -35,7 +38,14 @@
           <button type="button" class="btn btn-secondary" @click="hideModal">
             {{ isExecuted ? "Close" : "Cancel" }}
           </button>
-          <button type="button" class="btn btn-primary" @click="execute" v-show="!isExecuted">Execute</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click="execute"
+            v-show="!isExecuted"
+          >
+            Execute
+          </button>
         </div>
       </div>
     </div>
@@ -156,7 +166,6 @@ export default {
     this.modal.dispose();
   },
 };
-
 </script>
 
 <style scoped lang="scss">

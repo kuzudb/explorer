@@ -1,8 +1,17 @@
 <template>
   <div class="shell-main-view__wrapper" :style="{ height: `${containerHeight}px` }">
-    <ShellCell v-for="(cell, index) in shellCell" :key="cell.cellId" :schema="schema" :navbarHeight="navbarHeight"
-      :cellId="cell.cellId" @remove="removeCell(index)" @addCell="addCell()" @maximize="maximize(index)"
-      @minimize="minimize()" v-show="index === maximizedCellIndex || maximizedCellIndex < 0" />
+    <ShellCell
+      v-for="(cell, index) in shellCell"
+      :key="cell.cellId"
+      :schema="schema"
+      :navbarHeight="navbarHeight"
+      :cellId="cell.cellId"
+      @remove="removeCell(index)"
+      @addCell="addCell()"
+      @maximize="maximize(index)"
+      @minimize="minimize()"
+      v-show="index === maximizedCellIndex || maximizedCellIndex < 0"
+    />
   </div>
 </template>
 

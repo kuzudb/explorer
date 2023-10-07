@@ -3,11 +3,11 @@
 </template>
 
 <script>
-import MainLayout from './components/MainLayout.vue'
-import { Tooltip } from 'bootstrap'
+import MainLayout from "./components/MainLayout.vue";
+import { Tooltip } from "bootstrap";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     MainLayout,
   },
@@ -19,7 +19,7 @@ export default {
   beforeUnmount() {
     this.tooltip.dispose();
   },
-}
+};
 </script>
 
 <style lang="scss">

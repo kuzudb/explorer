@@ -180,5 +180,21 @@ export const useSettingsStore = defineStore("settings", {
         }
       }
     },
+
+    addNewNodeTable(label) {
+      const nodeDefault = this.graphViz.default.node;
+      const g6Settings = JSON.parse(JSON.stringify(nodeDefault));
+      let color = this.colors.pop();
+      if (!color) {
+        color = randomcolor({ luminosity: "dark", hue: "random" });
+      }
+      g6Settings.style.fill = color;
+      const nodeSettings = {
+        name: label,
+        g6Settings,
+        label: "_label",
+      };
+      this.graphViz.nodes[label] = nodeSettings;
+    },
   },
 });

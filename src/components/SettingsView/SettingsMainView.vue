@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-body" v-if="Object.keys(currentSettings).length > 0">
           <h4>Graph Visualization Options</h4>
-          <hr>
+          <hr />
           <h5>Nodes</h5>
           <table class="table table-hover table-bordered">
             <thead>
@@ -17,19 +17,36 @@
             </thead>
 
             <tbody>
-              <tr v-for="(node, key, index) in currentSettings.graphViz.nodes" :key="index">
+              <tr
+                v-for="(node, key, index) in currentSettings.graphViz.nodes"
+                :key="index"
+              >
                 <td>{{ node.name }}</td>
                 <td>
-                  <input type="color" class="form-control form-control-color" v-model="node.g6Settings.style.fill"
-                    title="Choose color for node">
+                  <input
+                    type="color"
+                    class="form-control form-control-color"
+                    v-model="node.g6Settings.style.fill"
+                    title="Choose color for node"
+                  />
                 </td>
                 <td>
-                  <input type="number" class="form-control" v-model="node.g6Settings.size" min="10" max="200"
-                    title="Choose size for node">
+                  <input
+                    type="number"
+                    class="form-control"
+                    v-model="node.g6Settings.size"
+                    min="10"
+                    max="200"
+                    title="Choose size for node"
+                  />
                 </td>
                 <td>
                   <select class="form-select" v-model="node.label">
-                    <option v-for="option in getCaptionOptions(node, true)" :value="option.value" :key="option.text">
+                    <option
+                      v-for="option in getCaptionOptions(node, true)"
+                      :value="option.value"
+                      :key="option.text"
+                    >
                       {{ option.text }}
                     </option>
                   </select>
@@ -53,16 +70,30 @@
               <tr v-for="(rel, key, index) in currentSettings.graphViz.rels" :key="index">
                 <td>{{ rel.name }}</td>
                 <td>
-                  <input type="color" class="form-control form-control-color" v-model="rel.g6Settings.style.stroke"
-                    title="Choose color for rel">
+                  <input
+                    type="color"
+                    class="form-control form-control-color"
+                    v-model="rel.g6Settings.style.stroke"
+                    title="Choose color for rel"
+                  />
                 </td>
                 <td>
-                  <input type="number" class="form-control" v-model="rel.g6Settings.size" min="1" max="20"
-                    title="Choose size for rel">
+                  <input
+                    type="number"
+                    class="form-control"
+                    v-model="rel.g6Settings.size"
+                    min="1"
+                    max="20"
+                    title="Choose size for rel"
+                  />
                 </td>
                 <td>
                   <select class="form-select" v-model="rel.label">
-                    <option v-for="option in getCaptionOptions(rel, false)" :value="option.value" :key="option.text">
+                    <option
+                      v-for="option in getCaptionOptions(rel, false)"
+                      :value="option.value"
+                      :key="option.text"
+                    >
                       {{ option.text }}
                     </option>
                   </select>
@@ -72,38 +103,58 @@
           </table>
           <h5>Performance Options</h5>
           <div class="input-group flex-nowrap">
-            <span class="input-group-text">Max number of nodes to draw for graph visualization</span>
-            <input type="number" class="form-control" v-model="currentSettings.performance.maxNumberOfNodes"
-              title="Choose max number of nodes to draw for graph visualization" min="100" max="2000">
+            <span class="input-group-text"
+              >Max number of nodes to draw for graph visualization</span
+            >
+            <input
+              type="number"
+              class="form-control"
+              v-model="currentSettings.performance.maxNumberOfNodes"
+              title="Choose max number of nodes to draw for graph visualization"
+              min="100"
+              max="2000"
+            />
           </div>
 
-          <br>
+          <br />
           <h4>Schema View Options</h4>
-          <hr>
+          <hr />
           <div class="input-group flex-nowrap">
             <span class="input-group-text">Show rel labels</span>
-            <select class="form-select" v-model="currentSettings.schemaView.showRelLabels">
+            <select
+              class="form-select"
+              v-model="currentSettings.schemaView.showRelLabels"
+            >
               <option :value="showRelLabelsOptions.ALWAYS">Always</option>
               <option :value="showRelLabelsOptions.HOVER">On hover or click</option>
               <option :value="showRelLabelsOptions.NEVER">Never</option>
             </select>
           </div>
 
-          <br>
+          <br />
           <h4>Table View Options</h4>
-          <hr>
+          <hr />
 
           <div class="input-group flex-nowrap">
             <span class="input-group-text">Number of rows per page</span>
-            <input type="number" class="form-control" v-model="currentSettings.tableView.rowsPerPage"
-              title="Choose number of rows per page" min="1" max="500">
+            <input
+              type="number"
+              class="form-control"
+              v-model="currentSettings.tableView.rowsPerPage"
+              title="Choose number of rows per page"
+              min="1"
+              max="500"
+            />
           </div>
-
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="hideModal()">Close</button>
-          <button type="button" class="btn btn-primary" @click="saveAndHideModal()">Save</button>
+          <button type="button" class="btn btn-secondary" @click="hideModal()">
+            Close
+          </button>
+          <button type="button" class="btn btn-primary" @click="saveAndHideModal()">
+            Save
+          </button>
         </div>
       </div>
     </div>

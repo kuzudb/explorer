@@ -2,10 +2,16 @@
   <div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark" ref="navbar">
       <div class="container">
-        <a class="navbar-brand" href="#"><img src="/img/kuzu-logo-inverse.png" alt="Kuzu Logo" class="navbar__logo" />
+        <a class="navbar-brand" href="#"
+          ><img src="/img/kuzu-logo-inverse.png" alt="Kuzu Logo" class="navbar__logo" />
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar__buttons"
-          aria-label="Toggle navigation">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target=".navbar__buttons"
+          aria-label="Toggle navigation"
+        >
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse navbar__buttons">
@@ -40,13 +46,21 @@
       </div>
     </nav>
 
-    <div class="layout__main-content" :style="{ height: `calc(100vh - ${navbarHeight}px)` }">
-      <SchemaViewMain v-show="showSchema" :schema="schema" ref="schemaView" :navbarHeight="navbarHeight"
-        @reloadSchema="reloadSchema" />
+    <div
+      class="layout__main-content"
+      :style="{ height: `calc(100vh - ${navbarHeight}px)` }"
+    >
+      <SchemaViewMain
+        v-show="showSchema"
+        :schema="schema"
+        ref="schemaView"
+        :navbarHeight="navbarHeight"
+        @reloadSchema="reloadSchema"
+        @addPlaceholderNodeTable="addPlaceholderNodeTable"
+      />
       <ShellMainView v-show="showShell" :schema="schema" :navbarHeight="navbarHeight" />
       <SettingsMainView :schema="schema" ref="settings" v-if="showSettings" />
     </div>
-
   </div>
 </template>
 
@@ -87,6 +101,12 @@ export default {
     async reloadSchema() {
       await this.getSchema();
       this.removeTablesBySchema(this.schema);
+    },
+    addPlaceholderNodeTable(tableName) {
+      this.schema.nodeTables.push({
+        name: tableName,
+        properties: [],
+      });
     },
     hideAll() {
       this.showSchema = false;
@@ -135,7 +155,7 @@ export default {
 
 <style scoped lang="scss">
 nav.navbar {
-  >div.container {
+  > div.container {
     max-width: 100%;
   }
 }

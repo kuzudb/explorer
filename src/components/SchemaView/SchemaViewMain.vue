@@ -1,41 +1,91 @@
 <template>
   <div class="schema-view__wrapper" ref="wrapper">
-    <div class="schema-view__tools_container" ref="toolsContainer" :style="{ minWidth: toolbarWidth + 'px' }">
+    <div
+      class="schema-view__tools_container"
+      ref="toolsContainer"
+      :style="{ minWidth: toolbarWidth + 'px' }"
+    >
       <div class="schema-view__tools_container--bottom">
         <div class="schema-view__button">
-          <i class="fa-lg fa-solid fa-magnifying-glass-plus" data-bs-toggle="tooltip" data-bs-placement="right"
-            title="Zoom In" @click="zoomIn()"></i>
+          <i
+            class="fa-lg fa-solid fa-magnifying-glass-plus"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Zoom In"
+            @click="zoomIn()"
+          ></i>
         </div>
         <div class="schema-view__button">
-          <i class="fa-lg fa-solid fa-magnifying-glass-minus" data-bs-toggle="tooltip" data-bs-placement="right"
-            title="Zoom Out" @click="zoomOut()"></i>
+          <i
+            class="fa-lg fa-solid fa-magnifying-glass-minus"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Zoom Out"
+            @click="zoomOut()"
+          ></i>
         </div>
         <div class="schema-view__button">
-          <i class="fa-lg fa-solid fa-compress" data-bs-toggle="tooltip" data-bs-placement="right" title="Fit to View"
-            @click="fitToView()"></i>
+          <i
+            class="fa-lg fa-solid fa-compress"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Fit to View"
+            @click="fitToView()"
+          ></i>
         </div>
         <div class="schema-view__button">
-          <i class="fa-lg fa-solid fa-expand" data-bs-toggle="tooltip" data-bs-placement="right" title="Actual Size"
-            @click="actualSize()"></i>
+          <i
+            class="fa-lg fa-solid fa-expand"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Actual Size"
+            @click="actualSize()"
+          ></i>
         </div>
-
       </div>
     </div>
-    <div class="schema_graph__wrapper" ref="graph" :style="{ width: graphWidth + 'px' }"></div>
+    <div
+      class="schema_graph__wrapper"
+      ref="graph"
+      :style="{ width: graphWidth + 'px' }"
+    ></div>
     <div class="schema_side-panel__wrapper" ref="sidePanel">
-      <br>
-      <SchemaSidebarOverview :schema="schema" v-if="schema" v-show="!hoveredLabel && !clickedLabel" @dropTable="dropTable"
-        @editTable="editTable" />
-      <SchemaSidebarHoverView :schema="schema" :hoveredLabel="hoveredLabel" :hoveredIsNode="hoveredIsNode"
-        v-if="hoveredLabel && !clickedLabel" />
-      <SchemaSidebarEditView :schema="schema" :clickedLabel="clickedLabel" :clickedIsNode="clickedIsNode"
-        v-if="clickedLabel" @dropProperty="dropProperty" @back="resetClick" @dropTable="dropTable"
-        @renameProperty="renameProperty" @addProperty="addProperty" ref="editView" />
+      <br />
+      <SchemaSidebarOverview
+        :schema="schema"
+        v-if="schema"
+        v-show="!hoveredLabel && !clickedLabel"
+        @dropTable="dropTable"
+        @editTable="enterEditTableMode"
+        @addNodeTable="enterAddNodeTableMode"
+      />
+      <SchemaSidebarHoverView
+        :schema="schema"
+        :hoveredLabel="hoveredLabel"
+        :hoveredIsNode="hoveredIsNode"
+        v-if="hoveredLabel && !clickedLabel"
+      />
+      <SchemaSidebarEditView
+        :schema="schema"
+        :label="clickedLabel"
+        :isNode="clickedIsNode"
+        v-if="clickedLabel"
+        @dropProperty="dropProperty"
+        @back="resetClick"
+        @dropTable="dropTable"
+        @renameProperty="renameProperty"
+        @addProperty="addProperty"
+        ref="editView"
+      />
     </div>
-    <SchemaActionDialog ref="actionDialog" @reloadSchema="reloadSchema" @actionCompleted="handleSchemaActionCompleted" />
+    <SchemaActionDialog
+      ref="actionDialog"
+      @reloadSchema="reloadSchema"
+      @actionCompleted="handleSchemaActionCompleted"
+    />
   </div>
 </template>
-  
+
 <script lang="js">
 import G6 from '@antv/g6';
 import { UI_SIZE, SHOW_REL_LABELS_OPTIONS, SCHEMA_ACTION_TYPES } from "../../utils/Constants";
@@ -43,6 +93,7 @@ import G6Utils from "../../utils/G6Utils";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
 import SchemaSidebarEditView from './SchemaSidebarEditView.vue';
+import SchemaSidebarAddView from './SchemaSidebarAddView.vue';
 import SchemaSidebarHoverView from './SchemaSidebarHoverView.vue';
 import SchemaSidebarOverview from './SchemaSidebarOverview.vue';
 import SchemaActionDialog from './SchemaActionDialog.vue';
@@ -50,7 +101,8 @@ import SchemaActionDialog from './SchemaActionDialog.vue';
 export default {
   name: "SchemaViewMain",
   components: {
-    SchemaSidebarOverview, SchemaSidebarHoverView, SchemaSidebarEditView, SchemaActionDialog
+    SchemaSidebarOverview, SchemaSidebarHoverView, SchemaSidebarEditView,
+    SchemaSidebarAddView, SchemaActionDialog
   },
   data: () => ({
     graphCreated: false,
@@ -63,6 +115,7 @@ export default {
     hoveredIsNode: false,
     clickedLabel: "",
     clickedIsNode: false,
+    clickedIsNewTable: false,
     toolbarDebounceTimeout: 100,
     toolbarDebounceTimer: null,
   }),
@@ -193,7 +246,6 @@ export default {
         },
         modes: {
           default: ['drag-canvas', 'zoom-canvas', 'drag-node'],
-          addEdge: ['click-add-edge', 'drag-canvas', 'zoom-canvas', 'click-select'],
         },
       });
 
@@ -216,7 +268,6 @@ export default {
         this.resetClick();
         const nodeItem = e.item;
         this.g6graph.setItemState(nodeItem, 'click', true);
-        this.handleClick();
         this.clickedLabel = nodeItem._cfg.model.label;
         this.clickedIsNode = true;
       });
@@ -252,7 +303,6 @@ export default {
         this.resetClick();
         const edgeItem = e.item;
         this.g6graph.setItemState(edgeItem, 'click', true);
-        this.handleClick();
         if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
           this.g6graph.updateItem(edgeItem, {
             label: edgeItem._cfg.model._label
@@ -345,9 +395,6 @@ export default {
     handleHover(label, isNode) {
       this.hoveredLabel = label;
       this.hoveredIsNode = isNode;
-    },
-
-    handleClick() {
     },
 
     handleSchemaActionCompleted(action) {
@@ -450,11 +497,8 @@ export default {
       this.counters = counters;
     },
 
-    dropTable(tableName) {
-      this.$refs.actionDialog.dropTable(tableName);
-    },
 
-    editTable(tableName) {
+    enterEditTableMode(tableName) {
       let isTableNode = false;
       const table = this.schema.relTables.find(t => t.name === tableName);
       if (!table) {
@@ -462,6 +506,10 @@ export default {
       }
       this.clickedIsNode = isTableNode;
       this.clickedLabel = tableName;
+      this.setG6Click(tableName);
+    },
+
+    setG6Click(tableName) {
       const g6Item = this.g6graph ? this.g6graph.findById(tableName) : null;
       if (g6Item) {
         this.g6graph.setItemState(g6Item, 'click', true);
@@ -472,6 +520,25 @@ export default {
         });
         g6Item.toFront();
       }
+    },
+
+    enterAddNodeTableMode() {
+      let newTableName = "NewNodeTable";
+      let counter = 1;
+      while (this.schema.nodeTables.find(t => t.name === newTableName)) {
+        newTableName = `NewNodeTable-${counter}`;
+        counter += 1;
+      }
+      this.$emit("addPlaceholderNodeTable", newTableName);
+      this.settingsStore.addNewNodeTable(newTableName);
+      this.$nextTick(() => {
+        this.handleSettingsChange();
+        this.setG6Click(newTableName);
+      });
+    },
+
+    dropTable(tableName) {
+      this.$refs.actionDialog.dropTable(tableName);
     },
 
     dropProperty({ table, property }) {
@@ -551,7 +618,6 @@ export default {
     this.computeGraphWidth();
     this.computeGraphHeight();
     window.addEventListener("resize", this.handleResize);
-    this.registerAddEdgeBehavior();
   },
   beforeUnmount() {
     if (this.g6graph) {
@@ -561,7 +627,7 @@ export default {
   },
 };
 </script>
-  
+
 <style lang="scss" scoped>
 .schema-view__wrapper {
   width: 100%;
@@ -599,7 +665,7 @@ export default {
     padding-bottom: 8px;
 
     .schema-view__button {
-      >i {
+      > i {
         color: $body-tertiary-color;
       }
     }
@@ -630,4 +696,3 @@ export default {
   }
 }
 </style>
-  

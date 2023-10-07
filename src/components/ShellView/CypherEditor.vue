@@ -1,23 +1,44 @@
 <template>
-  <div class="shell-editor__wrapper" :style="{ height: editorHeight + 'px' }" ref="wrapper">
-    <div class="shell-editor__container" :style="{ width: editorWidth + 'px' }" ref="editor">
-    </div>
-    <div class="shell-editor__tools_container" ref="toolsContainer" :style="{ width: toolbarWidth + 'px' }">
+  <div
+    class="shell-editor__wrapper"
+    :style="{ height: editorHeight + 'px' }"
+    ref="wrapper"
+  >
+    <div
+      class="shell-editor__container"
+      :style="{ width: editorWidth + 'px' }"
+      ref="editor"
+    ></div>
+    <div
+      class="shell-editor__tools_container"
+      ref="toolsContainer"
+      :style="{ width: toolbarWidth + 'px' }"
+    >
       <div class="shell-editor__button" v-show="!isMaximized">
         <i class="fa-lg fa-solid fa-times" @click="removeCell"></i>
       </div>
       <div class="shell-editor__button">
-        <i class="fa-lg fa-solid fa-play" data-bs-toggle="tooltip" data-bs-placement="right" title="Run"
-          @click="evaluateCypher"></i>
+        <i
+          class="fa-lg fa-solid fa-play"
+          data-bs-toggle="tooltip"
+          data-bs-placement="right"
+          title="Run"
+          @click="evaluateCypher"
+        ></i>
       </div>
       <div class="shell-editor__button" v-show="isMaximizable">
-        <i :class="maximizeButtonClass" data-bs-toggle="tooltip" data-bs-placement="right"
-          :data-bs-original-title="maximizeButtonTitle" @click="toggleMaximize"></i>
+        <i
+          :class="maximizeButtonClass"
+          data-bs-toggle="tooltip"
+          data-bs-placement="right"
+          :data-bs-original-title="maximizeButtonTitle"
+          @click="toggleMaximize"
+        ></i>
       </div>
     </div>
   </div>
 </template>
-  
+
 <script lang="js">
 import CypherLanguage from "../../utils/CypherLanguage";
 import MonacoCypherLanguage from "../../utils/MonacoCypherLanguage";
@@ -146,7 +167,7 @@ export default {
   },
 }
 </script>
-  
+
 <style lang="scss" scoped>
 $margin: 20px;
 
@@ -164,7 +185,6 @@ $margin: 20px;
   flex-grow: 1;
 }
 
-
 .shell-editor__tools_container {
   display: flex;
   flex-direction: column;
@@ -178,7 +198,7 @@ $margin: 20px;
   padding-top: 4px;
   padding-bottom: 4px;
 
-  >i {
+  > i {
     cursor: pointer;
 
     &:hover {
@@ -190,18 +210,17 @@ $margin: 20px;
     }
   }
 
-  >i.fa-play {
+  > i.fa-play {
     color: $success;
   }
 
-  >i.fa-times {
+  > i.fa-times {
     color: $red;
   }
 
-  >i.fa-maximize,
-  >i.fa-minimize {
+  > i.fa-maximize,
+  > i.fa-minimize {
     color: $info;
   }
 }
 </style>
-  

@@ -1,10 +1,9 @@
 <template>
   <div class="result-code__wrapper" ref="wrapper" :style="{ height: containerHeight }">
-    <div class="result-code__editor" ref="editor">
-    </div>
+    <div class="result-code__editor" ref="editor"></div>
   </div>
 </template>
-  
+
 <script lang="js">
 // Make sure Monaco is not reactive. Otherwise, it will cause the Vue.js
 // app to crash.
@@ -62,7 +61,7 @@ export default {
   },
 };
 </script>
-  
+
 <style lang="scss" scoped>
 .result-code__wrapper {
   width: 100%;

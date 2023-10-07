@@ -2,35 +2,47 @@
   <div>
     <div>
       <h5>
-        <span class="badge bg-primary" :style="{
-          backgroundColor: ` ${getColor(hoveredLabel)} !important`,
-          color: hoveredIsNode ? '#ffffff' : '#000000'
-        }">
+        <span
+          class="badge bg-primary"
+          :style="{
+            backgroundColor: ` ${getColor(hoveredLabel)} !important`,
+            color: hoveredIsNode ? '#ffffff' : '#000000',
+          }"
+        >
           {{ hoveredLabel }}
         </span>
       </h5>
-      <hr>
+      <hr />
 
       <div v-if="!hoveredIsNode">
         <h6>
-          <span class="badge bg-primary" :style="{
-            backgroundColor: ` ${getColor(source)} !important`,
-          }">
+          <span
+            class="badge bg-primary"
+            :style="{
+              backgroundColor: ` ${getColor(source)} !important`,
+            }"
+          >
             {{ source }}
           </span>
           &nbsp;
           <i class="fa-solid fa-arrow-right"></i>
           &nbsp;
-          <span class="badge bg-primary" :style="{
-            backgroundColor: ` ${getColor(destination)} !important`,
-          }">
+          <span
+            class="badge bg-primary"
+            :style="{
+              backgroundColor: ` ${getColor(destination)} !important`,
+            }"
+          >
             {{ destination }}
           </span>
         </h6>
-        <br>
+        <br />
       </div>
 
-      <table class="table table-sm table-bordered schema_side-panel__overview-table" v-if="schema">
+      <table
+        class="table table-sm table-bordered schema_side-panel__overview-table"
+        v-if="schema"
+      >
         <thead>
           <tr v-if="tableProperties.length > 0">
             <th scope="col">Name</th>
@@ -44,9 +56,7 @@
           <tr v-for="property in tableProperties" :key="property.name">
             <td scope="row">
               {{ property.name }}
-              <span class="badge bg-primary" v-if="property.isPrimaryKey">
-                PK
-              </span>
+              <span class="badge bg-primary" v-if="property.isPrimaryKey"> PK </span>
             </td>
             <td>
               {{ property.type }}
@@ -54,11 +64,10 @@
           </tr>
         </tbody>
       </table>
-
     </div>
   </div>
 </template>
-  
+
 <script lang="js">
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
@@ -116,6 +125,5 @@ export default {
   },
 };
 </script>
-  
+
 <style scoped lang="scss"></style>
-  

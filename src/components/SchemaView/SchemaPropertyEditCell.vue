@@ -3,11 +3,11 @@
     <div v-if="currProperty">
       <div class="input-group flex-nowrap">
         <span class="input-group-text">Name</span>
-        <input type="text" class="form-control" v-model="currProperty.name">
+        <input type="text" class="form-control" v-model="currProperty.name" />
       </div>
 
       <div v-if="currProperty && isNewProperty">
-        <br>
+        <br />
         <div class="input-group flex-nowrap">
           <span class="input-group-text">Type</span>
           <select class="form-select" v-model="currProperty.type" v-if="isNewTable">
@@ -17,14 +17,18 @@
           </select>
 
           <select class="form-select" v-model="currProperty.type" v-else>
-            <option v-for="dataType in supportedTypesForAlter" :value="dataType" :key="dataType">
+            <option
+              v-for="dataType in supportedTypesForAlter"
+              :value="dataType"
+              :key="dataType"
+            >
               {{ dataType }}
             </option>
           </select>
         </div>
 
         <div v-if="isList">
-          <br>
+          <br />
           <div class="input-group flex-nowrap">
             <span class="input-group-text">Member Type</span>
             <select class="form-select" v-model="currProperty.memberType">
@@ -37,23 +41,23 @@
       </div>
 
       <div v-if="isFixedList">
-        <br>
+        <br />
         <div class="input-group flex-nowrap">
           <span class="input-group-text">Size</span>
-          <input type="number" class="form-control" v-model="currProperty.size">
+          <input type="number" class="form-control" v-model="currProperty.size" />
         </div>
       </div>
 
       <div v-if="isVarList">
-        <br>
+        <br />
         <div class="input-group flex-nowrap">
           <span class="input-group-text">Dimension</span>
-          <input type="number" class="form-control" v-model="currProperty.dim">
+          <input type="number" class="form-control" v-model="currProperty.dim" />
         </div>
       </div>
 
       <div v-if="isStruct">
-        <br>
+        <br />
         <div class="input-group">
           <span class="input-group-text">Fields</span>
           <textarea class="form-control" v-model="currProperty.fields" rows="3" />
@@ -61,21 +65,31 @@
       </div>
 
       <div v-if="isNewProperty && !isNewTable">
-        <br>
+        <br />
         <div class="input-group flex-nowrap">
           <span class="input-group-text">Default Value</span>
-          <input type="text" class="form-control" v-model="defaultValue">
+          <input type="text" class="form-control" v-model="defaultValue" />
         </div>
       </div>
     </div>
 
     <div>
-      <button type="button" class="btn btn-sm btn-outline-primary" title="Save" @click="handleSave">
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-primary"
+        title="Save"
+        @click="handleSave"
+      >
         <i class="fa-solid fa-check"></i>
         Save
       </button>
       &nbsp;
-      <button type="button" class="btn btn-sm btn-outline-danger" title="Cancel" @click="$emit('cancel')">
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-danger"
+        title="Cancel"
+        @click="$emit('cancel')"
+      >
         <i class="fa-solid fa-xmark"></i>
         Cancel
       </button>
@@ -311,13 +325,11 @@ export default {
     this.currProperty = this.unpackProperty(this.property);
   },
 }
-
-
 </script>
 
 <style lang="scss" scoped>
 td {
-  >div {
+  > div {
     padding: 8px;
   }
 }

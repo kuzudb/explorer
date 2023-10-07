@@ -6,7 +6,9 @@ router.post("/", async (req, res) => {
   const conn = database.getConnection();
   const query = req.body.query;
   if (!query || !typeof query === "string") {
-    return res.status(400).send({ error: "The query must be a string with length > 0" });
+    return res
+      .status(400)
+      .send({ error: "The query must be a string with length > 0" });
   }
 
   const params = req.body.params;

@@ -2,31 +2,38 @@
   <div>
     <div>
       <div class="d-flex justify-content-between">
-        <h5>Node Tables
-        </h5>
-        <button class="btn  btn-sm btn-primary">
-          Add
-        </button>
+        <h5>Node Tables</h5>
+        <button class="btn btn-sm btn-primary" @click="$emit('addNodeTable')">Add</button>
       </div>
-      <hr>
-      <table class="table table-sm table-bordered schema_side-panel__overview-table" v-if="schema">
+      <hr />
+      <table
+        class="table table-sm table-bordered schema_side-panel__overview-table"
+        v-if="schema"
+      >
         <tbody>
           <tr v-for="nodeTable in schema.nodeTables" :key="nodeTable.name">
             <td scope="row">
-              <span class="badge bg-primary" :style="{ backgroundColor: ` ${getColor(nodeTable.name)} !important` }">{{
-                nodeTable.name }}</span>
-              <br>
-              <small>
-                {{ nodeTable.properties.length }} properties
-              </small>
+              <span
+                class="badge bg-primary"
+                :style="{ backgroundColor: ` ${getColor(nodeTable.name)} !important` }"
+                >{{ nodeTable.name }}</span
+              >
+              <br />
+              <small> {{ nodeTable.properties.length }} properties </small>
             </td>
             <td class="schema_side-panel__overview-table-buttons-container">
               <div>
-                <button class="btn btn-sm  btn-outline-primary" @click="editTable(nodeTable.name)">
+                <button
+                  class="btn btn-sm btn-outline-primary"
+                  @click="editTable(nodeTable.name)"
+                >
                   <i class="fa-solid fa-pencil"></i>
                 </button>
                 &nbsp;
-                <button class="btn btn-sm  btn-outline-danger" @click="dropTable(nodeTable.name)">
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  @click="dropTable(nodeTable.name)"
+                >
                   <i class="fa-solid fa-trash-can"></i>
                 </button>
               </div>
@@ -34,36 +41,46 @@
           </tr>
         </tbody>
       </table>
-      <br>
+      <br />
     </div>
 
     <div class="d-flex justify-content-between">
-      <h5>Rel Tables
-      </h5>
-      <button class="btn  btn-sm btn-primary">
-        Add
-      </button>
+      <h5>Rel Tables</h5>
+      <button class="btn btn-sm btn-primary">Add</button>
     </div>
-    <hr>
-    <table class="table table-sm table-bordered schema_side-panel__overview-table" v-if="schema">
+    <hr />
+    <table
+      class="table table-sm table-bordered schema_side-panel__overview-table"
+      v-if="schema"
+    >
       <tbody>
         <tr v-for="relTable in schema.relTables" :key="relTable.name">
           <td scope="row">
-            <span class="badge bg-primary"
-              :style="{ backgroundColor: ` ${getColor(relTable.name)} !important`, color: '#000000' }">
-              {{ relTable.name }}</span>
-            <br>
-            <small>
-              {{ relTable.properties.length }} properties
-            </small>
+            <span
+              class="badge bg-primary"
+              :style="{
+                backgroundColor: ` ${getColor(relTable.name)} !important`,
+                color: '#000000',
+              }"
+            >
+              {{ relTable.name }}</span
+            >
+            <br />
+            <small> {{ relTable.properties.length }} properties </small>
           </td>
           <td class="schema_side-panel__overview-table-buttons-container">
             <div>
-              <button class="btn btn-sm  btn-outline-primary" @click="editTable(relTable.name)">
+              <button
+                class="btn btn-sm btn-outline-primary"
+                @click="editTable(relTable.name)"
+              >
                 <i class="fa-solid fa-pencil"></i>
               </button>
               &nbsp;
-              <button class="btn btn-sm  btn-outline-danger" @click="dropTable(relTable.name)">
+              <button
+                class="btn btn-sm btn-outline-danger"
+                @click="dropTable(relTable.name)"
+              >
                 <i class="fa-solid fa-trash-can"></i>
               </button>
             </div>

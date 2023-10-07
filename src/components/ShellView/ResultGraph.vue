@@ -1,28 +1,44 @@
 <template>
   <div class="result-graph__wrapper" ref="wrapper">
-    <div class="result_container__graph" ref="graph" :style="{ width: graphWidth + 'px' }"></div>
-    <div class="result-container__tools_container" ref="toolsContainer" :style="{ width: toolbarContainerWidth + 'px' }">
+    <div
+      class="result_container__graph"
+      ref="graph"
+      :style="{ width: graphWidth + 'px' }"
+    ></div>
+    <div
+      class="result-container__tools_container"
+      ref="toolsContainer"
+      :style="{ width: toolbarContainerWidth + 'px' }"
+    >
       <div class="result-container__button">
-        <i :class="sidePanelButtonClass" data-bs-toggle="tooltip" data-bs-placement="right"
-          :data-bs-original-title="sidePanelButtonTitle" @click="toggleSidePanel"></i>
+        <i
+          :class="sidePanelButtonClass"
+          data-bs-toggle="tooltip"
+          data-bs-placement="right"
+          :data-bs-original-title="sidePanelButtonTitle"
+          @click="toggleSidePanel"
+        ></i>
       </div>
     </div>
     <div class="result-container__side-panel" ref="sidePanel" v-show="isSidePanelOpen">
-      <br>
+      <br />
       <div v-if="displayLabel">
-        <h5>
-          {{ sidePanelPropertyTitlePrefix }} Properties
-        </h5>
-        <span class="badge bg-primary" :style="{
-          backgroundColor: `${getColor(displayLabel)} !important`,
-          color: `${getTextColor(displayLabel)} !important`,
-        }">
-          {{ displayLabel }}</span>
-        <hr>
+        <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
+        <span
+          class="badge bg-primary"
+          :style="{
+            backgroundColor: `${getColor(displayLabel)} !important`,
+            color: `${getTextColor(displayLabel)} !important`,
+          }"
+        >
+          {{ displayLabel }}</span
+        >
+        <hr />
         <table class="table table-sm table-bordered result-container__result-table">
           <tbody>
             <tr v-for="property in displayProperties" :key="property.name">
-              <th scope="row">{{ property.name }}
+              <th scope="row">
+                {{ property.name }}
                 <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
               </th>
               <td>{{ property.value }}</td>
@@ -31,38 +47,42 @@
         </table>
       </div>
       <div v-else>
-        <h5>
-          Overview
-        </h5>
+        <h5>Overview</h5>
         <div v-if="counters.total.node > 0">
           <p>Showing {{ counters.total.node }} nodes</p>
-          <hr>
+          <hr />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
               <tr v-for="label in Object.keys(counters.node)" :key="label">
                 <th scope="row">
-                  <span class="badge bg-primary" :style="{ backgroundColor: ` ${getColor(label)} !important` }">{{
-                    label }}</span>
+                  <span
+                    class="badge bg-primary"
+                    :style="{ backgroundColor: ` ${getColor(label)} !important` }"
+                    >{{ label }}</span
+                  >
                 </th>
                 <td>{{ counters.node[label] }}</td>
               </tr>
             </tbody>
           </table>
 
-          <br>
+          <br />
         </div>
 
         <div v-if="counters.total.rel > 0">
           <p>Showing {{ counters.total.rel }} rels</p>
-          <hr>
+          <hr />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
               <tr v-for="label in Object.keys(counters.rel)" :key="label">
                 <th scope="row">
-                  <span class="badge bg-primary" :style="{
-                    backgroundColor: ` ${getColor(label)} !important`,
-                    color: `black !important`
-                  }">
+                  <span
+                    class="badge bg-primary"
+                    :style="{
+                      backgroundColor: ` ${getColor(label)} !important`,
+                      color: `black !important`,
+                    }"
+                  >
                     {{ label }}
                   </span>
                 </th>
@@ -82,7 +102,7 @@
     </div>
   </div>
 </template>
-  
+
 <script lang="js">
 import G6 from '@antv/g6';
 import G6Utils from "../../utils/G6Utils";
@@ -611,7 +631,7 @@ export default {
   },
 };
 </script>
-  
+
 <style lang="scss" scoped>
 .result-graph__wrapper {
   width: 100%;
@@ -636,7 +656,7 @@ export default {
     padding-top: 4px;
     padding-bottom: 4px;
 
-    >i {
+    > i {
       cursor: pointer;
 
       &:hover {
@@ -648,8 +668,8 @@ export default {
       }
     }
 
-    >i.fa-maximize,
-    >i.fa-minimize {
+    > i.fa-maximize,
+    > i.fa-minimize {
       color: $gray-500;
     }
   }
@@ -673,7 +693,7 @@ export default {
       }
 
       &.result-container__result-table {
-        font-family: 'Courier New', Courier, monospace;
+        font-family: "Courier New", Courier, monospace;
 
         td {
           word-break: break-all;
@@ -683,4 +703,3 @@ export default {
   }
 }
 </style>
-  

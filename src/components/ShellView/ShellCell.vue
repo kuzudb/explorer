@@ -1,12 +1,25 @@
 <template>
   <div class="shell-cell__wrapper">
-    <CypherEditor :schema="schema" :navbarHeight="navbarHeight" :isMaximizable="Boolean(queryResult)"
-      @evaluateCypher="evaluateCypher" @remove="removeCell" @toggleMaximize="toggleMaximize" ref="editor" />
-    <ResultContainer :isMaximized="isMaximized" :navbarHeight="navbarHeight" ref="resultContainer"
-      v-if="queryResult || errorMessage" />
+    <CypherEditor
+      :schema="schema"
+      :navbarHeight="navbarHeight"
+      :isMaximizable="
+        (queryResult && queryResult.rows && queryResult.rows.length > 0) || isMaximized
+      "
+      @evaluateCypher="evaluateCypher"
+      @remove="removeCell"
+      @toggleMaximize="toggleMaximize"
+      ref="editor"
+    />
+    <ResultContainer
+      :isMaximized="isMaximized"
+      :navbarHeight="navbarHeight"
+      ref="resultContainer"
+      v-if="queryResult || errorMessage"
+    />
   </div>
 </template>
-  
+
 <script lang="js">
 import CypherEditor from "./CypherEditor.vue";
 import ResultContainer from "./ResultContainer.vue";
@@ -101,10 +114,9 @@ export default {
   },
 }
 </script>
-  
+
 <style lang="scss" scoped>
 .shell-cell__wrapper {
   display: block;
 }
 </style>
-  

@@ -1,5 +1,8 @@
 <template>
-  <div class="result-table__wrapper" :style="{ height: containerHeight, width: tableWidth + 'px' }">
+  <div
+    class="result-table__wrapper"
+    :style="{ height: containerHeight, width: tableWidth + 'px' }"
+  >
     <div class="result-table__pagination__wrapper" v-if="totalPages > 1">
       <nav>
         <ul class="pagination">
@@ -8,7 +11,11 @@
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
-          <li v-for="currPage in pageList   " :key="currPage" :class="['page-item', { active: currPage === this.page }]">
+          <li
+            v-for="currPage in pageList"
+            :key="currPage"
+            :class="['page-item', { active: currPage === this.page }]"
+          >
             <a v-if="currPage > 0" class="page-link" href="#" @click="page = currPage">
               {{ currPage }}
             </a>
@@ -30,15 +37,14 @@
             <th v-for="header in tableHeaders" :key="header.text">
               {{ header.text }}
               <span class="badge bg-primary">{{ header.type }}</span>
-
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="row, i in rows" :key="i">
-            <td v-for="cell, j in row" :key="j">
+          <tr v-for="(row, i) in rows" :key="i">
+            <td v-for="(cell, j) in row" :key="j">
               <ul v-if="Array.isArray(cell)" class="list-group">
-                <li v-for="item, k in cell" :key="k" class="list-group-item">
+                <li v-for="(item, k) in cell" :key="k" class="list-group-item">
                   <b>{{ item.name }}:</b> {{ item.value }}
                 </li>
               </ul>
@@ -228,7 +234,7 @@ export default {
   border-bottom: 2px solid $gray-300;
 
   table {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Courier New", Courier, monospace;
 
     thead {
       position: sticky;

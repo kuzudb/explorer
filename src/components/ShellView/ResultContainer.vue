@@ -1,49 +1,128 @@
 <template>
-  <div class="result-container__wrapper" ref="wrapper" :style="{ height: containerHeight }">
-    <div class="result-container__tools_container" ref="toolsContainer" :style="{ minWidth: toolbarWidth + 'px' }"
-      v-show="!errorMessage">
-      <div :class="`result-container__button` + (showGraph ? ` result-container__button--active` : ``)"
-        v-show="!isGraphEmpty">
-        <i class="fa-lg fa-solid fa-circle-nodes" data-bs-toggle="tooltip" data-bs-placement="right" title="Graph View"
-          @click="toggleGraphView"></i>
+  <div
+    class="result-container__wrapper"
+    ref="wrapper"
+    :style="{ height: containerHeight }"
+  >
+    <div
+      class="result-container__tools_container"
+      ref="toolsContainer"
+      :style="{ minWidth: toolbarWidth + 'px' }"
+      v-show="!errorMessage"
+    >
+      <div
+        :class="
+          `result-container__button` +
+          (showGraph ? ` result-container__button--active` : ``)
+        "
+        v-show="!isGraphEmpty"
+      >
+        <i
+          class="fa-lg fa-solid fa-circle-nodes"
+          data-bs-toggle="tooltip"
+          data-bs-placement="right"
+          title="Graph View"
+          @click="toggleGraphView"
+        ></i>
       </div>
-      <div :class="`result-container__button` + (showTable ? ` result-container__button--active` : ``)">
-        <i class="fa-lg fa-solid fa-table" data-bs-toggle="tooltip" data-bs-placement="right" title="Table View"
-          @click="toggleTableView"></i>
+      <div
+        :class="
+          `result-container__button` +
+          (showTable ? ` result-container__button--active` : ``)
+        "
+      >
+        <i
+          class="fa-lg fa-solid fa-table"
+          data-bs-toggle="tooltip"
+          data-bs-placement="right"
+          title="Table View"
+          @click="toggleTableView"
+        ></i>
       </div>
-      <div :class="`result-container__button` + (showCode ? ` result-container__button--active` : ``)">
-        <i class="fa-lg fa-solid fa-code" data-bs-toggle="tooltip" data-bs-placement="right" title="JSON View"
-          @click="toggleCodeView"></i>
+      <div
+        :class="
+          `result-container__button` +
+          (showCode ? ` result-container__button--active` : ``)
+        "
+      >
+        <i
+          class="fa-lg fa-solid fa-code"
+          data-bs-toggle="tooltip"
+          data-bs-placement="right"
+          title="JSON View"
+          @click="toggleCodeView"
+        ></i>
       </div>
 
       <div class="result-container__tools_container--bottom" v-show="showGraph">
         <div class="result-container__button">
-          <i class="fa-lg fa-solid fa-magnifying-glass-plus" data-bs-toggle="tooltip" data-bs-placement="right"
-            title="Zoom In" @click="$refs.resultGraph.zoomIn()"></i>
+          <i
+            class="fa-lg fa-solid fa-magnifying-glass-plus"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Zoom In"
+            @click="$refs.resultGraph.zoomIn()"
+          ></i>
         </div>
         <div class="result-container__button">
-          <i class="fa-lg fa-solid fa-magnifying-glass-minus" data-bs-toggle="tooltip" data-bs-placement="right"
-            title="Zoom Out" @click="$refs.resultGraph.zoomOut()"></i>
+          <i
+            class="fa-lg fa-solid fa-magnifying-glass-minus"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Zoom Out"
+            @click="$refs.resultGraph.zoomOut()"
+          ></i>
         </div>
         <div class="result-container__button">
-          <i class="fa-lg fa-solid fa-compress" data-bs-toggle="tooltip" data-bs-placement="right" title="Fit to View"
-            @click="$refs.resultGraph.fitToView()"></i>
+          <i
+            class="fa-lg fa-solid fa-compress"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Fit to View"
+            @click="$refs.resultGraph.fitToView()"
+          ></i>
         </div>
         <div class="result-container__button">
-          <i class="fa-lg fa-solid fa-expand" data-bs-toggle="tooltip" data-bs-placement="right" title="Actual Size"
-            @click="$refs.resultGraph.actualSize()"></i>
+          <i
+            class="fa-lg fa-solid fa-expand"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Actual Size"
+            @click="$refs.resultGraph.actualSize()"
+          ></i>
         </div>
-
       </div>
     </div>
 
-    <ResultGraph v-if="queryResult" v-show="showGraph" :queryResult="queryResult" :schema="schema"
-      :containerHeight="containerHeight" ref="resultGraph" @graphEmpty="handleGraphEmpty" />
-    <ResultTable v-if="queryResult && showTable" :queryResult="queryResult" :schema="schema"
-      :containerHeight="containerHeight" ref="resultTable" />
-    <ResultCode v-if="queryResultString && showCode" :queryResultString="queryResultString" :schema="schema"
-      :containerHeight="containerHeight" ref="resultCode" />
-    <ResultError v-if="errorMessage" :errorMessage="errorMessage" />
+    <ResultGraph
+      v-if="queryResult"
+      v-show="showGraph"
+      :queryResult="queryResult"
+      :schema="schema"
+      :containerHeight="containerHeight"
+      ref="resultGraph"
+      @graphEmpty="handleGraphEmpty"
+    />
+    <ResultTable
+      v-if="queryResult && showTable"
+      :queryResult="queryResult"
+      :schema="schema"
+      :containerHeight="containerHeight"
+      ref="resultTable"
+    />
+    <ResultCode
+      v-if="queryResultString && showCode"
+      :queryResultString="queryResultString"
+      :schema="schema"
+      :containerHeight="containerHeight"
+      ref="resultCode"
+    />
+    <ResultError
+      v-if="errorMessage"
+      :errorMessage="errorMessage"
+      :isInfo="errorMessage === emptyResultMessage"
+      ref="resultError"
+    />
   </div>
 </template>
 
@@ -72,6 +151,7 @@ export default {
     queryResult: null,
     queryResultString: "",
     errorMessage: "",
+    emptyResultMessage: "The query executed successfully but the result is empty.",
   }),
   props: {
     navbarHeight: {
@@ -87,6 +167,9 @@ export default {
   },
   watch: {
     isMaximized() {
+      if (!this.$refs.resultGraph) {
+        return;
+      }
       this.$nextTick(() => {
         this.$refs.resultGraph.handleResize();
       });
@@ -106,6 +189,12 @@ export default {
       this.queryResult = queryResult;
       this.queryResultString = JSON.stringify(queryResult, null, 2);
       this.errorMessage = errorMessage;
+      if (this.queryResult && this.queryResult.rows.length === 0) {
+        this.queryResult = null;
+        this.queryResultString = "";
+        this.errorMessage = this.emptyResultMessage;
+      }
+
       if (this.errorMessage) {
         return;
       }
@@ -188,7 +277,7 @@ $margin: 20px;
     margin-top: auto;
 
     .result-container__button {
-      >i {
+      > i {
         color: $body-tertiary-color;
       }
     }
