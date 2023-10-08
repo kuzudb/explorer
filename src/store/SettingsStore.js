@@ -181,7 +181,7 @@ export const useSettingsStore = defineStore("settings", {
       }
     },
 
-    addNewNodeTable(label) {
+    addNewNodeTable(name) {
       const nodeDefault = this.graphViz.default.node;
       const g6Settings = JSON.parse(JSON.stringify(nodeDefault));
       let color = this.colors.pop();
@@ -190,11 +190,31 @@ export const useSettingsStore = defineStore("settings", {
       }
       g6Settings.style.fill = color;
       const nodeSettings = {
-        name: label,
+        name,
         g6Settings,
         label: "_label",
       };
-      this.graphViz.nodes[label] = nodeSettings;
+      this.graphViz.nodes[name] = nodeSettings;
+    },
+
+    removeNodeTable(label) {
+      delete this.graphViz.nodes[label];
+    },
+
+    renameNodeTable(oldName, newName) {
+      const node = this.graphViz.nodes[oldName];
+      if (node) {
+        node.name = newName;
+        this.graphViz.nodes[newName] = node;
+        delete this.graphViz.nodes[oldName];
+      }
+    },
+
+    updateNodeTableLabel(name, label) {
+      const node = this.graphViz.nodes[name];
+      if (node) {
+        node.label = label;
+      }
     },
   },
 });

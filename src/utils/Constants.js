@@ -43,6 +43,7 @@ export const SCHEMA_ACTION_TYPES = {
   DROP_PROPERTY: "dropProperty",
   RENAME_PROPERTY: "renameProperty",
   ADD_PROPERTY: "addProperty",
+  ADD_NODE_TABLE: "addNodeTable",
 };
 
 export const UI_SIZE = {
@@ -57,3 +58,5 @@ export const SHOW_REL_LABELS_OPTIONS = {
   HOVER: "HOVER",
   NEVER: "NEVER",
 };
+
+export const PLACEHOLDER = "__placeholder__";

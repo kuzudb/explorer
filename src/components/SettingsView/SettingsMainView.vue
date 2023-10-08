@@ -21,7 +21,9 @@
                 v-for="(node, key, index) in currentSettings.graphViz.nodes"
                 :key="index"
               >
-                <td>{{ node.name }}</td>
+                <td>
+                  {{ node.name === placeholder ? getPlaceholderNodeLabel() : node.name }}
+                </td>
                 <td>
                   <input
                     type="color"
@@ -165,7 +167,7 @@
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia';
 import { Modal } from 'bootstrap';
-import { SHOW_REL_LABELS_OPTIONS } from "../../utils/Constants";
+import { SHOW_REL_LABELS_OPTIONS, PLACEHOLDER } from "../../utils/Constants";
 
 export default {
   name: "SettingsMainView",
@@ -174,6 +176,7 @@ export default {
     currentSettings: {},
     modal: null,
     showRelLabelsOptions: SHOW_REL_LABELS_OPTIONS,
+    placeholder: PLACEHOLDER,
   }),
   props: {
     schema: {
@@ -207,7 +210,8 @@ export default {
       });
     },
     getCaptionOptions(entity, isNode) {
-      const name = entity.name;
+      console.log(entity);
+      const name = entity.name === this.placeholder ? this.getPlaceholderNodeLabel() : entity.name;
       const properties = (isNode ? this.schema.nodeTables : this.schema.relTables)
         .find(
           (table) => table.name === name
@@ -229,6 +233,9 @@ export default {
         });
       });
       return options;
+    },
+    getPlaceholderNodeLabel() {
+      return this.schema.nodeTables.find(t => t.isPlaceholder).name;
     },
   },
   mounted() {

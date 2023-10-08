@@ -2,25 +2,19 @@
   <div>
     <div>
       <h5>
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-primary"
-          title="Back"
-          @click="$emit('back')"
-        >
-          <i class="fa-solid fa-long-arrow-left"></i>
-          Back
-        </button>
-        &nbsp; Editing {{ isNode ? "Node" : "Rel" }} Table: &nbsp;
-        <span
-          class="badge bg-primary"
-          :style="{
-            backgroundColor: ` ${getColor(label)} !important`,
-            color: isNode ? '#ffffff' : '#000000',
-          }"
-        >
-          {{ label }}
-        </span>
+        <div class="input-group flex-nowrap">
+          <span class="input-group-text">Table Name</span>
+          <input
+            type="text"
+            class="form-control"
+            v-model="currLabel"
+            @keyup.enter="$emit('save', label)"
+            :style="{
+              backgroundColor: ` ${getColor()} !important`,
+              color: '#ffffff',
+            }"
+          />
+        </div>
       </h5>
       <hr />
 
@@ -49,23 +43,33 @@
         <br />
       </div>
 
-      <div class="schema_side-panel__edit-table-actions-container">
+      <div class="schema_side-panel__add-table-actions-container">
         <button
-          class="btn btn-sm btn-outline-primary"
-          title="Add Property"
-          @click="enterAddMode"
+          type="button"
+          class="btn btn-sm btn-outline-success"
+          title="Save Table"
+          @click="saveTable"
         >
-          <i class="fa-solid fa-plus"></i>
-          Add Property
+          <i class="fa-solid fa-save"></i>
+          Save Table
         </button>
         &nbsp;
         <button
           class="btn btn-sm btn-outline-danger"
-          title="Drop Table"
-          @click="$emit('dropTable', label)"
+          title="Discard Table"
+          @click="discardTable"
         >
           <i class="fa-solid fa-trash"></i>
-          Drop Table
+          Discard Table
+        </button>
+        &nbsp;
+        <button
+          class="btn btn-sm btn-outline-primary"
+          title="Add Property"
+          @click="addProperty"
+        >
+          <i class="fa-solid fa-plus"></i>
+          Add Property
         </button>
         &nbsp;
         <button
@@ -80,14 +84,14 @@
       <br />
 
       <table
-        class="table table-sm table-bordered schema_side-panel__edit-table"
+        class="table table-sm table-bordered schema_side-panel__add-table"
         v-if="schema"
       >
         <thead>
-          <tr v-if="tableProperties.length > 0">
+          <tr v-if="currProperties.length > 0">
             <th scope="col">Name</th>
             <th scope="col">Type</th>
-            <th scope="col" class="schema_side-panel__edit-table-buttons-container">
+            <th scope="col" class="schema_side-panel__add-table-buttons-container">
               Actions
             </th>
           </tr>
@@ -95,35 +99,35 @@
             <th scope="col">There is no property in this table</th>
           </tr>
         </thead>
-        <tbody v-if="tableProperties.length > 0">
-          <tr>
+
+        <tbody v-if="currProperties.length > 0">
+          <tr v-for="property in currProperties" :key="property.id">
             <SchemaPropertyEditCell
-              :property="defaultNewProperty"
+              :property="property"
               :colspan="3"
               :isNewProperty="true"
-              :isNewTable="false"
-              @cancel="cancelAddMode"
-              @save="addProperty"
-              v-if="addingProperty"
+              :isNewTable="true"
+              :ref="'editCell-' + property.id"
+              v-if="property.isEditing"
+              @save="(...args) => saveProperty(property.id, ...args)"
+              @cancel="cancelEditMode(property.id)"
             />
-          </tr>
-          <tr v-for="(property, i) in tableProperties" :key="property.name">
-            <td scope="row" v-if="i !== editingPropertyIndex">
+            <td v-if="!property.isEditing">
               {{ property.name }}
-              <span class="badge bg-primary" v-if="property.isPrimaryKey"> PK </span>
+              <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
             </td>
-            <td v-if="i !== editingPropertyIndex">
+            <td v-if="!property.isEditing">
               {{ property.type }}
             </td>
             <td
-              class="schema_side-panel__edit-table-buttons-container"
-              v-if="i !== editingPropertyIndex"
+              class="schema_side-panel__add-table-buttons-container"
+              v-if="!property.isEditing"
             >
               <button
                 type="button"
                 class="btn btn-sm btn-outline-primary"
                 title="Edit"
-                @click="enterEditMode(i)"
+                @click="enterEditMode(property.id)"
               >
                 <i class="fa-solid fa-pencil"></i>
               </button>
@@ -132,22 +136,11 @@
                 type="button"
                 class="btn btn-sm btn-outline-danger"
                 title="Drop"
-                @click="dropProperty(property.name)"
+                @click="dropProperty(property.id)"
               >
                 <i class="fa-solid fa-trash"></i>
               </button>
             </td>
-            <SchemaPropertyEditCell
-              v-if="i === editingPropertyIndex"
-              :property="property"
-              :colspan="3"
-              :isNewProperty="false"
-              :isNewTable="false"
-              @cancel="cancelEditMode"
-              @save="renameProperty"
-            >
-              {{ property.name }}
-            </SchemaPropertyEditCell>
           </tr>
         </tbody>
       </table>
@@ -159,19 +152,34 @@
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
 import SchemaPropertyEditCell from "./SchemaPropertyEditCell.vue";
-import { DATA_TYPES } from "../../utils/Constants";
+import { DATA_TYPES, PLACEHOLDER } from "../../utils/Constants";
+import { v4 as uuidv4 } from "uuid";
 export default {
-  name: "SchemaSidebarEditView",
+  name: "SchemaSidebarAddView",
   components: {
     SchemaPropertyEditCell,
   },
   data: () => ({
     editingPropertyIndex: -1,
-    addingProperty: false,
     defaultNewProperty: {
       name: "",
       type: DATA_TYPES.INT64,
-    }
+      isPrimaryKey: false,
+      isEditing: true,
+      isNew: true,
+      id: null
+    },
+    defaultPrimaryKey: {
+      name: "id",
+      type: DATA_TYPES.INT64,
+      isPrimaryKey: true,
+      isEditing: false,
+      isNew: false,
+      id: null
+    },
+    currLabel: "",
+    originalLabel: "",
+    currProperties: [],
   }),
   props: {
     schema: {
@@ -186,6 +194,11 @@ export default {
       type: Boolean,
       required: true,
     },
+  },
+  watch: {
+    currLabel() {
+      this.$emit("updateLabel", this.currLabel);
+    }
   },
   computed: {
     ...mapStores(useSettingsStore),
@@ -202,78 +215,82 @@ export default {
       }
       return this.schema.relTables.find(t => t.name === this.label).dst;
     },
-
-    tableProperties() {
-      if (!this.schema || !this.label) {
-        return [];
-      }
-      if (this.isNode) {
-        return this.schema.nodeTables
-          .find(t => t.name === this.label)
-          .properties;
-      } else {
-        return this.schema.relTables
-          .find(t => t.name === this.label)
-          .properties;
-      }
-    },
   },
   methods: {
     getColor(label) {
+      if(!label) {
+        return this.settingsStore.colorForLabel(PLACEHOLDER)
+      }
       return this.settingsStore.colorForLabel(label);
     },
-    dropProperty(propertyName) {
-      this.$emit("dropProperty", {
-        table: this.label,
-        property: propertyName,
-      });
+    addProperty() {
+      const newProperty = {...this.defaultNewProperty};
+      newProperty.id = uuidv4();
+      this.currProperties.unshift(newProperty);
     },
-    enterEditMode(index) {
-      if (this.editingPropertyIndex === index) {
-        return;
+    saveTable() {
+      for (let i = 0; i < this.currProperties.length; ++i) {
+        if (this.currProperties[i].isEditing) {
+          this.$refs["editCell-" + this.currProperties[i].id][0].save();
+        }
       }
-      this.cancelAddMode();
-      this.editingPropertyIndex = index;
+      this.$nextTick(() => {
+        this.$emit("save", this.currLabel, this.currProperties);
+      });
     },
-    cancelEditMode() {
-      this.editingPropertyIndex = -1;
+    discardTable() {
+      this.$emit("discard");
     },
-    enterAddMode() {
-      if (this.addingProperty) {
-        return;
+    enterEditMode(id) {
+      const index = this.currProperties.findIndex(p => p.id === id);
+      this.currProperties[index].isEditing = true;
+    },
+    dropProperty(id) {
+      const index = this.currProperties.findIndex(p => p.id === id);
+      this.currProperties.splice(index, 1);
+    },
+    saveProperty(id, _, property) {
+      const i = this.currProperties.findIndex(p => p.id === id);
+      this.currProperties[i] = property;
+      this.currProperties[i].id = id;
+      this.currProperties[i].isEditing = false;
+      this.currProperties[i].isNew = false;
+      if (this.currProperties[i].isPrimaryKey) {
+       for (let j = 0; j < this.currProperties.length; ++j) {
+         if (i !== j) {
+           this.currProperties[j].isPrimaryKey = false;
+           if(this.currProperties[j].isEditing) {
+              const jId = this.currProperties[j].id;
+              this.$refs["editCell-" + jId][0].cancelPrimaryKey();
+           }
+         }
+       }
       }
-      this.cancelEditMode();
-      this.addingProperty = true;
     },
-    cancelAddMode() {
-      this.addingProperty = false;
+    cancelEditMode(id) {
+      const i = this.currProperties.findIndex(p => p.id === id);
+      this.currProperties[i].isEditing = false;
+      if (this.currProperties[i].isNew) {
+        this.dropProperty(id);
+      }
     },
-    renameProperty(oldProperty, newProperty) {
-      const oldName = oldProperty.name;
-      const newName = newProperty.name;
-      this.$emit("renameProperty", {
-        table: this.label,
-        oldName,
-        newName,
-      });
-    },
-    addProperty(_, property, defaultValue) {
-      this.$emit("addProperty", {
-        table: this.label,
-        property,
-        defaultValue,
-      });
-    },
+
+  },
+  mounted() {
+    this.currLabel = this.label;
+    const primaryKey = {...this.defaultPrimaryKey};
+    primaryKey.id = uuidv4();
+    this.currProperties.push(primaryKey);
   },
 };
 </script>
 
 <style scoped lang="scss">
-.schema_side-panel__edit-table-actions-container {
+.schema_side-panel__add-table-actions-container {
   width: 100%;
 }
 
-.schema_side-panel__edit-table-buttons-container {
+.schema_side-panel__add-table-buttons-container {
   width: 90px;
   text-align: center;
   vertical-align: middle;

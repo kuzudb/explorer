@@ -54,7 +54,7 @@
       <SchemaSidebarOverview
         :schema="schema"
         v-if="schema"
-        v-show="!hoveredLabel && !clickedLabel"
+        v-show="!hoveredLabel && clickedLabel === null"
         @dropTable="dropTable"
         @editTable="enterEditTableMode"
         @addNodeTable="enterAddNodeTableMode"
@@ -63,19 +63,29 @@
         :schema="schema"
         :hoveredLabel="hoveredLabel"
         :hoveredIsNode="hoveredIsNode"
-        v-if="hoveredLabel && !clickedLabel"
+        v-if="hoveredLabel && clickedLabel === null"
       />
       <SchemaSidebarEditView
         :schema="schema"
         :label="clickedLabel"
         :isNode="clickedIsNode"
-        v-if="clickedLabel"
+        v-if="clickedLabel !== null && !clickedIsNewTable"
         @dropProperty="dropProperty"
         @back="resetClick"
         @dropTable="dropTable"
         @renameProperty="renameProperty"
         @addProperty="addProperty"
         ref="editView"
+      />
+      <SchemaSidebarAddView
+        :schema="schema"
+        :label="clickedLabel"
+        :isNode="clickedIsNode"
+        v-if="clickedLabel !== null && clickedIsNewTable"
+        @discard="cancelAdd"
+        @save="addNewTable"
+        @updateLabel="updatePlaceholderTableLabel"
+        ref="addView"
       />
     </div>
     <SchemaActionDialog
@@ -88,7 +98,7 @@
 
 <script lang="js">
 import G6 from '@antv/g6';
-import { UI_SIZE, SHOW_REL_LABELS_OPTIONS, SCHEMA_ACTION_TYPES } from "../../utils/Constants";
+import { UI_SIZE, SHOW_REL_LABELS_OPTIONS, SCHEMA_ACTION_TYPES, PLACEHOLDER } from "../../utils/Constants";
 import G6Utils from "../../utils/G6Utils";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
@@ -113,7 +123,7 @@ export default {
     borderWidth: UI_SIZE.DEFAULT_BORDER_WIDTH,
     hoveredLabel: "",
     hoveredIsNode: false,
-    clickedLabel: "",
+    clickedLabel: null,
     clickedIsNode: false,
     clickedIsNewTable: false,
     toolbarDebounceTimeout: 100,
@@ -265,6 +275,9 @@ export default {
 
 
       this.g6graph.on('node:click', (e) => {
+        if(this.clickedIsNewTable) {
+          return;
+        }
         this.resetClick();
         const nodeItem = e.item;
         this.g6graph.setItemState(nodeItem, 'click', true);
@@ -300,6 +313,9 @@ export default {
       });
 
       this.g6graph.on('edge:click', (e) => {
+        if(this.clickedIsNewTable) {
+          return;
+        }
         this.resetClick();
         const edgeItem = e.item;
         this.g6graph.setItemState(edgeItem, 'click', true);
@@ -314,6 +330,9 @@ export default {
       });
 
       this.g6graph.on('canvas:click', () => {
+        if(this.clickedIsNewTable) {
+          return;
+        }
         this.resetClick();
       });
 
@@ -340,8 +359,10 @@ export default {
         return {
           id: n.name,
           label: n.name,
+          isPlaceholder: Boolean(n.isPlaceholder),
           style: {
-            fill: this.getColor(n.name),
+            fill:
+            n.isPlaceholder ? this.getColor(PLACEHOLDER) : this.getColor(n.name),
           },
         };
       })
@@ -401,8 +422,13 @@ export default {
       if (action.type === SCHEMA_ACTION_TYPES.RENAME_PROPERTY) {
         this.$refs.editView.cancelEditMode();
       }
-      if (action.type === SCHEMA_ACTION_TYPES.ADD_PROPERTY) {
+      else if (action.type === SCHEMA_ACTION_TYPES.ADD_PROPERTY) {
         this.$refs.editView.cancelAddMode();
+      }
+      else if (action.type === SCHEMA_ACTION_TYPES.ADD_NODE_TABLE) {
+        this.settingsStore.renameNodeTable(PLACEHOLDER, action.table);
+        this.settingsStore.updateNodeTableLabel(action.table, action.primaryKey);
+        this.cancelAdd();
       }
     },
 
@@ -423,8 +449,9 @@ export default {
           });
         }
       }
-      this.clickedLabel = "";
+      this.clickedLabel = null;
       this.clickedIsNode = false;
+      this.clickedIsNewTable = false;
     },
 
     resetHover() {
@@ -495,8 +522,10 @@ export default {
       const { nodes, edges, counters } = this.extractGraphFromSchema(this.schema);
       this.g6graph.changeData({ nodes, edges });
       this.counters = counters;
+      if(this.clickedLabel){
+        this.setG6Click(this.clickedLabel);
+      }
     },
-
 
     enterEditTableMode(tableName) {
       let isTableNode = false;
@@ -514,6 +543,9 @@ export default {
       if (g6Item) {
         this.g6graph.setItemState(g6Item, 'click', true);
       }
+      else {
+        return;
+      }
       if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
         this.g6graph.updateItem(g6Item, {
           label: tableName
@@ -524,17 +556,46 @@ export default {
 
     enterAddNodeTableMode() {
       let newTableName = "NewNodeTable";
+      this.clickedIsNewTable = true;
       let counter = 1;
       while (this.schema.nodeTables.find(t => t.name === newTableName)) {
         newTableName = `NewNodeTable-${counter}`;
         counter += 1;
       }
       this.$emit("addPlaceholderNodeTable", newTableName);
-      this.settingsStore.addNewNodeTable(newTableName);
+      this.settingsStore.addNewNodeTable(PLACEHOLDER);
       this.$nextTick(() => {
         this.handleSettingsChange();
         this.setG6Click(newTableName);
       });
+      this.clickedLabel = newTableName;
+      this.clickedIsNode = true;
+      this.clickedIsNewTable = true;
+    },
+
+    cancelAdd(){
+      this.$emit("removePlaceholderNodeTable", this.clickedLabel);
+      this.settingsStore.removeNodeTable(PLACEHOLDER);
+      this.resetClick();
+      this.reloadSchema();
+    },
+
+    addNewTable(table, properties) {
+      this.$refs.actionDialog.addNewTable(table, properties);
+    },
+
+    updatePlaceholderTableLabel(newLabel){
+      if(this.clickedLabel === newLabel){
+        return;
+      }
+      const g6Item = this.g6graph ? this.g6graph.find('node', node => node._cfg.model.isPlaceholder) : null;
+      if(g6Item){
+        this.g6graph.updateItem(g6Item, {
+          label: newLabel,
+        });
+      }
+      this.$emit("updatePlaceholderNodeTableLabel", newLabel);
+      this.clickedLabel = newLabel;
     },
 
     dropTable(tableName) {

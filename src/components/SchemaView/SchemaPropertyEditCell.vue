@@ -56,11 +56,32 @@
         </div>
       </div>
 
-      <div v-if="isStruct">
+      <div v-if="isStruct || isUnion">
         <br />
         <div class="input-group">
           <span class="input-group-text">Fields</span>
           <textarea class="form-control" v-model="currProperty.fields" rows="3" />
+        </div>
+      </div>
+
+      <div v-if="isMap">
+        <br />
+        <div class="input-group flex-nowrap">
+          <span class="input-group-text">Key Type</span>
+          <select class="form-select" v-model="currProperty.keyType">
+            <option v-for="dataType in basicTypes" :value="dataType" :key="dataType">
+              {{ dataType }}
+            </option>
+          </select>
+        </div>
+        <br />
+        <div class="input-group flex-nowrap">
+          <span class="input-group-text">Value Type</span>
+          <select class="form-select" v-model="currProperty.valueType">
+            <option v-for="dataType in basicTypes" :value="dataType" :key="dataType">
+              {{ dataType }}
+            </option>
+          </select>
         </div>
       </div>
 
@@ -71,6 +92,18 @@
           <input type="text" class="form-control" v-model="defaultValue" />
         </div>
       </div>
+
+      <div v-if="isNewTable">
+        <br />
+        <div class="form-check form-switch">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            v-model="currProperty.isPrimaryKey"
+          />
+          <label class="form-check-label"> Primary Key </label>
+        </div>
+      </div>
     </div>
 
     <div>
@@ -78,7 +111,7 @@
         type="button"
         class="btn btn-sm btn-outline-primary"
         title="Save"
-        @click="handleSave"
+        @click="save"
       >
         <i class="fa-solid fa-check"></i>
         Save
@@ -155,7 +188,7 @@ export default {
           this.currProperty.fields = this.currProperty.fields || 'a INT64, b STRING';
         }
         if (val === DATA_TYPES.UNION) {
-          this.currProperty.fields = this.currProperty.fields || '';
+          this.currProperty.fields = this.currProperty.fields || 'a INT64, b STRING';
         }
       },
       immediate: true,
@@ -174,6 +207,12 @@ export default {
     },
     isStruct() {
       return this.currProperty.type && this.currProperty.type === DATA_TYPES.STRUCT;
+    },
+    isUnion() {
+      return this.currProperty.type && this.currProperty.type === DATA_TYPES.UNION;
+    },
+    isMap() {
+      return this.currProperty.type && this.currProperty.type === DATA_TYPES.MAP;
     },
   },
   methods: {
@@ -317,8 +356,12 @@ export default {
       return this.defaultValue;
     },
 
-    handleSave() {
+    save() {
       this.$emit('save', this.property, this.packProperty(this.currProperty), this.getDefaultValue());
+    },
+
+    cancelPrimaryKey() {
+      this.currProperty.isPrimaryKey = false;
     }
   },
   mounted() {

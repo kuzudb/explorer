@@ -158,6 +158,18 @@ export default {
       this.statement = statement;
       this.showModal();
     },
+    addNewTable(table, properties) {
+      this.reset();
+      const pk = properties.find(p => p.isPrimaryKey);
+      this.currentAction = {
+        type: SCHEMA_ACTION_TYPES.ADD_NODE_TABLE,
+        primaryKey: pk ? pk.name : null,
+        table,
+      };
+      const statement = DataDefinitionLanguage.addNodeTable(table, properties);
+      this.statement = statement;
+      this.showModal();
+    },
   },
   mounted() {
     this.modal = new Modal(this.$refs.modal);

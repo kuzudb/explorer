@@ -57,6 +57,7 @@
         :navbarHeight="navbarHeight"
         @reloadSchema="reloadSchema"
         @addPlaceholderNodeTable="addPlaceholderNodeTable"
+        @updatePlaceholderNodeTableLabel="updatePlaceholderNodeTable"
       />
       <ShellMainView v-show="showShell" :schema="schema" :navbarHeight="navbarHeight" />
       <SettingsMainView :schema="schema" ref="settings" v-if="showSettings" />
@@ -106,7 +107,12 @@ export default {
       this.schema.nodeTables.push({
         name: tableName,
         properties: [],
+        isPlaceholder: true,
       });
+    },
+    updatePlaceholderNodeTable(name) {
+      const table = this.schema.nodeTables.find((t) => t.isPlaceholder);
+      table.name = name;
     },
     hideAll() {
       this.showSchema = false;
