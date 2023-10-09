@@ -16,7 +16,7 @@ There is an option to load the database with bundled datasets to explore the bas
 - Server
   - [Node.js](https://nodejs.org)
   - [Express.js](https://expressjs.com/)
-  - Kùzu
+  - [Kùzu](https://kuzudb.com)
 - Client
   - [Vue 3](https://vuejs.org/)
   - [Bootstrap 5](https://getbootstrap.com/docs/5.0/)
