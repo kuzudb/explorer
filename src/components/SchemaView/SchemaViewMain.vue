@@ -158,6 +158,7 @@ export default {
     graphVizSettings() {
       this.handleSettingsChange();
     },
+
     schema(value, oldValue) {
       const oldNodes = oldValue ? oldValue.nodeTables.map(n => n.name) : [];
       const newNodes = value ? value.nodeTables.map(n => n.name) : [];
@@ -379,7 +380,7 @@ export default {
             _label: r.name,
             isPlaceholder: Boolean(r.isPlaceholder),
             style: {
-              stroke: this.getColor(r.name),
+              stroke: r.isPlaceholder ? this.getColor(PLACEHOLDER_REL_TABLE) : this.getColor(r.name),
             }
           };
           if(!edge.source || !edge.target) {
@@ -434,10 +435,15 @@ export default {
       else if (action.type === SCHEMA_ACTION_TYPES.ADD_NODE_TABLE) {
         this.settingsStore.renameNodeTable(PLACEHOLDER_NODE_TABLE, action.table);
         this.settingsStore.updateNodeTableLabel(action.table, action.primaryKey);
-        this.cancelAdd();
+        this.$nextTick(() => {
+          this.cancelAdd();
+        });
+
       }else if(action.type === SCHEMA_ACTION_TYPES.ADD_REL_TABLE){
         this.settingsStore.renameRelTable(PLACEHOLDER_REL_TABLE, action.table);
-        this.cancelAdd();
+        this.$nextTick(() => {
+          this.cancelAdd();
+        });
       }
     },
 
@@ -628,14 +634,14 @@ export default {
     },
 
     updatePlaceholderRelTable(newTable){
+      this.$emit("updatePlaceholderRelTable", newTable);
+      this.clickedLabel = newTable.name;
       const g6Item = this.g6graph ? this.g6graph.find('edge', edge => edge._cfg.model.isPlaceholder) : null;
+      // If the edge has not been created yet, and the user has not selected a source and destination, do nothing
       if(!g6Item && (!newTable.src || !newTable.dst)){
-        // If the edge has not been created yet, and the user has not selected a source and destination, do nothing
         return;
       }
       // If the edge has been created and only the label has changed, update the label and return
-      this.$emit("updatePlaceholderRelTable", newTable);
-      this.clickedLabel = newTable.name;
       if(g6Item && g6Item._cfg.model.src === newTable.src && g6Item._cfg.model.dst === newTable.dst){
         this.g6graph.updateItem(g6Item, {
           label: newTable.name,
@@ -730,6 +736,7 @@ export default {
     this.computeGraphHeight();
     window.addEventListener("resize", this.handleResize);
   },
+
   beforeUnmount() {
     if (this.g6graph) {
       this.g6graph.destroy();
