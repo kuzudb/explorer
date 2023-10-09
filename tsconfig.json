@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "module": "ES2022",
+        "target": "ES2022",
+        "moduleResolution": "node",
+        "noEmit": true,
+        "removeComments": false,
+        "noImplicitAny": true,
+        "noImplicitOverride": false,
+        "sourceMap": true,
+        "inlineSources": true,
+        "isolatedModules": false,
+        "allowSyntheticDefaultImports": false,
+        "strictNullChecks": true
+    },
+    "include": [
+        "src/**/*.ts",
+    ]
+}
