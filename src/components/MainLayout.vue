@@ -63,6 +63,12 @@
       />
       <ShellMainView v-show="showShell" :schema="schema" :navbarHeight="navbarHeight" />
       <SettingsMainView :schema="schema" ref="settings" v-if="showSettings" />
+      <DatasetMainView
+        v-show="showLoader"
+        :schema="schema"
+        :navbarHeight="navbarHeight"
+        @reloadSchema="reloadSchema"
+      />
     </div>
   </div>
 </template>
@@ -71,6 +77,7 @@
 import SchemaViewMain from "./SchemaView/SchemaViewMain.vue";
 import ShellMainView from "./ShellView/ShellMainView.vue";
 import SettingsMainView from "./SettingsView/SettingsMainView.vue"
+import DatasetMainView from "./DatasetView/DatasetMainView.vue"
 import Axios from "axios";
 import { useSettingsStore } from "../store/SettingsStore";
 import { mapActions } from 'pinia'
@@ -81,6 +88,7 @@ export default {
     SchemaViewMain,
     ShellMainView,
     SettingsMainView,
+    DatasetMainView
   },
   data: () => ({
     showSchema: false,
@@ -101,9 +109,15 @@ export default {
       });
       this.schema = schema;
     },
-    async reloadSchema() {
+    async reloadSchema(rerender) {
       await this.getSchema();
       this.removeTablesBySchema(this.schema);
+      if(rerender){
+        this.initDefaultSettings(this.schema);
+      }
+      if(rerender && this.$refs.schemaView){
+        this.$refs.schemaView.handleSettingsChange();
+      }
     },
     addPlaceholderNodeTable(tableName) {
       this.schema.nodeTables.push({

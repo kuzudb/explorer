@@ -250,17 +250,18 @@ export default {
     getPlaceholderRelLabel() {
       return this.schema.relTables.find(t => t.isPlaceholder).name;
     },
-  },
-  mounted() {
-    this.modal = new Modal(this.$refs.modal);
-    this.$refs.modal.addEventListener('hidden.bs.modal', () => {
+    resetSettings() {
       // Bootstrap modal can also be closed by clicking outside of the modal.
       // This way ensures that we can get the event when the modal is closed.
       this.currentSettings = {};
-    });
+    },
+  },
+  mounted() {
+    this.modal = new Modal(this.$refs.modal);
+    this.$refs.modal.addEventListener('hidden.bs.modal', this.resetSettings);
   },
   beforeUnmount() {
-    this.$refs.modal.removeEventListener('hidden.bs.modal');
+    this.$refs.modal.removeEventListener('hidden.bs.modal', this.resetSettings);
     this.modal.dispose();
   },
 }

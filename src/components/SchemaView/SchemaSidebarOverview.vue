@@ -39,6 +39,11 @@
               </div>
             </td>
           </tr>
+          <tr v-if="schema.nodeTables.length === 0">
+            <td colspan="2">
+              There is no node table in this schema. Click "Add" to add one.
+            </td>
+          </tr>
         </tbody>
       </table>
       <br />
@@ -84,6 +89,11 @@
                 <i class="fa-solid fa-trash-can"></i>
               </button>
             </div>
+          </td>
+        </tr>
+        <tr v-if="schema.relTables.length === 0">
+          <td colspan="2">
+            There is no rel table in this schema. Click "Add" to add one.
           </td>
         </tr>
       </tbody>

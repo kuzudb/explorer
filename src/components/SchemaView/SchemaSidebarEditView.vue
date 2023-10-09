@@ -102,6 +102,7 @@
               :colspan="3"
               :isNewProperty="true"
               :isNewTable="false"
+              :isNodeTable="isNode"
               @cancel="cancelAddMode"
               @save="addProperty"
               v-if="addingProperty"
