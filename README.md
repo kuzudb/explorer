@@ -1,24 +1,70 @@
 # kuzu-ui
+Browser-based user interface for Kùzu graph database.
 
-## Project setup
+## Get start
+```bash
+docker run -p 8000:8000 \
+           -v {path to database file}:/database \
+           -v {path to additional data files}:/data \
+           --rm kuzudb/kuzu-ui:latest
 ```
-npm install
+Note that the `-v` flags are optional. If no database file is specified, the server will be started with an empty database. 
+There is an option to load the database with bundled datasets to explore the basic functionalities of Kùzu.
+
+## Development (with Kùzu compiled from source)
+### Stack
+- Server
+  - [Node.js](https://nodejs.org)
+  - [Express.js](https://expressjs.com/)
+  - Kùzu
+- Client
+  - [Vue 3](https://vuejs.org/)
+  - [Bootstrap 5](https://getbootstrap.com/docs/5.0/)
+  - [Monaco Editor](https://microsoft.github.io/monaco-editor/)
+  - [G6](https://github.com/antvis/G6)
+
+### Prerequisite
+- [Node.js v20](https://nodejs.org/dist/latest-v20.x/)
+- [JDK 11+](https://jdk.java.net/11/)
+- [Toolchain for building Kùzu](https://kuzudb.com/docusaurus/development/building-kuzu)
+
+### Environment setup
+#### Download and compile Kùzu
+```bash
+git submodule update --init --recursive
+npm run build-kuzu 
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
+#### Install Node.js dependencies
+```bash
+npm i
 ```
 
-### Compiles and minifies for production
+#### Generate grammar files
+```bash
+npm run generate-grammar
 ```
+
+### Run development server (with hot-reloading)
+```
+env KUZU_PATH={path to database file} npm run serve
+```
+
+## Build and serve for production
+### Run production server locally
+```bash
 npm run build
+env KUZU_PATH={path to database file} npm run serve-prod
 ```
 
-### Lints and fixes files
+### Run production server with Docker
 ```
-npm run lint
+docker build -t kuzudb/kuzu-ui:latest .
+docker run -p 8000:8000 \
+           -v {path to database file}:/database \
+           -v {path to additional data files}:/data \
+           --rm kuzudb/kuzu-ui:latest
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Deployment
+A [GitHub actions pipeline]()
