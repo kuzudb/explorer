@@ -70,3 +70,6 @@ docker run -p 8000:8000 \
 A [GitHub actions pipeline](.github/workflows/build-and-deploy.yml) has been configured to automatically build and deploy 
 the Docker image to [Docker Hub](https://hub.docker.com/) upon pushing to the master branch. The pipeline will build images
 for both `amd64` and `arm64` platforms.
+
+## Contributing
+We welcome contributions to kuzu-ui. By contributing to kuzu-ui, you agree that your contributions will be licensed under the [MIT License](LICENSE).
