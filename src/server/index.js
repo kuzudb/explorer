@@ -1,6 +1,17 @@
 const express = require("express");
 const api = require("./API");
 const path = require("path");
+const process = require("process");
+
+process.on("SIGINT", () => {
+  console.log("SIGINT received, exiting");
+  process.exit(0);
+});
+
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received, exiting");
+  process.exit(0);
+});
 
 const app = express();
 const PORT = 8000;
