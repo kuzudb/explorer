@@ -46,7 +46,7 @@
 
     <div class="d-flex justify-content-between">
       <h5>Rel Tables</h5>
-      <button class="btn btn-sm btn-primary">Add</button>
+      <button class="btn btn-sm btn-primary" @click="$emit('addRelTable')">Add</button>
     </div>
     <hr />
     <table

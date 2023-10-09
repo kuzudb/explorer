@@ -44,6 +44,7 @@ export const SCHEMA_ACTION_TYPES = {
   RENAME_PROPERTY: "renameProperty",
   ADD_PROPERTY: "addProperty",
   ADD_NODE_TABLE: "addNodeTable",
+  ADD_REL_TABLE: "addRelTable",
 };
 
 export const UI_SIZE = {
@@ -59,4 +60,5 @@ export const SHOW_REL_LABELS_OPTIONS = {
   NEVER: "NEVER",
 };
 
-export const PLACEHOLDER = "__placeholder__";
+export const PLACEHOLDER_NODE_TABLE = "__placeholder_node_table__";
+export const PLACEHOLDER_REL_TABLE = "__placeholder_rel_table__";

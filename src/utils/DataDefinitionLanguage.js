@@ -69,6 +69,29 @@ class DataDefinitionLanguage {
     result += ");";
     return result;
   }
+
+  addRelTable(tableName, properties, src, dst) {
+    tableName = this._escapeName(tableName);
+    src = this._escapeName(src);
+    dst = this._escapeName(dst);
+    let result = `CREATE REL TABLE ${tableName} (\n`;
+    result += `  FROM ${src} TO ${dst},\n`;
+    if (properties.length === 0) {
+      result = result.slice(0, -2);
+      result += "\n";
+    } else {
+      properties.forEach((property) => {
+        const columnName = this._escapeName(property.name);
+        const columnType = this._fixColumnType(property.type);
+        let columnString = `  ${columnName} ${columnType},\n`;
+        result += columnString;
+      });
+      result = result.slice(0, -2);
+      result += "\n";
+    }
+    result += ");";
+    return result;
+  }
 }
 
 const ddl = new DataDefinitionLanguage();

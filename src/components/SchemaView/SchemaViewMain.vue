@@ -58,6 +58,7 @@
         @dropTable="dropTable"
         @editTable="enterEditTableMode"
         @addNodeTable="enterAddNodeTableMode"
+        @addRelTable="enterAddRelTableMode"
       />
       <SchemaSidebarHoverView
         :schema="schema"
@@ -84,7 +85,8 @@
         v-if="clickedLabel !== null && clickedIsNewTable"
         @discard="cancelAdd"
         @save="addNewTable"
-        @updateLabel="updatePlaceholderTableLabel"
+        @updateNodeTableLabel="updatePlaceholderNodeTableLabel"
+        @updatePlaceholderRelTable="updatePlaceholderRelTable"
         ref="addView"
       />
     </div>
@@ -98,7 +100,7 @@
 
 <script lang="js">
 import G6 from '@antv/g6';
-import { UI_SIZE, SHOW_REL_LABELS_OPTIONS, SCHEMA_ACTION_TYPES, PLACEHOLDER } from "../../utils/Constants";
+import { UI_SIZE, SHOW_REL_LABELS_OPTIONS, SCHEMA_ACTION_TYPES, PLACEHOLDER_NODE_TABLE, PLACEHOLDER_REL_TABLE } from "../../utils/Constants";
 import G6Utils from "../../utils/G6Utils";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
@@ -362,7 +364,7 @@ export default {
           isPlaceholder: Boolean(n.isPlaceholder),
           style: {
             fill:
-            n.isPlaceholder ? this.getColor(PLACEHOLDER) : this.getColor(n.name),
+            n.isPlaceholder ? this.getColor(PLACEHOLDER_NODE_TABLE) : this.getColor(n.name),
           },
         };
       })
@@ -375,10 +377,14 @@ export default {
             target: r.dst,
             label: this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.ALWAYS ? r.name : "",
             _label: r.name,
+            isPlaceholder: Boolean(r.isPlaceholder),
             style: {
               stroke: this.getColor(r.name),
             }
           };
+          if(!edge.source || !edge.target) {
+            return null;
+          }
           const hashKey = `${r.src}-${r.dst}`;
           if (!overlapEdgeHash[hashKey]) {
             overlapEdgeHash[hashKey] = 0;
@@ -397,8 +403,8 @@ export default {
             edge.curveOffset = ARC_CURVE_OFFSETS[(overlapEdgeHash[hashKey] - 1) % ARC_CURVE_OFFSETS.length];
           }
           return edge;
-        });
-      return { nodes, edges };
+        }).filter(e => Boolean(e));
+        return { nodes, edges };
     },
 
     handleResize() {
@@ -426,8 +432,11 @@ export default {
         this.$refs.editView.cancelAddMode();
       }
       else if (action.type === SCHEMA_ACTION_TYPES.ADD_NODE_TABLE) {
-        this.settingsStore.renameNodeTable(PLACEHOLDER, action.table);
+        this.settingsStore.renameNodeTable(PLACEHOLDER_NODE_TABLE, action.table);
         this.settingsStore.updateNodeTableLabel(action.table, action.primaryKey);
+        this.cancelAdd();
+      }else if(action.type === SCHEMA_ACTION_TYPES.ADD_REL_TABLE){
+        this.settingsStore.renameRelTable(PLACEHOLDER_REL_TABLE, action.table);
         this.cancelAdd();
       }
     },
@@ -563,7 +572,7 @@ export default {
         counter += 1;
       }
       this.$emit("addPlaceholderNodeTable", newTableName);
-      this.settingsStore.addNewNodeTable(PLACEHOLDER);
+      this.settingsStore.addNewNodeTable(PLACEHOLDER_NODE_TABLE);
       this.$nextTick(() => {
         this.handleSettingsChange();
         this.setG6Click(newTableName);
@@ -573,18 +582,38 @@ export default {
       this.clickedIsNewTable = true;
     },
 
+
+    enterAddRelTableMode(){
+      let newTableName = "NewRelTable";
+      this.clickedIsNewTable = true;
+      let counter = 1;
+      while (this.schema.relTables.find(t => t.name === newTableName)) {
+        newTableName = `NewRelTable-${counter}`;
+        counter += 1;
+      }
+      this.$emit("addPlaceholderRelTable", newTableName);
+      this.settingsStore.addNewRelTable(PLACEHOLDER_REL_TABLE);
+      this.clickedLabel = newTableName;
+      this.clickedIsNode = false;
+      this.clickedIsNewTable = true;
+    },
+
     cancelAdd(){
-      this.$emit("removePlaceholderNodeTable", this.clickedLabel);
-      this.settingsStore.removeNodeTable(PLACEHOLDER);
+      if(this.clickedIsNode){
+        this.settingsStore.removeNodeTable(PLACEHOLDER_NODE_TABLE);
+      }
+      else{
+        this.settingsStore.removeRelTable(PLACEHOLDER_REL_TABLE);
+      }
       this.resetClick();
       this.reloadSchema();
     },
 
-    addNewTable(table, properties) {
-      this.$refs.actionDialog.addNewTable(table, properties);
+    addNewTable(table, properties, src, dst) {
+      this.$refs.actionDialog.addNewTable(table, properties, this.clickedIsNode, src, dst);
     },
 
-    updatePlaceholderTableLabel(newLabel){
+    updatePlaceholderNodeTableLabel(newLabel){
       if(this.clickedLabel === newLabel){
         return;
       }
@@ -596,6 +625,27 @@ export default {
       }
       this.$emit("updatePlaceholderNodeTableLabel", newLabel);
       this.clickedLabel = newLabel;
+    },
+
+    updatePlaceholderRelTable(newTable){
+      const g6Item = this.g6graph ? this.g6graph.find('edge', edge => edge._cfg.model.isPlaceholder) : null;
+      if(!g6Item && (!newTable.src || !newTable.dst)){
+        // If the edge has not been created yet, and the user has not selected a source and destination, do nothing
+        return;
+      }
+      // If the edge has been created and only the label has changed, update the label and return
+      this.$emit("updatePlaceholderRelTable", newTable);
+      this.clickedLabel = newTable.name;
+      if(g6Item && g6Item._cfg.model.src === newTable.src && g6Item._cfg.model.dst === newTable.dst){
+        this.g6graph.updateItem(g6Item, {
+          label: newTable.name,
+        });
+        return;
+      }
+      // Rerender the graph to update the edge
+      this.$nextTick(() => {
+        this.handleSettingsChange();
+      });
     },
 
     dropTable(tableName) {

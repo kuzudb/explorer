@@ -93,7 +93,7 @@
         </div>
       </div>
 
-      <div v-if="isNewTable">
+      <div v-if="isNewTable && isNodeTable">
         <br />
         <div class="form-check form-switch">
           <input
@@ -163,6 +163,11 @@ export default {
       default: false,
     },
     isNewTable: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    isNodeTable: {
       type: Boolean,
       required: true,
       default: false,

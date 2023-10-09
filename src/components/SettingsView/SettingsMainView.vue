@@ -22,7 +22,11 @@
                 :key="index"
               >
                 <td>
-                  {{ node.name === placeholder ? getPlaceholderNodeLabel() : node.name }}
+                  {{
+                    node.name === placeholderNodeTable
+                      ? getPlaceholderNodeLabel()
+                      : node.name
+                  }}
                 </td>
                 <td>
                   <input
@@ -70,7 +74,11 @@
 
             <tbody>
               <tr v-for="(rel, key, index) in currentSettings.graphViz.rels" :key="index">
-                <td>{{ rel.name }}</td>
+                <td>
+                  {{
+                    rel.name === placeholderRelTable ? getPlaceholderRelLabel() : rel.name
+                  }}
+                </td>
                 <td>
                   <input
                     type="color"
@@ -167,7 +175,7 @@
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia';
 import { Modal } from 'bootstrap';
-import { SHOW_REL_LABELS_OPTIONS, PLACEHOLDER } from "../../utils/Constants";
+import { SHOW_REL_LABELS_OPTIONS, PLACEHOLDER_NODE_TABLE, PLACEHOLDER_REL_TABLE } from "../../utils/Constants";
 
 export default {
   name: "SettingsMainView",
@@ -176,7 +184,8 @@ export default {
     currentSettings: {},
     modal: null,
     showRelLabelsOptions: SHOW_REL_LABELS_OPTIONS,
-    placeholder: PLACEHOLDER,
+    placeholderNodeTable: PLACEHOLDER_NODE_TABLE,
+    placeholderRelTable: PLACEHOLDER_REL_TABLE,
   }),
   props: {
     schema: {
@@ -210,8 +219,9 @@ export default {
       });
     },
     getCaptionOptions(entity, isNode) {
-      console.log(entity);
-      const name = entity.name === this.placeholder ? this.getPlaceholderNodeLabel() : entity.name;
+      const name = entity.name === this.placeholderNodeTable ? this.getPlaceholderNodeLabel() :
+        (entity.name === this.placeholderRelTable ?
+          this.getPlaceholderRelLabel() : entity.name);
       const properties = (isNode ? this.schema.nodeTables : this.schema.relTables)
         .find(
           (table) => table.name === name
@@ -236,6 +246,9 @@ export default {
     },
     getPlaceholderNodeLabel() {
       return this.schema.nodeTables.find(t => t.isPlaceholder).name;
+    },
+    getPlaceholderRelLabel() {
+      return this.schema.relTables.find(t => t.isPlaceholder).name;
     },
   },
   mounted() {

@@ -8,40 +8,14 @@
             type="text"
             class="form-control"
             v-model="currLabel"
-            @keyup.enter="$emit('save', label)"
             :style="{
               backgroundColor: ` ${getColor()} !important`,
-              color: '#ffffff',
+              color: isNode ? '#ffffff' : '#000000',
             }"
           />
         </div>
       </h5>
       <hr />
-
-      <div v-if="!isNode">
-        <h6>
-          <span
-            class="badge bg-primary"
-            :style="{
-              backgroundColor: ` ${getColor(source)} !important`,
-            }"
-          >
-            {{ source }}
-          </span>
-          &nbsp;
-          <i class="fa-solid fa-arrow-right"></i>
-          &nbsp;
-          <span
-            class="badge bg-primary"
-            :style="{
-              backgroundColor: ` ${getColor(destination)} !important`,
-            }"
-          >
-            {{ destination }}
-          </span>
-        </h6>
-        <br />
-      </div>
 
       <div class="schema_side-panel__add-table-actions-container">
         <button
@@ -83,6 +57,34 @@
       </div>
       <br />
 
+      <div v-if="!isNode">
+        <div class="input-group flex-nowrap">
+          <span class="input-group-text">From</span>
+          <select class="form-select" v-model="currSrc" :style="getSelectStyle(currSrc)">
+            <option
+              v-for="option in relTableSrcAndDstOptions"
+              :value="option.value"
+              :key="option.text"
+            >
+              {{ option.text }}
+            </option>
+          </select>
+        </div>
+        <div class="input-group flex-nowrap">
+          <span class="input-group-text">To</span>
+          <select class="form-select" v-model="currDst" :style="getSelectStyle(currDst)">
+            <option
+              v-for="option in relTableSrcAndDstOptions"
+              :value="option.value"
+              :key="option.text"
+            >
+              {{ option.text }}
+            </option>
+          </select>
+        </div>
+        <br />
+      </div>
+
       <table
         class="table table-sm table-bordered schema_side-panel__add-table"
         v-if="schema"
@@ -107,6 +109,7 @@
               :colspan="3"
               :isNewProperty="true"
               :isNewTable="true"
+              :isNodeTable="isNode"
               :ref="'editCell-' + property.id"
               v-if="property.isEditing"
               @save="(...args) => saveProperty(property.id, ...args)"
@@ -152,7 +155,7 @@
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
 import SchemaPropertyEditCell from "./SchemaPropertyEditCell.vue";
-import { DATA_TYPES, PLACEHOLDER } from "../../utils/Constants";
+import { DATA_TYPES, PLACEHOLDER_NODE_TABLE, PLACEHOLDER_REL_TABLE } from "../../utils/Constants";
 import { v4 as uuidv4 } from "uuid";
 export default {
   name: "SchemaSidebarAddView",
@@ -178,8 +181,12 @@ export default {
       id: null
     },
     currLabel: "",
-    originalLabel: "",
     currProperties: [],
+    currSrc: null,
+    currDst: null,
+    placeholderNodeTable: PLACEHOLDER_NODE_TABLE,
+    placeholderRelTable: PLACEHOLDER_REL_TABLE,
+    currLabelInputDebounce: null,
   }),
   props: {
     schema: {
@@ -197,34 +204,54 @@ export default {
   },
   watch: {
     currLabel() {
-      this.$emit("updateLabel", this.currLabel);
-    }
+      clearTimeout(this.currLabelInputDebounce);
+      this.currLabelInputDebounce = setTimeout(() => {
+        if(this.isNode){
+        this.$emit("updateNodeTableLabel", this.currLabel);
+        } else {
+          this.updatePlaceholderRelTable();
+        }
+      }, 300);
+    },
+    currSrc() {
+      this.updatePlaceholderRelTable();
+    },
+    currDst() {
+      this.updatePlaceholderRelTable();
+    },
   },
   computed: {
     ...mapStores(useSettingsStore),
-    source() {
-      if (!this.schema || !this.label || this.isNode) {
-        return null;
+    relTableSrcAndDstOptions() {
+      const result = [
+        {
+          value: null,
+          text: "Select a node table",
+        }
+      ];
+      if (!this.schema) {
+        return result;
       }
-      return this.schema.relTables.find(t => t.name === this.label).src;
-    },
-
-    destination() {
-      if (!this.schema || !this.label || this.isNode) {
-        return null;
+      for (let i = 0; i < this.schema.nodeTables.length; ++i) {
+        result.push({
+          value: this.schema.nodeTables[i].name,
+          text: this.schema.nodeTables[i].name,
+        });
       }
-      return this.schema.relTables.find(t => t.name === this.label).dst;
+      return result;
     },
   },
   methods: {
     getColor(label) {
-      if(!label) {
-        return this.settingsStore.colorForLabel(PLACEHOLDER)
+      if (!label) {
+        return this.isNode ?
+          this.settingsStore.colorForLabel(this.placeholderNodeTable) :
+          this.settingsStore.colorForLabel(this.placeholderRelTable);
       }
       return this.settingsStore.colorForLabel(label);
     },
     addProperty() {
-      const newProperty = {...this.defaultNewProperty};
+      const newProperty = { ...this.defaultNewProperty };
       newProperty.id = uuidv4();
       this.currProperties.unshift(newProperty);
     },
@@ -235,7 +262,7 @@ export default {
         }
       }
       this.$nextTick(() => {
-        this.$emit("save", this.currLabel, this.currProperties);
+        this.$emit("save", this.currLabel, this.currProperties, this.currSrc, this.currDst);
       });
     },
     discardTable() {
@@ -256,15 +283,15 @@ export default {
       this.currProperties[i].isEditing = false;
       this.currProperties[i].isNew = false;
       if (this.currProperties[i].isPrimaryKey) {
-       for (let j = 0; j < this.currProperties.length; ++j) {
-         if (i !== j) {
-           this.currProperties[j].isPrimaryKey = false;
-           if(this.currProperties[j].isEditing) {
+        for (let j = 0; j < this.currProperties.length; ++j) {
+          if (i !== j) {
+            this.currProperties[j].isPrimaryKey = false;
+            if (this.currProperties[j].isEditing) {
               const jId = this.currProperties[j].id;
               this.$refs["editCell-" + jId][0].cancelPrimaryKey();
-           }
-         }
-       }
+            }
+          }
+        }
       }
     },
     cancelEditMode(id) {
@@ -274,11 +301,31 @@ export default {
         this.dropProperty(id);
       }
     },
-
+    getSelectStyle(value) {
+      if (!value) {
+        return {
+          backgroundColor: "#ffffff",
+          color: "#000000",
+        };
+      }
+      return {
+        backgroundColor: this.getColor(value),
+        color: "#ffffff",
+      };
+    },
+    updatePlaceholderRelTable() {
+      const src = this.currSrc;
+      const dst = this.currDst;
+      const name = this.currLabel;
+      this.$emit("updatePlaceholderRelTable", { src, dst, name });
+    },
   },
   mounted() {
     this.currLabel = this.label;
-    const primaryKey = {...this.defaultPrimaryKey};
+    if(!this.isNode){
+      return;
+    }
+    const primaryKey = { ...this.defaultPrimaryKey };
     primaryKey.id = uuidv4();
     this.currProperties.push(primaryKey);
   },

@@ -158,15 +158,24 @@ export default {
       this.statement = statement;
       this.showModal();
     },
-    addNewTable(table, properties) {
+    addNewTable(table, properties, isNodeTable, src, dst) {
       this.reset();
+      if(isNodeTable){
       const pk = properties.find(p => p.isPrimaryKey);
       this.currentAction = {
         type: SCHEMA_ACTION_TYPES.ADD_NODE_TABLE,
         primaryKey: pk ? pk.name : null,
         table,
       };
-      const statement = DataDefinitionLanguage.addNodeTable(table, properties);
+    } else {
+      this.currentAction = {
+        type: SCHEMA_ACTION_TYPES.ADD_REL_TABLE,
+        table,
+      };
+    }
+      const statement = isNodeTable ?
+        DataDefinitionLanguage.addNodeTable(table, properties) :
+        DataDefinitionLanguage.addRelTable(table, properties, src, dst);
       this.statement = statement;
       this.showModal();
     },

@@ -197,6 +197,17 @@ export const useSettingsStore = defineStore("settings", {
       this.graphViz.nodes[name] = nodeSettings;
     },
 
+    addNewRelTable(name) {
+      const relDefault = this.graphViz.default.rel;
+      const g6Settings = JSON.parse(JSON.stringify(relDefault));
+      const relSettings = {
+        name,
+        g6Settings,
+        label: "_label",
+      };
+      this.graphViz.rels[name] = relSettings;
+    },
+
     removeNodeTable(label) {
       delete this.graphViz.nodes[label];
     },
@@ -214,6 +225,19 @@ export const useSettingsStore = defineStore("settings", {
       const node = this.graphViz.nodes[name];
       if (node) {
         node.label = label;
+      }
+    },
+
+    removeRelTable(label) {
+      delete this.graphViz.rels[label];
+    },
+
+    renameRelTable(oldName, newName) {
+      const rel = this.graphViz.rels[oldName];
+      if (rel) {
+        rel.name = newName;
+        this.graphViz.rels[newName] = rel;
+        delete this.graphViz.rels[oldName];
       }
     },
   },
