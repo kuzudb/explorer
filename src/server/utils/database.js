@@ -1,16 +1,21 @@
 const path = require("path");
-const kuzuPath = path.join(
-  __dirname,
-  "..",
-  "..",
-  "..",
-  "kuzu",
-  "tools",
-  "nodejs_api",
-  "build/"
-);
-const kuzu = require(kuzuPath);
 const process = require("process");
+let kuzu;
+if (process.env.NODE_ENV !== "production") {
+  const kuzuPath = path.join(
+    __dirname,
+    "..",
+    "..",
+    "..",
+    "kuzu",
+    "tools",
+    "nodejs_api",
+    "build/"
+  );
+  kuzu = require(kuzuPath);
+} else {
+  kuzu = require("kuzu");
+}
 const os = require("os");
 
 class Database {

@@ -122,8 +122,7 @@ export default {
 
       const editorContainer = this.$refs.editor;
       this.editor = window.Monaco.editor.create(editorContainer, {
-        // value: "",
-        value: "MATCH (p:person) -[w:workAt]-> (o:organisation) RETURN p, w, o;",
+        value: "",
         language: "cypher",
         theme: "vs-light",
         automaticLayout: true,

@@ -3,6 +3,7 @@ const router = express.Router();
 const path = require("path");
 const posixPath = require("path/posix");
 const fs = require("fs/promises");
+const process = require("process");
 const database = require("./utils/database");
 
 const DATASETS_TO_SHOW = {
@@ -17,6 +18,9 @@ const SCHEMA_FILE = "schema.cypher";
 const COPY_FILE = "copy.cypher";
 
 const getBasePath = () => {
+  if(process.env.NODE_ENV === "production") {
+    return path.join(__dirname, "..", "..", "node_modules", "kuzu", "kuzu-source", "dataset");
+  }
   return path.join(__dirname, "..", "..", "kuzu", "dataset");
 };
 

@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "serve": "nodemon --exec \"vue-cli-service serve\"",
-    "build": "vue-cli-service build",
+    "serve-prod": "NODE_ENV=production node src/server/index.js",
+    "build": "KUZU_PATH=. vue-cli-service build",
     "lint": "vue-cli-service lint",
     "build-kuzu": "cd kuzu/tools/nodejs_api/ && npm i && cd ../.. && make nodejs NUM_THREADS=$(node -e \"console.log(require('os').cpus().length)\")",
+    "generate-grammar-prod": "rm -rf src/utils/CypherParser/ && cp node_modules/kuzu/kuzu-source/src/antlr4/Cypher.g4 ./ && npx antlr4ng-cli -o src/utils/CypherParser -Dlanguage=TypeScript -no-visitor -no-listener Cypher.g4 && rm Cypher.g4 && cd src/utils/CypherParser && mv CypherParser.ts CypherParserOld.ts && grep -v \"notify\" CypherParserOld.ts > CypherParser.ts && rm CypherParserOld.ts",
     "generate-grammar": "rm -rf src/utils/CypherParser/ && cp kuzu/src/antlr4/Cypher.g4 ./ && npx antlr4ng-cli -o src/utils/CypherParser -Dlanguage=TypeScript -no-visitor -no-listener Cypher.g4 && rm Cypher.g4 && cd src/utils/CypherParser && mv CypherParser.ts CypherParserOld.ts && grep -v \"notify\" CypherParserOld.ts > CypherParser.ts && rm CypherParserOld.ts"
   },
   "dependencies": {
@@ -18,6 +20,7 @@
     "bootstrap": "^5.3.1",
     "core-js": "^3.8.3",
     "express": "^4.18.2",
+    "kuzu": "0.0.9",
     "moment": "^2.29.4",
     "monaco-editor": "^0.41.0",
     "monaco-themes": "^0.4.4",

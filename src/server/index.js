@@ -1,9 +1,14 @@
 const express = require("express");
 const api = require("./API");
+const path = require("path");
 
-const server = express();
+const app = express();
+const PORT = 8000;
+app.use(express.json({ limit: "16mb" }));
+app.use("/api", api);
+const distPath = path.join(__dirname, "..", "..", "dist");
+app.use("/", express.static(distPath));
 
-server.use(express.json({ limit: "16mb" }));
-server.use("/api", api);
-
-module.exports = server;
+app.listen(PORT, () => {
+  console.log("Deployed server started on port:", PORT);
+});
