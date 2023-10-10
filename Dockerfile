@@ -1,8 +1,16 @@
-FROM ubuntu:22.04
+FROM debian:bookworm-slim
+
+ARG SKIP_GRAMMAR=false
+ARG SKIP_BUILD_APP=false
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN echo "SKIP_GRAMMAR: $SKIP_GRAMMAR"
+RUN echo "SKIP_BUILD_APP: $SKIP_BUILD_APP"
 
 # Install dependencies
 RUN apt-get update
-RUN apt-get install -y openjdk-17-jdk ca-certificates curl gnupg
+RUN apt-get install -y ca-certificates curl gnupg
+RUN if [ "$SKIP_GRAMMAR" != "true" ] ; then apt-get install -y openjdk-17-jdk ; else echo "Skipping openjdk installation as grammar generation is skipped" ; fi
 RUN mkdir -p /etc/apt/keyrings
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
 RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
@@ -32,10 +40,10 @@ WORKDIR /home/appuser/app
 RUN npm install
 
 # Generate grammar
-RUN npm run generate-grammar-prod
+RUN if [ "$SKIP_GRAMMAR" != "true" ] ; then npm run generate-grammar-prod ; else echo "Skipping grammar generation" ; fi
 
 # Build app
-RUN npm run build
+RUN if [ "$SKIP_BUILD_APP" != "true" ] ; then npm run build ; else echo "Skipping build" ; fi
 
 # Expose port
 EXPOSE 8000
