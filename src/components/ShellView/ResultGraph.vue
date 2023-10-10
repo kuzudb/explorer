@@ -416,36 +416,38 @@ export default {
         for (let key in row) {
           switch (dataTypes[key]) {
             case DATA_TYPES.NODE: {
-              const node = row[key];
+              const node = { ...row[key] };
               processNode(node);
               break;
             }
             case DATA_TYPES.REL: {
-              const rel = row[key];
+              const rel = { ...row[key] };
               processRel(rel);
               break;
             }
             case DATA_TYPES.RECURSIVE_REL: {
-              const recursiveRel = row[key];
+              const recursiveRel = { ...row[key] };
               recursiveRel._nodes.forEach((node) => {
+                node = { ...node };
                 const nodeId = this.encodeNodeId(node._id);
                 if (nodes[nodeId]) {
                   return;
                 }
                 for (let key in node) {
-                  if (!node[key]) {
+                  if (node[key] === null || node[key] === undefined) {
                     delete node[key];
                   }
                 }
                 processNode(node);
               });
               recursiveRel._rels.forEach((rel) => {
+                rel = { ...rel };
                 const relId = this.encodeRelId(rel._src, rel._dst);
                 if (edges[relId]) {
                   return;
                 }
                 for (let key in rel) {
-                  if (!rel[key]) {
+                  if (rel[key] === null || rel[key] === undefined) {
                     delete rel[key];
                   }
                 }
