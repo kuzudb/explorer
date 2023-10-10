@@ -11,6 +11,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Prebuild - install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+      - name: Prebuild - install dependencies
+        run: npm install
+      - name: Prebuild - generate grammar
+        run: npm run generate-grammar-prod
+      - name: Prebuild - build app
+        run: npm run build
+      - name: Prebuild - cleanup
+        run: rm -rf node_modules
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -27,3 +39,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: kuzudb/kuzu-ui:latest
+          build-args: |
+            SKIP_GRAMMAR=true
+            SKIP_BUILD_APP=true
