@@ -2,14 +2,19 @@
 Browser-based user interface for Kùzu graph database.
 
 ## Get start
+To start the web application from the deployed Docker image, run the following command:
 ```bash
 docker run -p 8000:8000 \
-           -v {path to database file}:/database \
-           -v {path to additional data files}:/data \
+           -v {database path}:/database \
            --rm kuzudb/kuzu-ui:latest
 ```
-Note that the `-v` flags are optional. If no database file is specified, the server will be started with an empty database. 
+Note that the `-v` flag is optional. If no database path is specified, the server will be started with an empty database. 
 There is an option to load the database with bundled datasets to explore the basic functionalities of Kùzu.
+
+Additionally, a directory containing data files, such as parquet, csv, and npy files can be mounted to the `/data` directory
+in the container via `-v {path to additional data files}:/data`, so that the data files can be accessed inside the web application.
+
+
 
 ## Development (with Kùzu compiled from source)
 ### Stack
@@ -61,8 +66,7 @@ env KUZU_PATH={path to database file} npm run serve-prod
 ```
 docker build -t kuzudb/kuzu-ui:latest .
 docker run -p 8000:8000 \
-           -v {path to database file}:/database \
-           -v {path to additional data files}:/data \
+           -v {database path}:/database \
            --rm kuzudb/kuzu-ui:latest
 ```
 
