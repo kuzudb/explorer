@@ -77,21 +77,21 @@ npm run generate-grammar
 
 ### Run development server (with hot-reloading)
 ```
-env KUZU_PATH={path to database file} npm run serve
+env KUZU_PATH=/absolute/path/to/database npm run serve
 ```
 
 ## Build and serve for production
 ### Run production server locally
 ```bash
 npm run build
-env KUZU_PATH={path to database file} npm run serve-prod
+env KUZU_PATH=/absolute/path/to/database npm run serve-prod
 ```
 
 ### Run production server with Docker
 ```
 docker build -t kuzudb/kuzu-ui:latest .
 docker run -p 8000:8000 \
-           -v {database path}:/database \
+           -v /absolute/path/to/database:/database \
            --rm kuzudb/kuzu-ui:latest
 ```
 
