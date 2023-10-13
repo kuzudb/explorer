@@ -2,6 +2,7 @@ const express = require("express");
 const api = require("./API");
 const path = require("path");
 const process = require("process");
+const database = require("./utils/database");
 
 process.on("SIGINT", () => {
   console.log("SIGINT received, exiting");
@@ -20,6 +21,23 @@ app.use("/api", api);
 const distPath = path.join(__dirname, "..", "..", "dist");
 app.use("/", express.static(distPath));
 
-app.listen(PORT, () => {
-  console.log("Deployed server started on port:", PORT);
-});
+const conn = database.getConnection();
+conn
+  .query("CALL db_version() RETURN *;")
+  .then((res) => {
+    return res.getAll();
+  })
+  .then((res) => {
+    const row = res[0];
+    const version = Object.values(row)[0];
+    console.log("Version of Kùzu:", version);
+    app.listen(PORT, () => {
+      console.log("Deployed server started on port:", PORT);
+    });
+  })
+  .catch((err) => {
+    console.log("Error getting version of Kùzu:", err);
+  })
+  .finally(() => {
+    database.releaseConnection(conn);
+  });

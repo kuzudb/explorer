@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM node:20-bookworm-slim
 
 ARG SKIP_GRAMMAR=false
 ARG SKIP_BUILD_APP=false
@@ -8,33 +8,23 @@ RUN echo "SKIP_GRAMMAR: $SKIP_GRAMMAR"
 RUN echo "SKIP_BUILD_APP: $SKIP_BUILD_APP"
 
 # Install dependencies
-RUN apt-get update
-RUN apt-get install -y ca-certificates curl gnupg
-RUN if [ "$SKIP_GRAMMAR" != "true" ] ; then apt-get install -y openjdk-17-jdk ; else echo "Skipping openjdk installation as grammar generation is skipped" ; fi
-RUN mkdir -p /etc/apt/keyrings
-RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
-RUN apt-get update
-RUN apt-get install -y nodejs
-
-# Create app user
-RUN useradd --create-home appuser
+RUN if [ "$SKIP_GRAMMAR" != "true" ] ; then apt update && apt-get install -y openjdk-17-jdk ; else echo "Skipping openjdk installation as grammar generation is skipped" ; fi
 
 # Copy app
-COPY . /home/appuser/app
-RUN chown -R appuser:appuser /home/appuser/app
+COPY . /home/node/app
+RUN chown -R node:node /home/node/app
 
 # Make data and database directories
 RUN mkdir -p /database
 RUN mkdir -p /data
-RUN chown -R appuser:appuser /database
-RUN chown -R appuser:appuser /data
+RUN chown -R node:node /database
+RUN chown -R node:node /data
 
-# Switch to app user
-USER appuser
+# Switch to node user
+USER node
 
 # Set working directory
-WORKDIR /home/appuser/app
+WORKDIR /home/node/app
 
 # Install dependencies
 RUN npm install
