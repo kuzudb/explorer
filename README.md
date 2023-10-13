@@ -5,6 +5,8 @@ Browser-based user interface for the [Kùzu](https://github.com/kuzudb/kuzu) gra
 
 The UI is a web application that is launched from a deployed Docker image. Ensure that you have Docker installed before proceeding.
 
+The commands below make the UI accessible on http://localhost:8000.
+
 ### Option 1: Existing database
 
 Access an existing Kùzu database by mounting its path to the `/database` directory as follows.
