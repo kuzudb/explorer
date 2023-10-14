@@ -1,19 +1,44 @@
-# kuzu-ui
-Browser-based user interface for Kùzu graph database.
+# Kùzu UI
+Browser-based user interface for the [Kùzu](https://github.com/kuzudb/kuzu) graph database.
 
-## Get start
-To start the web application from the deployed Docker image, run the following command:
+## Get started
+
+The UI is a web application that is launched from a deployed Docker image. Ensure that you have Docker installed before proceeding.
+
+The commands below make the UI accessible on http://localhost:8000.
+
+### Option 1: Existing database
+
+Access an existing Kùzu database by mounting its path to the `/database` directory as follows.
+
 ```bash
 docker run -p 8000:8000 \
-           -v {database path}:/database \
+           -v /absolute/path/to/database:/database \
            --rm kuzudb/kuzu-ui:latest
 ```
-Note that the `-v` flag is optional. If no database path is specified, the server will be started with an empty database. 
-There is an option to load the database with bundled datasets to explore the basic functionalities of Kùzu.
 
-Additionally, a directory containing data files, such as parquet, csv, and npy files can be mounted to the `/data` directory
-in the container via `-v {path to additional data files}:/data`, so that the data files can be accessed inside the web application.
+The `--rm` flag tells docker that the container should automatically be removed after we close docker. 
 
+### Option 2: Empty database with example data
+
+The `-v` flag in the example above is optional: If no database path is specified, the server will be started with an empty database, and you can load the database with bundled datasets to explore the basic functionalities of Kùzu.
+
+```bash
+docker run -p 8000:8000 --rm kuzudb/kuzu-ui:latest
+```
+Click on the `Datasets` tab on the top right corner of the UI, and load the bundled dataset of your choice to explore the graph.
+
+### Option 3: Empty database with custom data
+
+Alternatively, directories containing node and edge data files, in formats such as `.parquet`, `.csv`, and `.npy` can be mounted to the `/data` directory as follows:
+
+```bash
+docker run -p 8000:8000 \
+           -v /absolute/path/to/data/files:/data \
+           --rm kuzudb/kuzu-ui:latest
+```
+
+With this approach, the data files can be accessed inside the web application to load yourself into Kùzu via Cypher.
 
 
 ## Development (with Kùzu compiled from source)
@@ -52,21 +77,21 @@ npm run generate-grammar
 
 ### Run development server (with hot-reloading)
 ```
-env KUZU_PATH={path to database file} npm run serve
+env KUZU_PATH=/absolute/path/to/database npm run serve
 ```
 
 ## Build and serve for production
 ### Run production server locally
 ```bash
 npm run build
-env KUZU_PATH={path to database file} npm run serve-prod
+env KUZU_PATH=/absolute/path/to/database npm run serve-prod
 ```
 
 ### Run production server with Docker
 ```
 docker build -t kuzudb/kuzu-ui:latest .
 docker run -p 8000:8000 \
-           -v {database path}:/database \
+           -v /absolute/path/to/database:/database \
            --rm kuzudb/kuzu-ui:latest
 ```
 
