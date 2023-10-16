@@ -8,7 +8,7 @@ RUN echo "SKIP_GRAMMAR: $SKIP_GRAMMAR"
 RUN echo "SKIP_BUILD_APP: $SKIP_BUILD_APP"
 
 # Install dependencies
-RUN if [ "$SKIP_GRAMMAR" != "true" ] ; then apt update && apt-get install -y openjdk-17-jdk ; else echo "Skipping openjdk installation as grammar generation is skipped" ; fi
+RUN if [ "$SKIP_GRAMMAR" != "true" ] ; then apt-get update && apt-get install -y openjdk-17-jdk ; else echo "Skipping openjdk installation as grammar generation is skipped" ; fi
 
 # Copy app
 COPY . /home/node/app
