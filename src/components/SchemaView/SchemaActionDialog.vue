@@ -82,12 +82,12 @@ export default {
           this.reloadSchema();
           this.remainingSeconds = 2;
           const interval = setInterval(() => {
-            this.remainingSeconds -= 0.1;
+            this.remainingSeconds -= 1;
             if (this.remainingSeconds <= 0) {
               clearInterval(interval);
               this.hideModal();
             }
-          }, 100);
+          }, 1000);
           if (this.currentAction) {
             this.$emit("actionCompleted", this.currentAction);
           }
