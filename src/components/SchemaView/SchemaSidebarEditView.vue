@@ -92,7 +92,7 @@
             </th>
           </tr>
           <tr v-else>
-            <th scope="col">There is no property in this table</th>
+            <th scope="col">There are no properties in this table</th>
           </tr>
         </thead>
         <tbody v-if="tableProperties.length > 0">

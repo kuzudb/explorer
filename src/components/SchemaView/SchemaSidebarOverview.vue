@@ -41,7 +41,7 @@
           </tr>
           <tr v-if="schema.nodeTables.length === 0">
             <td colspan="2">
-              There is no node table in this schema. Click "Add" to add one.
+              There are no node tables in this schema. Click "Add" to add one.
             </td>
           </tr>
         </tbody>
@@ -93,7 +93,7 @@
         </tr>
         <tr v-if="schema.relTables.length === 0">
           <td colspan="2">
-            There is no rel table in this schema. Click "Add" to add one.
+            There are no rel tables in this schema. Click "Add" to add one.
           </td>
         </tr>
       </tbody>
