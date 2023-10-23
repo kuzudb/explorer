@@ -1,38 +1,21 @@
 <template>
   <div class="result-graph__wrapper" ref="wrapper">
-    <div
-      class="result_container__graph"
-      ref="graph"
-      :style="{ width: graphWidth + 'px' }"
-    ></div>
-    <div
-      class="result-container__tools_container"
-      ref="toolsContainer"
-      :style="{ width: toolbarContainerWidth + 'px' }"
-    >
+    <div class="result_container__graph" ref="graph" :style="{ width: graphWidth + 'px' }"></div>
+    <div class="result-container__tools_container" ref="toolsContainer" :style="{ width: toolbarContainerWidth + 'px' }">
       <div class="result-container__button">
-        <i
-          :class="sidePanelButtonClass"
-          data-bs-toggle="tooltip"
-          data-bs-placement="right"
-          :data-bs-original-title="sidePanelButtonTitle"
-          @click="toggleSidePanel"
-        ></i>
+        <i :class="sidePanelButtonClass" data-bs-toggle="tooltip" data-bs-placement="right"
+          :data-bs-original-title="sidePanelButtonTitle" @click="toggleSidePanel"></i>
       </div>
     </div>
     <div class="result-container__side-panel" ref="sidePanel" v-show="isSidePanelOpen">
       <br />
       <div v-if="displayLabel">
         <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
-        <span
-          class="badge bg-primary"
-          :style="{
-            backgroundColor: `${getColor(displayLabel)} !important`,
-            color: `${getTextColor(displayLabel)} !important`,
-          }"
-        >
-          {{ displayLabel }}</span
-        >
+        <span class="badge bg-primary" :style="{
+          backgroundColor: `${getColor(displayLabel)} !important`,
+          color: `${getTextColor(displayLabel)} !important`,
+        }">
+          {{ displayLabel }}</span>
         <hr />
         <table class="table table-sm table-bordered result-container__result-table">
           <tbody>
@@ -55,11 +38,8 @@
             <tbody>
               <tr v-for="label in Object.keys(counters.node)" :key="label">
                 <th scope="row">
-                  <span
-                    class="badge bg-primary"
-                    :style="{ backgroundColor: ` ${getColor(label)} !important` }"
-                    >{{ label }}</span
-                  >
+                  <span class="badge bg-primary" :style="{ backgroundColor: ` ${getColor(label)} !important` }">{{ label
+                  }}</span>
                 </th>
                 <td>{{ counters.node[label] }}</td>
               </tr>
@@ -76,13 +56,10 @@
             <tbody>
               <tr v-for="label in Object.keys(counters.rel)" :key="label">
                 <th scope="row">
-                  <span
-                    class="badge bg-primary"
-                    :style="{
-                      backgroundColor: ` ${getColor(label)} !important`,
-                      color: `black !important`,
-                    }"
-                  >
+                  <span class="badge bg-primary" :style="{
+                    backgroundColor: ` ${getColor(label)} !important`,
+                    color: `black !important`,
+                  }">
                     {{ label }}
                   </span>
                 </th>
@@ -262,6 +239,9 @@ export default {
           linkDistance: 200,
           nodeStrength: -50,
           nodeSpacing: 60,
+          alpha: 0.5,
+          alphaDecay: 0.05,
+          alphaMin: 0.05,
         },
         defaultNode: this.settingsStore.defaultNode,
         nodeStateStyles: {
@@ -353,68 +333,71 @@ export default {
       const edges = {};
       const nodeLabels = {};
 
-      const processNode = (node) => {
-        const nodeId = this.encodeNodeId(node._id);
+      const processNode = (rawNode) => {
+        const nodeId = this.encodeNodeId(rawNode._id);
+        nodeLabels[rawNode._id.table] = rawNode._label;
+        const nodeSettings = this.settingsStore.settingsForLabel(rawNode._label);
+        const g6Node = {
+          ...nodeSettings.g6Settings,
+          id: nodeId,
+          properties: rawNode,
+        }
         if (nodes[nodeId]) {
           return;
         }
         const expectedPropertiesType = {};
-        const expectedProperties = this.schema.nodeTables.find((table) => table.name === node._label).properties;
+        const expectedProperties = this.schema.nodeTables.find((table) => table.name === rawNode._label).properties;
         expectedProperties.forEach((property) => {
           expectedPropertiesType[property.name] = property.type;
         });
-        const nodeSettings = this.settingsStore.settingsForLabel(node._label);
-        for (let key in nodeSettings.g6Settings) {
-          node[key] = nodeSettings.g6Settings[key];
-        }
-        nodeLabels[node._id.table] = node._label;
-        node.id = nodeId;
         const nodeLabelProp = nodeSettings.label;
         if (!nodeLabelProp) {
-          node.label = "";
+          g6Node.label = "";
         } else {
-          node.label = node[nodeLabelProp];
+          g6Node.label = rawNode[nodeLabelProp];
           if (nodeLabelProp in expectedPropertiesType) {
-            node.label = ValueFormatter.beautifyValue(node[nodeLabelProp], expectedPropertiesType[nodeLabelProp]);
+            g6Node.label = ValueFormatter.beautifyValue(rawNode[nodeLabelProp], expectedPropertiesType[nodeLabelProp]);
           }
-          node.label = String(node.label);
+          g6Node.label = String(g6Node.label);
         }
-        nodes[nodeId] = node;
+        nodes[nodeId] = g6Node;
       }
 
-      const processRel = (rel) => {
-        const relId = this.encodeRelId(rel._src, rel._dst);
-        rel.source = this.encodeNodeId(rel._src);
-        rel.target = this.encodeNodeId(rel._dst);
-        if(rel.source === rel.target) {
-          rel.type = "loop";
-          rel.loopCfg = {
+      const processRel = (rawRel) => {
+        const relSettings = this.settingsStore.settingsForLabel(rawRel._label);
+        const relId = this.encodeRelId(rawRel._src, rawRel._dst);
+        const g6Rel = {
+          ...relSettings.g6Settings,
+          id: relId,
+          properties: rawRel,
+          source: this.encodeNodeId(rawRel._src),
+          target: this.encodeNodeId(rawRel._dst),
+        }
+        if (g6Rel.source === g6Rel.target) {
+          g6Rel.type = "loop";
+          g6Rel.loopCfg = {
             dist: 50,
           };
         }
         const expectedPropertiesType = {};
-        const expectedProperties = this.schema.relTables.find((table) => table.name === rel._label).properties;
+        const expectedProperties = this.schema.relTables.find((table) => table.name === rawRel._label).properties;
         expectedProperties.forEach((property) => {
           expectedPropertiesType[property.name] = property.type;
         });
-        const relSettings = this.settingsStore.settingsForLabel(rel._label);
-        for (let key in relSettings.g6Settings) {
-          rel[key] = relSettings.g6Settings[key];
-        }
         const relLabelProp = relSettings.label;
         if (!relLabelProp) {
-          rel.label = "";
+          g6Rel.label = "";
         } else {
-          rel.label = rel[relLabelProp];
+          g6Rel.label = rawRel[relLabelProp];
           if (relLabelProp in expectedPropertiesType) {
-            rel.label = ValueFormatter.beautifyValue(rel[relLabelProp], expectedPropertiesType[relLabelProp]);
+            g6Rel.label = ValueFormatter.beautifyValue(rawRel[relLabelProp], expectedPropertiesType[relLabelProp]);
           }
-          rel.label = String(rel.label);
+          g6Rel.label = String(g6Rel.label);
         }
         if (edges[relId]) {
           return;
         }
-        edges[relId] = rel;
+        edges[relId] = g6Rel;
       }
       // Deduplicate nodes and edges
       rows.forEach((row) => {
@@ -483,7 +466,7 @@ export default {
       const nodeCounters = {
       };
       for (let key in nodes) {
-        const label = nodes[key]._label;
+        const label = nodes[key].properties._label;
         if (!nodeCounters[label]) {
           nodeCounters[label] = 0;
         }
@@ -492,7 +475,7 @@ export default {
       const relCounters = {
       };
       for (let key in edges) {
-        const label = edges[key]._label;
+        const label = edges[key].properties._label;
         if (!relCounters[label]) {
           relCounters[label] = 0;
         }
@@ -524,22 +507,21 @@ export default {
           const width = this.computeGraphWidth();
           this.g6graph.changeSize(width, parseInt(this.containerHeight));
           this.g6graph.fitCenter();
-          this.g6graph.layout();
         }
       });
     },
 
     handleHover(model) {
-      const label = model._label;
+      const label = model.properties._label;
       this.hoveredLabel = label;
-      this.hoveredProperties = ValueFormatter.filterAndBeautifyProperties(model, this.schema);
+      this.hoveredProperties = ValueFormatter.filterAndBeautifyProperties(model.properties, this.schema);
       this.hoveredIsNode = !(model._src && model._dst);
     },
 
     handleClick(model) {
-      const label = model._label;
+      const label = model.properties._label;
       this.clickedLabel = label;
-      this.clickedProperties = ValueFormatter.filterAndBeautifyProperties(model, this.schema);
+      this.clickedProperties = ValueFormatter.filterAndBeautifyProperties(model.properties, this.schema);
       this.clickedIsNode = !(model._src && model._dst);
     },
 
@@ -663,7 +645,7 @@ export default {
     padding-top: 4px;
     padding-bottom: 4px;
 
-    > i {
+    >i {
       cursor: pointer;
 
       &:hover {
@@ -675,8 +657,8 @@ export default {
       }
     }
 
-    > i.fa-maximize,
-    > i.fa-minimize {
+    >i.fa-maximize,
+    >i.fa-minimize {
       color: $gray-500;
     }
   }
