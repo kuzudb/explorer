@@ -67,6 +67,10 @@ export default {
           this.$nextTick(() => {
             this.$refs.resultContainer.handleDataChange(this.schema, this.queryResult, "");
           });
+          const isSchemaChanged = res.data && res.data.isSchemaChanged;
+          if (isSchemaChanged) {
+            this.$emit("reloadSchema");
+          }
         })
         .catch((error) => {
           if (!error.response) {

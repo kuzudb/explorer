@@ -120,42 +120,52 @@ export const useSettingsStore = defineStore("settings", {
   },
 
   actions: {
-    initDefaultSettings(schema) {
+    initDefaultNode(node) {
       const nodeDefault = this.graphViz.default.node;
+      const name = node.name;
+      const g6Settings = JSON.parse(JSON.stringify(nodeDefault));
+      let color = this.colors.pop();
+      if (!color) {
+        color = randomcolor({ luminosity: "dark", hue: "random" });
+      }
+      g6Settings.style.fill = color;
+      let primaryKey = node.properties.filter((p) => p.isPrimaryKey)[0];
+      if (!primaryKey) {
+        primaryKey = node.properties[0];
+      }
+      const label = primaryKey.name;
+      const nodeSettings = {
+        name,
+        g6Settings,
+        label,
+      };
+      return nodeSettings;
+    },
+
+    initDefaultRel(rel) {
       const relDefault = this.graphViz.default.rel;
+      const name = rel.name;
+      const g6Settings = JSON.parse(JSON.stringify(relDefault));
+      const label = "_label";
+      const relSettings = {
+        name,
+        g6Settings,
+        label,
+      };
+      return relSettings;
+    },
+
+    initDefaultSettings(schema) {
       this.graphViz.nodes = {};
       this.graphViz.rels = {};
       schema.nodeTables.forEach((node) => {
-        const name = node.name;
-        const g6Settings = JSON.parse(JSON.stringify(nodeDefault));
-        let color = this.colors.pop();
-        if (!color) {
-          color = randomcolor({ luminosity: "dark", hue: "random" });
-        }
-        g6Settings.style.fill = color;
-        let primaryKey = node.properties.filter((p) => p.isPrimaryKey)[0];
-        if (!primaryKey) {
-          primaryKey = node.properties[0];
-        }
-        const label = primaryKey.name;
-        const nodeSettings = {
-          name,
-          g6Settings,
-          label,
-        };
-        this.graphViz.nodes[name] = nodeSettings;
+        const nodeSettings = this.initDefaultNode(node);
+        this.graphViz.nodes[node.name] = nodeSettings;
       });
 
       schema.relTables.forEach((rel) => {
-        const name = rel.name;
-        const g6Settings = JSON.parse(JSON.stringify(relDefault));
-        const label = "_label";
-        const relSettings = {
-          name,
-          g6Settings,
-          label,
-        };
-        this.graphViz.rels[name] = relSettings;
+        const relSettings = this.initDefaultRel(rel);
+        this.graphViz.rels[rel.name] = relSettings;
       });
     },
 
@@ -166,19 +176,31 @@ export const useSettingsStore = defineStore("settings", {
       this.schemaView = settings.schemaView;
     },
 
-    removeTablesBySchema(schema) {
+    handleSchemaReload(schema) {
       const nodeTables = new Set(schema.nodeTables.map((node) => node.name));
       for (let table in this.graphViz.nodes) {
         if (!nodeTables.has(table)) {
           delete this.graphViz.nodes[table];
         }
       }
+      schema.nodeTables.forEach((node) => {
+        if (!this.graphViz.nodes[node.name]) {
+          const nodeSettings = this.initDefaultNode(node);
+          this.graphViz.nodes[node.name] = nodeSettings;
+        }
+      });
       const relTables = new Set(schema.relTables.map((rel) => rel.name));
       for (let table in this.graphViz.rels) {
         if (!relTables.has(table)) {
           delete this.graphViz.rels[table];
         }
       }
+      schema.relTables.forEach((rel) => {
+        if (!this.graphViz.rels[rel.name]) {
+          const relSettings = this.initDefaultRel(rel);
+          this.graphViz.rels[rel.name] = relSettings;
+        }
+      });
     },
 
     addNewNodeTable(name) {

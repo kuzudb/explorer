@@ -115,6 +115,7 @@ export default {
     },
     copyDataset() {
       this.datasetLoadingLog = "Loading dataset '" + this.selectedDataset + "'...";
+      this.datasetLoadingLog += "\n";
       this.datasetLoadingEnded = false;
       fetch(`/api/datasets/${this.selectedDataset}/copy`,)
         .then((response) => {
@@ -124,7 +125,7 @@ export default {
               if (done) {
                 this.datasetLoadingLog += "Dataset load process ended.";
                 this.datasetLoadingEnded = true;
-                this.$emit("reloadSchema", true);
+                this.$emit("reloadSchema");
                 return;
               }
               this.datasetLoadingLog += value;

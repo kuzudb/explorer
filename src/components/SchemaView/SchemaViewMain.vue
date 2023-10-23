@@ -180,6 +180,17 @@ export default {
     getColor(label) {
       return this.settingsStore.colorForLabel(label);
     },
+    getLayoutConfig(edges) {
+      const nodeSpacing = edges.length * 5;
+      return {
+        type: 'force',
+        preventOverlap: true,
+        linkDistance: 250,
+        nodeStrength: -100,
+        nodeSize: 100,
+        nodeSpacing,
+      };
+    },
     drawGraph() {
       if (this.graphCreated && this.g6graph) {
         this.g6graph.destroy();
@@ -191,21 +202,13 @@ export default {
       const container = this.$refs.graph;
       const width = container.offsetWidth;
       const height = container.offsetHeight;
-      const nodeSpacing = edges.length * 5;
 
       this.g6graph = new G6.Graph({
         container,
         width,
         height,
         linkCenter: false,
-        layout: {
-          type: 'force',
-          preventOverlap: true,
-          linkDistance: 250,
-          nodeStrength: -100,
-          nodeSize: 100,
-          nodeSpacing,
-        },
+        layout: this.getLayoutConfig(edges),
         defaultNode: {
           shape: "circle",
           labelCfg: {
@@ -481,6 +484,13 @@ export default {
       });
     },
 
+    layoutGraph() {
+      if (!this.g6graph) {
+        return;
+      }
+      this.g6graph.layout();
+    },
+
     computeGraphWidth() {
       let width = document.documentElement.clientWidth || document.body.clientWidth;
       width -= this.sidebarWidth;
@@ -536,6 +546,8 @@ export default {
     handleSettingsChange() {
       const { nodes, edges, counters } = this.extractGraphFromSchema(this.schema);
       this.g6graph.changeData({ nodes, edges });
+      const layoutConfig = this.getLayoutConfig(edges);
+      this.g6graph.updateLayout(layoutConfig);
       this.counters = counters;
       if(this.clickedLabel){
         this.setG6Click(this.clickedLabel);
