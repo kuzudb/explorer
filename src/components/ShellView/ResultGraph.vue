@@ -326,7 +326,7 @@ export default {
       return `${src.table}_${src.offset}_${dst.table}_${dst.offset}`;
     },
 
-    extractGraphFromQueryResult(queryResult) {
+    extractGraphFromQueryResult(queryResult, linkDistance = 200) {
       const rows = queryResult.rows;
       const dataTypes = queryResult.dataTypes;
       const nodes = {};
@@ -359,6 +359,9 @@ export default {
             g6Node.label = ValueFormatter.beautifyValue(rawNode[nodeLabelProp], expectedPropertiesType[nodeLabelProp]);
           }
           g6Node.label = String(g6Node.label);
+          const nodeSize = nodeSettings.g6Settings.size;
+          const fontSize = nodeSettings.g6Settings.labelCfg.style.fontSize;
+          g6Node.label = G6Utils.fittingString(g6Node.label, nodeSize - 6, fontSize);
         }
         nodes[nodeId] = g6Node;
       }
@@ -393,6 +396,8 @@ export default {
             g6Rel.label = ValueFormatter.beautifyValue(rawRel[relLabelProp], expectedPropertiesType[relLabelProp]);
           }
           g6Rel.label = String(g6Rel.label);
+          const fontSize = relSettings.g6Settings.labelCfg.style.fontSize;
+          g6Rel.label = G6Utils.fittingString(g6Rel.label, linkDistance - 10, fontSize);
         }
         if (edges[relId]) {
           return;
