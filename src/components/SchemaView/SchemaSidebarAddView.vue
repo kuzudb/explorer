@@ -4,53 +4,31 @@
       <h5>
         <div class="input-group flex-nowrap">
           <span class="input-group-text">Table Name</span>
-          <input
-            type="text"
-            class="form-control"
-            v-model="currLabel"
-            :style="{
-              backgroundColor: ` ${getColor()} !important`,
-              color: isNode ? '#ffffff' : '#000000',
-            }"
-          />
+          <input type="text" class="form-control" v-model="currLabel" :style="{
+            backgroundColor: ` ${getColor()} !important`,
+            color: isNode ? '#ffffff' : '#000000',
+          }" />
         </div>
       </h5>
       <hr />
 
       <div class="schema_side-panel__add-table-actions-container">
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-success"
-          title="Save Table"
-          @click="saveTable"
-        >
+        <button type="button" class="btn btn-sm btn-outline-success" title="Save Table" @click="saveTable">
           <i class="fa-solid fa-save"></i>
           Save Table
         </button>
         &nbsp;
-        <button
-          class="btn btn-sm btn-outline-danger"
-          title="Discard Table"
-          @click="discardTable"
-        >
+        <button class="btn btn-sm btn-outline-danger" title="Discard Table" @click="discardTable">
           <i class="fa-solid fa-trash"></i>
           Discard Table
         </button>
         &nbsp;
-        <button
-          class="btn btn-sm btn-outline-primary"
-          title="Add Property"
-          @click="addProperty"
-        >
+        <button class="btn btn-sm btn-outline-primary" title="Add Property" @click="addProperty">
           <i class="fa-solid fa-plus"></i>
           Add Property
         </button>
         &nbsp;
-        <button
-          class="btn btn-sm btn-outline-secondary"
-          title="Rename Table"
-          v-if="false"
-        >
+        <button class="btn btn-sm btn-outline-secondary" title="Rename Table" v-if="false">
           <i class="fa-solid fa-pencil"></i>
           Rename Table
         </button>
@@ -61,11 +39,7 @@
         <div class="input-group flex-nowrap">
           <span class="input-group-text">From</span>
           <select class="form-select" v-model="currSrc" :style="getSelectStyle(currSrc)">
-            <option
-              v-for="option in relTableSrcAndDstOptions"
-              :value="option.value"
-              :key="option.text"
-            >
+            <option v-for="option in relTableSrcAndDstOptions" :value="option.value" :key="option.text">
               {{ option.text }}
             </option>
           </select>
@@ -73,11 +47,7 @@
         <div class="input-group flex-nowrap">
           <span class="input-group-text">To</span>
           <select class="form-select" v-model="currDst" :style="getSelectStyle(currDst)">
-            <option
-              v-for="option in relTableSrcAndDstOptions"
-              :value="option.value"
-              :key="option.text"
-            >
+            <option v-for="option in relTableSrcAndDstOptions" :value="option.value" :key="option.text">
               {{ option.text }}
             </option>
           </select>
@@ -85,10 +55,7 @@
         <br />
       </div>
 
-      <table
-        class="table table-sm table-bordered schema_side-panel__add-table"
-        v-if="schema"
-      >
+      <table class="table table-sm table-bordered schema_side-panel__add-table" v-if="schema">
         <thead>
           <tr v-if="currProperties.length > 0">
             <th scope="col">Name</th>
@@ -104,17 +71,9 @@
 
         <tbody v-if="currProperties.length > 0">
           <tr v-for="property in currProperties" :key="property.id">
-            <SchemaPropertyEditCell
-              :property="property"
-              :colspan="3"
-              :isNewProperty="true"
-              :isNewTable="true"
-              :isNodeTable="isNode"
-              :ref="'editCell-' + property.id"
-              v-if="property.isEditing"
-              @save="(...args) => saveProperty(property.id, ...args)"
-              @cancel="cancelEditMode(property.id)"
-            />
+            <SchemaPropertyEditCell :property="property" :colspan="3" :isNewProperty="true" :isNewTable="true"
+              :isNodeTable="isNode" :ref="'editCell-' + property.id" v-if="property.isEditing"
+              @save="(...args) => saveProperty(property.id, ...args)" @cancel="cancelEditMode(property.id)" />
             <td v-if="!property.isEditing">
               {{ property.name }}
               <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
@@ -122,25 +81,13 @@
             <td v-if="!property.isEditing">
               {{ property.type }}
             </td>
-            <td
-              class="schema_side-panel__add-table-buttons-container"
-              v-if="!property.isEditing"
-            >
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-primary"
-                title="Edit"
-                @click="enterEditMode(property.id)"
-              >
+            <td class="schema_side-panel__add-table-buttons-container" v-if="!property.isEditing">
+              <button type="button" class="btn btn-sm btn-outline-primary" title="Edit"
+                @click="enterEditMode(property.id)">
                 <i class="fa-solid fa-pencil"></i>
               </button>
               &nbsp;
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-danger"
-                title="Drop"
-                @click="dropProperty(property.id)"
-              >
+              <button type="button" class="btn btn-sm btn-outline-danger" title="Drop" @click="dropProperty(property.id)">
                 <i class="fa-solid fa-trash"></i>
               </button>
             </td>
@@ -206,8 +153,8 @@ export default {
     currLabel() {
       clearTimeout(this.currLabelInputDebounce);
       this.currLabelInputDebounce = setTimeout(() => {
-        if(this.isNode){
-        this.$emit("updateNodeTableLabel", this.currLabel);
+        if (this.isNode) {
+          this.$emit("updateNodeTableLabel", this.currLabel);
         } else {
           this.updatePlaceholderRelTable();
         }
@@ -256,10 +203,18 @@ export default {
       this.currProperties.unshift(newProperty);
     },
     saveTable() {
+      let allNamesValid = true;
       for (let i = 0; i < this.currProperties.length; ++i) {
         if (this.currProperties[i].isEditing) {
-          this.$refs["editCell-" + this.currProperties[i].id][0].save();
+          const editCell = this.$refs["editCell-" + this.currProperties[i].id][0];
+          editCell.save();
+          if (!editCell.validateName()) {
+            allNamesValid = false;
+          }
         }
+      }
+      if (!allNamesValid) {
+        return;
       }
       this.$nextTick(() => {
         this.$emit("save", this.currLabel, this.currProperties, this.currSrc, this.currDst);
@@ -322,7 +277,7 @@ export default {
   },
   mounted() {
     this.currLabel = this.label;
-    if(!this.isNode){
+    if (!this.isNode) {
       return;
     }
     const primaryKey = { ...this.defaultPrimaryKey };

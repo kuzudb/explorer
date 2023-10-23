@@ -1,9 +1,16 @@
 <template>
   <td :colspan="colspan">
     <div v-if="currProperty">
+      <div class="alert alert-danger" role="alert" v-if="!nameValid">
+        <div>
+          <i class="fa-solid fa-circle-exclamation"></i>
+          The name of the property cannot be empty.
+        </div>
+      </div>
+
       <div class="input-group flex-nowrap">
         <span class="input-group-text">Name</span>
-        <input type="text" class="form-control" v-model="currProperty.name" />
+        <input type="text" class="form-control" v-model="currProperty.name" @input="nameValid = true" />
       </div>
 
       <div v-if="currProperty && isNewProperty">
@@ -17,11 +24,7 @@
           </select>
 
           <select class="form-select" v-model="currProperty.type" v-else>
-            <option
-              v-for="dataType in supportedTypesForAlter"
-              :value="dataType"
-              :key="dataType"
-            >
+            <option v-for="dataType in supportedTypesForAlter" :value="dataType" :key="dataType">
               {{ dataType }}
             </option>
           </select>
@@ -96,33 +99,19 @@
       <div v-if="isNewTable && isNodeTable">
         <br />
         <div class="form-check form-switch">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            v-model="currProperty.isPrimaryKey"
-          />
+          <input class="form-check-input" type="checkbox" v-model="currProperty.isPrimaryKey" />
           <label class="form-check-label"> Primary Key </label>
         </div>
       </div>
     </div>
 
     <div>
-      <button
-        type="button"
-        class="btn btn-sm btn-outline-primary"
-        title="Save"
-        @click="save"
-      >
+      <button type="button" class="btn btn-sm btn-outline-primary" title="Save" @click="save">
         <i class="fa-solid fa-check"></i>
         Save
       </button>
       &nbsp;
-      <button
-        type="button"
-        class="btn btn-sm btn-outline-danger"
-        title="Cancel"
-        @click="$emit('cancel')"
-      >
+      <button type="button" class="btn btn-sm btn-outline-danger" title="Cancel" @click="$emit('cancel')">
         <i class="fa-solid fa-xmark"></i>
         Cancel
       </button>
@@ -144,6 +133,7 @@ export default {
       basicTypes,
       supportedTypesForAlter,
       currProperty: null,
+      nameValid: true,
       defaultValue: ""
     }
   },
@@ -362,7 +352,15 @@ export default {
     },
 
     save() {
+      this.nameValid = this.validateName();
+      if (!this.nameValid) {
+        return;
+      }
       this.$emit('save', this.property, this.packProperty(this.currProperty), this.getDefaultValue());
+    },
+
+    validateName() {
+      return this.currProperty.name && this.currProperty.name.length > 0;
     },
 
     cancelPrimaryKey() {
@@ -377,7 +375,7 @@ export default {
 
 <style lang="scss" scoped>
 td {
-  > div {
+  >div {
     padding: 8px;
   }
 }
