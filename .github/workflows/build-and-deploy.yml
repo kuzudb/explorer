@@ -38,7 +38,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: kuzudb/kuzu-ui:latest
+          tags: kuzudb/explorer:latest
           build-args: |
             SKIP_GRAMMAR=true
             SKIP_BUILD_APP=true

@@ -1,11 +1,12 @@
-# Kùzu UI
+# KùzuExplorer
+
 Browser-based user interface for the [Kùzu](https://github.com/kuzudb/kuzu) graph database.
 
 ## Get started
 
-The UI is a web application that is launched from a deployed Docker image. Ensure that you have Docker installed before proceeding.
+KùzuExplorer is a web application that is launched from a deployed Docker image. Ensure that you have Docker installed before proceeding.
 
-The commands below make the UI accessible on http://localhost:8000.
+The commands below make KùzuExplorer accessible on http://localhost:8000.
 
 ### Option 1: Existing database
 
@@ -14,7 +15,7 @@ Access an existing Kùzu database by mounting its path to the `/database` direct
 ```bash
 docker run -p 8000:8000 \
            -v /absolute/path/to/database:/database \
-           --rm kuzudb/kuzu-ui:latest
+           --rm kuzudb/:latest
 ```
 
 The `--rm` flag tells docker that the container should automatically be removed after we close docker. 
@@ -24,9 +25,9 @@ The `--rm` flag tells docker that the container should automatically be removed 
 The `-v` flag in the example above is optional: If no database path is specified, the server will be started with an empty database, and you can load the database with bundled datasets to explore the basic functionalities of Kùzu.
 
 ```bash
-docker run -p 8000:8000 --rm kuzudb/kuzu-ui:latest
+docker run -p 8000:8000 --rm kuzudb/explorer:latest
 ```
-Click on the `Datasets` tab on the top right corner of the UI, and load the bundled dataset of your choice to explore the graph.
+Click on the `Datasets` tab on the top right corner of the navigation bar, and load the bundled dataset of your choice to explore the graph.
 
 ### Option 3: Empty database with custom data
 
@@ -35,7 +36,7 @@ Alternatively, directories containing node and edge data files, in formats such 
 ```bash
 docker run -p 8000:8000 \
            -v /absolute/path/to/data/files:/data \
-           --rm kuzudb/kuzu-ui:latest
+           --rm kuzudb/explorer:latest
 ```
 
 With this approach, the data files can be accessed inside the web application to load yourself into Kùzu via Cypher.
@@ -89,10 +90,10 @@ env KUZU_PATH=path/to/database npm run serve-prod
 
 ### Run production server with Docker
 ```
-docker build -t kuzudb/kuzu-ui:latest .
+docker build -t kuzudb/explorer:latest .
 docker run -p 8000:8000 \
            -v /absolute/path/to/database:/database \
-           --rm kuzudb/kuzu-ui:latest
+           --rm kuzudb/explorer:latest
 ```
 
 ## Deployment
@@ -101,4 +102,4 @@ the Docker image to [Docker Hub](https://hub.docker.com/) upon pushing to the ma
 for both `amd64` and `arm64` platforms.
 
 ## Contributing
-We welcome contributions to kuzu-ui. By contributing to kuzu-ui, you agree that your contributions will be licensed under the [MIT License](LICENSE).
+We welcome contributions to KùzuExplorer. By contributing to KùzuExplorer, you agree that your contributions will be licensed under the [MIT License](LICENSE).

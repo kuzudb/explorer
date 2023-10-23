@@ -1,15 +1,14 @@
 <template>
   <div class="dataset-view__wrapper" ref="wrapper" v-if="schema">
     <div
-      class="alert alert-info"
+      class="alert alert-warning"
       role="alert"
       v-if="!isSchemaEmpty && !datasetLoadingLog"
     >
       <i class="fa-solid fa-info-circle"></i>
-      The schema of the current database is not empty. Loading into the database is
-      disabled. You can still review the schema of the bundled datasets. If you want to
-      load a dataset, please run Kùzu UI with an empty database or drop all tables in the
-      current database.
+      You have already loaded a database. You can still review the schema of the bundled
+      datasets. If you want to load a different dataset, please restart your KùzuExplorer
+      Docker image with an empty database or drop all tables in the current database.
     </div>
 
     <div class="alert alert-info" role="alert" v-if="isSchemaEmpty && !datasetLoadingLog">
