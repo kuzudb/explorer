@@ -2,16 +2,10 @@
   <div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark" ref="navbar">
       <div class="container">
-        <a class="navbar-brand" href="#"
-          ><img src="/img/kuzu-logo-inverse.png" alt="Kuzu Logo" class="navbar__logo" />
+        <a class="navbar-brand" href="#"><img src="/img/kuzu-logo-inverse.png" alt="Kuzu Logo" class="navbar__logo" />
         </a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target=".navbar__buttons"
-          aria-label="Toggle navigation"
-        >
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar__buttons"
+          aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse navbar__buttons">
@@ -46,29 +40,14 @@
       </div>
     </nav>
 
-    <div
-      class="layout__main-content"
-      :style="{ height: `calc(100vh - ${navbarHeight}px)` }"
-    >
-      <SchemaViewMain
-        v-show="showSchema"
-        :schema="schema"
-        ref="schemaView"
-        :navbarHeight="navbarHeight"
-        @reloadSchema="reloadSchema"
-        @addPlaceholderNodeTable="addPlaceholderNodeTable"
-        @addPlaceholderRelTable="addPlaceholderRelTable"
-        @updatePlaceholderNodeTableLabel="updatePlaceholderNodeTable"
-        @updatePlaceholderRelTable="updatePlaceholderRelTable"
-      />
-      <ShellMainView v-show="showShell" :schema="schema" :navbarHeight="navbarHeight" />
+    <div class="layout__main-content" :style="{ height: `calc(100vh - ${navbarHeight}px)` }">
+      <SchemaViewMain v-show="showSchema" :schema="schema" ref="schemaView" :navbarHeight="navbarHeight"
+        @reloadSchema="reloadSchema" @addPlaceholderNodeTable="addPlaceholderNodeTable"
+        @addPlaceholderRelTable="addPlaceholderRelTable" @updatePlaceholderNodeTableLabel="updatePlaceholderNodeTable"
+        @updatePlaceholderRelTable="updatePlaceholderRelTable" />
+      <ShellMainView v-show="showShell" :schema="schema" :navbarHeight="navbarHeight" @reloadSchema="reloadSchema" />
       <SettingsMainView :schema="schema" ref="settings" v-if="showSettings" />
-      <DatasetMainView
-        v-show="showLoader"
-        :schema="schema"
-        :navbarHeight="navbarHeight"
-        @reloadSchema="reloadSchema"
-      />
+      <DatasetMainView v-show="showLoader" :schema="schema" :navbarHeight="navbarHeight" @reloadSchema="reloadSchema" />
     </div>
   </div>
 </template>
@@ -104,15 +83,10 @@ export default {
       const schema = response.data;
       this.schema = schema;
     },
-    async reloadSchema(rerender) {
+    async reloadSchema() {
       await this.getSchema();
-      this.removeTablesBySchema(this.schema);
-      if(rerender){
-        this.initDefaultSettings(this.schema);
-      }
-      if(rerender && this.$refs.schemaView){
-        this.$refs.schemaView.handleSettingsChange();
-      }
+      this.handleSchemaReload(this.schema);
+      this.$refs.schemaView.handleSettingsChange();
     },
     addPlaceholderNodeTable(tableName) {
       this.schema.nodeTables.push({
@@ -134,7 +108,7 @@ export default {
       const table = this.schema.nodeTables.find((t) => t.isPlaceholder);
       table.name = name;
     },
-    updatePlaceholderRelTable(newTable){
+    updatePlaceholderRelTable(newTable) {
       const table = this.schema.relTables.find((t) => t.isPlaceholder);
       table.name = newTable.name;
       table.src = newTable.src;
@@ -148,7 +122,9 @@ export default {
     toggleSchema() {
       this.hideAll();
       this.showSchema = true;
-      this.$refs.schemaView.handleResize();
+      this.$nextTick(() => {
+        this.$refs.schemaView.handleResize();
+      });
     },
     toggleShell() {
       this.hideAll();
@@ -167,7 +143,7 @@ export default {
     updateNavbarHeight() {
       this.navbarHeight = this.$refs.navbar.clientHeight;
     },
-    ...mapActions(useSettingsStore, ['initDefaultSettings', 'removeTablesBySchema']),
+    ...mapActions(useSettingsStore, ['initDefaultSettings', 'handleSchemaReload']),
   },
   mounted() {
     this.updateNavbarHeight();
@@ -187,7 +163,7 @@ export default {
 
 <style scoped lang="scss">
 nav.navbar {
-  > div.container {
+  >div.container {
     max-width: 100%;
   }
 }

@@ -10,6 +10,7 @@
       @addCell="addCell()"
       @maximize="maximize(index)"
       @minimize="minimize()"
+      @reloadSchema="reloadSchema()"
       v-show="index === maximizedCellIndex || maximizedCellIndex < 0"
     />
   </div>
@@ -46,9 +47,6 @@ export default {
     },
   },
 
-  computed: {
-  },
-
   methods: {
     createCell() {
       return {
@@ -80,6 +78,9 @@ export default {
     },
     minimize() {
       this.maximizedCellIndex = -1;
+    },
+    reloadSchema() {
+      this.$emit("reloadSchema");
     },
   },
 

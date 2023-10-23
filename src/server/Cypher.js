@@ -2,7 +2,16 @@ const database = require("./utils/database");
 const express = require("express");
 const router = express.Router();
 
+let schema = null;
+
 router.post("/", async (req, res) => {
+  if (!schema) {
+    try {
+      schema = await database.getSchema();
+    } catch (err) {
+      return res.status(400).send({ error: err.message });
+    }
+  }
   const conn = database.getConnection();
   const query = req.body.query;
   if (!query || !typeof query === "string") {
@@ -30,7 +39,11 @@ router.post("/", async (req, res) => {
     columnNames.forEach((name, i) => {
       dataTypes[name] = columnTypes[i];
     });
-    return res.send({ rows, dataTypes });
+    const currentSchema = await database.getSchema();
+    const isSchemaChanged =
+      JSON.stringify(schema) !== JSON.stringify(currentSchema);
+    schema = currentSchema;
+    return res.send({ rows, dataTypes, isSchemaChanged });
   } catch (err) {
     return res.status(400).send({ error: err.message });
   } finally {
