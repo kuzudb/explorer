@@ -261,8 +261,7 @@ export default {
           preventOverlap: true,
           linkDistance: 200,
           nodeStrength: -50,
-          nodeSize: 40,
-          nodeSpacing: 10,
+          nodeSpacing: 60,
         },
         defaultNode: this.settingsStore.defaultNode,
         nodeStateStyles: {
