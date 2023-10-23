@@ -50,7 +50,7 @@
     </div>
 
     <div class="d-flex justify-content-between">
-      <h5>Rel Tables</h5>
+      <h5>Relationship Tables</h5>
       <button class="btn btn-sm btn-primary" @click="$emit('addRelTable')">Add</button>
     </div>
     <hr />
@@ -93,7 +93,7 @@
         </tr>
         <tr v-if="schema.relTables.length === 0">
           <td colspan="2">
-            There are no rel tables in this schema. Click "Add" to add one.
+            There are no relationship tables in this schema. Click "Add" to add one.
           </td>
         </tr>
       </tbody>

@@ -62,7 +62,7 @@ export const useSettingsStore = defineStore("settings", {
       rowsPerPage: 10,
     },
     schemaView: {
-      showRelLabels: SHOW_REL_LABELS_OPTIONS.HOVER,
+      showRelLabels: SHOW_REL_LABELS_OPTIONS.ALWAYS,
     },
     colors: COLOR_PALETTE,
   }),

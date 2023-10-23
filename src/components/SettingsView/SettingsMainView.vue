@@ -130,14 +130,14 @@
           <h4>Schema View Options</h4>
           <hr />
           <div class="input-group flex-nowrap">
-            <span class="input-group-text">Show rel labels</span>
+            <span class="input-group-text">Show relationship labels</span>
             <select
               class="form-select"
               v-model="currentSettings.schemaView.showRelLabels"
             >
               <option :value="showRelLabelsOptions.ALWAYS">Always</option>
               <option :value="showRelLabelsOptions.HOVER">On hover or click</option>
-              <option :value="showRelLabelsOptions.NEVER">Never</option>
+              <!-- <option :value="showRelLabelsOptions.NEVER">Never</option> -->
             </select>
           </div>
 
