@@ -386,6 +386,12 @@ export default {
         const relId = this.encodeRelId(rel._src, rel._dst);
         rel.source = this.encodeNodeId(rel._src);
         rel.target = this.encodeNodeId(rel._dst);
+        if(rel.source === rel.target) {
+          rel.type = "loop";
+          rel.loopCfg = {
+            dist: 50,
+          };
+        }
         const expectedPropertiesType = {};
         const expectedProperties = this.schema.relTables.find((table) => table.name === rel._label).properties;
         expectedProperties.forEach((property) => {
