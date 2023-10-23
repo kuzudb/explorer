@@ -1,5 +1,10 @@
 const path = require("path");
 const process = require("process");
+const TABLE_TYPES = {
+  NODE: "NODE",
+  REL: "REL",
+};
+
 let kuzu;
 if (process.env.NODE_ENV !== "production") {
   const kuzuPath = path.join(
@@ -75,6 +80,50 @@ class Database {
       }
     }
     return false;
+  }
+
+  async getSchema() {
+    const conn = this.getConnection();
+    try {
+      const tables = await conn
+        .query("CALL show_tables() RETURN *;")
+        .then((res) => res.getAll());
+      const nodeTables = [];
+      const relTables = [];
+      for (const table of tables) {
+        const properties = (
+          await conn
+            .query(`CALL TABLE_INFO('${table.name}') RETURN *;`)
+            .then((res) => res.getAll())
+        ).map((property) => ({
+          name: property.name,
+          type: property.type,
+          isPrimaryKey: property["primary key"],
+        }));
+        if (table.type === TABLE_TYPES.NODE) {
+          delete table["type"];
+          table.properties = properties;
+          nodeTables.push(table);
+        } else if (table.type === TABLE_TYPES.REL) {
+          delete table["type"];
+          properties.forEach((property) => {
+            delete property.isPrimaryKey;
+          });
+          table.properties = properties;
+          const connectivity = await conn
+            .query(`CALL SHOW_CONNECTION('${table.name}') RETURN *;`)
+            .then((res) => res.getAll());
+          const src = connectivity[0]["source table name"];
+          const dst = connectivity[0]["destination table name"];
+          table.src = src;
+          table.dst = dst;
+          relTables.push(table);
+        }
+      }
+      return { nodeTables, relTables };
+    } finally {
+      this.releaseConnection(conn);
+    }
   }
 }
 

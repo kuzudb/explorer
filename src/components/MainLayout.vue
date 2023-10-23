@@ -102,11 +102,6 @@ export default {
     async getSchema() {
       const response = await Axios.get("/api/schema");
       const schema = response.data;
-      schema.relTables.forEach((table) => {
-        table.src = table.properties.src;
-        table.dst = table.properties.dst;
-        table.properties = table.properties.props;
-      });
       this.schema = schema;
     },
     async reloadSchema(rerender) {
