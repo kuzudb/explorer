@@ -58,6 +58,7 @@ With this approach, the data files can be accessed inside the web application to
 - [Node.js v20](https://nodejs.org/dist/latest-v20.x/)
 - [JDK 11+](https://jdk.java.net/11/)
 - [Toolchain for building Kùzu](https://kuzudb.com/docusaurus/development/building-kuzu)
+- [Git](https://git-scm.com/)
 
 ### Environment setup
 #### Download and compile Kùzu
