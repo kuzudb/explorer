@@ -31,9 +31,6 @@ WORKDIR /home/node/app
 # Install dependencies
 RUN npm install
 
-# Reduce size of kuzu node module
-RUN rm -rf node_modules/kuzu/prebuilt node_modules/kuzu/kuzu-source
-
 # Fetch datasets
 RUN if [ "$SKIP_DATASETS" != "true" ] ; then npm run fetch-datasets ; else echo "Skipping dataset fetch" ; fi
 
@@ -42,6 +39,9 @@ RUN if [ "$SKIP_GRAMMAR" != "true" ] ; then npm run generate-grammar-prod ; else
 
 # Build app
 RUN if [ "$SKIP_BUILD_APP" != "true" ] ; then npm run build ; else echo "Skipping build" ; fi
+
+# Reduce size of kuzu node module
+RUN rm -rf node_modules/kuzu/prebuilt node_modules/kuzu/kuzu-source
 
 # Expose port
 EXPOSE 8000
