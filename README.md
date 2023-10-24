@@ -76,6 +76,11 @@ npm i
 npm run generate-grammar
 ```
 
+#### Fetch datasets
+```bash
+npm run fetch-datasets
+```
+
 ### Run development server (with hot-reloading)
 ```
 env KUZU_PATH=path/to/database npm run serve
