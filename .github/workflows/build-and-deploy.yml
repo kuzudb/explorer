@@ -44,3 +44,4 @@ jobs:
           build-args: |
             SKIP_GRAMMAR=true
             SKIP_BUILD_APP=true
+            SKIP_DATASETS=true
