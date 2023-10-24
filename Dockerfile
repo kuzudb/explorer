@@ -29,6 +29,9 @@ WORKDIR /home/node/app
 # Install dependencies
 RUN npm install
 
+# Reduce size of kuzu node module
+RUN rm -rf node_modules/kuzu/prebuilt node_modules/kuzu/kuzu-source
+
 # Generate grammar
 RUN if [ "$SKIP_GRAMMAR" != "true" ] ; then npm run generate-grammar-prod ; else echo "Skipping grammar generation" ; fi
 

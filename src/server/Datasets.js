@@ -4,24 +4,37 @@ const path = require("path");
 const posixPath = require("path/posix");
 const fs = require("fs/promises");
 const process = require("process");
-const database = require("./utils/database");
+const database = require("./utils/Database");
 
-const DATASETS_TO_SHOW = {
-  "demo-db": "demo-db/csv",
-  "ldbc-0.1": "sf-0.1",
-  tinysnb: "tinysnb",
-  "snap-amazon": "snap/amazon0601/csv",
-  "snap-twitter": "snap/twitter/csv",
+let DATASETS_CONFIG, DATASETS_PROMISE, DATASETS_TO_SHOW;
+
+const getDatasetsToShow = async () => {
+  if (!DATASETS_TO_SHOW) {
+    if (!DATASETS_PROMISE) {
+      DATASETS_PROMISE = fs
+        .readFile(path.join(__dirname, "..", "..", "datasets.json"), "utf-8")
+        .then((content) => {
+          DATASETS_CONFIG = JSON.parse(content);
+          DATASETS_PROMISE = null;
+          DATASETS_TO_SHOW = {};
+          DATASETS_CONFIG.datasets.forEach((d) => {
+            if (process.env.NODE_ENV === "production" && !d.isProduction) {
+              return;
+            }
+            DATASETS_TO_SHOW[d.name] = d.path;
+          });
+        });
+    }
+    await DATASETS_PROMISE;
+  }
+  return DATASETS_TO_SHOW;
 };
 
 const SCHEMA_FILE = "schema.cypher";
 const COPY_FILE = "copy.cypher";
 
 const getBasePath = () => {
-  if(process.env.NODE_ENV === "production") {
-    return path.join(__dirname, "..", "..", "node_modules", "kuzu", "kuzu-source", "dataset");
-  }
-  return path.join(__dirname, "..", "..", "kuzu", "dataset");
+  return path.join(__dirname, "..", "..", "datasets");
 };
 
 const getDatasetPath = (dataset) => {
@@ -34,10 +47,12 @@ const getDatasetPath = (dataset) => {
 };
 
 router.get("/", async (_, res) => {
+  await getDatasetsToShow();
   return res.send(Object.keys(DATASETS_TO_SHOW));
 });
 
 router.get("/:dataset", async (req, res) => {
+  await getDatasetsToShow();
   const dataset = req.params.dataset;
   const datasetPath = getDatasetPath(dataset);
   if (!datasetPath) {
@@ -53,6 +68,7 @@ router.get("/:dataset", async (req, res) => {
 });
 
 router.get("/:dataset/copy", async (req, res) => {
+  await getDatasetsToShow();
   res.set("Content-Type", "text/plain");
   const dataset = req.params.dataset;
   const datasetPath = getDatasetPath(dataset);

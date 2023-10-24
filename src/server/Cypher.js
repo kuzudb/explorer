@@ -1,4 +1,4 @@
-const database = require("./utils/database");
+const database = require("./utils/Database");
 const express = require("express");
 const router = express.Router();
 

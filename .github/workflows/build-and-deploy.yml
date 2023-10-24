@@ -21,6 +21,8 @@ jobs:
         run: npm run generate-grammar-prod
       - name: Prebuild - build app
         run: npm run build
+      - name: Prebuild - fetch datasets
+        run: npm run fetch-datasets
       - name: Prebuild - cleanup
         run: rm -rf node_modules
       - name: Set up QEMU

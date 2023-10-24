@@ -1,0 +1,37 @@
+{
+  "repository": "https://github.com/kuzudb/kuzu",
+  "commitHash": "5d7ad0045c026e711edbd446e4c3d90ed2823c14",
+  "datasetsRoot": "dataset",
+  "datasets": [
+    {
+      "name": "Kùzu Demo",
+      "path": "demo-db/csv",
+      "isProduction": true,
+      "description": ""
+    },
+    {
+      "name": "TinySNB",
+      "path": "tinysnb",
+      "isProduction": false,
+      "description": ""
+    },
+    {
+      "name": "LDBC SNB Scale Factor 0.1",
+      "path": "ldbc-sf01",
+      "isProduction": true,
+      "description": ""
+    },
+    {
+      "name": "SNAP Amazon",
+      "path": "snap/amazon0601/csv",
+      "isProduction": false,
+      "description": ""
+    },
+    {
+      "name": "SNAP Twitter",
+      "path": "snap/twitter/csv",
+      "isProduction": true,
+      "description": ""
+    }
+  ]
+}

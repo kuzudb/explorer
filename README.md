@@ -15,7 +15,7 @@ Access an existing Kùzu database by mounting its path to the `/database` direct
 ```bash
 docker run -p 8000:8000 \
            -v /absolute/path/to/database:/database \
-           --rm kuzudb/:latest
+           --rm kuzudb/explorer:latest
 ```
 
 The `--rm` flag tells docker that the container should automatically be removed after we close docker. 

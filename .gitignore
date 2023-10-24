@@ -136,3 +136,6 @@ src/utils/CypherParser/*.tokens
 
 # VSCode settings
 .vscode/*
+
+# Datasets
+datasets
