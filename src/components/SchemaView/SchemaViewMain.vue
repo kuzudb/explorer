@@ -64,13 +64,19 @@
         :schema="schema"
         :hoveredLabel="hoveredLabel"
         :hoveredIsNode="hoveredIsNode"
-        v-if="hoveredLabel && clickedLabel === null"
+        v-if="hoveredLabel !== null && (clickedLabel === null || !modeStore.isReadWrite)"
+      />
+      <SchemaSidebarHoverView
+        :schema="schema"
+        :hoveredLabel="clickedLabel"
+        :hoveredIsNode="clickedIsNode"
+        v-if="clickedLabel !== null && hoveredLabel === null && !modeStore.isReadWrite"
       />
       <SchemaSidebarEditView
         :schema="schema"
         :label="clickedLabel"
         :isNode="clickedIsNode"
-        v-if="clickedLabel !== null && !clickedIsNewTable"
+        v-if="clickedLabel !== null && !clickedIsNewTable && modeStore.isReadWrite"
         @dropProperty="dropProperty"
         @back="resetClick"
         @dropTable="dropTable"
@@ -103,6 +109,7 @@ import G6 from '@antv/g6';
 import { UI_SIZE, SHOW_REL_LABELS_OPTIONS, SCHEMA_ACTION_TYPES, PLACEHOLDER_NODE_TABLE, PLACEHOLDER_REL_TABLE } from "../../utils/Constants";
 import G6Utils from "../../utils/G6Utils";
 import { useSettingsStore } from "../../store/SettingsStore";
+import { useModeStore } from "../../store/ModeStore";
 import { mapStores } from 'pinia'
 import SchemaSidebarEditView from './SchemaSidebarEditView.vue';
 import SchemaSidebarAddView from './SchemaSidebarAddView.vue';
@@ -123,7 +130,7 @@ export default {
     graphWidth: 0,
     graphHeight: 0,
     borderWidth: UI_SIZE.DEFAULT_BORDER_WIDTH,
-    hoveredLabel: "",
+    hoveredLabel: null,
     hoveredIsNode: false,
     clickedLabel: null,
     clickedIsNode: false,
@@ -152,7 +159,7 @@ export default {
     displayLabel() {
       return this.hoveredLabel ? this.hoveredLabel : this.clickedLabel;
     },
-    ...mapStores(useSettingsStore),
+    ...mapStores(useSettingsStore, useModeStore)
   },
   watch: {
     graphVizSettings() {
@@ -473,7 +480,7 @@ export default {
     },
 
     resetHover() {
-      this.hoveredLabel = "";
+      this.hoveredLabel = null;
       this.hoveredIsNode = false;
     },
 

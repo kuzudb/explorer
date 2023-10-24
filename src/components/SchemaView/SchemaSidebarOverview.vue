@@ -3,7 +3,13 @@
     <div>
       <div class="d-flex justify-content-between">
         <h5>Node Tables</h5>
-        <button class="btn btn-sm btn-primary" @click="$emit('addNodeTable')">Add</button>
+        <button
+          v-if="modeStore.isReadWrite"
+          class="btn btn-sm btn-primary"
+          @click="$emit('addNodeTable')"
+        >
+          Add
+        </button>
       </div>
       <hr />
       <table
@@ -15,13 +21,16 @@
             <td scope="row">
               <span
                 class="badge bg-primary"
-                :style="{ backgroundColor: ` ${getColor(nodeTable.name)} !important` }"
+                :style="{ backgroundColor: `${getColor(nodeTable.name)} !important` }"
                 >{{ nodeTable.name }}</span
               >
               <br />
               <small> {{ nodeTable.properties.length }} properties </small>
             </td>
-            <td class="schema_side-panel__overview-table-buttons-container">
+            <td
+              class="schema_side-panel__overview-table-buttons-container"
+              v-if="modeStore.isReadWrite"
+            >
               <div>
                 <button
                   class="btn btn-sm btn-outline-primary"
@@ -40,9 +49,10 @@
             </td>
           </tr>
           <tr v-if="schema.nodeTables.length === 0">
-            <td colspan="2">
+            <td colspan="2" v-if="modeStore.isReadWrite">
               There are no node tables in this schema. Click "Add" to add one.
             </td>
+            <td colspan="2" v-else>There are no node tables in this schema.</td>
           </tr>
         </tbody>
       </table>
@@ -51,7 +61,13 @@
 
     <div class="d-flex justify-content-between">
       <h5>Relationship Tables</h5>
-      <button class="btn btn-sm btn-primary" @click="$emit('addRelTable')">Add</button>
+      <button
+        v-if="modeStore.isReadWrite"
+        class="btn btn-sm btn-primary"
+        @click="$emit('addRelTable')"
+      >
+        Add
+      </button>
     </div>
     <hr />
     <table
@@ -73,7 +89,10 @@
             <br />
             <small> {{ relTable.properties.length }} properties </small>
           </td>
-          <td class="schema_side-panel__overview-table-buttons-container">
+          <td
+            v-if="modeStore.isReadWrite"
+            class="schema_side-panel__overview-table-buttons-container"
+          >
             <div>
               <button
                 class="btn btn-sm btn-outline-primary"
@@ -92,9 +111,10 @@
           </td>
         </tr>
         <tr v-if="schema.relTables.length === 0">
-          <td colspan="2">
+          <td colspan="2" v-if="modeStore.isReadWrite">
             There are no relationship tables in this schema. Click "Add" to add one.
           </td>
+          <td colspan="2" v-else>There are no relationship tables in this schema.</td>
         </tr>
       </tbody>
     </table>
@@ -103,6 +123,7 @@
 
 <script lang="js">
 import { useSettingsStore } from "../../store/SettingsStore";
+import { useModeStore } from "../../store/ModeStore";
 import { mapStores } from 'pinia'
 export default {
   name: "SchemaSidebarOverview",
@@ -113,7 +134,7 @@ export default {
     },
   },
   computed: {
-    ...mapStores(useSettingsStore),
+    ...mapStores(useSettingsStore, useModeStore)
   },
   methods: {
     getColor(label) {

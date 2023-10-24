@@ -62,7 +62,7 @@ export const SHOW_REL_LABELS_OPTIONS = {
 
 export const MODES = {
   DEMO: "DEMO",
-  NORMAL: "NORMAL",
+  READ_WRITE: "READ_WRITE",
   READ_ONLY: "READ_ONLY",
 };
 

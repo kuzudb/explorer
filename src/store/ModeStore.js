@@ -3,7 +3,7 @@ import { MODES } from "../utils/Constants";
 
 export const useModeStore = defineStore("mode", {
   state: () => ({
-    currentMode: "NORMAL",
+    currentMode: "READ_WRITE",
   }),
 
   getters: {
@@ -19,8 +19,8 @@ export const useModeStore = defineStore("mode", {
       return state.currentMode === MODES.DEMO;
     },
 
-    isNormal(state) {
-      return state.currentMode === MODES.NORMAL;
+    isReadWrite(state) {
+      return state.currentMode === MODES.READ_WRITE;
     },
   },
 
