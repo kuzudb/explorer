@@ -28,20 +28,17 @@ USER node
 # Set working directory
 WORKDIR /home/node/app
 
-# Install dependencies
-RUN npm install
+# Install dependencies, generate grammar, and reduce size of kuzu node module
+# Done in one step to reduce image size
+RUN npm install &&\
+    if [ "$SKIP_GRAMMAR" != "true" ] ; then npm run generate-grammar-prod ; else echo "Skipping grammar generation" ; fi &&\
+    rm -rf node_modules/kuzu/prebuilt node_modules/kuzu/kuzu-source
 
 # Fetch datasets
 RUN if [ "$SKIP_DATASETS" != "true" ] ; then npm run fetch-datasets ; else echo "Skipping dataset fetch" ; fi
 
-# Generate grammar
-RUN if [ "$SKIP_GRAMMAR" != "true" ] ; then npm run generate-grammar-prod ; else echo "Skipping grammar generation" ; fi
-
 # Build app
 RUN if [ "$SKIP_BUILD_APP" != "true" ] ; then npm run build ; else echo "Skipping build" ; fi
-
-# Reduce size of kuzu node module
-RUN rm -rf node_modules/kuzu/prebuilt node_modules/kuzu/kuzu-source
 
 # Expose port
 EXPOSE 8000
