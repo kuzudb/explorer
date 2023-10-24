@@ -1,13 +1,14 @@
 {
   "name": "kuzu-explorer",
   "version": "0.1.0",
-  "private": true,
+  "license": "MIT",
   "scripts": {
     "serve": "NODE_ENV=development nodemon --exec \"vue-cli-service serve\"",
     "serve-prod": "NODE_ENV=production node src/server/index.js",
     "build": "KUZU_PATH=. vue-cli-service build",
     "lint": "vue-cli-service lint",
     "build-kuzu": "cd kuzu/tools/nodejs_api/ && npm i && cd ../.. && make nodejs NUM_THREADS=$(node -e \"console.log(require('os').cpus().length)\")",
+    "fetch-datasets": "node src/server/utils/FetchDatasets.js",
     "generate-grammar-prod": "rm -rf src/utils/CypherParser/ && cp node_modules/kuzu/kuzu-source/src/antlr4/Cypher.g4 ./ && npx antlr4ng-cli -o src/utils/CypherParser -Dlanguage=TypeScript -no-visitor -no-listener Cypher.g4 && rm Cypher.g4 && cd src/utils/CypherParser && mv CypherParser.ts CypherParserOld.ts && grep -v \"notify\" CypherParserOld.ts > CypherParser.ts && rm CypherParserOld.ts",
     "generate-grammar": "rm -rf src/utils/CypherParser/ && cp kuzu/src/antlr4/Cypher.g4 ./ && npx antlr4ng-cli -o src/utils/CypherParser -Dlanguage=TypeScript -no-visitor -no-listener Cypher.g4 && rm Cypher.g4 && cd src/utils/CypherParser && mv CypherParser.ts CypherParserOld.ts && grep -v \"notify\" CypherParserOld.ts > CypherParser.ts && rm CypherParserOld.ts",
     "clean": "rm -rf node_modules dist src/utils/CypherParser && git submodule deinit --all"
@@ -28,7 +29,6 @@
     "pinia": "^2.0.23",
     "randomcolor": "^0.6.2",
     "uuid": "^9.0.1",
-    "vis-network": "^9.1.6",
     "vue": "^3.2.13"
   },
   "devDependencies": {

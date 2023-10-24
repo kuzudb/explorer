@@ -2,7 +2,7 @@ const express = require("express");
 const api = require("./API");
 const path = require("path");
 const process = require("process");
-const database = require("./utils/database");
+const database = require("./utils/Database");
 
 process.on("SIGINT", () => {
   console.log("SIGINT received, exiting");
