@@ -4,6 +4,7 @@ const TABLE_TYPES = {
   NODE: "NODE",
   REL: "REL",
 };
+const READ_WRITE_MODE = "READ_WRITE";
 
 let kuzu;
 if (process.env.NODE_ENV !== "production") {
@@ -25,8 +26,16 @@ const os = require("os");
 
 class Database {
   constructor() {
+    const mode = process.env.MODE
+      ? process.env.MODE.toUpperCase()
+      : READ_WRITE_MODE;
+    const accessMode =
+      mode === READ_WRITE_MODE
+        ? kuzu.AccessMode.READ_WRITE
+        : kuzu.AccessMode.READ_ONLY;
     const dbPath = process.env.KUZU_PATH;
-    const bufferPoolSize = parseInt(process.env.KUZU_BUFFER_POOL_SIZE);
+    let bufferPoolSize = parseInt(process.env.KUZU_BUFFER_POOL_SIZE);
+    bufferPoolSize = isNaN(bufferPoolSize) ? 0 : bufferPoolSize;
     let numberConnections = parseInt(process.env.KUZU_NUM_CONNECTIONS);
     numberConnections = isNaN(numberConnections) ? 4 : numberConnections;
     const numberOfCores = os.cpus().length;
@@ -34,9 +43,12 @@ class Database {
     if (!dbPath) {
       throw new Error("KUZU_PATH environment variable not set");
     }
-    this.db = isNaN(bufferPoolSize)
-      ? new kuzu.Database(dbPath)
-      : new kuzu.Database(dbPath, bufferPoolSize);
+    console.log(
+      `Access mode: ${
+        accessMode === kuzu.AccessMode.READ_WRITE ? "READ_WRITE" : "READ_ONLY"
+      }`
+    );
+    this.db = new kuzu.Database(dbPath, bufferPoolSize, true, accessMode);
     this.connectionPool = [];
     for (let i = 0; i < numberConnections; i++) {
       this.connectionPool.push({
