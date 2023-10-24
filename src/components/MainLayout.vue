@@ -9,6 +9,16 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse navbar__buttons">
+          <ul class="navbar-nav me-auto" v-if="modeStore.isReadOnly">
+            <li class="nav-item">
+              <span class="badge bg-primary">Read-only Mode</span>
+            </li>
+          </ul>
+          <ul class="navbar-nav me-auto" v-if="modeStore.isDemo">
+            <li class="nav-item">
+              <span class="badge bg-primary">Demo Mode</span>
+            </li>
+          </ul>
           <ul class="navbar-nav ms-auto">
             <li :class="['nav-item', { active: showShell }]">
               <a class="nav-link" href="#" @click="toggleShell()">
@@ -59,7 +69,8 @@ import SettingsMainView from "./SettingsView/SettingsMainView.vue"
 import DatasetMainView from "./DatasetView/DatasetMainView.vue"
 import Axios from "axios";
 import { useSettingsStore } from "../store/SettingsStore";
-import { mapActions } from 'pinia'
+import { useModeStore } from "../store/ModeStore";
+import { mapActions, mapStores } from 'pinia'
 
 export default {
   name: "MainLayout",
@@ -82,6 +93,11 @@ export default {
       const response = await Axios.get("/api/schema");
       const schema = response.data;
       this.schema = schema;
+    },
+    async getMode() {
+      const response = await Axios.get("/api/mode");
+      const mode = response.data.mode;
+      this.modeStore.setMode(mode);
     },
     async reloadSchema() {
       await this.getSchema();
@@ -145,6 +161,9 @@ export default {
     },
     ...mapActions(useSettingsStore, ['initDefaultSettings', 'handleSchemaReload']),
   },
+  computed: {
+    ...mapStores(useModeStore)
+  },
   mounted() {
     this.updateNavbarHeight();
     window.addEventListener("resize", this.updateNavbarHeight);
@@ -153,6 +172,7 @@ export default {
     window.removeEventListener("resize", this.updateNavbarHeight);
   },
   created() {
+    this.getMode();
     this.getSchema().then(() => {
       this.initDefaultSettings(this.schema);
       this.$refs.schemaView.drawGraph();

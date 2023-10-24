@@ -60,5 +60,11 @@ export const SHOW_REL_LABELS_OPTIONS = {
   NEVER: "NEVER",
 };
 
+export const MODES = {
+  DEMO: "DEMO",
+  NORMAL: "NORMAL",
+  READ_ONLY: "READ_ONLY",
+};
+
 export const PLACEHOLDER_NODE_TABLE = "__placeholder_node_table__";
 export const PLACEHOLDER_REL_TABLE = "__placeholder_rel_table__";
