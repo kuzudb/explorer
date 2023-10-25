@@ -159,7 +159,6 @@ export default {
       this.showModal();
     },
     addNewTable(table, properties, isNodeTable, isRelGroup, src, dst, relGroupRels) {
-      console.log(table, properties, isNodeTable, isRelGroup, src, dst, relGroupRels);
       this.reset();
       if (isNodeTable) {
         const pk = properties.find(p => p.isPrimaryKey);
@@ -179,7 +178,6 @@ export default {
           table,
         };
       }
-      console.log("isRelGroup", isRelGroup);
       const statement =
         isRelGroup ?
           DataDefinitionLanguage.addRelGroup(table, properties, relGroupRels) :
