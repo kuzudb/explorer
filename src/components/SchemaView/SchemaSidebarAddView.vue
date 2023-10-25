@@ -82,7 +82,6 @@
           <div>
             <div class="schema_side-panel__add-table-rel-group-container">
               <div class="input-group flex-nowrap">
-                <span class="input-group-text">From</span>
                 <select
                   class="form-select"
                   v-model="rel.src"
@@ -97,9 +96,10 @@
                   </option>
                 </select>
               </div>
-              &nbsp;
+              <span class="input-group-text no-border">
+                <i class="fa-solid fa-arrow-right"></i
+              ></span>
               <div class="input-group flex-nowrap">
-                <span class="input-group-text">To</span>
                 <select
                   class="form-select"
                   v-model="rel.dst"
@@ -465,5 +465,9 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
+
+  .input-group-text.no-border {
+    border: none;
+  }
 }
 </style>

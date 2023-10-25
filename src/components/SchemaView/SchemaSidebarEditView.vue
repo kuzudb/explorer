@@ -59,7 +59,7 @@
           @click="enterAddMode"
         >
           <i class="fa-solid fa-plus"></i>
-          Add Property
+          Property
         </button>
         &nbsp;
         <button
@@ -88,7 +88,7 @@
         v-if="schema"
       >
         <thead>
-          <tr v-if="tableProperties.length > 0">
+          <tr v-if="tableProperties.length > 0 || addingProperty">
             <th scope="col">Name</th>
             <th scope="col">Type</th>
             <th scope="col" class="schema_side-panel__edit-table-buttons-container">
@@ -99,7 +99,7 @@
             <th scope="col">There are no properties in this table</th>
           </tr>
         </thead>
-        <tbody v-if="tableProperties.length > 0">
+        <tbody v-if="tableProperties.length > 0 || addingProperty">
           <tr>
             <SchemaPropertyEditCell
               :property="defaultNewProperty"

@@ -30,7 +30,7 @@
               <i class="fa-solid fa-check-circle"></i>
               The statement has been executed successfully. This dialog will be closed
               automatically in
-              {{ remainingSeconds.toFixed(1) }} seconds.
+              {{ remainingSeconds.toFixed(0) }} seconds.
             </div>
           </div>
         </div>
@@ -159,12 +159,19 @@ export default {
       this.showModal();
     },
     addNewTable(table, properties, isNodeTable, isRelGroup, src, dst, relGroupRels) {
-      this.reset(); if (isNodeTable) {
+      console.log(table, properties, isNodeTable, isRelGroup, src, dst, relGroupRels);
+      this.reset();
+      if (isNodeTable) {
         const pk = properties.find(p => p.isPrimaryKey);
         this.currentAction = {
           type: SCHEMA_ACTION_TYPES.ADD_NODE_TABLE,
           primaryKey: pk ? pk.name : null,
           table,
+        };
+      } else if (isRelGroup) {
+        this.currentAction = {
+          type: SCHEMA_ACTION_TYPES.ADD_REL_GROUP,
+          group: table,
         };
       } else {
         this.currentAction = {
@@ -172,9 +179,13 @@ export default {
           table,
         };
       }
-      const statement = isNodeTable ?
-        DataDefinitionLanguage.addNodeTable(table, properties) :
-        DataDefinitionLanguage.addRelTable(table, properties, src, dst);
+      console.log("isRelGroup", isRelGroup);
+      const statement =
+        isRelGroup ?
+          DataDefinitionLanguage.addRelGroup(table, properties, relGroupRels) :
+          isNodeTable ?
+            DataDefinitionLanguage.addNodeTable(table, properties) :
+            DataDefinitionLanguage.addRelTable(table, properties, src, dst);
       this.statement = statement;
       this.showModal();
     },

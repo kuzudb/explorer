@@ -456,6 +456,10 @@ export default {
         this.$nextTick(() => {
           this.cancelAdd();
         });
+      } else if (action.type === SCHEMA_ACTION_TYPES.ADD_REL_GROUP) {
+        this.$nextTick(() => {
+          this.cancelAdd();
+        });
       }
     },
 
