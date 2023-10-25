@@ -3,6 +3,7 @@ const process = require("process");
 const TABLE_TYPES = {
   NODE: "NODE",
   REL: "REL",
+  REL_GROUP: "REL_GROUP",
 };
 const READ_WRITE_MODE = "READ_WRITE";
 
@@ -95,6 +96,14 @@ class Database {
   }
 
   async getSchema() {
+    const isBelongToGroup = (relTable, relGroupName) => {
+      const src = relTable.src;
+      const dst = relTable.dst;
+      const expectedRelName = `${relGroupName}_${src}_${dst}`;
+      const result = relTable.name === expectedRelName;
+      return result;
+    };
+
     const conn = this.getConnection();
     try {
       const tables = await conn
@@ -102,6 +111,7 @@ class Database {
         .then((res) => res.getAll());
       const nodeTables = [];
       const relTables = [];
+      const relGroups = [];
       for (const table of tables) {
         const properties = (
           await conn
@@ -130,9 +140,20 @@ class Database {
           table.src = src;
           table.dst = dst;
           relTables.push(table);
+        } else if (table.type === TABLE_TYPES.REL_GROUP) {
+          const name = table.name;
+          relGroups.push({ name });
         }
       }
-      return { nodeTables, relTables };
+      relGroups.forEach((relGroup) => {
+        relGroup.rels = relTables
+          .filter((relTable) => isBelongToGroup(relTable, relGroup.name))
+          .map((relTable) => relTable.name);
+      });
+      nodeTables.sort((a, b) => a.name.localeCompare(b.name));
+      relTables.sort((a, b) => a.name.localeCompare(b.name));
+      relGroups.sort((a, b) => a.name.localeCompare(b.name));
+      return { nodeTables, relTables, relGroups };
     } finally {
       this.releaseConnection(conn);
     }

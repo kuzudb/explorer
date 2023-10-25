@@ -24,8 +24,8 @@
     <div class="alert alert-warning" role="alert" v-if="modeStore.isReadOnly">
       <i class="fa-solid fa-info-circle"></i>
       KùzuExplorer is running in read-only mode. You can still review the schema of the
-      bundled datasets. If you want to load a dataset, please restart your
-      KùzuExplorer Docker image in read-write mode with an empty database.
+      bundled datasets. If you want to load a dataset, please restart your KùzuExplorer
+      Docker image in read-write mode with an empty database.
     </div>
 
     <div class="alert alert-warning" role="alert" v-if="modeStore.isDemo">

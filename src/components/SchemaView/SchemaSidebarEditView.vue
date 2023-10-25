@@ -25,6 +25,9 @@
       <hr />
 
       <div v-if="!isNode">
+        <h6 v-if="relGroup">
+          <b>{{ relGroup }} </b> group
+        </h6>
         <h6>
           <span
             class="badge bg-primary"
@@ -56,11 +59,12 @@
           @click="enterAddMode"
         >
           <i class="fa-solid fa-plus"></i>
-          Add Property
+          Property
         </button>
         &nbsp;
         <button
           class="btn btn-sm btn-outline-danger"
+          :disabled="!!relGroup"
           title="Drop Table"
           @click="$emit('dropTable', label)"
         >
@@ -84,7 +88,7 @@
         v-if="schema"
       >
         <thead>
-          <tr v-if="tableProperties.length > 0">
+          <tr v-if="tableProperties.length > 0 || addingProperty">
             <th scope="col">Name</th>
             <th scope="col">Type</th>
             <th scope="col" class="schema_side-panel__edit-table-buttons-container">
@@ -95,7 +99,7 @@
             <th scope="col">There are no properties in this table</th>
           </tr>
         </thead>
-        <tbody v-if="tableProperties.length > 0">
+        <tbody v-if="tableProperties.length > 0 || addingProperty">
           <tr>
             <SchemaPropertyEditCell
               :property="defaultNewProperty"
@@ -202,6 +206,13 @@ export default {
         return null;
       }
       return this.schema.relTables.find(t => t.name === this.label).dst;
+    },
+
+    relGroup() {
+      if (!this.schema || !this.label || this.isNode) {
+        return false;
+      }
+      return this.schema.relTables.find(t => t.name === this.label).group;
     },
 
     tableProperties() {

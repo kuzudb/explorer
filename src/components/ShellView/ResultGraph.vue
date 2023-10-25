@@ -1,21 +1,38 @@
 <template>
   <div class="result-graph__wrapper" ref="wrapper">
-    <div class="result_container__graph" ref="graph" :style="{ width: graphWidth + 'px' }"></div>
-    <div class="result-container__tools_container" ref="toolsContainer" :style="{ width: toolbarContainerWidth + 'px' }">
+    <div
+      class="result_container__graph"
+      ref="graph"
+      :style="{ width: graphWidth + 'px' }"
+    ></div>
+    <div
+      class="result-container__tools_container"
+      ref="toolsContainer"
+      :style="{ width: toolbarContainerWidth + 'px' }"
+    >
       <div class="result-container__button">
-        <i :class="sidePanelButtonClass" data-bs-toggle="tooltip" data-bs-placement="right"
-          :data-bs-original-title="sidePanelButtonTitle" @click="toggleSidePanel"></i>
+        <i
+          :class="sidePanelButtonClass"
+          data-bs-toggle="tooltip"
+          data-bs-placement="right"
+          :data-bs-original-title="sidePanelButtonTitle"
+          @click="toggleSidePanel"
+        ></i>
       </div>
     </div>
     <div class="result-container__side-panel" ref="sidePanel" v-show="isSidePanelOpen">
       <br />
       <div v-if="displayLabel">
         <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
-        <span class="badge bg-primary" :style="{
-          backgroundColor: `${getColor(displayLabel)} !important`,
-          color: `${getTextColor(displayLabel)} !important`,
-        }">
-          {{ displayLabel }}</span>
+        <span
+          class="badge bg-primary"
+          :style="{
+            backgroundColor: `${getColor(displayLabel)} !important`,
+            color: `${getTextColor(displayLabel)} !important`,
+          }"
+        >
+          {{ displayLabel }}</span
+        >
         <hr />
         <table class="table table-sm table-bordered result-container__result-table">
           <tbody>
@@ -38,8 +55,11 @@
             <tbody>
               <tr v-for="label in Object.keys(counters.node)" :key="label">
                 <th scope="row">
-                  <span class="badge bg-primary" :style="{ backgroundColor: ` ${getColor(label)} !important` }">{{ label
-                  }}</span>
+                  <span
+                    class="badge bg-primary"
+                    :style="{ backgroundColor: ` ${getColor(label)} !important` }"
+                    >{{ label }}</span
+                  >
                 </th>
                 <td>{{ counters.node[label] }}</td>
               </tr>
@@ -56,10 +76,13 @@
             <tbody>
               <tr v-for="label in Object.keys(counters.rel)" :key="label">
                 <th scope="row">
-                  <span class="badge bg-primary" :style="{
-                    backgroundColor: ` ${getColor(label)} !important`,
-                    color: `black !important`,
-                  }">
+                  <span
+                    class="badge bg-primary"
+                    :style="{
+                      backgroundColor: ` ${getColor(label)} !important`,
+                      color: `black !important`,
+                    }"
+                  >
                     {{ label }}
                   </span>
                 </th>
@@ -650,7 +673,7 @@ export default {
     padding-top: 4px;
     padding-bottom: 4px;
 
-    >i {
+    > i {
       cursor: pointer;
 
       &:hover {
@@ -662,8 +685,8 @@ export default {
       }
     }
 
-    >i.fa-maximize,
-    >i.fa-minimize {
+    > i.fa-maximize,
+    > i.fa-minimize {
       color: $gray-500;
     }
   }

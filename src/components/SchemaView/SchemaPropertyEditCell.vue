@@ -10,7 +10,12 @@
 
       <div class="input-group flex-nowrap">
         <span class="input-group-text">Name</span>
-        <input type="text" class="form-control" v-model="currProperty.name" @input="nameValid = true" />
+        <input
+          type="text"
+          class="form-control"
+          v-model="currProperty.name"
+          @input="nameValid = true"
+        />
       </div>
 
       <div v-if="currProperty && isNewProperty">
@@ -24,7 +29,11 @@
           </select>
 
           <select class="form-select" v-model="currProperty.type" v-else>
-            <option v-for="dataType in supportedTypesForAlter" :value="dataType" :key="dataType">
+            <option
+              v-for="dataType in supportedTypesForAlter"
+              :value="dataType"
+              :key="dataType"
+            >
               {{ dataType }}
             </option>
           </select>
@@ -99,19 +108,33 @@
       <div v-if="isNewTable && isNodeTable">
         <br />
         <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" v-model="currProperty.isPrimaryKey" />
+          <input
+            class="form-check-input"
+            type="checkbox"
+            v-model="currProperty.isPrimaryKey"
+          />
           <label class="form-check-label"> Primary Key </label>
         </div>
       </div>
     </div>
 
     <div>
-      <button type="button" class="btn btn-sm btn-outline-primary" title="Save" @click="save">
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-primary"
+        title="Save"
+        @click="save"
+      >
         <i class="fa-solid fa-check"></i>
         Save
       </button>
       &nbsp;
-      <button type="button" class="btn btn-sm btn-outline-danger" title="Cancel" @click="$emit('cancel')">
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-danger"
+        title="Cancel"
+        @click="$emit('cancel')"
+      >
         <i class="fa-solid fa-xmark"></i>
         Cancel
       </button>
@@ -375,7 +398,7 @@ export default {
 
 <style lang="scss" scoped>
 td {
-  >div {
+  > div {
     padding: 8px;
   }
 }
