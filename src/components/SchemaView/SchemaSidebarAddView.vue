@@ -1,45 +1,149 @@
 <template>
   <div>
     <div>
+      <div v-if="isRelGroup" class="alert alert-info text-justify" role="alert">
+        <i class="fa-solid fa-info-circle"></i>
+        When creating a relationship group, multiple relationship tables with the same
+        properties will be created.
+        <br />
+        The visualization will not show a preview of the relationship group, but each
+        relationship table will be shown after the relationship group is saved.
+      </div>
       <h5>
         <div class="input-group flex-nowrap">
-          <span class="input-group-text">Table Name</span>
-          <input type="text" class="form-control" v-model="currLabel" :style="{
-            backgroundColor: ` ${getColor()} !important`,
-            color: isNode ? '#ffffff' : '#000000',
-          }" />
+          <span class="input-group-text">Name</span>
+          <input
+            type="text"
+            class="form-control"
+            v-model="currLabel"
+            :style="{
+              backgroundColor: !isRelGroup ? ` ${getColor()} !important` : '#ffffff',
+              color: isNode ? '#ffffff' : '#000000',
+            }"
+          />
         </div>
       </h5>
       <hr />
 
       <div class="schema_side-panel__add-table-actions-container">
-        <button type="button" class="btn btn-sm btn-outline-success" title="Save Table" @click="saveTable">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-success"
+          title="Save Table"
+          @click="saveTable"
+        >
           <i class="fa-solid fa-save"></i>
-          Save Table
+          Save
         </button>
         &nbsp;
-        <button class="btn btn-sm btn-outline-danger" title="Discard Table" @click="discardTable">
+        <button
+          class="btn btn-sm btn-outline-danger"
+          title="Discard Table"
+          @click="discardTable"
+        >
           <i class="fa-solid fa-trash"></i>
-          Discard Table
+          Discard
         </button>
         &nbsp;
-        <button class="btn btn-sm btn-outline-primary" title="Add Property" @click="addProperty">
+        <button
+          class="btn btn-sm btn-outline-primary"
+          title="Add Property"
+          @click="addProperty"
+        >
           <i class="fa-solid fa-plus"></i>
-          Add Property
+          Property
         </button>
         &nbsp;
-        <button class="btn btn-sm btn-outline-secondary" title="Rename Table" v-if="false">
+        <button
+          class="btn btn-sm btn-outline-primary"
+          title="Relationship"
+          v-if="isRelGroup"
+          @click="addRel"
+        >
+          <i class="fa-solid fa-plus"></i>
+          Connection
+        </button>
+        &nbsp;
+        <button
+          class="btn btn-sm btn-outline-secondary"
+          title="Rename Table"
+          v-if="false"
+        >
           <i class="fa-solid fa-pencil"></i>
           Rename Table
         </button>
       </div>
       <br />
 
-      <div v-if="!isNode">
+      <div v-if="isRelGroup">
+        <h5>Connections</h5>
+        <hr />
+        <div v-for="rel in currRelGroupRels" :key="rel.id">
+          <div>
+            <div class="schema_side-panel__add-table-rel-group-container">
+              <div class="input-group flex-nowrap">
+                <span class="input-group-text">From</span>
+                <select
+                  class="form-select"
+                  v-model="rel.src"
+                  :style="getSelectStyle(rel.src)"
+                >
+                  <option
+                    v-for="option in relTableSrcAndDstOptions"
+                    :value="option.value"
+                    :key="option.text"
+                  >
+                    {{ option.text }}
+                  </option>
+                </select>
+              </div>
+              &nbsp;
+              <div class="input-group flex-nowrap">
+                <span class="input-group-text">To</span>
+                <select
+                  class="form-select"
+                  v-model="rel.dst"
+                  :style="getSelectStyle(rel.dst)"
+                >
+                  <option
+                    v-for="option in relTableSrcAndDstOptions"
+                    :value="option.value"
+                    :key="option.text"
+                  >
+                    {{ option.text }}
+                  </option>
+                </select>
+              </div>
+              &nbsp;
+              <div>
+                <button
+                  v-if="currRelGroupRels.length > 1"
+                  type="button"
+                  class="btn btn-sm btn-outline-danger"
+                  title="Drop"
+                  @click="deleteRel(rel.id)"
+                >
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="schema_side-panel__add-table-rel-group-blank-space"></div>
+        </div>
+        <br />
+      </div>
+
+      <div v-if="!isNode && !isRelGroup">
+        <h5>Connection</h5>
+        <hr />
         <div class="input-group flex-nowrap">
           <span class="input-group-text">From</span>
           <select class="form-select" v-model="currSrc" :style="getSelectStyle(currSrc)">
-            <option v-for="option in relTableSrcAndDstOptions" :value="option.value" :key="option.text">
+            <option
+              v-for="option in relTableSrcAndDstOptions"
+              :value="option.value"
+              :key="option.text"
+            >
               {{ option.text }}
             </option>
           </select>
@@ -47,7 +151,11 @@
         <div class="input-group flex-nowrap">
           <span class="input-group-text">To</span>
           <select class="form-select" v-model="currDst" :style="getSelectStyle(currDst)">
-            <option v-for="option in relTableSrcAndDstOptions" :value="option.value" :key="option.text">
+            <option
+              v-for="option in relTableSrcAndDstOptions"
+              :value="option.value"
+              :key="option.text"
+            >
               {{ option.text }}
             </option>
           </select>
@@ -55,7 +163,12 @@
         <br />
       </div>
 
-      <table class="table table-sm table-bordered schema_side-panel__add-table" v-if="schema">
+      <h5>Properties</h5>
+      <hr />
+      <table
+        class="table table-sm table-bordered schema_side-panel__add-table"
+        v-if="schema"
+      >
         <thead>
           <tr v-if="currProperties.length > 0">
             <th scope="col">Name</th>
@@ -71,9 +184,17 @@
 
         <tbody v-if="currProperties.length > 0">
           <tr v-for="property in currProperties" :key="property.id">
-            <SchemaPropertyEditCell :property="property" :colspan="3" :isNewProperty="true" :isNewTable="true"
-              :isNodeTable="isNode" :ref="'editCell-' + property.id" v-if="property.isEditing"
-              @save="(...args) => saveProperty(property.id, ...args)" @cancel="cancelEditMode(property.id)" />
+            <SchemaPropertyEditCell
+              :property="property"
+              :colspan="3"
+              :isNewProperty="true"
+              :isNewTable="true"
+              :isNodeTable="isNode"
+              :ref="'editCell-' + property.id"
+              v-if="property.isEditing"
+              @save="(...args) => saveProperty(property.id, ...args)"
+              @cancel="cancelEditMode(property.id)"
+            />
             <td v-if="!property.isEditing">
               {{ property.name }}
               <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
@@ -81,13 +202,25 @@
             <td v-if="!property.isEditing">
               {{ property.type }}
             </td>
-            <td class="schema_side-panel__add-table-buttons-container" v-if="!property.isEditing">
-              <button type="button" class="btn btn-sm btn-outline-primary" title="Edit"
-                @click="enterEditMode(property.id)">
+            <td
+              class="schema_side-panel__add-table-buttons-container"
+              v-if="!property.isEditing"
+            >
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-primary"
+                title="Edit"
+                @click="enterEditMode(property.id)"
+              >
                 <i class="fa-solid fa-pencil"></i>
               </button>
               &nbsp;
-              <button type="button" class="btn btn-sm btn-outline-danger" title="Drop" @click="dropProperty(property.id)">
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                title="Drop"
+                @click="dropProperty(property.id)"
+              >
                 <i class="fa-solid fa-trash"></i>
               </button>
             </td>
@@ -129,6 +262,7 @@ export default {
     },
     currLabel: "",
     currProperties: [],
+    currRelGroupRels: [],
     currSrc: null,
     currDst: null,
     placeholderNodeTable: PLACEHOLDER_NODE_TABLE,
@@ -148,6 +282,10 @@ export default {
       type: Boolean,
       required: true,
     },
+    isRelGroup: {
+      type: Boolean,
+      required: true,
+    }
   },
   watch: {
     currLabel() {
@@ -155,7 +293,7 @@ export default {
       this.currLabelInputDebounce = setTimeout(() => {
         if (this.isNode) {
           this.$emit("updateNodeTableLabel", this.currLabel);
-        } else {
+        } else if (!this.isRelGroup) {
           this.updatePlaceholderRelTable();
         }
       }, 300);
@@ -173,7 +311,7 @@ export default {
       const result = [
         {
           value: null,
-          text: "Select a node table",
+          text: "(Unspecified)",
         }
       ];
       if (!this.schema) {
@@ -217,7 +355,7 @@ export default {
         return;
       }
       this.$nextTick(() => {
-        this.$emit("save", this.currLabel, this.currProperties, this.currSrc, this.currDst);
+        this.$emit("save", this.currLabel, this.currProperties, this.currSrc, this.currDst, this.currRelGroupRels);
       });
     },
     discardTable() {
@@ -274,9 +412,25 @@ export default {
       const name = this.currLabel;
       this.$emit("updatePlaceholderRelTable", { src, dst, name });
     },
+    addRel() {
+      const newRel = {
+        id: uuidv4(),
+        src: null,
+        dst: null,
+      };
+      this.currRelGroupRels.push(newRel);
+    },
+    deleteRel(id) {
+      const index = this.currRelGroupRels.findIndex(r => r.id === id);
+      this.currRelGroupRels.splice(index, 1);
+    },
   },
   mounted() {
     this.currLabel = this.label;
+    if (this.isRelGroup) {
+      this.currRelGroupRels = [];
+      this.addRel();
+    }
     if (!this.isNode) {
       return;
     }
@@ -296,5 +450,20 @@ export default {
   width: 90px;
   text-align: center;
   vertical-align: middle;
+}
+
+.alert.alert-info.text-justify {
+  text-align: justify;
+}
+
+.schema_side-panel__add-table-rel-group-blank-space {
+  display: block;
+  height: 8px;
+}
+
+.schema_side-panel__add-table-rel-group-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 </style>

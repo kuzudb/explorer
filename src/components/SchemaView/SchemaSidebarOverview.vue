@@ -228,10 +228,12 @@ export default {
   width: 90px;
   text-align: center;
   vertical-align: middle;
+
   &.schema_side-panel__overview-rel-groups-buttons-container {
     width: 50px;
   }
 }
+
 ul {
   margin-bottom: 4px;
 }

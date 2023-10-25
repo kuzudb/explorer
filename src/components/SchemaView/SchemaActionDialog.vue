@@ -158,21 +158,20 @@ export default {
       this.statement = statement;
       this.showModal();
     },
-    addNewTable(table, properties, isNodeTable, src, dst) {
-      this.reset();
-      if(isNodeTable){
-      const pk = properties.find(p => p.isPrimaryKey);
-      this.currentAction = {
-        type: SCHEMA_ACTION_TYPES.ADD_NODE_TABLE,
-        primaryKey: pk ? pk.name : null,
-        table,
-      };
-    } else {
-      this.currentAction = {
-        type: SCHEMA_ACTION_TYPES.ADD_REL_TABLE,
-        table,
-      };
-    }
+    addNewTable(table, properties, isNodeTable, isRelGroup, src, dst, relGroupRels) {
+      this.reset(); if (isNodeTable) {
+        const pk = properties.find(p => p.isPrimaryKey);
+        this.currentAction = {
+          type: SCHEMA_ACTION_TYPES.ADD_NODE_TABLE,
+          primaryKey: pk ? pk.name : null,
+          table,
+        };
+      } else {
+        this.currentAction = {
+          type: SCHEMA_ACTION_TYPES.ADD_REL_TABLE,
+          table,
+        };
+      }
       const statement = isNodeTable ?
         DataDefinitionLanguage.addNodeTable(table, properties) :
         DataDefinitionLanguage.addRelTable(table, properties, src, dst);

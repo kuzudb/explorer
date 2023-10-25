@@ -171,9 +171,9 @@ export default {
         });
       });
       this.schema.relTables.forEach((r) => {
-       if(relGroupsMap[r.name]) {
-         r.group = relGroupsMap[r.name];
-       }
+        if (relGroupsMap[r.name]) {
+          r.group = relGroupsMap[r.name];
+        }
       });
     },
     async getMode() {
@@ -181,7 +181,7 @@ export default {
       const mode = response.data.mode;
       this.modeStore.setMode(mode);
       this.$nextTick(() => {
-        if(this.modeStore.isDemo) {
+        if (this.modeStore.isDemo) {
           this.accessModeModal.show();
         }
       });
@@ -299,6 +299,7 @@ nav.navbar {
   .badge {
     cursor: pointer;
   }
+
   &.active {
     a {
       color: $gray-300;

@@ -59,6 +59,7 @@
         @editTable="enterEditTableMode"
         @addNodeTable="enterAddNodeTableMode"
         @addRelTable="enterAddRelTableMode"
+        @addRelGroup="enterAddRelGroupMode"
       />
       <SchemaSidebarHoverView
         :schema="schema"
@@ -88,6 +89,7 @@
         :schema="schema"
         :label="clickedLabel"
         :isNode="clickedIsNode"
+        :isRelGroup="clickedIsRelGroup"
         v-if="clickedLabel !== null && clickedIsNewTable"
         @discard="cancelAdd"
         @save="addNewTable"
@@ -135,6 +137,7 @@ export default {
     clickedLabel: null,
     clickedIsNode: false,
     clickedIsNewTable: false,
+    clickedIsRelGroup: false,
     toolbarDebounceTimeout: 100,
     toolbarDebounceTimer: null,
   }),
@@ -288,7 +291,7 @@ export default {
 
 
       this.g6graph.on('node:click', (e) => {
-        if(this.clickedIsNewTable) {
+        if (this.clickedIsNewTable) {
           return;
         }
         this.resetClick();
@@ -326,7 +329,7 @@ export default {
       });
 
       this.g6graph.on('edge:click', (e) => {
-        if(this.clickedIsNewTable) {
+        if (this.clickedIsNewTable) {
           return;
         }
         this.resetClick();
@@ -343,7 +346,7 @@ export default {
       });
 
       this.g6graph.on('canvas:click', () => {
-        if(this.clickedIsNewTable) {
+        if (this.clickedIsNewTable) {
           return;
         }
         this.resetClick();
@@ -375,7 +378,7 @@ export default {
           isPlaceholder: Boolean(n.isPlaceholder),
           style: {
             fill:
-            n.isPlaceholder ? this.getColor(PLACEHOLDER_NODE_TABLE) : this.getColor(n.name),
+              n.isPlaceholder ? this.getColor(PLACEHOLDER_NODE_TABLE) : this.getColor(n.name),
           },
         };
       })
@@ -393,7 +396,7 @@ export default {
               stroke: r.isPlaceholder ? this.getColor(PLACEHOLDER_REL_TABLE) : this.getColor(r.name),
             }
           };
-          if(!edge.source || !edge.target) {
+          if (!edge.source || !edge.target) {
             return null;
           }
           const hashKey = `${r.src}-${r.dst}`;
@@ -415,7 +418,7 @@ export default {
           }
           return edge;
         }).filter(e => Boolean(e));
-        return { nodes, edges };
+      return { nodes, edges };
     },
 
     handleResize() {
@@ -448,7 +451,7 @@ export default {
           this.cancelAdd();
         });
 
-      }else if(action.type === SCHEMA_ACTION_TYPES.ADD_REL_TABLE){
+      } else if (action.type === SCHEMA_ACTION_TYPES.ADD_REL_TABLE) {
         this.settingsStore.renameRelTable(PLACEHOLDER_REL_TABLE, action.table);
         this.$nextTick(() => {
           this.cancelAdd();
@@ -555,7 +558,7 @@ export default {
       const layoutConfig = this.getLayoutConfig(edges);
       this.g6graph.updateLayout(layoutConfig);
       this.counters = counters;
-      if(this.clickedLabel){
+      if (this.clickedLabel) {
         this.setG6Click(this.clickedLabel);
       }
     },
@@ -607,7 +610,7 @@ export default {
     },
 
 
-    enterAddRelTableMode(){
+    enterAddRelTableMode() {
       let newTableName = "NewRelTable";
       this.clickedIsNewTable = true;
       let counter = 1;
@@ -622,27 +625,42 @@ export default {
       this.clickedIsNewTable = true;
     },
 
-    cancelAdd(){
-      if(this.clickedIsNode){
+    enterAddRelGroupMode() {
+      let newTableName = "NewRelGroup";
+      this.clickedIsNewTable = true;
+      let counter = 1;
+      while (this.schema.relTables.find(t => t.name === newTableName)) {
+        newTableName = `NewRelGroup-${counter}`;
+        counter += 1;
+      }
+      this.clickedLabel = newTableName;
+      this.clickedIsNode = false;
+      this.clickedIsNewTable = true;
+      this.clickedIsRelGroup = true;
+    },
+
+    cancelAdd() {
+      if (this.clickedIsNode) {
         this.settingsStore.removeNodeTable(PLACEHOLDER_NODE_TABLE);
       }
-      else{
+      else if (!this.clickedIsRelGroup) {
         this.settingsStore.removeRelTable(PLACEHOLDER_REL_TABLE);
       }
+      this.clickedIsRelGroup = false;
       this.resetClick();
       this.reloadSchema();
     },
 
-    addNewTable(table, properties, src, dst) {
-      this.$refs.actionDialog.addNewTable(table, properties, this.clickedIsNode, src, dst);
+    addNewTable(table, properties, src, dst, relGroupRels) {
+      this.$refs.actionDialog.addNewTable(table, properties, this.clickedIsNode, this.clickedIsRelGroup, src, dst, relGroupRels);
     },
 
-    updatePlaceholderNodeTableLabel(newLabel){
-      if(this.clickedLabel === newLabel){
+    updatePlaceholderNodeTableLabel(newLabel) {
+      if (this.clickedLabel === newLabel) {
         return;
       }
       const g6Item = this.g6graph ? this.g6graph.find('node', node => node._cfg.model.isPlaceholder) : null;
-      if(g6Item){
+      if (g6Item) {
         this.g6graph.updateItem(g6Item, {
           label: newLabel,
         });
@@ -651,16 +669,16 @@ export default {
       this.clickedLabel = newLabel;
     },
 
-    updatePlaceholderRelTable(newTable){
+    updatePlaceholderRelTable(newTable) {
       this.$emit("updatePlaceholderRelTable", newTable);
       this.clickedLabel = newTable.name;
       const g6Item = this.g6graph ? this.g6graph.find('edge', edge => edge._cfg.model.isPlaceholder) : null;
       // If the edge has not been created yet, and the user has not selected a source and destination, do nothing
-      if(!g6Item && (!newTable.src || !newTable.dst)){
+      if (!g6Item && (!newTable.src || !newTable.dst)) {
         return;
       }
       // If the edge has been created and only the label has changed, update the label and return
-      if(g6Item && g6Item._cfg.model.src === newTable.src && g6Item._cfg.model.dst === newTable.dst){
+      if (g6Item && g6Item._cfg.model.src === newTable.src && g6Item._cfg.model.dst === newTable.dst) {
         this.g6graph.updateItem(g6Item, {
           label: newTable.name,
         });
