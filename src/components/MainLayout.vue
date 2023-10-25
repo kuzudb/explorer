@@ -55,6 +55,13 @@
                 Settings
               </a>
             </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="https://kuzudb.com/docusaurus/" target="_blank">
+                <i class="fa-solid fa-book"></i>
+                Docs
+              </a>
+            </li>
           </ul>
         </div>
       </div>
