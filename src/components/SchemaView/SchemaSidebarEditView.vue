@@ -25,6 +25,9 @@
       <hr />
 
       <div v-if="!isNode">
+        <h6 v-if="relGroup">
+          <b>{{ relGroup }} </b> group
+        </h6>
         <h6>
           <span
             class="badge bg-primary"
@@ -61,6 +64,7 @@
         &nbsp;
         <button
           class="btn btn-sm btn-outline-danger"
+          :disabled="!!relGroup"
           title="Drop Table"
           @click="$emit('dropTable', label)"
         >
@@ -202,6 +206,13 @@ export default {
         return null;
       }
       return this.schema.relTables.find(t => t.name === this.label).dst;
+    },
+
+    relGroup() {
+      if (!this.schema || !this.label || this.isNode) {
+        return false;
+      }
+      return this.schema.relTables.find(t => t.name === this.label).group;
     },
 
     tableProperties() {

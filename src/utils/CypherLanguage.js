@@ -235,6 +235,14 @@ class CypherLanguage {
           });
         });
       });
+      schema.relGroups.forEach((relGroup) => {
+        monacoSuggestions.push({
+          range,
+          label: relGroup.name,
+          kind: Monaco.languages.CompletionItemKind.Class,
+          insertText: relGroup.name,
+        });
+      });
     }
     return {
       suggestions: monacoSuggestions,

@@ -164,6 +164,17 @@ export default {
       const response = await Axios.get("/api/schema");
       const schema = response.data;
       this.schema = schema;
+      const relGroupsMap = {};
+      this.schema.relGroups.forEach((g) => {
+        g.rels.forEach((r) => {
+          relGroupsMap[r] = g.name
+        });
+      });
+      this.schema.relTables.forEach((r) => {
+       if(relGroupsMap[r.name]) {
+         r.group = relGroupsMap[r.name];
+       }
+      });
     },
     async getMode() {
       const response = await Axios.get("/api/mode");
