@@ -425,7 +425,6 @@ export default {
         if (this.g6graph) {
           this.g6graph.changeSize(width, height);
           this.g6graph.fitCenter();
-          this.g6graph.layout();
         }
       });
     },
