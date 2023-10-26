@@ -1,13 +1,10 @@
-const process = require("process");
 const express = require("express");
 const router = express.Router();
-const READ_WRITE_MODE = "READ_WRITE";
+const database = require("./utils/Database");
 
 router.get("/", async (_, res) => {
   try {
-    const mode = process.env.MODE
-      ? process.env.MODE.toUpperCase()
-      : READ_WRITE_MODE;
+    const mode = database.getAccessModeString();
     res.send({ mode });
   } catch (err) {
     return res.status(400).send({ error: err.message });
