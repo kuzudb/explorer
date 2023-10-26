@@ -27,9 +27,7 @@ const os = require("os");
 
 class Database {
   constructor() {
-    const mode = process.env.MODE
-      ? process.env.MODE.toUpperCase()
-      : READ_WRITE_MODE;
+    const mode = this.getAccessModeString();
     const accessMode =
       mode === READ_WRITE_MODE
         ? kuzu.AccessMode.READ_WRITE
@@ -39,8 +37,29 @@ class Database {
     bufferPoolSize = isNaN(bufferPoolSize) ? 0 : bufferPoolSize;
     let numberConnections = parseInt(process.env.KUZU_NUM_CONNECTIONS);
     numberConnections = isNaN(numberConnections) ? 4 : numberConnections;
-    const numberOfCores = os.cpus().length;
-    const coresPerConnection = parseInt(numberConnections / numberOfCores);
+    let numberOfCores = parseInt(process.env.KUZU_NUM_CORES);
+    numberOfCores =
+      isNaN(numberOfCores) || numberOfCores < 1
+        ? os.cpus().length
+        : numberOfCores;
+    if (numberOfCores !== os.cpus().length) {
+      console.log("Connection pool configuration: ");
+      console.log(`   ${numberOfCores} / ${os.cpus().length} total cores`);
+    }
+    let coresPerConnection = Math.floor(numberOfCores / numberConnections);
+    coresPerConnection = coresPerConnection < 1 ? 1 : coresPerConnection;
+    if (numberOfCores !== os.cpus().length) {
+      console.log(
+        `   ${coresPerConnection} ${
+          coresPerConnection === 1 ? "core" : "cores"
+        } per connection`
+      );
+      console.log(
+        `   ${numberConnections} ${
+          numberConnections === 1 ? "connection" : "connections"
+        }`
+      );
+    }
     if (!dbPath) {
       throw new Error("KUZU_PATH environment variable not set");
     }
@@ -53,14 +72,15 @@ class Database {
     this.connectionPool = [];
     for (let i = 0; i < numberConnections; i++) {
       this.connectionPool.push({
-        connection: new kuzu.Connection(
-          this.db,
-          coresPerConnection > 0 ? coresPerConnection : 1
-        ),
+        connection: new kuzu.Connection(this.db, coresPerConnection),
         useCount: 0,
         id: i,
       });
     }
+  }
+
+  getAccessModeString() {
+    return process.env.MODE ? process.env.MODE.toUpperCase() : READ_WRITE_MODE;
   }
 
   getDb() {

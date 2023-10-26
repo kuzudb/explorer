@@ -1,6 +1,7 @@
 const database = require("./utils/Database");
 const express = require("express");
 const router = express.Router();
+const DEMO_MODE = "DEMO";
 
 let schema = null;
 
@@ -13,13 +14,19 @@ router.post("/", async (req, res) => {
     }
   }
   const conn = database.getConnection();
+  const mode = database.getAccessModeString();
   const query = req.body.query;
   if (!query || !typeof query === "string") {
     return res
       .status(400)
       .send({ error: "The query must be a string with length > 0" });
   }
-
+  const isQueryCopy = query.trim().toUpperCase().startsWith("COPY");
+  if (mode === DEMO_MODE && isQueryCopy) {
+    return res
+      .status(400)
+      .send({ error: "COPY command is not allowed in demo mode" });
+  }
   const params = req.body.params;
   if (params && !typeof params === "object") {
     return res.status(400).send({ error: "Params must be an object" });
