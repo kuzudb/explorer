@@ -116,7 +116,7 @@
               If you want load a different bundled dataset or use your own dataset, you
               can run KùzuExplorer locally. Please refer to
               <a target="_blank" href="https://kuzudb.com/docusaurus/kuzuexplorer/">
-                the Documentation
+                the documentation
               </a>
               for more information.
             </p>

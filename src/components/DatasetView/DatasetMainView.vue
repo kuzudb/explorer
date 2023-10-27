@@ -35,7 +35,7 @@
       bundled dataset or use your own dataset if you run KùzuExplorer locally. Please
       refer to
       <a target="_blank" href="https://kuzudb.com/docusaurus/kuzuexplorer/">
-        the Documentation </a
+        the documentation </a
       >for more information.
     </div>
     <div class="form-group" v-if="!datasetLoadingLog">
