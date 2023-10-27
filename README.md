@@ -1,6 +1,8 @@
 # KùzuExplorer
-
 Browser-based user interface for the [Kùzu](https://github.com/kuzudb/kuzu) graph database.
+
+![image](https://github.com/kuzudb/explorer/assets/14037726/12bfcd9e-cb7f-4fd5-9214-7bbd3b547bd6)
+
 
 ## Get started
 
