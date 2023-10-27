@@ -24,6 +24,8 @@
 import CypherEditor from "./CypherEditor.vue";
 import ResultContainer from "./ResultContainer.vue";
 import Axios from "axios";
+import { useModeStore } from "../../store/ModeStore";
+import { mapStores } from "pinia";
 
 export default {
   name: "ShellCell",
@@ -56,6 +58,10 @@ export default {
     },
   },
 
+  computed: {
+    ...mapStores(useModeStore),
+  },
+
   methods: {
     evaluateCypher(query) {
       this.queryResult = null;
@@ -74,7 +80,11 @@ export default {
         })
         .catch((error) => {
           if (!error.response) {
-            this.errorMessage = "The application is disconnected from the server. Please try to restart the server.";
+            if (this.modeStore.isDemo) {
+              this.errorMessage = "The application is disconnected from the server. Please try to refresh the page and execute the query again.";
+            } else {
+              this.errorMessage = "The application is disconnected from the server. Please try to restart the server.";
+            }
           }
           else if (!error.response.data) {
             this.errorMessage = String(error).trim();

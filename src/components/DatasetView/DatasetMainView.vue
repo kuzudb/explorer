@@ -33,8 +33,10 @@
       KùzuExplorer is running in demo mode. You can still review the schema of the bundled
       datasets. Loading a dataset is not possible in this demo. However, you can load a
       bundled dataset or use your own dataset if you run KùzuExplorer locally. Please
-      refer to <a href="https://github.com/kuzudb/explorer/">the GitHub repository</a> for
-      more information.
+      refer to
+      <a target="_blank" href="https://kuzudb.com/docusaurus/kuzuexplorer/">
+        the Documentation </a
+      >for more information.
     </div>
     <div class="form-group" v-if="!datasetLoadingLog">
       <label for="dataset-select">

@@ -115,9 +115,9 @@
               different dataset, modify the schema, or execute write queries in this demo.
               If you want load a different bundled dataset or use your own dataset, you
               can run KùzuExplorer locally. Please refer to
-              <a target="_blank" href="https://github.com/kuzudb/explorer/"
-                >the GitHub repository</a
-              >
+              <a target="_blank" href="https://kuzudb.com/docusaurus/kuzuexplorer/">
+                the Documentation
+              </a>
               for more information.
             </p>
             <p v-if="modeStore.isReadOnly">
