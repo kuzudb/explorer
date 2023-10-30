@@ -105,20 +105,20 @@
           </div>
           <div class="modal-body">
             <p v-if="modeStore.isDemo">
-              Welcome to the <a target="_blank" href="https://kuzudb.com">Kùzu</a> demo!
-              In this demo, the
-              <a target="_blank" href="https://ldbcouncil.org/benchmarks/snb/">
-                LDBC SNB Interactive Benchmark</a
-              >
-              dataset with scale factor 0.1 is loaded. You can review the schema of this
-              dataset and execute Cypher queries in the shell. However, you cannot load a
-              different dataset, modify the schema, or execute write queries in this demo.
-              If you want load a different bundled dataset or use your own dataset, you
-              can run KùzuExplorer locally. Please refer to
-              <a target="_blank" href="https://kuzudb.com/docusaurus/kuzuexplorer/">
-                the documentation
+              This is a demo of <a href="https://kuzudb.com/">Kùzu</a> on the
+              <a href="https://ldbcouncil.org/benchmarks/snb/">
+                LDBC Social Network Benchmark
               </a>
-              for more information.
+              scale factor 0.1 dataset. Please run KùzuExplorer locally to load a
+              different dataset (see the
+              <a href="https://kuzudb.com/docusaurus/kuzuexplorer/">
+                documentation here
+              </a>
+              ).
+              <br />
+              <br />
+              You can visualize the schema of LDBC SNB in the Schema tab and execute
+              interactive Cypher queries in the Shell tab.
             </p>
             <p v-if="modeStore.isReadOnly">
               KùzuExplorer is running in read-only mode. In this mode, you cannot load a
