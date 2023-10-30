@@ -42,7 +42,7 @@
                 Schema
               </a>
             </li>
-            <li :class="['nav-item', { active: showLoader }]">
+            <li :class="['nav-item', { active: showLoader }]" v-if="!modeStore.isDemo">
               <a class="nav-link" href="#" @click="toggleLoader()">
                 <i class="fa-solid fa-database"></i>
                 Datasets
