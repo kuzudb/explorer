@@ -3,14 +3,15 @@ const api = require("./API");
 const path = require("path");
 const process = require("process");
 const database = require("./utils/Database");
+const logger = require("./utils/Logger");
 
 process.on("SIGINT", () => {
-  console.log("SIGINT received, exiting");
+  logger.info("SIGINT received, exiting");
   process.exit(0);
 });
 
 process.on("SIGTERM", () => {
-  console.log("SIGTERM received, exiting");
+  logger.info("SIGTERM received, exiting");
   process.exit(0);
 });
 
@@ -30,13 +31,13 @@ conn
   .then((res) => {
     const row = res[0];
     const version = Object.values(row)[0];
-    console.log("Version of Kùzu:", version);
+    logger.info("Version of Kùzu: " + version);
     app.listen(PORT, () => {
-      console.log("Deployed server started on port:", PORT);
+      logger.info("Deployed server started on port: " + PORT);
     });
   })
   .catch((err) => {
-    console.log("Error getting version of Kùzu:", err);
+    logger.error("Error getting version of Kùzu: " + err);
   })
   .finally(() => {
     database.releaseConnection(conn);

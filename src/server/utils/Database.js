@@ -1,5 +1,6 @@
 const path = require("path");
 const process = require("process");
+const logger = require("./Logger");
 const TABLE_TYPES = {
   NODE: "NODE",
   REL: "REL",
@@ -36,25 +37,25 @@ class Database {
     let bufferPoolSize = parseInt(process.env.KUZU_BUFFER_POOL_SIZE);
     bufferPoolSize = isNaN(bufferPoolSize) ? 0 : bufferPoolSize;
     let numberConnections = parseInt(process.env.KUZU_NUM_CONNECTIONS);
-    numberConnections = isNaN(numberConnections) ? 4 : numberConnections;
+    numberConnections = isNaN(numberConnections) ? 1 : numberConnections;
     let numberOfCores = parseInt(process.env.KUZU_NUM_CORES);
     numberOfCores =
       isNaN(numberOfCores) || numberOfCores < 1
         ? os.cpus().length
         : numberOfCores;
     if (numberOfCores !== os.cpus().length) {
-      console.log("Connection pool configuration: ");
-      console.log(`   ${numberOfCores} / ${os.cpus().length} total cores`);
+      logger.info("Connection pool configuration: ");
+      logger.info(`   ${numberOfCores} / ${os.cpus().length} total cores`);
     }
     let coresPerConnection = Math.floor(numberOfCores / numberConnections);
     coresPerConnection = coresPerConnection < 1 ? 1 : coresPerConnection;
     if (numberOfCores !== os.cpus().length) {
-      console.log(
+      logger.info(
         `   ${coresPerConnection} ${
           coresPerConnection === 1 ? "core" : "cores"
         } per connection`
       );
-      console.log(
+      logger.info(
         `   ${numberConnections} ${
           numberConnections === 1 ? "connection" : "connections"
         }`
@@ -63,19 +64,27 @@ class Database {
     if (!dbPath) {
       throw new Error("KUZU_PATH environment variable not set");
     }
-    console.log(
+    logger.info(
       `Access mode: ${
         accessMode === kuzu.AccessMode.READ_WRITE ? "READ_WRITE" : "READ_ONLY"
       }`
     );
+    const queryTimeout = parseInt(process.env.KUZU_QUERY_TIMEOUT);
+    if (!isNaN(queryTimeout)) {
+      logger.info(`Query timeout: ${queryTimeout} ms`);
+    }
     this.db = new kuzu.Database(dbPath, bufferPoolSize, true, accessMode);
     this.connectionPool = [];
     for (let i = 0; i < numberConnections; i++) {
-      this.connectionPool.push({
+      const conn = {
         connection: new kuzu.Connection(this.db, coresPerConnection),
         useCount: 0,
         id: i,
-      });
+      };
+      if (!isNaN(queryTimeout)) {
+        conn.connection.setQueryTimeout(queryTimeout);
+      }
+      this.connectionPool.push(conn);
     }
   }
 
