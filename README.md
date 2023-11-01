@@ -98,15 +98,15 @@ For more information regarding launching and using KùzuExplorer, please refer t
 - [Git](https://git-scm.com/)
 
 ### Environment setup
+#### Install Node.js dependencies
+```bash
+npm i
+```
+
 #### Download and compile Kùzu
 ```bash
 git submodule update --init --recursive
 npm run build-kuzu 
-```
-
-#### Install Node.js dependencies
-```bash
-npm i
 ```
 
 #### Generate grammar files
