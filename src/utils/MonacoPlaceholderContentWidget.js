@@ -29,6 +29,7 @@ class PlaceholderContentWidget {
       this.domNode.textContent = this.placeholder;
       this.domNode.style.fontStyle = "italic";
       this.domNode.style.color = "#6c757d";
+      this.domNode.style.pointerEvents = "none";
       this.editor.applyFontInfo(this.domNode);
     }
 

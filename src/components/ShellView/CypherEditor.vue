@@ -143,7 +143,7 @@ export default {
         this.evaluateCypher();
       });
 
-      new PlaceholderContentWidget('> Type your query here', this.editor);
+      new PlaceholderContentWidget('Type your query here', this.editor);
     },
     toggleMaximize() {
       this.$emit("toggleMaximize");
