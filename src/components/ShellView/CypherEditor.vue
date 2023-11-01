@@ -17,7 +17,7 @@
       <div class="shell-editor__button" v-show="!isMaximized">
         <i class="fa-lg fa-solid fa-times" @click="removeCell"></i>
       </div>
-      <div class="shell-editor__button">
+      <div class="shell-editor__button" v-show="!isLoading">
         <i
           class="fa-lg fa-solid fa-play"
           data-bs-toggle="tooltip"
@@ -72,6 +72,11 @@ export default {
     isMaximizable: {
       type: Boolean,
       required: false,
+      default: false,
+    },
+    isLoading: {
+      type: Boolean,
+      required: true,
       default: false,
     },
   },
