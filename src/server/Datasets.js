@@ -97,7 +97,7 @@ router.get("/:dataset/copy", async (req, res) => {
   }
   const conn = database.getConnection();
   try {
-    for (let i = 0; i < commands.length; i++) {
+    for (let i = 0; i < commands.length; ++i) {
       const command = commands[i];
       res.write("Executing: " + command + "\n");
       const result = await conn.query(command);

@@ -309,7 +309,7 @@ export default {
           return `${type.memberType}[${type.size}]`;
         case DATA_TYPES.VAR_LIST: {
           let result = type.memberType;
-          for (let i = 0; i < type.dim; i++) {
+          for (let i = 0; i < type.dim; ++i) {
             result += '[]';
           }
           return result;

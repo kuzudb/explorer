@@ -111,14 +111,13 @@
               </a>
               scale factor 0.1 dataset. Please run KùzuExplorer locally to load a
               different dataset (see the
-              <a href="https://kuzudb.com/docusaurus/kuzuexplorer/">
-                documentation here
-              </a>
-              ).
+              <a href="https://kuzudb.com/docusaurus/kuzuexplorer/"> documentation here</a
+              >).
               <br />
               <br />
               You can visualize the schema of LDBC SNB in the Schema tab and execute
-              interactive Cypher queries in the Shell tab.
+              interactive Cypher queries in the Shell tab. If your query returns more than
+              1000 rows, it will be truncated.
             </p>
             <p v-if="modeStore.isReadOnly">
               KùzuExplorer is running in read-only mode. In this mode, you cannot load a

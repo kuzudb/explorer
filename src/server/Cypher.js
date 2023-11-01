@@ -1,8 +1,15 @@
 const database = require("./utils/Database");
 const express = require("express");
 const router = express.Router();
+const logger = require("./utils/Logger");
+
 const DEMO_MODE = "DEMO";
 
+let querySizeLimit = parseInt(process.env.KUZU_QUERY_SIZE_LIMIT);
+querySizeLimit = isNaN(querySizeLimit) ? null : querySizeLimit;
+if (querySizeLimit) {
+  logger.info(`Query size limit: ${querySizeLimit}`);
+}
 let schema = null;
 
 router.post("/", async (req, res) => {
@@ -39,7 +46,16 @@ router.post("/", async (req, res) => {
       const preparedStatment = await conn.prepare(query);
       result = await conn.execute(preparedStatment, params);
     }
-    const rows = await result.getAll();
+    let rows;
+    const resultSize = result.getNumTuples();
+    if (!querySizeLimit || resultSize <= querySizeLimit) {
+      rows = await result.getAll();
+    } else {
+      rows = [];
+      for (let i = 0; i < querySizeLimit; ++i) {
+        rows.push(await result.getNext());
+      }
+    }
     const columnTypes = await result.getColumnDataTypes();
     const columnNames = await result.getColumnNames();
     const dataTypes = {};
