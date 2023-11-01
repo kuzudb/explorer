@@ -97,17 +97,14 @@ export default {
               this.errorMessage = "The application is disconnected from the server. Please try to restart the server.";
             }
           }
-          else if (!error.response.data) {
-            this.errorMessage = String(error).trim();
-          }
           else {
             try {
               this.errorMessage = error.response.data.error.trim();
               console.error(error.response.data.error.trim());
             } catch (e) {
               const httpStatus = error.response.status;
-              this.errorMessage = `The request failed with HTTP status code ${httpStatus}: ${error.response.statusText}`;
-              console.error(`The request failed with HTTP status code ${httpStatus}: ${error.response.statusText}`);
+              this.errorMessage = `The request failed with HTTP status code ${httpStatus}.`;
+              console.error(this.errorMessage);
             }
           }
           if (this.errorMessage) {
