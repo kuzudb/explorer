@@ -44,6 +44,7 @@ import CypherLanguage from "../../utils/CypherLanguage";
 import MonacoCypherLanguage from "../../utils/MonacoCypherLanguage";
 import * as Monaco from "monaco-editor";
 import { UI_SIZE } from "../../utils/Constants";
+import PlaceholderContentWidget from "../../utils/MonacoPlaceholderContentWidget";
 
 // Make sure Monaco is not reactive. Otherwise, it will cause the Vue.js
 // app to crash.
@@ -141,6 +142,8 @@ export default {
       this.editor.addCommand(window.Monaco.KeyMod.Shift | window.Monaco.KeyCode.Enter, () => {
         this.evaluateCypher();
       });
+
+      new PlaceholderContentWidget('> Type your query here', this.editor);
     },
     toggleMaximize() {
       this.$emit("toggleMaximize");

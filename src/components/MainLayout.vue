@@ -116,8 +116,7 @@
               <br />
               <br />
               You can visualize the schema of LDBC SNB in the Schema tab and execute
-              interactive Cypher queries in the Shell tab. If your query returns more than
-              1000 rows, it will be truncated.
+              interactive Cypher queries in the Shell tab.
             </p>
             <p v-if="modeStore.isReadOnly">
               KùzuExplorer is running in read-only mode. In this mode, you cannot load a
