@@ -75,7 +75,7 @@ class Database {
     }
     this.db = new kuzu.Database(dbPath, bufferPoolSize, true, accessMode);
     this.connectionPool = [];
-    for (let i = 0; i < numberConnections; i++) {
+    for (let i = 0; i < numberConnections; ++i) {
       const conn = {
         connection: new kuzu.Connection(this.db, coresPerConnection),
         useCount: 0,
@@ -99,7 +99,7 @@ class Database {
   getConnection() {
     let minUseCount = Number.MAX_SAFE_INTEGER;
     let minUseCountIndex = -1;
-    for (let i = 0; i < this.connectionPool.length; i++) {
+    for (let i = 0; i < this.connectionPool.length; ++i) {
       if (this.connectionPool[i].useCount < minUseCount) {
         minUseCount = this.connectionPool[i].useCount;
         minUseCountIndex = i;
@@ -115,7 +115,7 @@ class Database {
   }
 
   releaseConnection(connection) {
-    for (let i = 0; i < this.connectionPool.length; i++) {
+    for (let i = 0; i < this.connectionPool.length; ++i) {
       if (this.connectionPool[i].connection === connection) {
         this.connectionPool[i].useCount--;
         return true;

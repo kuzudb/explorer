@@ -6,6 +6,7 @@
       :isMaximizable="
         (queryResult && queryResult.rows && queryResult.rows.length > 0) || isMaximized
       "
+      :isLoading="isLoading"
       @evaluateCypher="evaluateCypher"
       @remove="removeCell"
       @toggleMaximize="toggleMaximize"
@@ -17,6 +18,14 @@
       ref="resultContainer"
       v-if="queryResult || errorMessage"
     />
+    <div class="d-flex align-items-center" v-if="isLoading">
+      <strong class="text-secondary">Executing query...</strong>
+      <div
+        class="spinner-border text-secondary ms-auto"
+        role="status"
+        aria-hidden="true"
+      ></div>
+    </div>
   </div>
 </template>
 
@@ -39,6 +48,7 @@ export default {
     errorMessage: "",
     isEvaluated: false,
     isMaximized: false,
+    isLoading: false,
   }),
 
   props: {
@@ -66,6 +76,7 @@ export default {
     evaluateCypher(query) {
       this.queryResult = null;
       this.errorMessage = "";
+      this.isLoading = true;
       Axios.post("/api/cypher", { query })
         .then((res) => {
           this.queryResult = res.data;
@@ -98,6 +109,8 @@ export default {
               this.$refs.resultContainer.handleDataChange(this.schema, null, this.errorMessage);
             });
           }
+        }).finally(() => {
+          this.isLoading = false;
         });
       if (!this.isEvaluated) {
         this.$emit("addCell");
@@ -132,5 +145,13 @@ export default {
 <style lang="scss" scoped>
 .shell-cell__wrapper {
   display: block;
+}
+
+div.d-flex.align-items-center {
+  margin: 20px;
+  margin-top: 0;
+  padding: 16px;
+  border: 2px solid $gray-300;
+  border-top: 0;
 }
 </style>
