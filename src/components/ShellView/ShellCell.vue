@@ -101,8 +101,14 @@ export default {
             this.errorMessage = String(error).trim();
           }
           else {
-            this.errorMessage = error.response.data.error.trim();
-            console.error(error.response.data.error.trim());
+            try {
+              this.errorMessage = error.response.data.error.trim();
+              console.error(error.response.data.error.trim());
+            } catch (e) {
+              const httpStatus = error.response.status;
+              this.errorMessage = `The request failed with HTTP status code ${httpStatus}: ${error.response.statusText}`;
+              console.error(`The request failed with HTTP status code ${httpStatus}: ${error.response.statusText}`);
+            }
           }
           if (this.errorMessage) {
             this.$nextTick(() => {
