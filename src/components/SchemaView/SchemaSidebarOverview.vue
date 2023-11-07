@@ -180,6 +180,14 @@
                   <i class="fa-solid fa-trash-can"></i>
                 </button>
               </div>
+              <div>
+                <button
+                  class="btn btn-sm btn-outline-primary"
+                  @click="$emit('editTable', relGroup.name)"
+                >
+                  <i class="fa-solid fa-pencil"></i>
+                </button>
+              </div>
             </td>
           </tr>
           <tr v-if="schema.relGroups.length === 0">

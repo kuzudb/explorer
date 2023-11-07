@@ -56,6 +56,7 @@
         v-if="schema"
         v-show="!hoveredLabel && clickedLabel === null"
         @dropTable="dropTable"
+        @renameTable="renameTable"
         @editTable="enterEditTableMode"
         @addNodeTable="enterAddNodeTableMode"
         @addRelTable="enterAddRelTableMode"
@@ -613,7 +614,6 @@ export default {
       this.clickedIsNewTable = true;
     },
 
-
     enterAddRelTableMode() {
       let newTableName = "NewRelTable";
       this.clickedIsNewTable = true;
@@ -696,6 +696,10 @@ export default {
 
     dropTable(tableName) {
       this.$refs.actionDialog.dropTable(tableName);
+    },
+
+    renameTable(tableName) {
+      this.$refs.actionDialog.renameTable(tableName);
     },
 
     dropProperty({ table, property }) {

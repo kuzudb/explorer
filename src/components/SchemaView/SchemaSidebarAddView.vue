@@ -67,7 +67,8 @@
         <button
           class="btn btn-sm btn-outline-secondary"
           title="Rename Table"
-          v-if="false"
+          v-if="!isRelGroup"
+          @click="renameTable"
         >
           <i class="fa-solid fa-pencil"></i>
           Rename Table
@@ -360,6 +361,9 @@ export default {
     },
     discardTable() {
       this.$emit("discard");
+    },
+    renameTable() {
+      this.$emit("rename", this.currLabel);
     },
     enterEditMode(id) {
       const index = this.currProperties.findIndex(p => p.id === id);

@@ -123,6 +123,17 @@ export default {
       this.reset();
       this.modal.hide();
     },
+    renameTable(oldName, newName) {
+      this.reset();
+      this.currentAction = {
+        type: SCHEMA_ACTION_TYPES.RENAME_TABLE,
+        oldName,
+        newName,
+      };
+      const statement = DataDefinitionLanguage.renameTable(oldName, newName);
+      this.statement = statement;
+      this.showModal();
+    },
     dropTable(tableName) {
       this.reset();
       const statement = DataDefinitionLanguage.dropTable(tableName);

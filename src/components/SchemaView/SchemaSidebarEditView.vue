@@ -74,8 +74,9 @@
         &nbsp;
         <button
           class="btn btn-sm btn-outline-secondary"
+          :disabled="!!relGroup"
           title="Rename Table"
-          v-if="false"
+          @click="$emit('renameTable', label)"
         >
           <i class="fa-solid fa-pencil"></i>
           Rename Table

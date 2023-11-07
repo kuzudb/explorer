@@ -39,6 +39,7 @@ export const INTERNAL_DATA_TYPES = [
 ];
 
 export const SCHEMA_ACTION_TYPES = {
+  RENAME_TABLE: "renameTable",
   DROP_TABLE: "dropTable",
   DROP_PROPERTY: "dropProperty",
   RENAME_PROPERTY: "renameProperty",
