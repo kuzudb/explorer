@@ -2,8 +2,9 @@ const database = require("./utils/Database");
 const express = require("express");
 const router = express.Router();
 const logger = require("./utils/Logger");
+const MODES = require("./utils/Constants").MODES;
 
-const DEMO_MODE = "DEMO";
+const DEMO_MODE = MODES.DEMO;
 
 let querySizeLimit = parseInt(process.env.KUZU_QUERY_SIZE_LIMIT);
 querySizeLimit = isNaN(querySizeLimit) ? null : querySizeLimit;
@@ -13,7 +14,8 @@ if (querySizeLimit) {
 let schema = null;
 
 router.post("/", async (req, res) => {
-  if (!schema) {
+  const mode = database.getAccessModeString();
+  if (!schema && mode === MODES.READ_WRITE) {
     try {
       schema = await database.getSchema();
     } catch (err) {
@@ -21,7 +23,6 @@ router.post("/", async (req, res) => {
     }
   }
   const conn = database.getConnection();
-  const mode = database.getAccessModeString();
   const query = req.body.query;
   if (!query || !typeof query === "string") {
     return res
@@ -62,10 +63,12 @@ router.post("/", async (req, res) => {
     columnNames.forEach((name, i) => {
       dataTypes[name] = columnTypes[i];
     });
-    const currentSchema = await database.getSchema();
-    const isSchemaChanged =
-      JSON.stringify(schema) !== JSON.stringify(currentSchema);
-    schema = currentSchema;
+    let isSchemaChanged = false;
+    if (mode === MODES.READ_WRITE) {
+      const currentSchema = await database.getSchema();
+      isSchemaChanged =
+          JSON.stringify(schema) !== JSON.stringify(currentSchema);
+    }
     return res.send({ rows, dataTypes, isSchemaChanged });
   } catch (err) {
     return res.status(400).send({ error: err.message });

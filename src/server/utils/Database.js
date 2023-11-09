@@ -6,7 +6,8 @@ const TABLE_TYPES = {
   REL: "REL",
   REL_GROUP: "REL_GROUP",
 };
-const READ_WRITE_MODE = "READ_WRITE";
+const MODES = require("./Constants").MODES;
+const READ_WRITE_MODE = MODES.READ_WRITE;
 
 let kuzu;
 if (process.env.NODE_ENV !== "production") {
@@ -66,7 +67,7 @@ class Database {
     }
     logger.info(
       `Access mode: ${
-        accessMode === kuzu.AccessMode.READ_WRITE ? "READ_WRITE" : "READ_ONLY"
+        accessMode === kuzu.AccessMode.READ_WRITE ? MODES.READ_WRITE : MODES.READ_ONLY
       }`
     );
     const queryTimeout = parseInt(process.env.KUZU_QUERY_TIMEOUT);
