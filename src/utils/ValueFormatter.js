@@ -7,8 +7,15 @@ class ValueFormatter {
     this.parsedComplexTypes = {};
   }
 
-  filterAndBeautifyProperties(rawValue, schema) {
+  filterAndBeautifyProperties(rawValue, schema, isRecursiveRel = false) {
     const properties = [];
+    if (isRecursiveRel) {
+      properties.push({
+        name: "LABEL",
+        isPrimaryKey: false,
+        value: rawValue._label,
+      });
+    }
 
     const label = rawValue._label;
     const expectedProperties = (
@@ -71,12 +78,9 @@ class ValueFormatter {
   }
 
   beautifyRecursiveRelValue(value, type) {
-    let res = [];
-    value.nodes.forEach((node) => {
-      node = { ...node };
-      res.push(this.beautifyValue(node, type));
-    });
-    console.log("res is", res);
+    let res = {};
+    res["_nodes"] = value._nodes.map((node) => this.filterAndBeautifyProperties({ ...node }, type, true));
+    res["_rels"] = value._rels.map((rel) => this.filterAndBeautifyProperties({ ...rel }, type, true));
     return res;
   }
 }
