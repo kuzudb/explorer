@@ -33,27 +33,45 @@
     <div class="result-table__table__wrapper">
       <table class="table table-hover">
         <thead class="fixed-top">
-          <tr>
-            <th v-for="header in tableHeaders" :key="header.text">
-              {{ header.text }}
-              <span class="badge bg-primary">{{ header.type }}</span>
-            </th>
-          </tr>
+        <tr>
+          <th v-for="header in tableHeaders" :key="header.text">
+            {{ header.text }}
+            <span class="badge bg-primary">{{ header.type }}</span>
+          </th>
+        </tr>
         </thead>
-        <tbody>
-          <tr v-for="(row, i) in rows" :key="i">
-            <td v-for="(cell, j) in row" :key="j">
-              <ul v-if="Array.isArray(cell)" class="list-group">
-                <li v-for="(item, k) in cell" :key="k" class="list-group-item">
-                  <b>{{ item.name }}:</b> {{ item.value }}
+      <tbody>
+      <tr v-for="(row, i) in rows" :key="i">
+
+        <td v-for="(cell, j) in row" :key="j">
+          <template v-if="Array.isArray(cell)">
+            <ul class="list-group">
+              <li v-for="(item, k) in cell" :key="k" class="list-group-item">
+                <b>{{ item.name }}:</b> {{ item.value }}
+              </li>
+            </ul>
+          </template>
+          <template v-else>
+            <div v-if="cell.hasOwnProperty('_nodes') && cell.hasOwnProperty('_rels')">
+              <h3>Nodes</h3>
+                <ul class="list-group">
+                  <li v-for="(item, k) in cell._nodes" :key="k" class="list-group-item">
+                    <b>{{ item.name }}:</b> {{ item._label }}
+                  </li>
+                </ul>
+
+              <h3>Rels</h3>
+              <ul class="list-group">
+                <li v-for="(item, k) in cell._rels" :key="k" class="list-group-item">
+                  <b>{{ item.name }}:</b> {{ item._label }}
                 </li>
               </ul>
-
-              <span v-else>{{ cell }}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </template>
+        </td>
+      </tr>
+      </tbody>
+    </table>
     </div>
   </div>
 </template>
@@ -70,7 +88,9 @@ export default {
     maxLength: 8,
     rows: [],
     tableHeaders: [],
+    tableSubHeaders: [],
     tableWidth: 0,
+    isRecursive: false,
   }),
   props: {
     queryResult: {
@@ -157,31 +177,47 @@ export default {
       }
       const tableFields = Object.keys(this.queryResult.rows[0]);
       const tableTypes = this.queryResult.dataTypes;
+      // const rows = this.queryResult.rows;
+
       tableFields.forEach((field) => {
         this.tableHeaders.push({
           text: field,
           type: tableTypes[field],
         });
       });
+
+      if (tableTypes[tableFields[0]] === "RECURSIVE_REL") {
+        this.isRecursive = true;
+      }
+
       const numRows = this.queryResult.rows.length;
       const start = (this.page - 1) * this.itemsPerPage;
       const end = Math.min(start + this.itemsPerPage, numRows);
-      const rowsForPage = this.queryResult.rows.slice(start, end);
+      let rowsForPage = this.queryResult.rows.slice(start, end);
+
       rowsForPage.forEach((row) => {
+        console.log("currecnt row is: ", row);
         this.rows.push([]);
-        for (let key in row) {
-          if (!row[key]) {
-            this.rows[this.rows.length - 1].push('NULL');
+
+          for (let key in row) {
+            if (!row[key]) {
+              this.rows[this.rows.length - 1].push('NULL');
+            }
+            else if (row[key]._label) {
+              console.log("row key label is: ", row[key]);
+              // Value is a complex type
+              if (row[key].label === "RECURSIVE_REL") {
+                this.rows[this.rows.length - 1].push(ValueFormatter.beautifyRecursiveRelValue(row[key], this.schema));
+              } else {
+                this.rows[this.rows.length - 1].push(ValueFormatter.filterAndBeautifyProperties(row[key], this.schema));
+              }
+            }
+            else {
+              // Value is a primitive type
+              this.rows[this.rows.length - 1].push(ValueFormatter.beautifyValue(row[key], tableTypes[key]));
+            }
           }
-          else if (row[key]._label) {
-            // Value is a complex type
-            this.rows[this.rows.length - 1].push(ValueFormatter.filterAndBeautifyProperties(row[key], this.schema));
-          }
-          else {
-            // Value is a primitive type
-            this.rows[this.rows.length - 1].push(ValueFormatter.beautifyValue(row[key], tableTypes[key]));
-          }
-        }
+        // }
       });
     },
 

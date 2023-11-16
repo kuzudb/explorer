@@ -69,6 +69,16 @@ class ValueFormatter {
       return value;
     }
   }
+
+  beautifyRecursiveRelValue(value, type) {
+    let res = [];
+    value.nodes.forEach((node) => {
+      node = { ...node };
+      res.push(this.beautifyValue(node, type));
+    });
+    console.log("res is", res);
+    return res;
+  }
 }
 
 const valueFormatter = new ValueFormatter();
