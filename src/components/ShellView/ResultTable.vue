@@ -290,19 +290,17 @@ export default {
 }
 
 .list-group {
-  list-style: none !important;
+  list-style: none;
   padding: 0;
 }
 
 .list-group-item {
-  list-style: none !important;
   border: 1px solid #ddd;
   padding: 8px;
 }
 
 .list-group-item-o {
-  list-style: none !important;
-  border: 1px solid transparent;
+  border: 1px solid transparent; /* 1px solid border with transparent color */
 }
 
 .label-large {
