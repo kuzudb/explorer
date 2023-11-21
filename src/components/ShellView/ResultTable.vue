@@ -40,20 +40,55 @@
             </th>
           </tr>
         </thead>
-        <tbody>
-          <tr v-for="(row, i) in rows" :key="i">
-            <td v-for="(cell, j) in row" :key="j">
-              <ul v-if="Array.isArray(cell)" class="list-group">
-                <li v-for="(item, k) in cell" :key="k" class="list-group-item">
-                  <b>{{ item.name }}:</b> {{ item.value }}
+      <tbody>
+      <tr v-for="(row, i) in rows" :key="i">
+        <td v-for="(cell, j) in row" :key="j">
+          <div v-if="Array.isArray(cell)" class="list-container">
+            <ul class="list-group">
+              <li v-for="(item, k) in cell" :key="k" class="list-group-item">
+                <b>{{ item.name }}:</b> {{ item.value }}
+              </li>
+            </ul>
+          </div>
+          <div v-else-if="cell.hasOwnProperty('_label') && cell._label === 'RECURSIVE_REL'" class="data-container">
+            <div class="flex-item">
+              <ul class="list-group">
+                <li v-for="(item, k) in cell._nodes" :key="k" class="list-group-item-o">
+                  <ul class="list-group">
+                    <li v-for="(field, k) in item" :key="k" class="list-group-item">
+                      <span v-if="field.name === '_label'">
+                        <b>{{ field.value }}</b>
+                      </span>
+                      <span v-else>
+                        <b>{{ field.name }}:</b> {{ field.value }}
+                      </span>
+                    </li>
+                  </ul>
                 </li>
               </ul>
-
-              <span v-else>{{ cell }}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+            <div class="flex-item">
+              <ul class="list-group">
+                <li v-for="(item, k) in cell._rels" :key="k" class="list-group-item-o">
+                  <ul class="list-group">
+                    <li v-for="(field, k) in item" :key="k" class="list-group-item">
+                      <span v-if="field.name === '_label'">
+                        <b>{{ field.value }}</b>
+                      </span>
+                      <span v-else>
+                        <b>{{ field.name }}:</b> {{ field.value }}
+                      </span>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <span v-else>{{ cell }}</span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
     </div>
   </div>
 </template>
@@ -157,21 +192,26 @@ export default {
       }
       const tableFields = Object.keys(this.queryResult.rows[0]);
       const tableTypes = this.queryResult.dataTypes;
+
       tableFields.forEach((field) => {
         this.tableHeaders.push({
           text: field,
           type: tableTypes[field],
         });
       });
+
       const numRows = this.queryResult.rows.length;
       const start = (this.page - 1) * this.itemsPerPage;
       const end = Math.min(start + this.itemsPerPage, numRows);
-      const rowsForPage = this.queryResult.rows.slice(start, end);
+      let rowsForPage = this.queryResult.rows.slice(start, end);
       rowsForPage.forEach((row) => {
         this.rows.push([]);
         for (let key in row) {
           if (!row[key]) {
             this.rows[this.rows.length - 1].push('NULL');
+          }
+          else if (tableTypes[key] === "RECURSIVE_REL") {
+            this.rows[this.rows.length - 1].push(ValueFormatter.beautifyRecursiveRelValue(row[key], this.schema));
           }
           else if (row[key]._label) {
             // Value is a complex type
@@ -256,4 +296,32 @@ export default {
     margin-bottom: 0;
   }
 }
+
+.data-container {
+  display: flex;
+}
+
+.flex-item {
+  flex: 1;
+}
+
+.list-group {
+  list-style: none;
+  padding: 0;
+}
+
+.list-group-item {
+  border: 1px solid #ddd;
+  //margin: 4px 0;
+  padding: 8px;
+}
+
+.list-group-item-o {
+  border: 1px solid transparent; /* 1px solid border with transparent color */
+}
+
+.label-large {
+  font-size: larger;
+}
+
 </style>
