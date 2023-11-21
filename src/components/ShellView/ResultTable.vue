@@ -53,31 +53,17 @@
           <div v-else-if="cell.hasOwnProperty('_label') && cell._label === 'RECURSIVE_REL'" class="data-container">
             <div class="flex-item">
               <ul class="list-group">
-                <li v-for="(item, k) in cell._nodes" :key="k" class="list-group-item-o">
+                <li v-for="cell_items in [cell._nodes, cell._rels]" :key="cell_items.id" class="list-group-item-o">
                   <ul class="list-group">
-                    <li v-for="(field, k) in item" :key="k" class="list-group-item">
-                      <span v-if="field.name === '_label'">
-                        <b>{{ field.value }}</b>
-                      </span>
-                      <span v-else>
-                        <b>{{ field.name }}:</b> {{ field.value }}
-                      </span>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-            <div class="flex-item">
-              <ul class="list-group">
-                <li v-for="(item, k) in cell._rels" :key="k" class="list-group-item-o">
-                  <ul class="list-group">
-                    <li v-for="(field, k) in item" :key="k" class="list-group-item">
-                      <span v-if="field.name === '_label'">
-                        <b>{{ field.value }}</b>
-                      </span>
-                      <span v-else>
-                        <b>{{ field.name }}:</b> {{ field.value }}
-                      </span>
+                    <li v-for="(item, k) in cell_items" :key="k" class="list-group-item-o">
+                      <ul class="list-group">
+                        <li class="list-group-item">
+                          <b>{{ item[0].value }}</b>
+                        </li>
+                        <li v-for="(field, k) in item.slice(1)" :key="k" class="list-group-item">
+                          <b>{{ field.name }}:</b> {{ field.value }}
+                        </li>
+                      </ul>
                     </li>
                   </ul>
                 </li>
