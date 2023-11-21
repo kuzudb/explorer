@@ -50,13 +50,13 @@
               </li>
             </ul>
           </div>
-          <div v-else-if="cell.hasOwnProperty('_nodes') && cell.hasOwnProperty('_rels')" class="data-container">
+          <div v-else-if="cell.hasOwnProperty('_label') && cell._label === 'RECURSIVE_REL'" class="data-container">
             <div class="flex-item">
               <ul class="list-group">
                 <li v-for="(item, k) in cell._nodes" :key="k" class="list-group-item-o">
                   <ul class="list-group">
                     <li v-for="(field, k) in item" :key="k" class="list-group-item">
-                      <span v-if="field.name === 'LABEL'">
+                      <span v-if="field.name === '_label'">
                         <b>{{ field.value }}</b>
                       </span>
                       <span v-else>
@@ -72,7 +72,7 @@
                 <li v-for="(item, k) in cell._rels" :key="k" class="list-group-item-o">
                   <ul class="list-group">
                     <li v-for="(field, k) in item" :key="k" class="list-group-item">
-                      <span v-if="field.name === 'LABEL'">
+                      <span v-if="field.name === '_label'">
                         <b>{{ field.value }}</b>
                       </span>
                       <span v-else>
@@ -210,7 +210,7 @@ export default {
           if (!row[key]) {
             this.rows[this.rows.length - 1].push('NULL');
           }
-          else if (row[key]._nodes && row[key]._rels) {
+          else if (tableTypes[key] === "RECURSIVE_REL") {
             this.rows[this.rows.length - 1].push(ValueFormatter.beautifyRecursiveRelValue(row[key], this.schema));
           }
           else if (row[key]._label) {
