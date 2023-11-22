@@ -30,10 +30,7 @@ const os = require("os");
 class Database {
   constructor() {
     const mode = this.getAccessModeString();
-    const accessMode =
-      mode === READ_WRITE_MODE
-        ? kuzu.AccessMode.READ_WRITE
-        : kuzu.AccessMode.READ_ONLY;
+    const isReadOnlyMode = mode !== READ_WRITE_MODE;
     const dbPath = process.env.KUZU_PATH;
     let bufferPoolSize = parseInt(process.env.KUZU_BUFFER_POOL_SIZE);
     bufferPoolSize = isNaN(bufferPoolSize) ? 0 : bufferPoolSize;
@@ -66,15 +63,13 @@ class Database {
       throw new Error("KUZU_PATH environment variable not set");
     }
     logger.info(
-      `Access mode: ${
-        accessMode === kuzu.AccessMode.READ_WRITE ? MODES.READ_WRITE : MODES.READ_ONLY
-      }`
+      `Access mode: ${isReadOnlyMode ? MODES.READ_ONLY : MODES.READ_WRITE}`
     );
     const queryTimeout = parseInt(process.env.KUZU_QUERY_TIMEOUT);
     if (!isNaN(queryTimeout)) {
       logger.info(`Query timeout: ${queryTimeout} ms`);
     }
-    this.db = new kuzu.Database(dbPath, bufferPoolSize, true, accessMode);
+    this.db = new kuzu.Database(dbPath, bufferPoolSize, true, isReadOnlyMode);
     this.connectionPool = [];
     for (let i = 0; i < numberConnections; ++i) {
       const conn = {
