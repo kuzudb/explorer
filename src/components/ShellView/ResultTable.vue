@@ -50,10 +50,9 @@
               </li>
             </ul>
           </div>
-          <div v-else-if="cell.hasOwnProperty('_label') && cell._label === 'RECURSIVE_REL'" class="data-container">
-            <div class="flex-item">
-              <ul class="list-group">
-                <li v-for="cell_items in [cell._nodes, cell._rels]" :key="cell_items.id" class="list-group-item-o">
+          <div v-else-if="cell.hasOwnProperty('_label') && cell._label === 'RECURSIVE_REL'">
+              <ul class="data-container">
+                <li v-for="cell_items in [cell._nodes, cell._rels]" :key="cell_items.id" class="flex-item">
                   <ul class="list-group">
                     <li v-for="(item, k) in cell_items" :key="k" class="list-group-item-o">
                       <ul class="list-group">
@@ -68,7 +67,6 @@
                   </ul>
                 </li>
               </ul>
-            </div>
           </div>
           <span v-else>{{ cell }}</span>
         </td>
@@ -292,18 +290,19 @@ export default {
 }
 
 .list-group {
-  list-style: none;
+  list-style: none !important;
   padding: 0;
 }
 
 .list-group-item {
+  list-style: none !important;
   border: 1px solid #ddd;
-  //margin: 4px 0;
   padding: 8px;
 }
 
 .list-group-item-o {
-  border: 1px solid transparent; /* 1px solid border with transparent color */
+  list-style: none !important;
+  border: 1px solid transparent;
 }
 
 .label-large {
