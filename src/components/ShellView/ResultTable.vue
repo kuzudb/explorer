@@ -43,24 +43,23 @@
         <tbody>
           <tr v-for="(row, i) in rows" :key="i">
             <td v-for="(cell, j) in row" :key="j">
-              <div v-if="Array.isArray(cell)" class="list-container">
-                <ul class="list-group">
-                  <li v-for="(item, k) in cell" :key="k" class="list-group-item">
-                    <b>{{ item.name }}:</b> {{ item.value }}
-                  </li>
-                </ul>
-              </div>
-              <div v-else-if="isColumnRecursiveRel(j)">
-                <div class="result-table__recursive-rel__wrapper">
-                  <div v-for="(subcolumn, subcolumnId) in cell" :key="subcolumnId">
-                    <div v-for="(item, k) in subcolumn" :key="k">
-                      <ul class="list-group">
-                        <li v-for="(field, k) in item" :key="k" class="list-group-item">
-                          <b>{{ k === 0 ? field.value : field.name + ":" }}</b>
-                          <span v-if="k > 0">{{ field.value }}</span>
-                        </li>
-                      </ul>
-                    </div>
+              <ul class="list-group" v-if="Array.isArray(cell)">
+                <li v-for="(item, k) in cell" :key="k" class="list-group-item">
+                  <b>{{ item.name }}:</b> {{ item.value }}
+                </li>
+              </ul>
+              <div
+                class="result-table__recursive-rel__wrapper"
+                v-else-if="isColumnRecursiveRel(j)"
+              >
+                <div v-for="(subcolumn, subcolumnId) in cell" :key="subcolumnId">
+                  <div v-for="(item, k) in subcolumn" :key="k">
+                    <ul class="list-group">
+                      <li v-for="(field, k) in item" :key="k" class="list-group-item">
+                        <b>{{ k === 0 ? field.value : field.name + ":" }}</b>
+                        <span v-if="k > 0">{{ field.value }}</span>
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </div>
