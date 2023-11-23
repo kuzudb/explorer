@@ -43,7 +43,7 @@
         <tbody>
           <tr v-for="(row, i) in rows" :key="i">
             <td v-for="(cell, j) in row" :key="j">
-              <ul class="list-group" v-if="Array.isArray(cell)">
+              <ul v-if="Array.isArray(cell)" class="list-group">
                 <li v-for="(item, k) in cell" :key="k" class="list-group-item">
                   <b>{{ item.name }}:</b> {{ item.value }}
                 </li>
