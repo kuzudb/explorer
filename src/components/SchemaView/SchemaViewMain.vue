@@ -450,12 +450,6 @@ export default {
         this.$nextTick(() => {
           this.cancelAdd();
         });
-      } else if (action.type === SCHEMA_ACTION_TYPES.RENAME_TABLE) {
-        console.log("in SchemaViewMain.vue");
-        this.settingsStore.renameTable(action.oldName, action.newName);
-        this.$nextTick(() => {
-          this.cancelAdd();
-        });
       } else if (action.type === SCHEMA_ACTION_TYPES.ADD_REL_TABLE) {
         this.settingsStore.renameRelTable(PLACEHOLDER_REL_TABLE, action.table);
         this.$nextTick(() => {
@@ -702,12 +696,16 @@ export default {
       this.$refs.actionDialog.dropTable(tableName);
     },
 
-    renameTable(tableName) {
-      this.$refs.actionDialog.renameTable(tableName);
-    },
-
     dropProperty({ table, property }) {
       this.$refs.actionDialog.dropProperty(table, property);
+    },
+
+    renameProperty({ table, oldName, newName }) {
+      if (oldName === newName) {
+        this.$refs.editView.cancelEditMode();
+        return;
+      }
+      this.$refs.actionDialog.renameProperty(table, oldName, newName);
     },
 
     addProperty({ table, property, defaultValue }) {

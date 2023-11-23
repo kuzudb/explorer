@@ -244,7 +244,6 @@ export const useSettingsStore = defineStore("settings", {
     },
 
     updateNodeTableLabel(name, label) {
-      console.log("in update nodeTable label");
       const node = this.graphViz.nodes[name];
       if (node) {
         node.label = label;

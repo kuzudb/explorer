@@ -9,7 +9,6 @@
           @click="$emit('back')"
         >
           <i class="fa-solid fa-long-arrow-left"></i>
-<!--          Back-->
         </button>
         &nbsp; Table: &nbsp;
         <input

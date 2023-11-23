@@ -27,12 +27,6 @@ class DataDefinitionLanguage {
     return `DROP TABLE ${tableName};`;
   }
 
-  renameTable(tableName, newTableName) {
-    tableName = this._escapeName(tableName);
-    newTableName = this._escapeName(newTableName);
-    return `ALTER TABLE ${tableName} RENAME TO ${newTableName};`
-  }
-
   dropProperty(tableName, columnName) {
     tableName = this._escapeName(tableName);
     return `ALTER TABLE ${tableName} DROP ${columnName};`;
