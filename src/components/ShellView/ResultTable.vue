@@ -40,46 +40,42 @@
             </th>
           </tr>
         </thead>
-      <tbody>
-      <tr v-for="(row, i) in rows" :key="i">
-        <td v-for="(cell, j) in row" :key="j">
-          <div v-if="Array.isArray(cell)" class="list-container">
-            <ul class="list-group">
-              <li v-for="(item, k) in cell" :key="k" class="list-group-item">
-                <b>{{ item.name }}:</b> {{ item.value }}
-              </li>
-            </ul>
-          </div>
-          <div v-else-if="cell.hasOwnProperty('_label') && cell._label === 'RECURSIVE_REL'">
-              <ul class="data-container">
-                <li v-for="cell_items in [cell._nodes, cell._rels]" :key="cell_items.id" class="flex-item">
-                  <ul class="list-group">
-                    <li v-for="(item, k) in cell_items" :key="k" class="list-group-item-o">
+        <tbody>
+          <tr v-for="(row, i) in rows" :key="i">
+            <td v-for="(cell, j) in row" :key="j">
+              <div v-if="Array.isArray(cell)" class="list-container">
+                <ul class="list-group">
+                  <li v-for="(item, k) in cell" :key="k" class="list-group-item">
+                    <b>{{ item.name }}:</b> {{ item.value }}
+                  </li>
+                </ul>
+              </div>
+              <div v-else-if="isColumnRecursiveRel(j)">
+                <div class="result-table__recursive-rel__wrapper">
+                  <div v-for="(subcolumn, subcolumnId) in cell" :key="subcolumnId">
+                    <div v-for="(item, k) in subcolumn" :key="k">
                       <ul class="list-group">
-                        <li class="list-group-item">
-                          <b>{{ item[0].value }}</b>
-                        </li>
-                        <li v-for="(field, k) in item.slice(1)" :key="k" class="list-group-item">
-                          <b>{{ field.name }}:</b> {{ field.value }}
+                        <li v-for="(field, k) in item" :key="k" class="list-group-item">
+                          <b>{{ k === 0 ? field.value : field.name + ":" }}</b>
+                          <span v-if="k > 0">{{ field.value }}</span>
                         </li>
                       </ul>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-          </div>
-          <span v-else>{{ cell }}</span>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <span v-else>{{ cell }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
 
 <script lang="js">
 import ValueFormatter from "../../utils/ValueFormatter";
-import { UI_SIZE } from "../../utils/Constants";
+import { UI_SIZE, DATA_TYPES } from "../../utils/Constants";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
 export default {
@@ -165,6 +161,9 @@ export default {
     }
   },
   methods: {
+    isColumnRecursiveRel(columnIndex) {
+      return this.tableHeaders[columnIndex].type === DATA_TYPES.RECURSIVE_REL;
+    },
     renderTable() {
       if (!this.queryResult) {
         return;
@@ -194,11 +193,12 @@ export default {
           if (!row[key]) {
             this.rows[this.rows.length - 1].push('NULL');
           }
-          else if (tableTypes[key] === "RECURSIVE_REL") {
+          else if (tableTypes[key] === DATA_TYPES.RECURSIVE_REL) {
+            // Value is a recursive relationship
             this.rows[this.rows.length - 1].push(ValueFormatter.beautifyRecursiveRelValue(row[key], this.schema));
           }
-          else if (row[key]._label) {
-            // Value is a complex type
+          else if (tableTypes[key] === DATA_TYPES.NODE || tableTypes[key] === DATA_TYPES.REL) {
+            // Value is a node or relationship
             this.rows[this.rows.length - 1].push(ValueFormatter.filterAndBeautifyProperties(row[key], this.schema));
           }
           else {
@@ -278,33 +278,18 @@ export default {
     }
 
     margin-bottom: 0;
+
+    .result-table__recursive-rel__wrapper {
+      display: flex;
+
+      > div {
+        flex: 1;
+
+        &:not(:last-child) {
+          margin-right: 4px;
+        }
+      }
+    }
   }
 }
-
-.data-container {
-  display: flex;
-}
-
-.flex-item {
-  flex: 1;
-}
-
-.list-group {
-  list-style: none;
-  padding: 0;
-}
-
-.list-group-item {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-.list-group-item-o {
-  border: 1px solid transparent; /* 1px solid border with transparent color */
-}
-
-.label-large {
-  font-size: larger;
-}
-
 </style>

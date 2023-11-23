@@ -78,11 +78,14 @@ class ValueFormatter {
   }
 
   beautifyRecursiveRelValue(value, type) {
-    let res = {};
-    res["_label"] = "RECURSIVE_REL";
-    res["_nodes"] = value._nodes.map((node) => this.filterAndBeautifyProperties({ ...node }, type, true));
-    res["_rels"] = value._rels.map((rel) => this.filterAndBeautifyProperties({ ...rel }, type, true));
-    return res;
+    return {
+      _nodes: value._nodes.map((node) =>
+        this.filterAndBeautifyProperties({ ...node }, type, true)
+      ),
+      _rels: value._rels.map((rel) =>
+        this.filterAndBeautifyProperties({ ...rel }, type, true)
+      ),
+    };
   }
 }
 
