@@ -83,6 +83,7 @@
         @dropTable="dropTable"
         @renameProperty="renameProperty"
         @addProperty="addProperty"
+        @updateTableName="renameTable"
         ref="editView"
       />
       <SchemaSidebarAddView
@@ -668,6 +669,17 @@ export default {
         });
       }
       this.$emit("updatePlaceholderNodeTableLabel", newLabel);
+      this.clickedLabel = newLabel;
+    },
+
+    renameTable(oldLabel, newLabel) {
+      const g6Item = this.g6graph ? this.g6graph.find('node', node => node._cfg.model.isPlaceholder) : null;
+      if (g6Item) {
+        this.g6graph.updateItem(g6Item, {
+          label: newLabel,
+        });
+      }
+      this.$emit("renameTable", oldLabel, newLabel);
       this.clickedLabel = newLabel;
     },
 

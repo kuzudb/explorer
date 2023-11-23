@@ -194,6 +194,7 @@ export default {
     },
   },
   currLabel() {
+    console.log("in currLabel");
     clearTimeout(this.currLabelInputDebounce);
     this.currLabelInputDebounce = setTimeout(() => {
       if (this.isNode) {
@@ -204,6 +205,7 @@ export default {
       }
     }, 300);
   },
+
   computed: {
     ...mapStores(useSettingsStore),
     source() {
@@ -250,14 +252,12 @@ export default {
       this.renameTable = true;
     },
     saveNewTableName() {
-      console.log("in save table, label is: ", this.currLabel);
-      console.log("prev label is: ", this.label);
       if (this.currLabel === this.label) {
         this.renameTable = false;
         return;
       }
       this.$nextTick(() => {
-        this.$emit("save", this.currLabel);
+        this.$emit("updateTableName", this.label, this.currLabel);
       });
       this.renameTable = false;
     },
