@@ -48,7 +48,21 @@
                   <b>{{ item.name }}:</b> {{ item.value }}
                 </li>
               </ul>
-
+              <div
+                class="result-table__recursive-rel__wrapper"
+                v-else-if="isColumnRecursiveRel(j)"
+              >
+                <div v-for="(subcolumn, subcolumnId) in cell" :key="subcolumnId">
+                  <div v-for="(item, k) in subcolumn" :key="k">
+                    <ul class="list-group">
+                      <li v-for="(field, k) in item" :key="k" class="list-group-item">
+                        <b>{{ k === 0 ? field.value : field.name + ":" }}</b>
+                        <span v-if="k > 0">{{ field.value }}</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
               <span v-else>{{ cell }}</span>
             </td>
           </tr>
@@ -60,7 +74,7 @@
 
 <script lang="js">
 import ValueFormatter from "../../utils/ValueFormatter";
-import { UI_SIZE } from "../../utils/Constants";
+import { UI_SIZE, DATA_TYPES } from "../../utils/Constants";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
 export default {
@@ -146,6 +160,9 @@ export default {
     }
   },
   methods: {
+    isColumnRecursiveRel(columnIndex) {
+      return this.tableHeaders[columnIndex].type === DATA_TYPES.RECURSIVE_REL;
+    },
     renderTable() {
       if (!this.queryResult) {
         return;
@@ -173,8 +190,12 @@ export default {
           if (!row[key]) {
             this.rows[this.rows.length - 1].push('NULL');
           }
-          else if (row[key]._label) {
-            // Value is a complex type
+          else if (tableTypes[key] === DATA_TYPES.RECURSIVE_REL) {
+            // Value is a recursive relationship
+            this.rows[this.rows.length - 1].push(ValueFormatter.beautifyRecursiveRelValue(row[key], this.schema));
+          }
+          else if (tableTypes[key] === DATA_TYPES.NODE || tableTypes[key] === DATA_TYPES.REL) {
+            // Value is a node or relationship
             this.rows[this.rows.length - 1].push(ValueFormatter.filterAndBeautifyProperties(row[key], this.schema));
           }
           else {
@@ -254,6 +275,18 @@ export default {
     }
 
     margin-bottom: 0;
+
+    .result-table__recursive-rel__wrapper {
+      display: flex;
+
+      > div {
+        flex: 1;
+
+        &:not(:last-child) {
+          margin-right: 4px;
+        }
+      }
+    }
   }
 }
 </style>
