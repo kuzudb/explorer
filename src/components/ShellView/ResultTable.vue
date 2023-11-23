@@ -180,7 +180,6 @@ export default {
           type: tableTypes[field],
         });
       });
-
       const numRows = this.queryResult.rows.length;
       const start = (this.page - 1) * this.itemsPerPage;
       const end = Math.min(start + this.itemsPerPage, numRows);
