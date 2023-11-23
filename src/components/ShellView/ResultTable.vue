@@ -174,7 +174,6 @@ export default {
       }
       const tableFields = Object.keys(this.queryResult.rows[0]);
       const tableTypes = this.queryResult.dataTypes;
-
       tableFields.forEach((field) => {
         this.tableHeaders.push({
           text: field,
@@ -185,7 +184,7 @@ export default {
       const numRows = this.queryResult.rows.length;
       const start = (this.page - 1) * this.itemsPerPage;
       const end = Math.min(start + this.itemsPerPage, numRows);
-      let rowsForPage = this.queryResult.rows.slice(start, end);
+      const rowsForPage = this.queryResult.rows.slice(start, end);
       rowsForPage.forEach((row) => {
         this.rows.push([]);
         for (let key in row) {
