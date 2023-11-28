@@ -250,7 +250,6 @@ export const useSettingsStore = defineStore("settings", {
       }
     },
 
-
     removeRelTable(label) {
       delete this.graphViz.rels[label];
     },
