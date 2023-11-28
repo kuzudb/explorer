@@ -673,14 +673,13 @@ export default {
     },
 
     renameTable(oldLabel, newLabel) {
-      const g6Item = this.g6graph ? this.g6graph.find('node', node => node._cfg.model.isPlaceholder) : null;
-      if (g6Item) {
-        this.g6graph.updateItem(g6Item, {
-          label: newLabel,
-        });
-      }
       this.$emit("renameTable", oldLabel, newLabel);
       this.clickedLabel = newLabel;
+      this.settingsStore.renameNodeTable(oldLabel, newLabel);
+
+      this.$nextTick(() => {
+        this.handleSettingsChange();
+      });
     },
 
     updatePlaceholderRelTable(newTable) {

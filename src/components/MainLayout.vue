@@ -225,7 +225,9 @@ export default {
     },
     renameTable(oldTableName, newTableName) {
       const table = this.schema.nodeTables.find((t) => t.name === oldTableName);
-      table.name=newTableName;
+      table.name = newTableName;
+      this.schema.relTables.filter((t) => t.src === oldTableName).map((t) => t.src = newTableName);
+      this.schema.relTables.filter((t) => t.dst === oldTableName).map((t) => t.dst = newTableName);
     },
     hideAll() {
       this.showSchema = false;
