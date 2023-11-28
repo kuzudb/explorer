@@ -60,6 +60,7 @@
         @addNodeTable="enterAddNodeTableMode"
         @addRelTable="enterAddRelTableMode"
         @addRelGroup="enterAddRelGroupMode"
+        @renameNodeTable="enterRenameNodeTableMode"
       />
       <SchemaSidebarHoverView
         :schema="schema"
@@ -83,7 +84,9 @@
         @dropTable="dropTable"
         @renameProperty="renameProperty"
         @addProperty="addProperty"
-        @updateTableName="renameTable"
+        @updateNodeTableName="renameNodeTable"
+        @saveRenamedNodeTable="saveRenamedNodeTable"
+        @saveRenamedRelTable="saveRenamedRelTable"
         ref="editView"
       />
       <SchemaSidebarAddView
@@ -654,8 +657,37 @@ export default {
       this.reloadSchema();
     },
 
+
+    enterRenameNodeTableMode(newTableName) {
+      // let newTableName = "NewNodeTable";
+      // // this.clickedIsNewTable = true;
+      // let counter = 1;
+      // while (this.schema.nodeTables.find(t => t.name === newTableName)) {
+      //   newTableName = `NewNodeTable-${counter}`;
+      //   counter += 1;
+      // }
+      // this.$emit("addPlaceholderNodeTable", newTableName);
+      // this.settingsStore.addNewNodeTable(PLACEHOLDER_NODE_TABLE);
+      // this.$nextTick(() => {
+      //   this.handleSettingsChange();
+      //   this.setG6Click(newTableName);
+      // });
+      this.clickedLabel = newTableName;
+      this.clickedIsNode = true;
+      this.clickedIsNewTable = true;
+    },
+
+
     addNewTable(table, properties, src, dst, relGroupRels) {
       this.$refs.actionDialog.addNewTable(table, properties, this.clickedIsNode, this.clickedIsRelGroup, src, dst, relGroupRels);
+    },
+
+    saveRenamedNodeTable(oldLabel, newLabel) {
+      this.$refs.actionDialog.saveRenamedNodeTable(oldLabel, newLabel);
+    },
+
+    saveRenamedRelTable(oldLabel, newLabel) {
+      this.$refs.actionDialog.saveRenamedRelTable(oldLabel, newLabel);
     },
 
     updatePlaceholderNodeTableLabel(newLabel) {
@@ -672,11 +704,18 @@ export default {
       this.clickedLabel = newLabel;
     },
 
-    renameTable(oldLabel, newLabel) {
-      this.$emit("renameTable", oldLabel, newLabel);
+    renameNodeTable(oldLabel, newLabel) {
+      this.$emit("renameNodeTable", oldLabel, newLabel);
       this.clickedLabel = newLabel;
-      this.settingsStore.renameNodeTable(oldLabel, newLabel);
+      // this.settingsStore.renameNodeTable(oldLabel, newLabel);
+      this.$nextTick(() => {
+        this.handleSettingsChange();
+      });
+    },
 
+    renameRelTable(oldLabel, newLabel) {
+      this.$emit("renameRelTable", oldLabel, newLabel);
+      this.clickedLabel = newLabel;
       this.$nextTick(() => {
         this.handleSettingsChange();
       });

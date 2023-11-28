@@ -81,7 +81,8 @@
         @addPlaceholderRelTable="addPlaceholderRelTable"
         @updatePlaceholderNodeTableLabel="updatePlaceholderNodeTable"
         @updatePlaceholderRelTable="updatePlaceholderRelTable"
-        @renameTable="renameTable"
+        @renameNodeTable="renameNodeTable"
+        @renameRelTable="renameRelTable"
       />
       <ShellMainView
         v-show="showShell"
@@ -223,11 +224,15 @@ export default {
       table.src = newTable.src;
       table.dst = newTable.dst;
     },
-    renameTable(oldTableName, newTableName) {
+    renameNodeTable(oldTableName, newTableName) {
       const table = this.schema.nodeTables.find((t) => t.name === oldTableName);
       table.name = newTableName;
       this.schema.relTables.filter((t) => t.src === oldTableName).map((t) => t.src = newTableName);
       this.schema.relTables.filter((t) => t.dst === oldTableName).map((t) => t.dst = newTableName);
+    },
+    renameRelTable(oldTableName, newTableName) {
+      const table = this.schema.relTables.find((t) => t.name === oldTableName);
+      table.name = newTableName;
     },
     hideAll() {
       this.showSchema = false;

@@ -10,21 +10,19 @@
         >
           <i class="fa-solid fa-long-arrow-left"></i>
         </button>
-        &nbsp; Table: &nbsp;
         <input
           type="text"
           class="from-control"
           v-model="currLabel"
-          @click="enterRenameMode"
           :style="{
             backgroundColor: ` ${getColor(label)} !important`,
             color: isNode ? '#ffffff' : '#000000',
           }"
         />
-        <button v-if="renameTable" @click="saveNewTableName" class="btn btn-sm btn-outline-primary">
+        <button v-if="currLabel!==label" @click="saveNewTableName" class="btn btn-sm btn-outline-primary">
           <i class="fa-solid fa-check"></i>
         </button>
-        <button v-if="renameTable" @click="discardNewTableName" class="btn btn-sm btn-outline-danger">
+        <button v-if="currLabel!==label" @click="discardNewTableName" class="btn btn-sm btn-outline-danger">
           <i class="fa-solid fa-times"></i>
         </button>
       </h5>
@@ -177,7 +175,6 @@ export default {
     },
     currLabel: "",
     currLabelInputDebounce: null,
-    renameTable: false,
   }),
   props: {
     schema: {
@@ -193,19 +190,24 @@ export default {
       required: true,
     },
   },
-  currLabel() {
-    console.log("in currLabel");
-    clearTimeout(this.currLabelInputDebounce);
-    this.currLabelInputDebounce = setTimeout(() => {
-      if (this.isNode) {
-        console.log("inNode123");
-        this.$emit("updateNodeTableLabel", this.currLabel);
-      } else if (!this.isRelGroup) {
-        this.updatePlaceholderRelTable();
-      }
-    }, 300);
+  watch: {
+    currLabel() {
+      clearTimeout(this.currLabelInputDebounce);
+      this.currLabelInputDebounce = setTimeout(() => {
+        if (this.isNode) {
+          this.$emit("renameNodeTable", this.label, this.currLabel);
+        } else if (!this.isRelGroup) {
+          this.$emit("renameRelTable", this.label, this.currLabel);
+        }
+      }, 300);
+    },
+    currSrc() {
+      this.updatePlaceholderRelTable();
+    },
+    currDst() {
+      this.updatePlaceholderRelTable();
+    },
   },
-
   computed: {
     ...mapStores(useSettingsStore),
     source() {
@@ -248,21 +250,18 @@ export default {
     getColor(label) {
       return this.settingsStore.colorForLabel(label);
     },
-    enterRenameMode() {
-      this.renameTable = true;
-    },
     saveNewTableName() {
-      if (this.currLabel === this.label) {
-        this.renameTable = false;
-        return;
+      if (this.isNode) {
+        this.$nextTick(() => {
+          this.$emit("saveRenamedNodeTable", this.label, this.currLabel);
+        });
+      } else {
+        this.$nextTick(() => {
+          this.$emit("saveRenamedRelTable", this.label, this.currLabel);
+        });
       }
-      this.$nextTick(() => {
-        this.$emit("updateTableName", this.label, this.currLabel);
-      });
-      this.renameTable = false;
     },
     discardNewTableName() {
-      this.renameTable = false;
       this.currLabel = this.label;
     },
     dropProperty(propertyName) {

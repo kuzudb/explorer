@@ -158,6 +158,28 @@ export default {
       this.statement = statement;
       this.showModal();
     },
+    saveRenamedNodeTable(oldName, newName) {
+      this.reset();
+      this.currentAction = {
+        type: SCHEMA_ACTION_TYPES.RENAME_TABLE,
+        oldName,
+        newName,
+      };
+      const statement = DataDefinitionLanguage.saveRenamedNodeTable(oldName, newName);
+      this.statement = statement;
+      this.showModal();
+    },
+    saveRenamedRelTable(oldName, newName) {
+      this.reset();
+      this.currentAction = {
+        type: SCHEMA_ACTION_TYPES.RENAME_TABLE,
+        oldName,
+        newName,
+      };
+      const statement = DataDefinitionLanguage.saveRenamedRelTable(oldName, newName);
+      this.statement = statement;
+      this.showModal();
+    },
     addNewTable(table, properties, isNodeTable, isRelGroup, src, dst, relGroupRels) {
       this.reset();
       if (isNodeTable) {
