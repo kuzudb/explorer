@@ -73,6 +73,16 @@
         </button>
         &nbsp;
         <button
+            class="btn btn-sm btn-outline-secondary"
+            :disabled="!!relGroup"
+            title="Hide Table"
+            @click="$emit('hideTable', label)"
+        >
+          <i class="fa-solid fa-eye-slash"></i>
+          Hide Table
+        </button>
+
+        <button
           class="btn btn-sm btn-outline-secondary"
           title="Rename Table"
           v-if="false"

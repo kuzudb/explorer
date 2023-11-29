@@ -60,6 +60,8 @@
         @addNodeTable="enterAddNodeTableMode"
         @addRelTable="enterAddRelTableMode"
         @addRelGroup="enterAddRelGroupMode"
+        @hideTable="hideTable"
+        @showAllTables="showAllTables"
       />
       <SchemaSidebarHoverView
         :schema="schema"
@@ -140,6 +142,7 @@ export default {
     clickedIsRelGroup: false,
     toolbarDebounceTimeout: 100,
     toolbarDebounceTimer: null,
+    hiddenTables: [],
   }),
   props: {
     schema: {
@@ -696,6 +699,26 @@ export default {
 
     dropTable(tableName) {
       this.$refs.actionDialog.dropTable(tableName);
+    },
+
+    hideTable(tableName) {
+      const g6Item = this.g6graph ? this.g6graph.cfg.nodes.find((node) => node._cfg.id === tableName) : null;
+      if (g6Item) {
+        g6Item.hide();
+        this.hiddenTables.push(tableName);
+      }
+    },
+
+    showAllTables() {
+      console.log("in showAllTables ,", this.hiddenTables);
+      while(this.hiddenTables) {
+        const tableName = this.hiddenTables.pop();
+
+        const g6Item = this.g6graph ? this.g6graph.cfg.nodes.find((node) => node._cfg.id === tableName) : null;
+        if (g6Item) {
+          g6Item.showItem();
+        }
+      }
     },
 
     dropProperty({ table, property }) {
