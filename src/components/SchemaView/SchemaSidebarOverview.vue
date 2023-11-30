@@ -53,12 +53,6 @@
                   <i class="fa-solid fa-trash-can"></i>
                 </button>
                 &nbsp;
-                <button
-                    class="btn btn-sm btn-outline-secondary"
-                    @click="hideTable(nodeTable.name)"
-                >
-                  <i class="fa-solid fa-eye-slash"></i>
-                </button>
               </div>
             </td>
           </tr>
@@ -232,9 +226,6 @@ export default {
     },
     editTable(tableName) {
       this.$emit("editTable", tableName);
-    },
-    hideTable(tableName) {
-      this.$emit("hideTable", tableName);
     },
     showAllTables() {
       console.log("in showAllTables");

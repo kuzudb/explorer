@@ -23,7 +23,17 @@
     <div class="result-container__side-panel" ref="sidePanel" v-show="isSidePanelOpen">
       <br />
       <div v-if="displayLabel">
-        <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
+        <div style="display: flex; align-items: center;">
+          <h5 style="margin-right: 10px;">{{ sidePanelPropertyTitlePrefix }} Properties</h5>
+          <button
+              class="btn btn-sm btn-outline-secondary"
+              style="padding: 5px; margin-right: 5px;"
+              @click="hideNode()"
+          >
+            <i class="fa-solid fa-eye-slash"></i>
+          </button>
+        </div>
+
         <span
           class="badge bg-primary"
           :style="{
@@ -49,7 +59,14 @@
       <div v-else>
         <h5>Overview</h5>
         <div v-if="counters.total.node > 0">
-          <p>Showing {{ counters.total.node }} nodes</p>
+          <p>Showing {{ counters.total.node }} nodes ({{ counters.total.node - hiddenNodes.length}} visible, {{hiddenNodes.length}} hidden)</p>
+            <button
+            class="btn btn-sm btn-outline-secondary"
+            @click="showAllNodesRels()"
+            >
+            <i class="fa-solid fa-eye"></i>
+            ShowAll
+            </button>
           <hr />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
@@ -122,6 +139,8 @@ export default {
     sidebarWidth: 500,
     graphWidth: 0,
     borderWidth: UI_SIZE.DEFAULT_BORDER_WIDTH,
+    hiddenNodes: [],
+    hiddenRels: [],
     hoveredProperties: [],
     hoveredLabel: "",
     hoveredIsNode: false,
@@ -339,6 +358,30 @@ export default {
 
       this.g6graph.render();
       this.graphCreated = true;
+    },
+
+    hideNode() {
+      const currentSelectedNode = this.g6graph.findAllByState('node', 'click')[0];
+      const nodeId = currentSelectedNode.getModel().id;
+      this.hiddenNodes.push(currentSelectedNode);
+      currentSelectedNode.hide();
+
+      const relatedEdges = this.g6graph.getEdges().filter((edge) => {
+        const edgeModel = edge.getModel();
+        return edgeModel.source === nodeId || edgeModel.target === nodeId;
+      });
+
+      relatedEdges.forEach((edge) => {
+        this.hiddenRels.push(edge);
+        edge.hide();
+      });
+    },
+
+    showAllNodesRels() {
+      this.hiddenNodes.forEach((node) => node.show());
+      this.hiddenRels.forEach((rel) => rel.show());
+      this.hiddenNodes = [];
+      this.hiddenRels = [];
     },
 
     encodeNodeId(id) {

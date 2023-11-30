@@ -71,16 +71,6 @@
           <i class="fa-solid fa-trash"></i>
           Drop Table
         </button>
-        &nbsp;
-        <button
-            class="btn btn-sm btn-outline-secondary"
-            :disabled="!!relGroup"
-            title="Hide Table"
-            @click="$emit('hideTable', label)"
-        >
-          <i class="fa-solid fa-eye-slash"></i>
-          Hide Table
-        </button>
 
         <button
           class="btn btn-sm btn-outline-secondary"
