@@ -10,13 +10,6 @@
         >
           Add
         </button>
-
-        <button
-            class="btn btn-sm btn-primary"
-            @click="showAllTables()"
-        >
-          Show
-        </button>
       </div>
       <hr />
       <table
@@ -227,17 +220,13 @@ export default {
     editTable(tableName) {
       this.$emit("editTable", tableName);
     },
-    showAllTables() {
-      console.log("in showAllTables");
-      this.$emit("showAllTables");
-    }
   },
 };
 </script>
 
 <style scoped lang="scss">
 .schema_side-panel__overview-table-buttons-container {
-  width: 135px;
+  width: 90px;
   text-align: center;
   vertical-align: middle;
 

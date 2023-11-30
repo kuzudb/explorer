@@ -71,7 +71,7 @@
           <i class="fa-solid fa-trash"></i>
           Drop Table
         </button>
-
+        &nbsp;
         <button
           class="btn btn-sm btn-outline-secondary"
           title="Rename Table"
