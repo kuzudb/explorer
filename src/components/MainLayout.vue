@@ -81,8 +81,8 @@
         @addPlaceholderRelTable="addPlaceholderRelTable"
         @updatePlaceholderNodeTableLabel="updatePlaceholderNodeTable"
         @updatePlaceholderRelTable="updatePlaceholderRelTable"
-        @renameNodeTable="renameNodeTable"
-        @renameRelTable="renameRelTable"
+        @setPlaceholder="setPlaceholder"
+        @unsetPlaceholder="unsetPlaceholder"
       />
       <ShellMainView
         v-show="showShell"
@@ -224,15 +224,38 @@ export default {
       table.src = newTable.src;
       table.dst = newTable.dst;
     },
-    renameNodeTable(oldTableName, newTableName) {
-      const table = this.schema.nodeTables.find((t) => t.name === oldTableName);
-      table.name = newTableName;
-      this.schema.relTables.filter((t) => t.src === oldTableName).map((t) => t.src = newTableName);
-      this.schema.relTables.filter((t) => t.dst === oldTableName).map((t) => t.dst = newTableName);
+    setPlaceholder(name) {
+      let table = this.schema.nodeTables.find((t) => t.name === name);
+      if (table) {
+        table.isPlaceholder = true;
+        this.setPlaceholderNodeTable(name);
+        return;
+      }
+      table = this.schema.relTables.find((t) => t.name === name);
+      if (table) {
+        table.isPlaceholder = true;
+        this.setPlaceholderRelTable(name);
+      }
     },
-    renameRelTable(oldTableName, newTableName) {
-      const table = this.schema.relTables.find((t) => t.name === oldTableName);
-      table.name = newTableName;
+    unsetPlaceholder({ originalLabel, isNode }) {
+      let table;
+      if (isNode) {
+        table = this.schema.nodeTables.find((t) => t.isPlaceholder);
+      } else {
+        table = this.schema.relTables.find((t) => t.isPlaceholder);
+      }
+      if (table) {
+        table.isPlaceholder = false;
+        table.name = originalLabel;
+      }
+      if (isNode) {
+        this.unsetPlaceholderNodeTable(originalLabel);
+      } else {
+        this.unsetPlaceholderRelTable(originalLabel);
+      }
+      this.$nextTick(() => {
+        this.$refs.schemaView.handleSettingsChange();
+      });
     },
     hideAll() {
       this.showSchema = false;
@@ -263,7 +286,7 @@ export default {
     updateNavbarHeight() {
       this.navbarHeight = this.$refs.navbar.clientHeight;
     },
-    ...mapActions(useSettingsStore, ['initDefaultSettings', 'handleSchemaReload']),
+    ...mapActions(useSettingsStore, ['initDefaultSettings', 'handleSchemaReload', 'setPlaceholderNodeTable', 'setPlaceholderRelTable', 'unsetPlaceholderNodeTable', 'unsetPlaceholderRelTable'])
   },
   computed: {
     ...mapStores(useModeStore)

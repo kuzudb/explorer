@@ -127,13 +127,7 @@ class DataDefinitionLanguage {
     return result;
   }
 
-  saveRenamedNodeTable(oldName, newName) {
-    oldName = this._escapeName(oldName);
-    newName = this._escapeName(newName);
-    return `ALTER TABLE ${oldName} RENAME TO ${newName};`;
-  }
-
-  saveRenamedRelTable(oldName, newName) {
+  renameTable(oldName, newName) {
     oldName = this._escapeName(oldName);
     newName = this._escapeName(newName);
     return `ALTER TABLE ${oldName} RENAME TO ${newName};`;

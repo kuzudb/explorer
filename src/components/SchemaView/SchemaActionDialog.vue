@@ -147,6 +147,18 @@ export default {
       this.statement = statement;
       this.showModal();
     },
+    renameTable(oldLabel, newLabel, isNode) {
+      this.reset();
+      this.currentAction = {
+        type: isNode ? SCHEMA_ACTION_TYPES.RENAME_NODE_TABLE : SCHEMA_ACTION_TYPES.RENAME_REL_TABLE,
+        oldLabel,
+        newLabel,
+        isNode,
+      };
+      const statement = DataDefinitionLanguage.renameTable(oldLabel, newLabel);
+      this.statement = statement;
+      this.showModal();
+    },
     addProperty(table, property, defaultValue) {
       this.reset();
       this.currentAction = {
@@ -155,28 +167,6 @@ export default {
         property,
       };
       const statement = DataDefinitionLanguage.addProperty(table, property.name, property.type, defaultValue);
-      this.statement = statement;
-      this.showModal();
-    },
-    saveRenamedNodeTable(oldName, newName) {
-      this.reset();
-      this.currentAction = {
-        type: SCHEMA_ACTION_TYPES.RENAME_TABLE,
-        oldName,
-        newName,
-      };
-      const statement = DataDefinitionLanguage.saveRenamedNodeTable(oldName, newName);
-      this.statement = statement;
-      this.showModal();
-    },
-    saveRenamedRelTable(oldName, newName) {
-      this.reset();
-      this.currentAction = {
-        type: SCHEMA_ACTION_TYPES.RENAME_TABLE,
-        oldName,
-        newName,
-      };
-      const statement = DataDefinitionLanguage.saveRenamedRelTable(oldName, newName);
       this.statement = statement;
       this.showModal();
     },

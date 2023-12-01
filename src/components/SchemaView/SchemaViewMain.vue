@@ -60,7 +60,6 @@
         @addNodeTable="enterAddNodeTableMode"
         @addRelTable="enterAddRelTableMode"
         @addRelGroup="enterAddRelGroupMode"
-        @renameNodeTable="enterRenameNodeTableMode"
       />
       <SchemaSidebarHoverView
         :schema="schema"
@@ -83,10 +82,11 @@
         @back="resetClick"
         @dropTable="dropTable"
         @renameProperty="renameProperty"
+        @renameTable="renameTable"
         @addProperty="addProperty"
-        @updateNodeTableName="renameNodeTable"
-        @saveRenamedNodeTable="saveRenamedNodeTable"
-        @saveRenamedRelTable="saveRenamedRelTable"
+        @setPlaceholder="setPlaceholder"
+        @unsetPlaceholder="unsetPlaceholder"
+        @setPlaceholderLabel="setPlaceholderLabelForEditView"
         ref="editView"
       />
       <SchemaSidebarAddView
@@ -445,6 +445,14 @@ export default {
       if (action.type === SCHEMA_ACTION_TYPES.RENAME_PROPERTY) {
         this.$refs.editView.cancelEditMode();
       }
+      else if (action.type === SCHEMA_ACTION_TYPES.RENAME_NODE_TABLE) {
+        this.settingsStore.renameNodeTable(PLACEHOLDER_NODE_TABLE, action.newLabel);
+        this.$refs.editView.finishTableRename();
+      }
+      else if (action.type === SCHEMA_ACTION_TYPES.RENAME_REL_TABLE) {
+        this.settingsStore.renameRelTable(PLACEHOLDER_REL_TABLE, action.newLabel);
+        this.$refs.editView.finishTableRename();
+      }
       else if (action.type === SCHEMA_ACTION_TYPES.ADD_PROPERTY) {
         this.$refs.editView.cancelAddMode();
       }
@@ -657,37 +665,34 @@ export default {
       this.reloadSchema();
     },
 
-
-    enterRenameNodeTableMode(newTableName) {
-      // let newTableName = "NewNodeTable";
-      // // this.clickedIsNewTable = true;
-      // let counter = 1;
-      // while (this.schema.nodeTables.find(t => t.name === newTableName)) {
-      //   newTableName = `NewNodeTable-${counter}`;
-      //   counter += 1;
-      // }
-      // this.$emit("addPlaceholderNodeTable", newTableName);
-      // this.settingsStore.addNewNodeTable(PLACEHOLDER_NODE_TABLE);
-      // this.$nextTick(() => {
-      //   this.handleSettingsChange();
-      //   this.setG6Click(newTableName);
-      // });
-      this.clickedLabel = newTableName;
-      this.clickedIsNode = true;
-      this.clickedIsNewTable = true;
-    },
-
-
     addNewTable(table, properties, src, dst, relGroupRels) {
       this.$refs.actionDialog.addNewTable(table, properties, this.clickedIsNode, this.clickedIsRelGroup, src, dst, relGroupRels);
     },
 
-    saveRenamedNodeTable(oldLabel, newLabel) {
-      this.$refs.actionDialog.saveRenamedNodeTable(oldLabel, newLabel);
+    setPlaceholder(label) {
+      const g6Item = this.g6graph ? this.g6graph.findById(label) : null;
+      if (g6Item) {
+        this.g6graph.updateItem(g6Item, {
+          isPlaceholder: true,
+        });
+      }
+      this.$emit("setPlaceholder", label);
     },
 
-    saveRenamedRelTable(oldLabel, newLabel) {
-      this.$refs.actionDialog.saveRenamedRelTable(oldLabel, newLabel);
+    setPlaceholderLabelForEditView({ newLabel, isNode }) {
+      if (isNode) {
+        this.updatePlaceholderNodeTableLabel(newLabel);
+      } else {
+        const g6Item = this.g6graph ? this.g6graph.find('edge', edge => edge._cfg.model.isPlaceholder) : null;
+        const src = g6Item._cfg.model.source;
+        const dst = g6Item._cfg.model.target;
+        this.updatePlaceholderRelTable({ name: newLabel, src, dst });
+      }
+    },
+
+    unsetPlaceholder({ originalLabel, isNode }) {
+      this.clickedLabel = originalLabel;
+      this.$emit("unsetPlaceholder", { originalLabel, isNode });
     },
 
     updatePlaceholderNodeTableLabel(newLabel) {
@@ -702,23 +707,6 @@ export default {
       }
       this.$emit("updatePlaceholderNodeTableLabel", newLabel);
       this.clickedLabel = newLabel;
-    },
-
-    renameNodeTable(oldLabel, newLabel) {
-      this.$emit("renameNodeTable", oldLabel, newLabel);
-      this.clickedLabel = newLabel;
-      // this.settingsStore.renameNodeTable(oldLabel, newLabel);
-      this.$nextTick(() => {
-        this.handleSettingsChange();
-      });
-    },
-
-    renameRelTable(oldLabel, newLabel) {
-      this.$emit("renameRelTable", oldLabel, newLabel);
-      this.clickedLabel = newLabel;
-      this.$nextTick(() => {
-        this.handleSettingsChange();
-      });
     },
 
     updatePlaceholderRelTable(newTable) {
@@ -748,6 +736,14 @@ export default {
 
     dropProperty({ table, property }) {
       this.$refs.actionDialog.dropProperty(table, property);
+    },
+
+    renameTable({ oldLabel, newLabel, isNode }) {
+      if (oldLabel === newLabel) {
+        this.$refs.editView.cancelEditMode();
+        return;
+      }
+      this.$refs.actionDialog.renameTable(oldLabel, newLabel, isNode);
     },
 
     renameProperty({ table, oldName, newName }) {

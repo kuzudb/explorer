@@ -1,31 +1,30 @@
 <template>
   <div>
     <div>
-      <h5>
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-primary"
-          title="Back"
-          @click="$emit('back')"
-        >
-          <i class="fa-solid fa-long-arrow-left"></i>
-        </button>
-        <input
-          type="text"
-          class="from-control"
-          v-model="currLabel"
-          :style="{
-            backgroundColor: ` ${getColor(label)} !important`,
-            color: isNode ? '#ffffff' : '#000000',
-          }"
-        />
-        <button v-if="currLabel!==label" @click="saveNewTableName" class="btn btn-sm btn-outline-primary">
-          <i class="fa-solid fa-check"></i>
-        </button>
-        <button v-if="currLabel!==label" @click="discardNewTableName" class="btn btn-sm btn-outline-danger">
-          <i class="fa-solid fa-times"></i>
-        </button>
-      </h5>
+      <div class="d-flex justify-content-between">
+        <div class="input-group d-flex">
+          <span class="input-group-text">Name</span>
+          <input
+            type="text"
+            class="form-control"
+            v-model="currLabel"
+            :style="{
+              backgroundColor: ` ${getBackgroundColorForEditingTable()} !important`,
+              color: isNode ? '#ffffff' : '#000000',
+            }"
+          />
+        </div>
+        <div v-if="isEditingLabel" class="d-flex">
+          &nbsp;
+          <button @click="renameTable" class="btn btn-sm btn-outline-primary">
+            <i class="fa-solid fa-check"></i>
+          </button>
+          &nbsp;
+          <button @click="cancelTableRename" class="btn btn-sm btn-outline-danger">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+      </div>
       <hr />
 
       <div v-if="!isNode">
@@ -57,6 +56,15 @@
       </div>
 
       <div class="schema_side-panel__edit-table-actions-container">
+        <button
+          class="btn btn-sm btn-outline-primary"
+          title="Cancel Edit"
+          @click="goBack"
+        >
+          <i class="fa-solid fa-long-arrow-left"></i>
+          Cancel Edit
+        </button>
+        &nbsp;
         <button
           class="btn btn-sm btn-outline-primary"
           title="Add Property"
@@ -160,7 +168,7 @@
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
 import SchemaPropertyEditCell from "./SchemaPropertyEditCell.vue";
-import { DATA_TYPES } from "../../utils/Constants";
+import { DATA_TYPES, PLACEHOLDER_NODE_TABLE, PLACEHOLDER_REL_TABLE } from "../../utils/Constants";
 export default {
   name: "SchemaSidebarEditView",
   components: {
@@ -175,6 +183,8 @@ export default {
     },
     currLabel: "",
     currLabelInputDebounce: null,
+    isEditingLabel: false,
+    oldLabel: "",
   }),
   props: {
     schema: {
@@ -191,21 +201,28 @@ export default {
     },
   },
   watch: {
-    currLabel() {
+    currLabel(newLabel) {
       clearTimeout(this.currLabelInputDebounce);
       this.currLabelInputDebounce = setTimeout(() => {
-        if (this.isNode) {
-          this.$emit("renameNodeTable", this.label, this.currLabel);
-        } else if (!this.isRelGroup) {
-          this.$emit("renameRelTable", this.label, this.currLabel);
+        if (!this.isEditingLabel && newLabel !== this.label) {
+          this.isEditingLabel = true;
+          this.oldLabel = this.label;
+          this.$emit("setPlaceholder", this.label);
+        }
+        if (this.isEditingLabel) {
+          if (newLabel === this.oldLabel) {
+            return this.unsetPlaceholder();
+          }
+          else {
+            this.$nextTick(() => {
+              this.$emit("setPlaceholderLabel", {
+                newLabel,
+                isNode: this.isNode,
+              });
+            });
+          }
         }
       }, 300);
-    },
-    currSrc() {
-      this.updatePlaceholderRelTable();
-    },
-    currDst() {
-      this.updatePlaceholderRelTable();
     },
   },
   computed: {
@@ -250,19 +267,37 @@ export default {
     getColor(label) {
       return this.settingsStore.colorForLabel(label);
     },
-    saveNewTableName() {
-      if (this.isNode) {
-        this.$nextTick(() => {
-          this.$emit("saveRenamedNodeTable", this.label, this.currLabel);
-        });
-      } else {
-        this.$nextTick(() => {
-          this.$emit("saveRenamedRelTable", this.label, this.currLabel);
-        });
+    getBackgroundColorForEditingTable() {
+      if (!this.isEditingLabel) {
+        return this.getColor(this.label);
       }
+      if (this.isNode) {
+        return this.getColor(PLACEHOLDER_NODE_TABLE);
+      }
+      return this.getColor(PLACEHOLDER_REL_TABLE);
     },
-    discardNewTableName() {
+    renameTable() {
+      this.$emit("renameTable", {
+        oldLabel: this.oldLabel,
+        newLabel: this.currLabel,
+        isNode: this.isNode,
+      });
+    },
+    unsetPlaceholder() {
+      this.$emit("unsetPlaceholder", { originalLabel: this.oldLabel, isNode: this.isNode });
+      this.oldLabel = "";
+      this.isEditingLabel = false;
+    },
+    cancelTableRename() {
+      if (!this.isEditingLabel) {
+        return;
+      }
+      this.currLabel = this.oldLabel;
+    },
+    finishTableRename() {
       this.currLabel = this.label;
+      this.isEditingLabel = false;
+      this.oldLabel = "";
     },
     dropProperty(propertyName) {
       this.$emit("dropProperty", {
@@ -305,6 +340,15 @@ export default {
         property,
         defaultValue,
       });
+    },
+    goBack() {
+      if (this.isEditingLabel) {
+        this.unsetPlaceholder();
+      }
+      this.$nextTick(() => {
+        this.$emit("back");
+      });
+
     },
   },
   mounted() {
