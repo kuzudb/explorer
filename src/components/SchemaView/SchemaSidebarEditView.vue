@@ -228,6 +228,9 @@ export default {
   computed: {
     ...mapStores(useSettingsStore),
     source() {
+      if (this.isEditingLabel) {
+        return this.schema.relTables.find(t => t.isPlaceholder).src;
+      }
       if (!this.schema || !this.label || this.isNode) {
         return null;
       }
@@ -235,6 +238,9 @@ export default {
     },
 
     destination() {
+      if (this.isEditingLabel) {
+        return this.schema.relTables.find(t => t.isPlaceholder).dst;
+      }
       if (!this.schema || !this.label || this.isNode) {
         return null;
       }
@@ -249,6 +255,12 @@ export default {
     },
 
     tableProperties() {
+      if (this.isEditingLabel) {
+        if (this.isNode) {
+          return this.schema.nodeTables.find(t => t.isPlaceholder).properties;
+        }
+        return this.schema.relTables.find(t => t.isPlaceholder).properties;
+      }
       if (!this.schema || !this.label) {
         return [];
       }
