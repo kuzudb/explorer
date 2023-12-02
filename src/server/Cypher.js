@@ -69,7 +69,15 @@ router.post("/", async (req, res) => {
       isSchemaChanged =
           JSON.stringify(schema) !== JSON.stringify(currentSchema);
     }
-    return res.send({ rows, dataTypes, isSchemaChanged });
+    // This is a workaround for the JSON stringify issue with INT128 values
+    const replacer = (key, value) => {
+      if (typeof value === 'bigint') {
+        return value.toString();
+      }
+      return value;
+    };
+    const responseBody = JSON.stringify({ rows, dataTypes, isSchemaChanged }, replacer);
+    return res.send(responseBody);
   } catch (err) {
     return res.status(400).send({ error: err.message });
   } finally {
