@@ -42,6 +42,8 @@ export const SCHEMA_ACTION_TYPES = {
   DROP_TABLE: "dropTable",
   DROP_PROPERTY: "dropProperty",
   RENAME_PROPERTY: "renameProperty",
+  RENAME_NODE_TABLE: "renameNodeTable",
+  RENAME_REL_TABLE: "renameRelTable",
   ADD_PROPERTY: "addProperty",
   ADD_NODE_TABLE: "addNodeTable",
   ADD_REL_TABLE: "addRelTable",

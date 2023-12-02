@@ -82,7 +82,11 @@
         @back="resetClick"
         @dropTable="dropTable"
         @renameProperty="renameProperty"
+        @renameTable="renameTable"
         @addProperty="addProperty"
+        @setPlaceholder="setPlaceholder"
+        @unsetPlaceholder="unsetPlaceholder"
+        @setPlaceholderLabel="setPlaceholderLabelForEditView"
         ref="editView"
       />
       <SchemaSidebarAddView
@@ -441,6 +445,14 @@ export default {
       if (action.type === SCHEMA_ACTION_TYPES.RENAME_PROPERTY) {
         this.$refs.editView.cancelEditMode();
       }
+      else if (action.type === SCHEMA_ACTION_TYPES.RENAME_NODE_TABLE) {
+        this.settingsStore.renameNodeTable(PLACEHOLDER_NODE_TABLE, action.newLabel);
+        this.$refs.editView.finishTableRename();
+      }
+      else if (action.type === SCHEMA_ACTION_TYPES.RENAME_REL_TABLE) {
+        this.settingsStore.renameRelTable(PLACEHOLDER_REL_TABLE, action.newLabel);
+        this.$refs.editView.finishTableRename();
+      }
       else if (action.type === SCHEMA_ACTION_TYPES.ADD_PROPERTY) {
         this.$refs.editView.cancelAddMode();
       }
@@ -450,7 +462,6 @@ export default {
         this.$nextTick(() => {
           this.cancelAdd();
         });
-
       } else if (action.type === SCHEMA_ACTION_TYPES.ADD_REL_TABLE) {
         this.settingsStore.renameRelTable(PLACEHOLDER_REL_TABLE, action.table);
         this.$nextTick(() => {
@@ -613,7 +624,6 @@ export default {
       this.clickedIsNewTable = true;
     },
 
-
     enterAddRelTableMode() {
       let newTableName = "NewRelTable";
       this.clickedIsNewTable = true;
@@ -659,6 +669,32 @@ export default {
       this.$refs.actionDialog.addNewTable(table, properties, this.clickedIsNode, this.clickedIsRelGroup, src, dst, relGroupRels);
     },
 
+    setPlaceholder(label) {
+      const g6Item = this.g6graph ? this.g6graph.findById(label) : null;
+      if (g6Item) {
+        this.g6graph.updateItem(g6Item, {
+          isPlaceholder: true,
+        });
+      }
+      this.$emit("setPlaceholder", label);
+    },
+
+    setPlaceholderLabelForEditView({ newLabel, isNode }) {
+      if (isNode) {
+        this.updatePlaceholderNodeTableLabel(newLabel);
+      } else {
+        const g6Item = this.g6graph ? this.g6graph.find('edge', edge => edge._cfg.model.isPlaceholder) : null;
+        const src = g6Item._cfg.model.source;
+        const dst = g6Item._cfg.model.target;
+        this.updatePlaceholderRelTable({ name: newLabel, src, dst });
+      }
+    },
+
+    unsetPlaceholder({ originalLabel, isNode }) {
+      this.clickedLabel = originalLabel;
+      this.$emit("unsetPlaceholder", { originalLabel, isNode });
+    },
+
     updatePlaceholderNodeTableLabel(newLabel) {
       if (this.clickedLabel === newLabel) {
         return;
@@ -700,6 +736,14 @@ export default {
 
     dropProperty({ table, property }) {
       this.$refs.actionDialog.dropProperty(table, property);
+    },
+
+    renameTable({ oldLabel, newLabel, isNode }) {
+      if (oldLabel === newLabel) {
+        this.$refs.editView.cancelEditMode();
+        return;
+      }
+      this.$refs.actionDialog.renameTable(oldLabel, newLabel, isNode);
     },
 
     renameProperty({ table, oldName, newName }) {

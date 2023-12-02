@@ -63,15 +63,6 @@
           <i class="fa-solid fa-plus"></i>
           Connection
         </button>
-        &nbsp;
-        <button
-          class="btn btn-sm btn-outline-secondary"
-          title="Rename Table"
-          v-if="false"
-        >
-          <i class="fa-solid fa-pencil"></i>
-          Rename Table
-        </button>
       </div>
       <br />
 

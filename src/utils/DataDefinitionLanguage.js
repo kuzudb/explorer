@@ -126,6 +126,12 @@ class DataDefinitionLanguage {
     result += ");";
     return result;
   }
+
+  renameTable(oldName, newName) {
+    oldName = this._escapeName(oldName);
+    newName = this._escapeName(newName);
+    return `ALTER TABLE ${oldName} RENAME TO ${newName};`;
+  }
 }
 
 const ddl = new DataDefinitionLanguage();

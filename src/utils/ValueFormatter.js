@@ -62,8 +62,6 @@ class ValueFormatter {
       [DATA_TYPES.FIXED_LIST, DATA_TYPES.VAR_LIST].forEach((dataType) => {
         if (type.startsWith(dataType)) {
           // TODO: beautify list recursively
-          const childType = this.getChildTypeForList(type);
-          console.log("childType", childType);
         }
       });
       [DATA_TYPES.STRUCT, DATA_TYPES.MAP, DATA_TYPES.UNION].forEach(
