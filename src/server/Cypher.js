@@ -69,7 +69,7 @@ router.post("/", async (req, res) => {
       isSchemaChanged =
           JSON.stringify(schema) !== JSON.stringify(currentSchema);
     }
-    // This is a workaround for the JSON stringify issue with bigint values
+    // This is a workaround for the JSON stringify issue with INT128 values
     const replacer = (key, value) => {
       if (typeof value === 'bigint') {
         return value.toString();
