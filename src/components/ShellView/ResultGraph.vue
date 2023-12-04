@@ -23,17 +23,18 @@
     <div class="result-container__side-panel" ref="sidePanel" v-show="isSidePanelOpen">
       <br />
       <div v-if="displayLabel">
-        <div style="display: flex; align-items: center;">
-          <h5 style="margin-right: 10px;">{{ sidePanelPropertyTitlePrefix }} Properties</h5>
-          <button
-              class="btn btn-sm btn-outline-secondary"
-              style="padding: 5px; margin-right: 5px;"
-              @click="hideNode()"
-          >
-            <i class="fa-solid fa-eye-slash"></i>
-          </button>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
+          <div style="display: flex; align-items: center;">
+            <button
+                class="btn btn-sm btn-outline-secondary"
+                style="padding: 5px; margin-right: 20px;"
+                @click="hideNode()"
+            >
+              <i class="fa-solid fa-eye-slash"></i> Hide Node
+            </button>
+          </div>
         </div>
-
         <span
           class="badge bg-primary"
           :style="{
@@ -59,15 +60,22 @@
       <div v-else>
         <h5>Overview</h5>
         <div v-if="counters.total.node > 0">
-          <p>Showing {{ counters.total.node }} nodes ({{ counters.total.node - hiddenNodes.length}} visible, {{hiddenNodes.length}} hidden)</p>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <p>
+              Showing {{ counters.total.node - numHiddenNodes }}/{{ counters.total.node }} nodes
+              <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
+            </p>
             <button
-            class="btn btn-sm btn-outline-secondary"
-            @click="showAllNodesRels()"
+                v-if="numHiddenNodes > 0"
+                class="btn btn-sm btn-outline-secondary"
+                style="padding: 5px; margin-right: 20px;"
+                @click="showAllNodesRels()"
             >
-            <i class="fa-solid fa-eye"></i>
-            ShowAll
+              <i class="fa-solid fa-eye"></i>
+              Show All
             </button>
-          <hr />
+          </div>
+          <hr style="margin-top: 15px;" />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
               <tr v-for="label in Object.keys(counters.node)" :key="label">
@@ -87,7 +95,10 @@
         </div>
 
         <div v-if="counters.total.rel > 0">
-          <p>Showing {{ counters.total.rel }} rels</p>
+          <p>
+            Showing {{ counters.total.rel - numHiddenRels }}/{{ counters.total.rel }} rels
+            <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
+          </p>
           <hr />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
@@ -139,8 +150,8 @@ export default {
     sidebarWidth: 500,
     graphWidth: 0,
     borderWidth: UI_SIZE.DEFAULT_BORDER_WIDTH,
-    hiddenNodes: [],
-    hiddenRels: [],
+    numHiddenNodes: 0,
+    numHiddenRels: 0,
     hoveredProperties: [],
     hoveredLabel: "",
     hoveredIsNode: false,
@@ -363,25 +374,32 @@ export default {
     hideNode() {
       const currentSelectedNode = this.g6graph.findAllByState('node', 'click')[0];
       const nodeId = currentSelectedNode.getModel().id;
-      this.hiddenNodes.push(currentSelectedNode);
+      this.numHiddenNodes += 1;
       currentSelectedNode.hide();
-
+      this.deselectAll();
       const relatedEdges = this.g6graph.getEdges().filter((edge) => {
         const edgeModel = edge.getModel();
         return edgeModel.source === nodeId || edgeModel.target === nodeId;
       });
-
       relatedEdges.forEach((edge) => {
-        this.hiddenRels.push(edge);
+        this.numHiddenRels += 1;
         edge.hide();
       });
     },
 
     showAllNodesRels() {
-      this.hiddenNodes.forEach((node) => node.show());
-      this.hiddenRels.forEach((rel) => rel.show());
-      this.hiddenNodes = [];
-      this.hiddenRels = [];
+      this.g6graph.getNodes().forEach((node) => {
+        if (!node.isVisible()) {
+          node.show();
+        }
+      });
+      this.g6graph.getEdges().forEach((edge) => {
+        if (!edge.isVisible()) {
+          edge.show();
+        }
+      });
+      this.numHiddenNodes = 0;
+      this.numHiddenRels = 0;
     },
 
     encodeNodeId(id) {
@@ -762,4 +780,9 @@ export default {
     }
   }
 }
+p {
+  display: inline-block;
+  margin: 0;
+}
+
 </style>
