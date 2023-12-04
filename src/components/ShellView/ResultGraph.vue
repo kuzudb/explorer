@@ -23,17 +23,14 @@
     <div class="result-container__side-panel" ref="sidePanel" v-show="isSidePanelOpen">
       <br />
       <div v-if="displayLabel">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div class="result-container__summary-panel">
           <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
-          <div style="display: flex; align-items: center;">
             <button
                 class="btn btn-sm btn-outline-secondary"
-                style="padding: 5px; margin-right: 20px;"
                 @click="hideNode()"
             >
               <i class="fa-solid fa-eye-slash"></i> Hide Node
             </button>
-          </div>
         </div>
         <span
           class="badge bg-primary"
@@ -60,7 +57,7 @@
       <div v-else>
         <h5>Overview</h5>
         <div v-if="counters.total.node > 0">
-          <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div class="result-container__summary-panel">
             <p>
               Showing {{ counters.total.node - numHiddenNodes }}/{{ counters.total.node }} nodes
               <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
@@ -68,7 +65,6 @@
             <button
                 v-if="numHiddenNodes > 0"
                 class="btn btn-sm btn-outline-secondary"
-                style="padding: 5px; margin-right: 20px;"
                 @click="showAllNodesRels()"
             >
               <i class="fa-solid fa-eye"></i>
@@ -719,6 +715,17 @@ export default {
 
   .result_container__graph {
     height: 100%;
+  }
+
+  .result-container__summary-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    button {
+      padding: 5px;
+      margin-right: 20px;
+    }
   }
 
   .result-container__tools_container {
