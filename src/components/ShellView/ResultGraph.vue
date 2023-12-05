@@ -26,6 +26,7 @@
         <div class="result-container__summary-panel">
           <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
             <button
+                v-if="isNodeSelectedOrHovered"
                 class="btn btn-sm btn-outline-secondary"
                 @click="hideNode()"
             >
@@ -59,7 +60,7 @@
         <div v-if="counters.total.node > 0">
           <div class="result-container__summary-panel">
             <p>
-              Showing {{ counters.total.node - numHiddenNodes }}/{{ counters.total.node }} nodes
+              Showing <span v-if="numHiddenNodes > 0"> {{ counters.total.node - numHiddenNodes }}/</span>{{ counters.total.node }} nodes
               <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
             </p>
             <button
@@ -71,7 +72,7 @@
               Show All
             </button>
           </div>
-          <hr style="margin-top: 15px;" />
+          <hr>
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
               <tr v-for="label in Object.keys(counters.node)" :key="label">
@@ -86,13 +87,12 @@
               </tr>
             </tbody>
           </table>
-
           <br />
         </div>
 
         <div v-if="counters.total.rel > 0">
           <p>
-            Showing {{ counters.total.rel - numHiddenRels }}/{{ counters.total.rel }} rels
+            Showing <span v-if="numHiddenRels > 0"> {{ counters.total.rel - numHiddenRels }}/</span>{{ counters.total.rel }} rels
             <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
           </p>
           <hr />
@@ -600,14 +600,14 @@ export default {
       const label = model.properties._label;
       this.hoveredLabel = label;
       this.hoveredProperties = ValueFormatter.filterAndBeautifyProperties(model.properties, this.schema);
-      this.hoveredIsNode = !(model._src && model._dst);
+      this.hoveredIsNode = !(model.properties._src && model.properties._dst);
     },
 
     handleClick(model) {
       const label = model.properties._label;
       this.clickedLabel = label;
       this.clickedProperties = ValueFormatter.filterAndBeautifyProperties(model.properties, this.schema);
-      this.clickedIsNode = !(model._src && model._dst);
+      this.clickedIsNode = !(model.properties._src && model.properties._dst);
     },
 
     deselectAll() {
@@ -722,6 +722,11 @@ export default {
     align-items: center;
     justify-content: space-between;
 
+    p {
+      display: inline-block;
+      margin: 0;
+    }
+
     button {
       padding: 5px;
       margin-right: 20px;
@@ -786,10 +791,6 @@ export default {
       }
     }
   }
-}
-p {
-  display: inline-block;
-  margin: 0;
 }
 
 </style>
