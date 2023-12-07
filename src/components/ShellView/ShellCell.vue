@@ -8,6 +8,7 @@
       "
       :isLoading="isLoading"
       @evaluateCypher="evaluateCypher"
+      @generateAndEvaluateQuery="generateAndEvaluateQuery"
       @remove="removeCell"
       @toggleMaximize="toggleMaximize"
       ref="editor"
@@ -19,7 +20,9 @@
       v-if="queryResult || errorMessage"
     />
     <div class="d-flex align-items-center" v-if="isLoading">
-      <strong class="text-secondary">Executing query...</strong>
+      <strong class="text-secondary">{{
+        loadingText ? loadingText : "Loading..."
+      }}</strong>
       <div
         class="spinner-border text-secondary ms-auto"
         role="status"
@@ -34,6 +37,7 @@ import CypherEditor from "./CypherEditor.vue";
 import ResultContainer from "./ResultContainer.vue";
 import Axios from "axios";
 import { useModeStore } from "../../store/ModeStore";
+import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from "pinia";
 
 export default {
@@ -46,6 +50,7 @@ export default {
     queryString: "",
     queryResult: null,
     errorMessage: "",
+    loadingText: "",
     isEvaluated: false,
     isMaximized: false,
     isLoading: false,
@@ -69,7 +74,7 @@ export default {
   },
 
   computed: {
-    ...mapStores(useModeStore),
+    ...mapStores(useModeStore, useSettingsStore),
   },
 
   methods: {
@@ -77,6 +82,7 @@ export default {
       this.queryResult = null;
       this.errorMessage = "";
       this.isLoading = true;
+      this.loadingText = "Evaluating query...";
       Axios.post("/api/cypher", { query })
         .then((res) => {
           this.queryResult = res.data;
@@ -119,6 +125,62 @@ export default {
         this.$emit("addCell");
       }
       this.isEvaluated = true;
+    },
+    generateAndEvaluateQuery(question) {
+      this.queryResult = null;
+      this.errorMessage = "";
+      question = question.trim();
+      const token = this.settingsStore.gptApiToken;
+      if (!question) {
+        this.errorMessage = "The question cannot be empty. Please type a question and try again.";
+      }
+      if (!token) {
+        this.errorMessage = "OpenAI API token is not set. Please set the token in the settings and try again.";
+      }
+      if (this.errorMessage) {
+        this.$nextTick(() => {
+          this.$refs.resultContainer.handleDataChange(this.schema, null, this.errorMessage);
+        });
+        return;
+      }
+      this.isLoading = true;
+      this.loadingText = "Generating query from question...";
+      const url = "/api/gpt";
+      const data = {
+        question,
+        token,
+      };
+      Axios.post(url, data)
+        .then((res) => {
+          const query = res.data.query;
+          this.$refs.editor.setEditorContent(query);
+          this.$refs.editor.evaluateCypher(query);
+        })
+        .catch((error) => {
+          this.isLoading = false;
+          if (!error.response) {
+            if (this.modeStore.isDemo) {
+              this.errorMessage = "The application is disconnected from the server. Please try to refresh the page and execute the query again.";
+            } else {
+              this.errorMessage = "The application is disconnected from the server. Please try to restart the server.";
+            }
+          }
+          else {
+            try {
+              this.errorMessage = error.response.data.error.trim();
+              console.error(error.response.data.error.trim());
+            } catch (e) {
+              const httpStatus = error.response.status;
+              this.errorMessage = `The request failed with HTTP status code ${httpStatus}.`;
+              console.error(this.errorMessage);
+            }
+          }
+          if (this.errorMessage) {
+            this.$nextTick(() => {
+              this.$refs.resultContainer.handleDataChange(this.schema, null, this.errorMessage);
+            });
+          }
+        })
     },
     toggleMaximize() {
       if (this.isMaximized) {

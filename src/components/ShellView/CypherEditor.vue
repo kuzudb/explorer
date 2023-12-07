@@ -35,7 +35,7 @@
           data-bs-toggle="tooltip"
           data-bs-placement="right"
           title="Run"
-          @click="evaluateCypher"
+          @click="evaluateCurrentCell"
         ></i>
       </div>
       <div class="shell-editor__button">
@@ -189,6 +189,19 @@ export default {
     evaluateCypher() {
       const cypher = this.editor.getValue();
       this.$emit("evaluateCypher", cypher);
+    },
+    generateAndEvaluateQuery() {
+      this.$emit("generateAndEvaluateQuery", this.gptQuestion);
+    },
+    evaluateCurrentCell() {
+      if (this.isQueryGenerationMode) {
+        this.generateAndEvaluateQuery();
+      } else {
+        this.evaluateCypher();
+      }
+    },
+    setEditorContent(content) {
+      this.editor.setValue(content);
     },
     removeCell() {
       this.$emit("remove");

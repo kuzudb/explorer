@@ -3,7 +3,7 @@
     <div class="alert alert-danger" role="alert" v-if="!isInfo">
       <div>
         <i class="fa-solid fa-circle-exclamation"></i>
-        The query has failed to execute with the following error:
+        The evaluation of this cell failed with the following error:
         <br />
         <b>
           {{ errorMessage }}
