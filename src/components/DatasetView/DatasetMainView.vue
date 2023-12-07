@@ -117,8 +117,10 @@ export default {
   props: {
     schema: {
       type: Object,
+      default: null,
     },
   },
+  emits: ["reloadSchema"],
   data: () => ({
     selectedDataset: null,
     selectedDatasetSchema: null,

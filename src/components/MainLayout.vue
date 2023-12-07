@@ -224,6 +224,26 @@ export default {
     navbarHeight: 0,
     schema: null,
   }),
+  computed: {
+    ...mapStores(useModeStore)
+  },
+  mounted() {
+    this.updateNavbarHeight();
+    this.accessModeModal = new Modal(this.$refs.modal);
+    window.addEventListener("resize", this.updateNavbarHeight);
+    this.loadGptApiTokenFromLocalStorage();
+  },
+  beforeUnmount() {
+    this.accessModeModal.dispose();
+    window.removeEventListener("resize", this.updateNavbarHeight);
+  },
+  created() {
+    this.getMode();
+    this.getSchema().then(() => {
+      this.initDefaultSettings(this.schema);
+      this.$refs.schemaView.drawGraph();
+    });
+  },
   methods: {
     async getSchema() {
       const response = await Axios.get("/api/schema");
@@ -353,26 +373,6 @@ export default {
       'unsetPlaceholderRelTable',
       'loadGptApiTokenFromLocalStorage'
     ])
-  },
-  computed: {
-    ...mapStores(useModeStore)
-  },
-  mounted() {
-    this.updateNavbarHeight();
-    this.accessModeModal = new Modal(this.$refs.modal);
-    window.addEventListener("resize", this.updateNavbarHeight);
-    this.loadGptApiTokenFromLocalStorage();
-  },
-  beforeUnmount() {
-    this.accessModeModal.dispose();
-    window.removeEventListener("resize", this.updateNavbarHeight);
-  },
-  created() {
-    this.getMode();
-    this.getSchema().then(() => {
-      this.initDefaultSettings(this.schema);
-      this.$refs.schemaView.drawGraph();
-    });
   },
 };
 </script>

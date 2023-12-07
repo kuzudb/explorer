@@ -215,6 +215,8 @@ export default {
       required: true,
     },
   },
+  emits: ["dropTable", "renameTable", "renameProperty", "addProperty", "dropProperty", "back", "setPlaceholder",
+    "setPlaceholderLabel", "unsetPlaceholder"],
   data: () => ({
     editingPropertyIndex: -1,
     addingProperty: false,
@@ -227,31 +229,6 @@ export default {
     isEditingLabel: false,
     oldLabel: "",
   }),
-  watch: {
-    currLabel(newLabel) {
-      clearTimeout(this.currLabelInputDebounce);
-      this.currLabelInputDebounce = setTimeout(() => {
-        if (!this.isEditingLabel && newLabel !== this.label) {
-          this.isEditingLabel = true;
-          this.oldLabel = this.label;
-          this.$emit("setPlaceholder", this.label);
-        }
-        if (this.isEditingLabel) {
-          if (newLabel === this.oldLabel) {
-            return this.unsetPlaceholder();
-          }
-          else {
-            this.$nextTick(() => {
-              this.$emit("setPlaceholderLabel", {
-                newLabel,
-                isNode: this.isNode,
-              });
-            });
-          }
-        }
-      }, 300);
-    },
-  },
   computed: {
     ...mapStores(useSettingsStore),
     source() {
@@ -293,13 +270,38 @@ export default {
       }
       if (this.isNode) {
         return this.schema.nodeTables
-          .find(t => t.name === this.label)
-          .properties;
+            .find(t => t.name === this.label)
+            .properties;
       } else {
         return this.schema.relTables
-          .find(t => t.name === this.label)
-          .properties;
+            .find(t => t.name === this.label)
+            .properties;
       }
+    },
+  },
+  watch: {
+    currLabel(newLabel) {
+      clearTimeout(this.currLabelInputDebounce);
+      this.currLabelInputDebounce = setTimeout(() => {
+        if (!this.isEditingLabel && newLabel !== this.label) {
+          this.isEditingLabel = true;
+          this.oldLabel = this.label;
+          this.$emit("setPlaceholder", this.label);
+        }
+        if (this.isEditingLabel) {
+          if (newLabel === this.oldLabel) {
+            return this.unsetPlaceholder();
+          }
+          else {
+            this.$nextTick(() => {
+              this.$emit("setPlaceholderLabel", {
+                newLabel,
+                isNode: this.isNode,
+              });
+            });
+          }
+        }
+      }, 300);
     },
   },
   mounted() {

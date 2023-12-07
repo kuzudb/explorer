@@ -280,6 +280,7 @@ export default {
       required: true,
     }
   },
+  emits: ["save", "discard", "updateNodeTableLabel", "updatePlaceholderRelTable"],
   data: () => ({
     editingPropertyIndex: -1,
     defaultNewProperty: {
@@ -307,24 +308,6 @@ export default {
     placeholderRelTable: PLACEHOLDER_REL_TABLE,
     currLabelInputDebounce: null,
   }),
-  watch: {
-    currLabel() {
-      clearTimeout(this.currLabelInputDebounce);
-      this.currLabelInputDebounce = setTimeout(() => {
-        if (this.isNode) {
-          this.$emit("updateNodeTableLabel", this.currLabel);
-        } else if (!this.isRelGroup) {
-          this.updatePlaceholderRelTable();
-        }
-      }, 300);
-    },
-    currSrc() {
-      this.updatePlaceholderRelTable();
-    },
-    currDst() {
-      this.updatePlaceholderRelTable();
-    },
-  },
   computed: {
     ...mapStores(useSettingsStore),
     relTableSrcAndDstOptions() {
@@ -346,6 +329,25 @@ export default {
       return result;
     },
   },
+  watch: {
+    currLabel() {
+      clearTimeout(this.currLabelInputDebounce);
+      this.currLabelInputDebounce = setTimeout(() => {
+        if (this.isNode) {
+          this.$emit("updateNodeTableLabel", this.currLabel);
+        } else if (!this.isRelGroup) {
+          this.updatePlaceholderRelTable();
+        }
+      }, 300);
+    },
+    currSrc() {
+      this.updatePlaceholderRelTable();
+    },
+    currDst() {
+      this.updatePlaceholderRelTable();
+    },
+  },
+
   mounted() {
     this.currLabel = this.label;
     if (this.isRelGroup) {

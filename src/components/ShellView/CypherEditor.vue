@@ -107,7 +107,7 @@ export default {
       default: false,
     },
   },
-emits: ['remove', 'evaluateCypher'],
+emits: ['remove', 'evaluateCypher', 'toggleMaximize', 'generateAndEvaluateQuery'],
   data: () => {
     return {
       name: "CypherEditor",

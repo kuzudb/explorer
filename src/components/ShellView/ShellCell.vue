@@ -49,11 +49,11 @@ export default {
     CypherEditor,
     ResultContainer,
   },
-
   props: {
     schema: {
       type: Object,
       required: false,
+      default: null,
     },
     navbarHeight: {
       type: Number,
@@ -66,6 +66,7 @@ export default {
       default: "",
     },
   },
+  emits: ["reloadSchema", "addCell", "maximize", "minimize", "remove"],
   data: () => ({
     queryString: "",
     queryResult: null,

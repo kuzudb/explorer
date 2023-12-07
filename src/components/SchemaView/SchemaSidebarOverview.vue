@@ -239,6 +239,7 @@ export default {
       required: true,
     },
   },
+  emits: ["dropTable", "editTable", "addNodeTable", "addRelTable", "addRelGroup"],
   computed: {
     ...mapStores(useSettingsStore, useModeStore)
   },

@@ -146,6 +146,15 @@ export default {
       required: true,
     },
   },
+  emits: [
+    "addPlaceholderNodeTable",
+    "addPlaceholderRelTable",
+    "setPlaceholder",
+    "unsetPlaceholder",
+    "updatePlaceholderNodeTableLabel",
+    "updatePlaceholderRelTable",
+    "reloadSchema",
+  ],
   data: () => ({
     graphCreated: false,
     toolbarWidth: UI_SIZE.SHELL_TOOL_BAR_WIDTH,

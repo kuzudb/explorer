@@ -27,11 +27,11 @@ export default {
   components: {
     ShellCell,
   },
-
   props: {
     schema: {
       type: Object,
       required: false,
+      default: null,
     },
     navbarHeight: {
       type: Number,
@@ -39,6 +39,7 @@ export default {
       default: 0,
     },
   },
+  emits: ["reloadSchema"],
   data: () => ({
     shellCell: [
       {

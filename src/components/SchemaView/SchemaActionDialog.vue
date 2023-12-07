@@ -94,6 +94,7 @@ import { SCHEMA_ACTION_TYPES } from "../../utils/Constants";
 import Axios from 'axios';
 export default {
   name: "SchemaActionDialog",
+  emits: ["reloadSchema", "actionCompleted"],
   data: () => ({
     statement: "",
     errorMessage: "",

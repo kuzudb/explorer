@@ -175,6 +175,7 @@ export default {
       default: "auto",
     },
   },
+  emits: ["graphEmpty"],
   data: () => ({
     graphCreated: false,
     isMaximized: false,

@@ -226,6 +226,7 @@ export default {
       default: false,
     },
   },
+  emits: ['save', 'cancel'],
   data: () => {
     const dataTypes = Object.keys(DATA_TYPES).filter(k => !INTERNAL_DATA_TYPES.includes(k));
     const basicTypes = dataTypes.filter(t => ![DATA_TYPES.MAP, DATA_TYPES.STRUCT, DATA_TYPES.UNION, DATA_TYPES.FIXED_LIST, DATA_TYPES.VAR_LIST, DATA_TYPES.SERIAL].includes(t));

@@ -97,12 +97,12 @@
                   >
                     <ul class="list-group">
                       <li
-                        v-for="(field, k) in item"
-                        :key="k"
+                        v-for="(field, m) in item"
+                        :key="m"
                         class="list-group-item"
                       >
-                        <b>{{ k === 0 ? field.value : field.name + ":" }}</b>
-                        <span v-if="k > 0">{{ field.value }}</span>
+                        <b>{{ m === 0 ? field.value : field.name + ":" }}</b>
+                        <span v-if="m > 0">{{ field.value }}</span>
                       </li>
                     </ul>
                   </div>
