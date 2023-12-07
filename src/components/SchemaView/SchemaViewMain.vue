@@ -1,8 +1,11 @@
 <template>
-  <div class="schema-view__wrapper" ref="wrapper">
+  <div
+    ref="wrapper"
+    class="schema-view__wrapper"
+  >
     <div
-      class="schema-view__tools_container"
       ref="toolsContainer"
+      class="schema-view__tools_container"
       :style="{ minWidth: toolbarWidth + 'px' }"
     >
       <div class="schema-view__tools_container--bottom">
@@ -13,7 +16,7 @@
             data-bs-placement="right"
             title="Zoom In"
             @click="zoomIn()"
-          ></i>
+          />
         </div>
         <div class="schema-view__button">
           <i
@@ -22,7 +25,7 @@
             data-bs-placement="right"
             title="Zoom Out"
             @click="zoomOut()"
-          ></i>
+          />
         </div>
         <div class="schema-view__button">
           <i
@@ -31,7 +34,7 @@
             data-bs-placement="right"
             title="Fit to View"
             @click="fitToView()"
-          ></i>
+          />
         </div>
         <div class="schema-view__button">
           <i
@@ -40,72 +43,75 @@
             data-bs-placement="right"
             title="Actual Size"
             @click="actualSize()"
-          ></i>
+          />
         </div>
       </div>
     </div>
     <div
-      class="schema_graph__wrapper"
       ref="graph"
+      class="schema_graph__wrapper"
       :style="{ width: graphWidth + 'px' }"
-    ></div>
-    <div class="schema_side-panel__wrapper" ref="sidePanel">
-      <br />
+    />
+    <div
+      ref="sidePanel"
+      class="schema_side-panel__wrapper"
+    >
+      <br>
       <SchemaSidebarOverview
-        :schema="schema"
         v-if="schema"
         v-show="!hoveredLabel && clickedLabel === null"
-        @dropTable="dropTable"
-        @editTable="enterEditTableMode"
-        @addNodeTable="enterAddNodeTableMode"
-        @addRelTable="enterAddRelTableMode"
-        @addRelGroup="enterAddRelGroupMode"
+        :schema="schema"
+        @drop-table="dropTable"
+        @edit-table="enterEditTableMode"
+        @add-node-table="enterAddNodeTableMode"
+        @add-rel-table="enterAddRelTableMode"
+        @add-rel-group="enterAddRelGroupMode"
       />
       <SchemaSidebarHoverView
-        :schema="schema"
-        :hoveredLabel="hoveredLabel"
-        :hoveredIsNode="hoveredIsNode"
         v-if="hoveredLabel !== null && (clickedLabel === null || !modeStore.isReadWrite)"
+        :schema="schema"
+        :hovered-label="hoveredLabel"
+        :hovered-is-node="hoveredIsNode"
       />
       <SchemaSidebarHoverView
-        :schema="schema"
-        :hoveredLabel="clickedLabel"
-        :hoveredIsNode="clickedIsNode"
         v-if="clickedLabel !== null && hoveredLabel === null && !modeStore.isReadWrite"
+        :schema="schema"
+        :hovered-label="clickedLabel"
+        :hovered-is-node="clickedIsNode"
       />
       <SchemaSidebarEditView
+        v-if="clickedLabel !== null && !clickedIsNewTable && modeStore.isReadWrite"
         :schema="schema"
         :label="clickedLabel"
-        :isNode="clickedIsNode"
-        v-if="clickedLabel !== null && !clickedIsNewTable && modeStore.isReadWrite"
-        @dropProperty="dropProperty"
-        @back="resetClick"
-        @dropTable="dropTable"
-        @renameProperty="renameProperty"
-        @renameTable="renameTable"
-        @addProperty="addProperty"
-        @setPlaceholder="setPlaceholder"
-        @unsetPlaceholder="unsetPlaceholder"
-        @setPlaceholderLabel="setPlaceholderLabelForEditView"
         ref="editView"
+        :is-node="clickedIsNode"
+        @drop-property="dropProperty"
+        @back="resetClick"
+        @drop-table="dropTable"
+        @rename-property="renameProperty"
+        @rename-table="renameTable"
+        @add-property="addProperty"
+        @set-placeholder="setPlaceholder"
+        @unset-placeholder="unsetPlaceholder"
+        @set-placeholder-label="setPlaceholderLabelForEditView"
       />
       <SchemaSidebarAddView
+        v-if="clickedLabel !== null && clickedIsNewTable"
+        ref="addView"
         :schema="schema"
         :label="clickedLabel"
-        :isNode="clickedIsNode"
-        :isRelGroup="clickedIsRelGroup"
-        v-if="clickedLabel !== null && clickedIsNewTable"
+        :is-node="clickedIsNode"
+        :is-rel-group="clickedIsRelGroup"
         @discard="cancelAdd"
         @save="addNewTable"
-        @updateNodeTableLabel="updatePlaceholderNodeTableLabel"
-        @updatePlaceholderRelTable="updatePlaceholderRelTable"
-        ref="addView"
+        @update-node-table-label="updatePlaceholderNodeTableLabel"
+        @update-placeholder-rel-table="updatePlaceholderRelTable"
       />
     </div>
     <SchemaActionDialog
       ref="actionDialog"
-      @reloadSchema="reloadSchema"
-      @actionCompleted="handleSchemaActionCompleted"
+      @reload-schema="reloadSchema"
+      @action-completed="handleSchemaActionCompleted"
     />
   </div>
 </template>
@@ -129,6 +135,17 @@ export default {
     SchemaSidebarOverview, SchemaSidebarHoverView, SchemaSidebarEditView,
     SchemaSidebarAddView, SchemaActionDialog
   },
+  props: {
+    schema: {
+      type: Object,
+      required: false,
+      default: null,
+    },
+    navbarHeight: {
+      type: Number,
+      required: true,
+    },
+  },
   data: () => ({
     graphCreated: false,
     toolbarWidth: UI_SIZE.SHELL_TOOL_BAR_WIDTH,
@@ -145,17 +162,6 @@ export default {
     toolbarDebounceTimeout: 100,
     toolbarDebounceTimer: null,
   }),
-  props: {
-    schema: {
-      type: Object,
-      required: false,
-      default: null,
-    },
-    navbarHeight: {
-      type: Number,
-      required: true,
-    },
-  },
   computed: {
     graphVizSettings() {
       return this.settingsStore.graphVizSettings;
@@ -189,6 +195,18 @@ export default {
       this.resetClick();
       this.handleSettingsChange();
     },
+  },
+  mounted() {
+    this.computeGraphWidth();
+    this.computeGraphHeight();
+    window.addEventListener("resize", this.handleResize);
+  },
+
+  beforeUnmount() {
+    if (this.g6graph) {
+      this.g6graph.destroy();
+    }
+    window.removeEventListener("resize", this.handleResize);
   },
   methods: {
     getColor(label) {
@@ -814,18 +832,6 @@ export default {
       });
       window.g6AddEdgeBehaviorRegistered = true;
     }
-  },
-  mounted() {
-    this.computeGraphWidth();
-    this.computeGraphHeight();
-    window.addEventListener("resize", this.handleResize);
-  },
-
-  beforeUnmount() {
-    if (this.g6graph) {
-      this.g6graph.destroy();
-    }
-    window.removeEventListener("resize", this.handleResize);
   },
 };
 </script>

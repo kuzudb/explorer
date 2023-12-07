@@ -1,17 +1,20 @@
 <template>
-  <div class="shell-main-view__wrapper" :style="{ height: `${containerHeight}px` }">
+  <div
+    class="shell-main-view__wrapper"
+    :style="{ height: `${containerHeight}px` }"
+  >
     <ShellCell
       v-for="(cell, index) in shellCell"
+      v-show="index === maximizedCellIndex || maximizedCellIndex < 0"
       :key="cell.cellId"
       :schema="schema"
-      :navbarHeight="navbarHeight"
-      :cellId="cell.cellId"
+      :navbar-height="navbarHeight"
+      :cell-id="cell.cellId"
       @remove="removeCell(index)"
-      @addCell="addCell()"
+      @add-cell="addCell()"
       @maximize="maximize(index)"
       @minimize="minimize()"
-      @reloadSchema="reloadSchema()"
-      v-show="index === maximizedCellIndex || maximizedCellIndex < 0"
+      @reload-schema="reloadSchema()"
     />
   </div>
 </template>
@@ -24,16 +27,6 @@ export default {
   components: {
     ShellCell,
   },
-  data: () => ({
-    shellCell: [
-      {
-        cellId: uuidv4(),
-      },
-    ],
-    isCellAddedToTheEnd: false,
-    maximizedCellIndex: -1,
-    containerHeight: 0,
-  }),
 
   props: {
     schema: {
@@ -45,6 +38,27 @@ export default {
       required: false,
       default: 0,
     },
+  },
+  data: () => ({
+    shellCell: [
+      {
+        cellId: uuidv4(),
+      },
+    ],
+    isCellAddedToTheEnd: false,
+    maximizedCellIndex: -1,
+    containerHeight: 0,
+  }),
+
+  mounted() {
+    this.$nextTick(() => {
+      this.updateContainerHeight();
+    });
+    window.addEventListener("resize", this.updateContainerHeight);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener("resize", this.updateContainerHeight);
   },
 
   methods: {
@@ -82,17 +96,6 @@ export default {
     reloadSchema() {
       this.$emit("reloadSchema");
     },
-  },
-
-  mounted() {
-    this.$nextTick(() => {
-      this.updateContainerHeight();
-    });
-    window.addEventListener("resize", this.updateContainerHeight);
-  },
-
-  beforeUnmount() {
-    window.removeEventListener("resize", this.updateContainerHeight);
   },
 
 }

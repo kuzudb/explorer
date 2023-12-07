@@ -1,9 +1,13 @@
 <template>
   <td :colspan="colspan">
     <div v-if="currProperty">
-      <div class="alert alert-danger" role="alert" v-if="!nameValid">
+      <div
+        v-if="!nameValid"
+        class="alert alert-danger"
+        role="alert"
+      >
         <div>
-          <i class="fa-solid fa-circle-exclamation"></i>
+          <i class="fa-solid fa-circle-exclamation" />
           The name of the property cannot be empty.
         </div>
       </div>
@@ -11,28 +15,40 @@
       <div class="input-group flex-nowrap">
         <span class="input-group-text">Name</span>
         <input
+          v-model="currProperty.name"
           type="text"
           class="form-control"
-          v-model="currProperty.name"
           @input="nameValid = true"
-        />
+        >
       </div>
 
       <div v-if="currProperty && isNewProperty">
-        <br />
+        <br>
         <div class="input-group flex-nowrap">
           <span class="input-group-text">Type</span>
-          <select class="form-select" v-model="currProperty.type" v-if="isNewTable">
-            <option v-for="dataType in dataTypes" :value="dataType" :key="dataType">
+          <select
+            v-if="isNewTable"
+            v-model="currProperty.type"
+            class="form-select"
+          >
+            <option
+              v-for="dataType in dataTypes"
+              :key="dataType"
+              :value="dataType"
+            >
               {{ dataType }}
             </option>
           </select>
 
-          <select class="form-select" v-model="currProperty.type" v-else>
+          <select
+            v-else
+            v-model="currProperty.type"
+            class="form-select"
+          >
             <option
               v-for="dataType in supportedTypesForAlter"
-              :value="dataType"
               :key="dataType"
+              :value="dataType"
             >
               {{ dataType }}
             </option>
@@ -40,11 +56,18 @@
         </div>
 
         <div v-if="isList">
-          <br />
+          <br>
           <div class="input-group flex-nowrap">
             <span class="input-group-text">Member Type</span>
-            <select class="form-select" v-model="currProperty.memberType">
-              <option v-for="dataType in basicTypes" :value="dataType" :key="dataType">
+            <select
+              v-model="currProperty.memberType"
+              class="form-select"
+            >
+              <option
+                v-for="dataType in basicTypes"
+                :key="dataType"
+                :value="dataType"
+              >
                 {{ dataType }}
               </option>
             </select>
@@ -53,44 +76,70 @@
       </div>
 
       <div v-if="isFixedList">
-        <br />
+        <br>
         <div class="input-group flex-nowrap">
           <span class="input-group-text">Size</span>
-          <input type="number" class="form-control" v-model="currProperty.size" />
+          <input
+            v-model="currProperty.size"
+            type="number"
+            class="form-control"
+          >
         </div>
       </div>
 
       <div v-if="isVarList">
-        <br />
+        <br>
         <div class="input-group flex-nowrap">
           <span class="input-group-text">Dimension</span>
-          <input type="number" class="form-control" v-model="currProperty.dim" />
+          <input
+            v-model="currProperty.dim"
+            type="number"
+            class="form-control"
+          >
         </div>
       </div>
 
       <div v-if="isStruct || isUnion">
-        <br />
+        <br>
         <div class="input-group">
           <span class="input-group-text">Fields</span>
-          <textarea class="form-control" v-model="currProperty.fields" rows="3" />
+          <textarea
+            v-model="currProperty.fields"
+            class="form-control"
+            rows="3"
+          />
         </div>
       </div>
 
       <div v-if="isMap">
-        <br />
+        <br>
         <div class="input-group flex-nowrap">
           <span class="input-group-text">Key Type</span>
-          <select class="form-select" v-model="currProperty.keyType">
-            <option v-for="dataType in basicTypes" :value="dataType" :key="dataType">
+          <select
+            v-model="currProperty.keyType"
+            class="form-select"
+          >
+            <option
+              v-for="dataType in basicTypes"
+              :key="dataType"
+              :value="dataType"
+            >
               {{ dataType }}
             </option>
           </select>
         </div>
-        <br />
+        <br>
         <div class="input-group flex-nowrap">
           <span class="input-group-text">Value Type</span>
-          <select class="form-select" v-model="currProperty.valueType">
-            <option v-for="dataType in basicTypes" :value="dataType" :key="dataType">
+          <select
+            v-model="currProperty.valueType"
+            class="form-select"
+          >
+            <option
+              v-for="dataType in basicTypes"
+              :key="dataType"
+              :value="dataType"
+            >
               {{ dataType }}
             </option>
           </select>
@@ -98,21 +147,25 @@
       </div>
 
       <div v-if="isNewProperty && !isNewTable">
-        <br />
+        <br>
         <div class="input-group flex-nowrap">
           <span class="input-group-text">Default Value</span>
-          <input type="text" class="form-control" v-model="defaultValue" />
+          <input
+            v-model="defaultValue"
+            type="text"
+            class="form-control"
+          >
         </div>
       </div>
 
       <div v-if="isNewTable && isNodeTable">
-        <br />
+        <br>
         <div class="form-check form-switch">
           <input
+            v-model="currProperty.isPrimaryKey"
             class="form-check-input"
             type="checkbox"
-            v-model="currProperty.isPrimaryKey"
-          />
+          >
           <label class="form-check-label"> Primary Key </label>
         </div>
       </div>
@@ -125,7 +178,7 @@
         title="Save"
         @click="save"
       >
-        <i class="fa-solid fa-check"></i>
+        <i class="fa-solid fa-check" />
         Save
       </button>
       &nbsp;
@@ -135,7 +188,7 @@
         title="Cancel"
         @click="$emit('cancel')"
       >
-        <i class="fa-solid fa-xmark"></i>
+        <i class="fa-solid fa-xmark" />
         Cancel
       </button>
     </div>
@@ -147,19 +200,6 @@ import { DATA_TYPES, INTERNAL_DATA_TYPES } from '../../utils/Constants';
 
 export default {
   name: "SchemaPropertyEditCell",
-  data: () => {
-    const dataTypes = Object.keys(DATA_TYPES).filter(k => !INTERNAL_DATA_TYPES.includes(k));
-    const basicTypes = dataTypes.filter(t => ![DATA_TYPES.MAP, DATA_TYPES.STRUCT, DATA_TYPES.UNION, DATA_TYPES.FIXED_LIST, DATA_TYPES.VAR_LIST, DATA_TYPES.SERIAL].includes(t));
-    const supportedTypesForAlter = dataTypes.filter(t => ![DATA_TYPES.SERIAL, DATA_TYPES.UNION, DATA_TYPES.MAP, DATA_TYPES.FIXED_LIST].includes(t));
-    return {
-      dataTypes,
-      basicTypes,
-      supportedTypesForAlter,
-      currProperty: null,
-      nameValid: true,
-      defaultValue: ""
-    }
-  },
   props: {
     property: {
       type: Object,
@@ -184,6 +224,39 @@ export default {
       type: Boolean,
       required: true,
       default: false,
+    },
+  },
+  data: () => {
+    const dataTypes = Object.keys(DATA_TYPES).filter(k => !INTERNAL_DATA_TYPES.includes(k));
+    const basicTypes = dataTypes.filter(t => ![DATA_TYPES.MAP, DATA_TYPES.STRUCT, DATA_TYPES.UNION, DATA_TYPES.FIXED_LIST, DATA_TYPES.VAR_LIST, DATA_TYPES.SERIAL].includes(t));
+    const supportedTypesForAlter = dataTypes.filter(t => ![DATA_TYPES.SERIAL, DATA_TYPES.UNION, DATA_TYPES.MAP, DATA_TYPES.FIXED_LIST].includes(t));
+    return {
+      dataTypes,
+      basicTypes,
+      supportedTypesForAlter,
+      currProperty: null,
+      nameValid: true,
+      defaultValue: ""
+    }
+  },
+  computed: {
+    isList() {
+      return this.currProperty.type && [DATA_TYPES.FIXED_LIST, DATA_TYPES.VAR_LIST].includes(this.currProperty.type);
+    },
+    isFixedList() {
+      return this.currProperty.type && this.currProperty.type === DATA_TYPES.FIXED_LIST;
+    },
+    isVarList() {
+      return this.currProperty.type && this.currProperty.type === DATA_TYPES.VAR_LIST;
+    },
+    isStruct() {
+      return this.currProperty.type && this.currProperty.type === DATA_TYPES.STRUCT;
+    },
+    isUnion() {
+      return this.currProperty.type && this.currProperty.type === DATA_TYPES.UNION;
+    },
+    isMap() {
+      return this.currProperty.type && this.currProperty.type === DATA_TYPES.MAP;
     },
   },
   watch: {
@@ -213,25 +286,8 @@ export default {
     },
 
   },
-  computed: {
-    isList() {
-      return this.currProperty.type && [DATA_TYPES.FIXED_LIST, DATA_TYPES.VAR_LIST].includes(this.currProperty.type);
-    },
-    isFixedList() {
-      return this.currProperty.type && this.currProperty.type === DATA_TYPES.FIXED_LIST;
-    },
-    isVarList() {
-      return this.currProperty.type && this.currProperty.type === DATA_TYPES.VAR_LIST;
-    },
-    isStruct() {
-      return this.currProperty.type && this.currProperty.type === DATA_TYPES.STRUCT;
-    },
-    isUnion() {
-      return this.currProperty.type && this.currProperty.type === DATA_TYPES.UNION;
-    },
-    isMap() {
-      return this.currProperty.type && this.currProperty.type === DATA_TYPES.MAP;
-    },
+  mounted() {
+    this.currProperty = this.unpackProperty(this.property);
   },
   methods: {
     parseType(type) {
@@ -389,9 +445,6 @@ export default {
     cancelPrimaryKey() {
       this.currProperty.isPrimaryKey = false;
     }
-  },
-  mounted() {
-    this.currProperty = this.unpackProperty(this.property);
   },
 }
 </script>

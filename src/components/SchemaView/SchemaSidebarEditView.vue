@@ -5,27 +5,36 @@
         <div class="input-group d-flex">
           <span class="input-group-text">Name</span>
           <input
+            v-model="currLabel"
             type="text"
             class="form-control"
-            v-model="currLabel"
             :style="{
               backgroundColor: ` ${getBackgroundColorForEditingTable()} !important`,
               color: isNode ? '#ffffff' : '#000000',
             }"
-          />
+          >
         </div>
-        <div v-if="isEditingLabel" class="d-flex">
+        <div
+          v-if="isEditingLabel"
+          class="d-flex"
+        >
           &nbsp;
-          <button @click="renameTable" class="btn btn-sm btn-outline-primary">
-            <i class="fa-solid fa-check"></i>
+          <button
+            class="btn btn-sm btn-outline-primary"
+            @click="renameTable"
+          >
+            <i class="fa-solid fa-check" />
           </button>
           &nbsp;
-          <button @click="cancelTableRename" class="btn btn-sm btn-outline-danger">
-            <i class="fa-solid fa-times"></i>
+          <button
+            class="btn btn-sm btn-outline-danger"
+            @click="cancelTableRename"
+          >
+            <i class="fa-solid fa-times" />
           </button>
         </div>
       </div>
-      <hr />
+      <hr>
 
       <div v-if="!isNode">
         <h6 v-if="relGroup">
@@ -41,7 +50,7 @@
             {{ source }}
           </span>
           &nbsp;
-          <i class="fa-solid fa-arrow-right"></i>
+          <i class="fa-solid fa-arrow-right" />
           &nbsp;
           <span
             class="badge bg-primary"
@@ -52,7 +61,7 @@
             {{ destination }}
           </span>
         </h6>
-        <br />
+        <br>
       </div>
 
       <div class="schema_side-panel__edit-table-actions-container">
@@ -61,7 +70,7 @@
           title="Cancel Edit"
           @click="goBack"
         >
-          <i class="fa-solid fa-long-arrow-left"></i>
+          <i class="fa-solid fa-long-arrow-left" />
           Cancel Edit
         </button>
         &nbsp;
@@ -70,7 +79,7 @@
           title="Add Property"
           @click="enterAddMode"
         >
-          <i class="fa-solid fa-plus"></i>
+          <i class="fa-solid fa-plus" />
           Property
         </button>
         &nbsp;
@@ -80,53 +89,71 @@
           title="Drop Table"
           @click="$emit('dropTable', label)"
         >
-          <i class="fa-solid fa-trash"></i>
+          <i class="fa-solid fa-trash" />
           Drop Table
         </button>
         &nbsp;
       </div>
-      <br />
+      <br>
 
       <table
-        class="table table-sm table-bordered schema_side-panel__edit-table"
         v-if="schema"
+        class="table table-sm table-bordered schema_side-panel__edit-table"
       >
         <thead>
           <tr v-if="tableProperties.length > 0 || addingProperty">
-            <th scope="col">Name</th>
-            <th scope="col">Type</th>
-            <th scope="col" class="schema_side-panel__edit-table-buttons-container">
+            <th scope="col">
+              Name
+            </th>
+            <th scope="col">
+              Type
+            </th>
+            <th
+              scope="col"
+              class="schema_side-panel__edit-table-buttons-container"
+            >
               Actions
             </th>
           </tr>
           <tr v-else>
-            <th scope="col">There are no properties in this table</th>
+            <th scope="col">
+              There are no properties in this table
+            </th>
           </tr>
         </thead>
         <tbody v-if="tableProperties.length > 0 || addingProperty">
           <tr>
             <SchemaPropertyEditCell
+              v-if="addingProperty"
               :property="defaultNewProperty"
               :colspan="3"
-              :isNewProperty="true"
-              :isNewTable="false"
-              :isNodeTable="isNode"
+              :is-new-property="true"
+              :is-new-table="false"
+              :is-node-table="isNode"
               @cancel="cancelAddMode"
               @save="addProperty"
-              v-if="addingProperty"
             />
           </tr>
-          <tr v-for="(property, i) in tableProperties" :key="property.name">
-            <td scope="row" v-if="i !== editingPropertyIndex">
+          <tr
+            v-for="(property, i) in tableProperties"
+            :key="property.name"
+          >
+            <td
+              v-if="i !== editingPropertyIndex"
+              scope="row"
+            >
               {{ property.name }}
-              <span class="badge bg-primary" v-if="property.isPrimaryKey"> PK </span>
+              <span
+                v-if="property.isPrimaryKey"
+                class="badge bg-primary"
+              > PK </span>
             </td>
             <td v-if="i !== editingPropertyIndex">
               {{ property.type }}
             </td>
             <td
-              class="schema_side-panel__edit-table-buttons-container"
               v-if="i !== editingPropertyIndex"
+              class="schema_side-panel__edit-table-buttons-container"
             >
               <button
                 type="button"
@@ -134,7 +161,7 @@
                 title="Edit"
                 @click="enterEditMode(i)"
               >
-                <i class="fa-solid fa-pencil"></i>
+                <i class="fa-solid fa-pencil" />
               </button>
               &nbsp;
               <button
@@ -143,15 +170,15 @@
                 title="Drop"
                 @click="dropProperty(property.name)"
               >
-                <i class="fa-solid fa-trash"></i>
+                <i class="fa-solid fa-trash" />
               </button>
             </td>
             <SchemaPropertyEditCell
               v-if="i === editingPropertyIndex"
               :property="property"
               :colspan="3"
-              :isNewProperty="false"
-              :isNewTable="false"
+              :is-new-property="false"
+              :is-new-table="false"
               @cancel="cancelEditMode"
               @save="renameProperty"
             >
@@ -174,18 +201,6 @@ export default {
   components: {
     SchemaPropertyEditCell,
   },
-  data: () => ({
-    editingPropertyIndex: -1,
-    addingProperty: false,
-    defaultNewProperty: {
-      name: "",
-      type: DATA_TYPES.INT64,
-    },
-    currLabel: "",
-    currLabelInputDebounce: null,
-    isEditingLabel: false,
-    oldLabel: "",
-  }),
   props: {
     schema: {
       type: Object,
@@ -200,6 +215,18 @@ export default {
       required: true,
     },
   },
+  data: () => ({
+    editingPropertyIndex: -1,
+    addingProperty: false,
+    defaultNewProperty: {
+      name: "",
+      type: DATA_TYPES.INT64,
+    },
+    currLabel: "",
+    currLabelInputDebounce: null,
+    isEditingLabel: false,
+    oldLabel: "",
+  }),
   watch: {
     currLabel(newLabel) {
       clearTimeout(this.currLabelInputDebounce);
@@ -274,6 +301,9 @@ export default {
           .properties;
       }
     },
+  },
+  mounted() {
+    this.currLabel = this.label;
   },
   methods: {
     getColor(label) {
@@ -362,9 +392,6 @@ export default {
       });
 
     },
-  },
-  mounted() {
-    this.currLabel = this.label;
   },
 };
 </script>

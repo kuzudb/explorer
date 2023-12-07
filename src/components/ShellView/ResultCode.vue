@@ -1,6 +1,13 @@
 <template>
-  <div class="result-code__wrapper" ref="wrapper" :style="{ height: containerHeight }">
-    <div class="result-code__editor" ref="editor"></div>
+  <div
+    ref="wrapper"
+    class="result-code__wrapper"
+    :style="{ height: containerHeight }"
+  >
+    <div
+      ref="editor"
+      class="result-code__editor"
+    />
   </div>
 </template>
 
@@ -9,8 +16,6 @@
 // app to crash.
 export default {
   name: "ResultCode",
-  data: () => ({
-  }),
   props: {
     queryResultString: {
       type: String,
@@ -23,7 +28,19 @@ export default {
       default: ""
     },
   },
+  data: () => ({
+  }),
   watch: {
+  },
+
+  mounted() {
+    this.initMonacoEditor();
+  },
+
+  beforeUnmount() {
+    if (this.editor) {
+      this.editor.dispose();
+    }
   },
   methods: {
     initMonacoEditor() {
@@ -48,16 +65,6 @@ export default {
         scrollBeyondLastLine: false,
       });
     },
-  },
-
-  mounted() {
-    this.initMonacoEditor();
-  },
-
-  beforeUnmount() {
-    if (this.editor) {
-      this.editor.dispose();
-    }
   },
 };
 </script>

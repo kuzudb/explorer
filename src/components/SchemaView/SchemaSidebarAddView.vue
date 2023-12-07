@@ -1,11 +1,15 @@
 <template>
   <div>
     <div>
-      <div v-if="isRelGroup" class="alert alert-info text-justify" role="alert">
-        <i class="fa-solid fa-info-circle"></i>
+      <div
+        v-if="isRelGroup"
+        class="alert alert-info text-justify"
+        role="alert"
+      >
+        <i class="fa-solid fa-info-circle" />
         When creating a relationship group, multiple relationship tables with the same
         properties will be created.
-        <br />
+        <br>
         The visualization will not show a preview of the relationship group, but each
         relationship table will be shown after the relationship group is saved.
       </div>
@@ -13,17 +17,17 @@
         <div class="input-group flex-nowrap">
           <span class="input-group-text">Name</span>
           <input
+            v-model="currLabel"
             type="text"
             class="form-control"
-            v-model="currLabel"
             :style="{
               backgroundColor: !isRelGroup ? ` ${getColor()} !important` : '#ffffff',
               color: isNode ? '#ffffff' : '#000000',
             }"
-          />
+          >
         </div>
       </h5>
-      <hr />
+      <hr>
 
       <div class="schema_side-panel__add-table-actions-container">
         <button
@@ -32,7 +36,7 @@
           title="Save Table"
           @click="saveTable"
         >
-          <i class="fa-solid fa-save"></i>
+          <i class="fa-solid fa-save" />
           Save
         </button>
         &nbsp;
@@ -41,7 +45,7 @@
           title="Discard Table"
           @click="discardTable"
         >
-          <i class="fa-solid fa-trash"></i>
+          <i class="fa-solid fa-trash" />
           Discard
         </button>
         &nbsp;
@@ -50,56 +54,58 @@
           title="Add Property"
           @click="addProperty"
         >
-          <i class="fa-solid fa-plus"></i>
+          <i class="fa-solid fa-plus" />
           Property
         </button>
         &nbsp;
         <button
+          v-if="isRelGroup"
           class="btn btn-sm btn-outline-primary"
           title="Relationship"
-          v-if="isRelGroup"
           @click="addRel"
         >
-          <i class="fa-solid fa-plus"></i>
+          <i class="fa-solid fa-plus" />
           Connection
         </button>
       </div>
-      <br />
+      <br>
 
       <div v-if="isRelGroup">
         <h5>Connections</h5>
-        <hr />
-        <div v-for="rel in currRelGroupRels" :key="rel.id">
+        <hr>
+        <div
+          v-for="rel in currRelGroupRels"
+          :key="rel.id"
+        >
           <div>
             <div class="schema_side-panel__add-table-rel-group-container">
               <div class="input-group flex-nowrap">
                 <select
-                  class="form-select"
                   v-model="rel.src"
+                  class="form-select"
                   :style="getSelectStyle(rel.src)"
                 >
                   <option
                     v-for="option in relTableSrcAndDstOptions"
-                    :value="option.value"
                     :key="option.text"
+                    :value="option.value"
                   >
                     {{ option.text }}
                   </option>
                 </select>
               </div>
               <span class="input-group-text no-border">
-                <i class="fa-solid fa-arrow-right"></i
-              ></span>
+                <i class="fa-solid fa-arrow-right" /></span>
               <div class="input-group flex-nowrap">
                 <select
-                  class="form-select"
                   v-model="rel.dst"
+                  class="form-select"
                   :style="getSelectStyle(rel.dst)"
                 >
                   <option
                     v-for="option in relTableSrcAndDstOptions"
-                    :value="option.value"
                     :key="option.text"
+                    :value="option.value"
                   >
                     {{ option.text }}
                   </option>
@@ -114,26 +120,30 @@
                   title="Drop"
                   @click="deleteRel(rel.id)"
                 >
-                  <i class="fa-solid fa-trash"></i>
+                  <i class="fa-solid fa-trash" />
                 </button>
               </div>
             </div>
           </div>
-          <div class="schema_side-panel__add-table-rel-group-blank-space"></div>
+          <div class="schema_side-panel__add-table-rel-group-blank-space" />
         </div>
-        <br />
+        <br>
       </div>
 
       <div v-if="!isNode && !isRelGroup">
         <h5>Connection</h5>
-        <hr />
+        <hr>
         <div class="input-group flex-nowrap">
           <span class="input-group-text">From</span>
-          <select class="form-select" v-model="currSrc" :style="getSelectStyle(currSrc)">
+          <select
+            v-model="currSrc"
+            class="form-select"
+            :style="getSelectStyle(currSrc)"
+          >
             <option
               v-for="option in relTableSrcAndDstOptions"
-              :value="option.value"
               :key="option.text"
+              :value="option.value"
             >
               {{ option.text }}
             </option>
@@ -141,61 +151,80 @@
         </div>
         <div class="input-group flex-nowrap">
           <span class="input-group-text">To</span>
-          <select class="form-select" v-model="currDst" :style="getSelectStyle(currDst)">
+          <select
+            v-model="currDst"
+            class="form-select"
+            :style="getSelectStyle(currDst)"
+          >
             <option
               v-for="option in relTableSrcAndDstOptions"
-              :value="option.value"
               :key="option.text"
+              :value="option.value"
             >
               {{ option.text }}
             </option>
           </select>
         </div>
-        <br />
+        <br>
       </div>
 
       <h5>Properties</h5>
-      <hr />
+      <hr>
       <table
-        class="table table-sm table-bordered schema_side-panel__add-table"
         v-if="schema"
+        class="table table-sm table-bordered schema_side-panel__add-table"
       >
         <thead>
           <tr v-if="currProperties.length > 0">
-            <th scope="col">Name</th>
-            <th scope="col">Type</th>
-            <th scope="col" class="schema_side-panel__add-table-buttons-container">
+            <th scope="col">
+              Name
+            </th>
+            <th scope="col">
+              Type
+            </th>
+            <th
+              scope="col"
+              class="schema_side-panel__add-table-buttons-container"
+            >
               Actions
             </th>
           </tr>
           <tr v-else>
-            <th scope="col">There are no properties in this table</th>
+            <th scope="col">
+              There are no properties in this table
+            </th>
           </tr>
         </thead>
 
         <tbody v-if="currProperties.length > 0">
-          <tr v-for="property in currProperties" :key="property.id">
+          <tr
+            v-for="property in currProperties"
+            :key="property.id"
+          >
             <SchemaPropertyEditCell
+              v-if="property.isEditing"
+              :ref="'editCell-' + property.id"
               :property="property"
               :colspan="3"
-              :isNewProperty="true"
-              :isNewTable="true"
-              :isNodeTable="isNode"
-              :ref="'editCell-' + property.id"
-              v-if="property.isEditing"
+              :is-new-property="true"
+              :is-new-table="true"
+              :is-node-table="isNode"
               @save="(...args) => saveProperty(property.id, ...args)"
               @cancel="cancelEditMode(property.id)"
             />
             <td v-if="!property.isEditing">
               {{ property.name }}
-              <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
+              <span
+                v-if="property.isPrimaryKey"
+                class="badge bg-primary"
+              >PK</span>
             </td>
             <td v-if="!property.isEditing">
               {{ property.type }}
             </td>
             <td
-              class="schema_side-panel__add-table-buttons-container"
               v-if="!property.isEditing"
+              class="schema_side-panel__add-table-buttons-container"
             >
               <button
                 type="button"
@@ -203,7 +232,7 @@
                 title="Edit"
                 @click="enterEditMode(property.id)"
               >
-                <i class="fa-solid fa-pencil"></i>
+                <i class="fa-solid fa-pencil" />
               </button>
               &nbsp;
               <button
@@ -212,7 +241,7 @@
                 title="Drop"
                 @click="dropProperty(property.id)"
               >
-                <i class="fa-solid fa-trash"></i>
+                <i class="fa-solid fa-trash" />
               </button>
             </td>
           </tr>
@@ -232,6 +261,24 @@ export default {
   name: "SchemaSidebarAddView",
   components: {
     SchemaPropertyEditCell,
+  },
+  props: {
+    schema: {
+      type: Object,
+      required: true,
+    },
+    label: {
+      type: String,
+      required: true,
+    },
+    isNode: {
+      type: Boolean,
+      required: true,
+    },
+    isRelGroup: {
+      type: Boolean,
+      required: true,
+    }
   },
   data: () => ({
     editingPropertyIndex: -1,
@@ -260,24 +307,6 @@ export default {
     placeholderRelTable: PLACEHOLDER_REL_TABLE,
     currLabelInputDebounce: null,
   }),
-  props: {
-    schema: {
-      type: Object,
-      required: true,
-    },
-    label: {
-      type: String,
-      required: true,
-    },
-    isNode: {
-      type: Boolean,
-      required: true,
-    },
-    isRelGroup: {
-      type: Boolean,
-      required: true,
-    }
-  },
   watch: {
     currLabel() {
       clearTimeout(this.currLabelInputDebounce);
@@ -316,6 +345,19 @@ export default {
       }
       return result;
     },
+  },
+  mounted() {
+    this.currLabel = this.label;
+    if (this.isRelGroup) {
+      this.currRelGroupRels = [];
+      this.addRel();
+    }
+    if (!this.isNode) {
+      return;
+    }
+    const primaryKey = { ...this.defaultPrimaryKey };
+    primaryKey.id = uuidv4();
+    this.currProperties.push(primaryKey);
   },
   methods: {
     getColor(label) {
@@ -415,19 +457,6 @@ export default {
       const index = this.currRelGroupRels.findIndex(r => r.id === id);
       this.currRelGroupRels.splice(index, 1);
     },
-  },
-  mounted() {
-    this.currLabel = this.label;
-    if (this.isRelGroup) {
-      this.currRelGroupRels = [];
-      this.addRel();
-    }
-    if (!this.isNode) {
-      return;
-    }
-    const primaryKey = { ...this.defaultPrimaryKey };
-    primaryKey.id = uuidv4();
-    this.currProperties.push(primaryKey);
   },
 };
 </script>

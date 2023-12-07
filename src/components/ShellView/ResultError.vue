@@ -1,19 +1,30 @@
 <template>
-  <div class="result-error__wrapper" ref="wrapper">
-    <div class="alert alert-danger" role="alert" v-if="!isInfo">
+  <div
+    ref="wrapper"
+    class="result-error__wrapper"
+  >
+    <div
+      v-if="!isInfo"
+      class="alert alert-danger"
+      role="alert"
+    >
       <div>
-        <i class="fa-solid fa-circle-exclamation"></i>
+        <i class="fa-solid fa-circle-exclamation" />
         The evaluation of this cell failed with the following error:
-        <br />
+        <br>
         <b>
           {{ errorMessage }}
         </b>
       </div>
     </div>
 
-    <div class="alert alert-info" role="alert" v-if="isInfo">
+    <div
+      v-if="isInfo"
+      class="alert alert-info"
+      role="alert"
+    >
       <div>
-        <i class="fa-solid fa-circle-info"></i>
+        <i class="fa-solid fa-circle-info" />
         {{ errorMessage }}
       </div>
     </div>
@@ -24,9 +35,6 @@
 
 export default {
   name: "ResultError",
-  data: () => ({
-
-  }),
   props: {
     errorMessage: {
       type: String,
@@ -39,6 +47,9 @@ export default {
       default: false
     }
   },
+  data: () => ({
+
+  }),
 };
 </script>
 

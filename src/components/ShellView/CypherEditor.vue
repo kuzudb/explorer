@@ -1,60 +1,75 @@
 <template>
   <div
+    ref="wrapper"
     class="shell-editor__wrapper"
     :style="{ height: editorHeight + 'px' }"
-    ref="wrapper"
   >
     <div
-      class="shell-editor__container"
-      :style="{ width: editorWidth + 'px' }"
       v-show="!isQueryGenerationMode"
       ref="editor"
-    ></div>
-    <div
       class="shell-editor__container"
       :style="{ width: editorWidth + 'px' }"
+    />
+    <div
       v-show="isQueryGenerationMode"
+      class="shell-editor__container"
+      :style="{ width: editorWidth + 'px' }"
     >
       <textarea
+        v-model="gptQuestion"
         class="form-control"
         placeholder="Type your question here..."
-        v-model="gptQuestion"
       />
     </div>
     <div
-      class="shell-editor__tools_container"
       ref="toolsContainer"
+      class="shell-editor__tools_container"
       :style="{ width: toolbarWidth + 'px' }"
     >
-      <div class="shell-editor__button" v-show="!isMaximized">
-        <i class="fa-lg fa-solid fa-times" @click="removeCell"></i>
+      <div
+        v-show="!isMaximized"
+        class="shell-editor__button"
+      >
+        <i
+          class="fa-lg fa-solid fa-times"
+          @click="removeCell"
+        />
       </div>
-      <div class="shell-editor__button" v-show="!isLoading">
+      <div
+        v-show="!isLoading"
+        class="shell-editor__button"
+      >
         <i
           class="fa-lg fa-solid fa-play"
           data-bs-toggle="tooltip"
           data-bs-placement="right"
           title="Run"
           @click="evaluateCurrentCell"
-        ></i>
+        />
       </div>
-      <div class="shell-editor__button" v-show="!isLoading">
+      <div
+        v-show="!isLoading"
+        class="shell-editor__button"
+      >
         <i
           :class="gptButtonClass"
           data-bs-toggle="tooltip"
           data-bs-placement="right"
           :data-bs-original-title="gptButtonTitle"
           @click="toggleQueryGeneration"
-        ></i>
+        />
       </div>
-      <div class="shell-editor__button" v-show="isMaximizable">
+      <div
+        v-show="isMaximizable"
+        class="shell-editor__button"
+      >
         <i
           :class="maximizeButtonClass"
           data-bs-toggle="tooltip"
           data-bs-placement="right"
           :data-bs-original-title="maximizeButtonTitle"
           @click="toggleMaximize"
-        ></i>
+        />
       </div>
     </div>
   </div>
@@ -70,20 +85,8 @@ import PlaceholderContentWidget from "../../utils/MonacoPlaceholderContentWidget
 // Make sure Monaco is not reactive. Otherwise, it will cause the Vue.js
 // app to crash.
 export default {
-  data: () => {
-    return {
-      name: "CypherEditor",
-      cypherLanguage: new CypherLanguage(),
-      isCommandPaletteOpen: false,
-      editorWidth: 0,
-      editorHeight: UI_SIZE.DEFAULT_EDITOR_HEIGHT,
-      toolbarWidth: UI_SIZE.SHELL_TOOL_BAR_WIDTH,
-      isMaximized: false,
-      isQueryGenerationMode: false,
-      gptQuestion: "",
-    }
-  },
   props: {
+    // eslint-disable-next-line vue/require-default-prop
     schema: {
       type: Object,
       required: false,
@@ -104,6 +107,20 @@ export default {
       default: false,
     },
   },
+emits: ['remove', 'evaluateCypher'],
+  data: () => {
+    return {
+      name: "CypherEditor",
+      cypherLanguage: new CypherLanguage(),
+      isCommandPaletteOpen: false,
+      editorWidth: 0,
+      editorHeight: UI_SIZE.DEFAULT_EDITOR_HEIGHT,
+      toolbarWidth: UI_SIZE.SHELL_TOOL_BAR_WIDTH,
+      isMaximized: false,
+      isQueryGenerationMode: false,
+      gptQuestion: "",
+    }
+  },
 
   computed: {
     maximizeButtonClass() {
@@ -118,6 +135,16 @@ export default {
     gptButtonTitle() {
       return this.isQueryGenerationMode ? "Cypher Code Editor" : "Query Generation (Powered by GPT)";
     },
+  },
+
+  mounted() {
+    this.initMonacoEditor();
+  },
+
+  beforeUnmount() {
+    if (this.editor) {
+      this.editor.dispose();
+    }
   },
 
   methods: {
@@ -205,16 +232,6 @@ export default {
     },
     removeCell() {
       this.$emit("remove");
-    }
-  },
-
-  mounted() {
-    this.initMonacoEditor();
-  },
-
-  beforeUnmount() {
-    if (this.editor) {
-      this.editor.dispose();
     }
   },
 }
