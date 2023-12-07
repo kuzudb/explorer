@@ -144,7 +144,6 @@
           <br />
           <h4>Table View Options</h4>
           <hr />
-
           <div class="input-group flex-nowrap">
             <span class="input-group-text">Number of rows per page</span>
             <input
@@ -156,6 +155,33 @@
               max="500"
             />
           </div>
+
+          <br />
+          <h4>Query Generation Options</h4>
+          <hr />
+          <div class="input-group flex-nowrap">
+            <span class="input-group-text">OpenAI model</span>
+            <select class="form-select" v-model="currentSettings.gpt.model">
+              <option v-for="option in gptModelOptions" :value="option" :key="option">
+                {{ option }}
+              </option>
+            </select>
+          </div>
+          <div class="input-group flex-nowrap">
+            <span class="input-group-text">GPT API Key</span>
+            <input
+              type="text"
+              class="form-control"
+              v-model="currentSettings.gpt.apiToken"
+              title="Enter your OpenAI API key"
+            />
+          </div>
+          <small class="form-text text-muted">
+            The OpenAI API key is used to generate queries from questions using GPT-3.5.
+            It can be obtained from
+            <a href="https://platform.openai.com/" target="_blank">OpenAI</a>. We only
+            store the API key in your browser.
+          </small>
         </div>
 
         <div class="modal-footer">
@@ -175,17 +201,22 @@
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia';
 import { Modal } from 'bootstrap';
-import { SHOW_REL_LABELS_OPTIONS, PLACEHOLDER_NODE_TABLE, PLACEHOLDER_REL_TABLE } from "../../utils/Constants";
+import {
+  SHOW_REL_LABELS_OPTIONS,
+  PLACEHOLDER_NODE_TABLE,
+  PLACEHOLDER_REL_TABLE,
+  GPT_MODELS
+} from "../../utils/Constants";
 
 export default {
   name: "SettingsMainView",
   data: () => ({
-    filterKeyword: "",
     currentSettings: {},
     modal: null,
     showRelLabelsOptions: SHOW_REL_LABELS_OPTIONS,
     placeholderNodeTable: PLACEHOLDER_NODE_TABLE,
     placeholderRelTable: PLACEHOLDER_REL_TABLE,
+    gptModelOptions: GPT_MODELS,
   }),
   props: {
     schema: {
@@ -214,6 +245,7 @@ export default {
     },
     saveAndHideModal() {
       this.settingsStore.updateSettings(this.currentSettings);
+      this.settingsStore.saveGptApiTokenToLocalStorage();
       this.$nextTick(() => {
         this.hideModal();
       });

@@ -4,6 +4,7 @@ import {
   SHOW_REL_LABELS_OPTIONS,
   PLACEHOLDER_NODE_TABLE,
   PLACEHOLDER_REL_TABLE,
+  GPT_MODELS,
 } from "../utils/Constants";
 
 const COLOR_PALETTE = [
@@ -69,6 +70,10 @@ export const useSettingsStore = defineStore("settings", {
       showRelLabels: SHOW_REL_LABELS_OPTIONS.ALWAYS,
     },
     colors: COLOR_PALETTE,
+    gpt: {
+      apiToken: null,
+      model: GPT_MODELS[0],
+    },
   }),
 
   getters: {
@@ -119,6 +124,7 @@ export const useSettingsStore = defineStore("settings", {
         performance: state.performance,
         tableView: state.tableView,
         schemaView: state.schemaView,
+        gpt: state.gpt,
       };
     },
   },
@@ -178,6 +184,7 @@ export const useSettingsStore = defineStore("settings", {
       this.performance = settings.performance;
       this.tableView = settings.tableView;
       this.schemaView = settings.schemaView;
+      this.gpt = settings.gpt;
     },
 
     handleSchemaReload(schema) {
@@ -281,6 +288,23 @@ export const useSettingsStore = defineStore("settings", {
 
     unsetPlaceholderRelTable(originalLabel) {
       this.renameRelTable(PLACEHOLDER_REL_TABLE, originalLabel);
+    },
+
+    loadGptApiTokenFromLocalStorage() {
+      const token = localStorage.getItem("gptApiToken");
+      if (token) {
+        this.gpt.apiToken = token;
+      } else {
+        this.gpt.apiToken = null;
+      }
+    },
+
+    saveGptApiTokenToLocalStorage() {
+      if (!this.gpt.apiToken) {
+        localStorage.removeItem("gptApiToken");
+      } else {
+        localStorage.setItem("gptApiToken", this.gpt.apiToken);
+      }
     },
   },
 });

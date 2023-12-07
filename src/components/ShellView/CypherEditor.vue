@@ -7,8 +7,20 @@
     <div
       class="shell-editor__container"
       :style="{ width: editorWidth + 'px' }"
+      v-show="!isQueryGenerationMode"
       ref="editor"
     ></div>
+    <div
+      class="shell-editor__container"
+      :style="{ width: editorWidth + 'px' }"
+      v-show="isQueryGenerationMode"
+    >
+      <textarea
+        class="form-control"
+        placeholder="Type your question here..."
+        v-model="gptQuestion"
+      />
+    </div>
     <div
       class="shell-editor__tools_container"
       ref="toolsContainer"
@@ -23,7 +35,16 @@
           data-bs-toggle="tooltip"
           data-bs-placement="right"
           title="Run"
-          @click="evaluateCypher"
+          @click="evaluateCurrentCell"
+        ></i>
+      </div>
+      <div class="shell-editor__button" v-show="!isLoading">
+        <i
+          :class="gptButtonClass"
+          data-bs-toggle="tooltip"
+          data-bs-placement="right"
+          :data-bs-original-title="gptButtonTitle"
+          @click="toggleQueryGeneration"
         ></i>
       </div>
       <div class="shell-editor__button" v-show="isMaximizable">
@@ -58,6 +79,8 @@ export default {
       editorHeight: UI_SIZE.DEFAULT_EDITOR_HEIGHT,
       toolbarWidth: UI_SIZE.SHELL_TOOL_BAR_WIDTH,
       isMaximized: false,
+      isQueryGenerationMode: false,
+      gptQuestion: "",
     }
   },
   props: {
@@ -88,6 +111,12 @@ export default {
     },
     maximizeButtonTitle() {
       return this.isMaximized ? "Minimize" : "Maximize";
+    },
+    gptButtonClass() {
+      return (this.isQueryGenerationMode ? "fa-file-code" : "fa-robot") + " fa-lg fa-solid";
+    },
+    gptButtonTitle() {
+      return this.isQueryGenerationMode ? "Cypher Code Editor" : "Query Generation (Powered by GPT)";
     },
   },
 
@@ -143,10 +172,13 @@ export default {
         this.evaluateCypher();
       });
 
-      new PlaceholderContentWidget('> Type your query here', this.editor);
+      new PlaceholderContentWidget('Type your Cypher code here...', this.editor);
     },
     toggleMaximize() {
       this.$emit("toggleMaximize");
+    },
+    toggleQueryGeneration() {
+      this.isQueryGenerationMode = !this.isQueryGenerationMode;
     },
     maximize() {
       this.isMaximized = true;
@@ -157,6 +189,19 @@ export default {
     evaluateCypher() {
       const cypher = this.editor.getValue();
       this.$emit("evaluateCypher", cypher);
+    },
+    generateAndEvaluateQuery() {
+      this.$emit("generateAndEvaluateQuery", this.gptQuestion);
+    },
+    evaluateCurrentCell() {
+      if (this.isQueryGenerationMode) {
+        this.generateAndEvaluateQuery();
+      } else {
+        this.evaluateCypher();
+      }
+    },
+    setEditorContent(content) {
+      this.editor.setValue(content);
     },
     removeCell() {
       this.$emit("remove");
@@ -190,6 +235,13 @@ $margin: 20px;
 .shell-editor__container {
   height: 100%;
   flex-grow: 1;
+
+  textarea {
+    height: 100%;
+    width: 100%;
+    border: none;
+    resize: none;
+  }
 }
 
 .shell-editor__tools_container {
