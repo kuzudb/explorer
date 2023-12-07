@@ -7,8 +7,20 @@
     <div
       class="shell-editor__container"
       :style="{ width: editorWidth + 'px' }"
+      v-show="!isQueryGenerationMode"
       ref="editor"
     ></div>
+    <div
+      class="shell-editor__container"
+      :style="{ width: editorWidth + 'px' }"
+      v-show="isQueryGenerationMode"
+    >
+      <textarea
+        class="form-control"
+        placeholder="Type your question here..."
+        v-model="gptQuestion"
+      />
+    </div>
     <div
       class="shell-editor__tools_container"
       ref="toolsContainer"
@@ -24,6 +36,15 @@
           data-bs-placement="right"
           title="Run"
           @click="evaluateCypher"
+        ></i>
+      </div>
+      <div class="shell-editor__button">
+        <i
+          :class="gptButtonClass"
+          data-bs-toggle="tooltip"
+          data-bs-placement="right"
+          :data-bs-original-title="gptButtonTitle"
+          @click="toggleQueryGeneration"
         ></i>
       </div>
       <div class="shell-editor__button" v-show="isMaximizable">
@@ -58,6 +79,8 @@ export default {
       editorHeight: UI_SIZE.DEFAULT_EDITOR_HEIGHT,
       toolbarWidth: UI_SIZE.SHELL_TOOL_BAR_WIDTH,
       isMaximized: false,
+      isQueryGenerationMode: false,
+      gptQuestion: "",
     }
   },
   props: {
@@ -88,6 +111,12 @@ export default {
     },
     maximizeButtonTitle() {
       return this.isMaximized ? "Minimize" : "Maximize";
+    },
+    gptButtonClass() {
+      return (this.isQueryGenerationMode ? "fa-code" : "fa-robot") + " fa-lg fa-solid";
+    },
+    gptButtonTitle() {
+      return this.isQueryGenerationMode ? "Cypher Code Editor" : "Query Generation (Powered by GPT)";
     },
   },
 
@@ -148,6 +177,9 @@ export default {
     toggleMaximize() {
       this.$emit("toggleMaximize");
     },
+    toggleQueryGeneration() {
+      this.isQueryGenerationMode = !this.isQueryGenerationMode;
+    },
     maximize() {
       this.isMaximized = true;
     },
@@ -190,6 +222,13 @@ $margin: 20px;
 .shell-editor__container {
   height: 100%;
   flex-grow: 1;
+
+  textarea {
+    height: 100%;
+    width: 100%;
+    border: none;
+    resize: none;
+  }
 }
 
 .shell-editor__tools_container {
