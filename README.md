@@ -97,9 +97,7 @@ podman run -p 8000:8000 \
            --rm kuzudb/explorer:latest
 ```
 
-Please refer to the official Podman docs for [mounting external volumes]
-(https://docs.podman.io/en/latest/markdown/podman-run.1.html#mounting-external-volumes) and [user namespace mode]
-(https://https://docs.podman.io/en/latest/markdown/podman-run.1.html#userns-mode) for more information.
+Please refer to the official Podman docs for [mounting external volumes](https://docs.podman.io/en/latest/markdown/podman-run.1.html#mounting-external-volumes) and [user namespace mode](https://https://docs.podman.io/en/latest/markdown/podman-run.1.html#userns-mode) for more information.
 
 ## Documentation
 
