@@ -280,7 +280,7 @@ export default {
       required: true,
     }
   },
-  emits: ["save", "discard", "updateNodeTableLabel", "updatePlaceholderRelTable"],
+  emits: ["save", "discard"],
   data: () => ({
     editingPropertyIndex: -1,
     defaultNewProperty: {
