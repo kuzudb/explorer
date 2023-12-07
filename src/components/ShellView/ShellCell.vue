@@ -132,11 +132,11 @@ export default {
       question = question.trim();
       const token = this.settingsStore.gpt.apiToken;
       const model = this.settingsStore.gpt.model;
-      if (!question) {
-        this.errorMessage = "The question cannot be empty. Please type a question and try again.";
-      }
       if (!token) {
         this.errorMessage = "OpenAI API token is not set. Please set the token in the settings and try again.";
+      }
+      if (!question) {
+        this.errorMessage = "The question cannot be empty. Please type a question and try again.";
       }
       if (this.errorMessage) {
         this.$nextTick(() => {
