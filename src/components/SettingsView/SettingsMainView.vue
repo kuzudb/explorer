@@ -144,7 +144,6 @@
           <br />
           <h4>Table View Options</h4>
           <hr />
-
           <div class="input-group flex-nowrap">
             <span class="input-group-text">Number of rows per page</span>
             <input
@@ -156,6 +155,25 @@
               max="500"
             />
           </div>
+
+          <br />
+          <h4>Query Generation Options</h4>
+          <hr />
+          <div class="input-group flex-nowrap">
+            <span class="input-group-text">GPT API Key</span>
+            <input
+              type="text"
+              class="form-control"
+              v-model="currentSettings.gptApiToken"
+              title="Enter your OpenAI API key"
+            />
+          </div>
+          <small class="form-text text-muted">
+            The optional OpenAI API key is used to generate queries from questions. It can
+            be obtained from
+            <a href="https://platform.openai.com/" target="_blank">OpenAI</a>. We only
+            store the API key in your browser.
+          </small>
         </div>
 
         <div class="modal-footer">
@@ -180,7 +198,6 @@ import { SHOW_REL_LABELS_OPTIONS, PLACEHOLDER_NODE_TABLE, PLACEHOLDER_REL_TABLE 
 export default {
   name: "SettingsMainView",
   data: () => ({
-    filterKeyword: "",
     currentSettings: {},
     modal: null,
     showRelLabelsOptions: SHOW_REL_LABELS_OPTIONS,
@@ -214,6 +231,7 @@ export default {
     },
     saveAndHideModal() {
       this.settingsStore.updateSettings(this.currentSettings);
+      this.settingsStore.saveGptApiTokenToLocalStorage();
       this.$nextTick(() => {
         this.hideModal();
       });

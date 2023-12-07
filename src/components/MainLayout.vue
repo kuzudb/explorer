@@ -286,7 +286,15 @@ export default {
     updateNavbarHeight() {
       this.navbarHeight = this.$refs.navbar.clientHeight;
     },
-    ...mapActions(useSettingsStore, ['initDefaultSettings', 'handleSchemaReload', 'setPlaceholderNodeTable', 'setPlaceholderRelTable', 'unsetPlaceholderNodeTable', 'unsetPlaceholderRelTable'])
+    ...mapActions(useSettingsStore, [
+      'initDefaultSettings',
+      'handleSchemaReload',
+      'setPlaceholderNodeTable',
+      'setPlaceholderRelTable',
+      'unsetPlaceholderNodeTable',
+      'unsetPlaceholderRelTable',
+      'loadGptApiTokenFromLocalStorage'
+    ])
   },
   computed: {
     ...mapStores(useModeStore)
@@ -295,6 +303,7 @@ export default {
     this.updateNavbarHeight();
     this.accessModeModal = new Modal(this.$refs.modal);
     window.addEventListener("resize", this.updateNavbarHeight);
+    this.loadGptApiTokenFromLocalStorage();
   },
   beforeUnmount() {
     this.accessModeModal.dispose();

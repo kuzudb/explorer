@@ -69,6 +69,7 @@ export const useSettingsStore = defineStore("settings", {
       showRelLabels: SHOW_REL_LABELS_OPTIONS.ALWAYS,
     },
     colors: COLOR_PALETTE,
+    gptApiToken: null,
   }),
 
   getters: {
@@ -119,6 +120,7 @@ export const useSettingsStore = defineStore("settings", {
         performance: state.performance,
         tableView: state.tableView,
         schemaView: state.schemaView,
+        gptApiToken: state.gptApiToken,
       };
     },
   },
@@ -178,6 +180,7 @@ export const useSettingsStore = defineStore("settings", {
       this.performance = settings.performance;
       this.tableView = settings.tableView;
       this.schemaView = settings.schemaView;
+      this.gptApiToken = settings.gptApiToken;
     },
 
     handleSchemaReload(schema) {
@@ -281,6 +284,28 @@ export const useSettingsStore = defineStore("settings", {
 
     unsetPlaceholderRelTable(originalLabel) {
       this.renameRelTable(PLACEHOLDER_REL_TABLE, originalLabel);
+    },
+
+    loadGptApiTokenFromLocalStorage() {
+      const token = localStorage.getItem("gptApiToken");
+      if (token) {
+        this.gptApiToken = token;
+      } else {
+        this.gptApiToken = null;
+      }
+    },
+
+    saveGptApiTokenToLocalStorage() {
+      if (!this.gptApiToken) {
+        localStorage.removeItem("gptApiToken");
+      } else {
+        localStorage.setItem("gptApiToken", this.gptApiToken);
+      }
+    },
+
+    updateGptApiToken(token) {
+      this.gptApiToken = token;
+      this.saveGptApiTokenToLocalStorage();
     },
   },
 });
