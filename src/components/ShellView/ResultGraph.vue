@@ -23,7 +23,16 @@
     <div class="result-container__side-panel" ref="sidePanel" v-show="isSidePanelOpen">
       <br />
       <div v-if="displayLabel">
-        <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
+        <div class="result-container__summary-section">
+          <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
+          <button
+            v-if="isNodeSelectedOrHovered"
+            class="btn btn-sm btn-outline-secondary"
+            @click="hideNode()"
+          >
+            <i class="fa-solid fa-eye-slash"></i> Hide Node
+          </button>
+        </div>
         <span
           class="badge bg-primary"
           :style="{
@@ -49,7 +58,23 @@
       <div v-else>
         <h5>Overview</h5>
         <div v-if="counters.total.node > 0">
-          <p>Showing {{ counters.total.node }} nodes</p>
+          <div class="result-container__summary-section">
+            <p>
+              Showing
+              <span v-if="numHiddenNodes > 0">
+                {{ counters.total.node - numHiddenNodes }}/</span
+              >{{ counters.total.node }} nodes
+              <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
+            </p>
+            <button
+              v-if="numHiddenNodes > 0"
+              class="btn btn-sm btn-outline-secondary"
+              @click="showAllNodesRels()"
+            >
+              <i class="fa-solid fa-eye"></i>
+              Show All
+            </button>
+          </div>
           <hr />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
@@ -65,12 +90,17 @@
               </tr>
             </tbody>
           </table>
-
           <br />
         </div>
 
         <div v-if="counters.total.rel > 0">
-          <p>Showing {{ counters.total.rel }} rels</p>
+          <p>
+            Showing
+            <span v-if="numHiddenRels > 0">
+              {{ counters.total.rel - numHiddenRels }}/</span
+            >{{ counters.total.rel }} rels
+            <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
+          </p>
           <hr />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
@@ -122,6 +152,8 @@ export default {
     sidebarWidth: 500,
     graphWidth: 0,
     borderWidth: UI_SIZE.DEFAULT_BORDER_WIDTH,
+    numHiddenNodes: 0,
+    numHiddenRels: 0,
     hoveredProperties: [],
     hoveredLabel: "",
     hoveredIsNode: false,
@@ -341,6 +373,37 @@ export default {
       this.graphCreated = true;
     },
 
+    hideNode() {
+      const currentSelectedNode = this.g6graph.findAllByState('node', 'click')[0];
+      const nodeId = currentSelectedNode.getModel().id;
+      this.numHiddenNodes += 1;
+      currentSelectedNode.hide();
+      this.deselectAll();
+      const relatedEdges = this.g6graph.getEdges().filter((edge) => {
+        const edgeModel = edge.getModel();
+        return edgeModel.source === nodeId || edgeModel.target === nodeId;
+      });
+      relatedEdges.forEach((edge) => {
+        this.numHiddenRels += 1;
+        edge.hide();
+      });
+    },
+
+    showAllNodesRels() {
+      this.g6graph.getNodes().forEach((node) => {
+        if (!node.isVisible()) {
+          node.show();
+        }
+      });
+      this.g6graph.getEdges().forEach((edge) => {
+        if (!edge.isVisible()) {
+          edge.show();
+        }
+      });
+      this.numHiddenNodes = 0;
+      this.numHiddenRels = 0;
+    },
+
     encodeNodeId(id) {
       return `${id.table}_${id.offset}`;
     },
@@ -543,14 +606,14 @@ export default {
       const label = model.properties._label;
       this.hoveredLabel = label;
       this.hoveredProperties = ValueFormatter.filterAndBeautifyProperties(model.properties, this.schema);
-      this.hoveredIsNode = !(model._src && model._dst);
+      this.hoveredIsNode = !(model.properties._src && model.properties._dst);
     },
 
     handleClick(model) {
       const label = model.properties._label;
       this.clickedLabel = label;
       this.clickedProperties = ValueFormatter.filterAndBeautifyProperties(model.properties, this.schema);
-      this.clickedIsNode = !(model._src && model._dst);
+      this.clickedIsNode = !(model.properties._src && model.properties._dst);
     },
 
     deselectAll() {
@@ -658,6 +721,22 @@ export default {
 
   .result_container__graph {
     height: 100%;
+  }
+
+  .result-container__summary-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    p {
+      display: inline-block;
+      margin: 0;
+    }
+
+    button {
+      padding: 5px;
+      margin-right: 20px;
+    }
   }
 
   .result-container__tools_container {
