@@ -23,15 +23,15 @@
     <div class="result-container__side-panel" ref="sidePanel" v-show="isSidePanelOpen">
       <br />
       <div v-if="displayLabel">
-        <div class="result-container__summary-panel">
+        <div class="result-container__summary-section">
           <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
-            <button
-                v-if="isNodeSelectedOrHovered"
-                class="btn btn-sm btn-outline-secondary"
-                @click="hideNode()"
-            >
-              <i class="fa-solid fa-eye-slash"></i> Hide Node
-            </button>
+          <button
+            v-if="isNodeSelectedOrHovered"
+            class="btn btn-sm btn-outline-secondary"
+            @click="hideNode()"
+          >
+            <i class="fa-solid fa-eye-slash"></i> Hide Node
+          </button>
         </div>
         <span
           class="badge bg-primary"
@@ -58,21 +58,24 @@
       <div v-else>
         <h5>Overview</h5>
         <div v-if="counters.total.node > 0">
-          <div class="result-container__summary-panel">
+          <div class="result-container__summary-section">
             <p>
-              Showing <span v-if="numHiddenNodes > 0"> {{ counters.total.node - numHiddenNodes }}/</span>{{ counters.total.node }} nodes
+              Showing
+              <span v-if="numHiddenNodes > 0">
+                {{ counters.total.node - numHiddenNodes }}/</span
+              >{{ counters.total.node }} nodes
               <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
             </p>
             <button
-                v-if="numHiddenNodes > 0"
-                class="btn btn-sm btn-outline-secondary"
-                @click="showAllNodesRels()"
+              v-if="numHiddenNodes > 0"
+              class="btn btn-sm btn-outline-secondary"
+              @click="showAllNodesRels()"
             >
               <i class="fa-solid fa-eye"></i>
               Show All
             </button>
           </div>
-          <hr>
+          <hr />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
               <tr v-for="label in Object.keys(counters.node)" :key="label">
@@ -92,7 +95,10 @@
 
         <div v-if="counters.total.rel > 0">
           <p>
-            Showing <span v-if="numHiddenRels > 0"> {{ counters.total.rel - numHiddenRels }}/</span>{{ counters.total.rel }} rels
+            Showing
+            <span v-if="numHiddenRels > 0">
+              {{ counters.total.rel - numHiddenRels }}/</span
+            >{{ counters.total.rel }} rels
             <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
           </p>
           <hr />
@@ -717,7 +723,7 @@ export default {
     height: 100%;
   }
 
-  .result-container__summary-panel {
+  .result-container__summary-section {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -792,5 +798,4 @@ export default {
     }
   }
 }
-
 </style>
