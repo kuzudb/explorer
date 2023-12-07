@@ -169,8 +169,8 @@
             />
           </div>
           <small class="form-text text-muted">
-            The optional OpenAI API key is used to generate queries from questions. It can
-            be obtained from
+            The optional OpenAI API key is used to generate queries from questions using
+            GPT-3.5. It can be obtained from
             <a href="https://platform.openai.com/" target="_blank">OpenAI</a>. We only
             store the API key in your browser.
           </small>
