@@ -38,7 +38,7 @@
           @click="evaluateCurrentCell"
         ></i>
       </div>
-      <div class="shell-editor__button">
+      <div class="shell-editor__button" v-show="!isLoading">
         <i
           :class="gptButtonClass"
           data-bs-toggle="tooltip"
@@ -113,7 +113,7 @@ export default {
       return this.isMaximized ? "Minimize" : "Maximize";
     },
     gptButtonClass() {
-      return (this.isQueryGenerationMode ? "fa-code" : "fa-robot") + " fa-lg fa-solid";
+      return (this.isQueryGenerationMode ? "fa-file-code" : "fa-robot") + " fa-lg fa-solid";
     },
     gptButtonTitle() {
       return this.isQueryGenerationMode ? "Cypher Code Editor" : "Query Generation (Powered by GPT)";
@@ -172,7 +172,7 @@ export default {
         this.evaluateCypher();
       });
 
-      new PlaceholderContentWidget('> Type your query here', this.editor);
+      new PlaceholderContentWidget('Type your Cypher code here...', this.editor);
     },
     toggleMaximize() {
       this.$emit("toggleMaximize");

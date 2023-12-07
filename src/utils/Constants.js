@@ -51,7 +51,7 @@ export const SCHEMA_ACTION_TYPES = {
 };
 
 export const UI_SIZE = {
-  DEFAULT_EDITOR_HEIGHT: 135,
+  DEFAULT_EDITOR_HEIGHT: 132,
   DEFAULT_MARGIN: 20,
   SHELL_TOOL_BAR_WIDTH: 32,
   DEFAULT_BORDER_WIDTH: 2,
@@ -68,6 +68,8 @@ export const MODES = {
   READ_WRITE: "READ_WRITE",
   READ_ONLY: "READ_ONLY",
 };
+
+export const GPT_MODELS = ["gpt-3.5-turbo", "gpt-4"];
 
 export const PLACEHOLDER_NODE_TABLE = "__placeholder_node_table__";
 export const PLACEHOLDER_REL_TABLE = "__placeholder_rel_table__";

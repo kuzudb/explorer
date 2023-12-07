@@ -130,7 +130,8 @@ export default {
       this.queryResult = null;
       this.errorMessage = "";
       question = question.trim();
-      const token = this.settingsStore.gptApiToken;
+      const token = this.settingsStore.gpt.apiToken;
+      const model = this.settingsStore.gpt.model;
       if (!question) {
         this.errorMessage = "The question cannot be empty. Please type a question and try again.";
       }
@@ -149,6 +150,7 @@ export default {
       const data = {
         question,
         token,
+        model,
       };
       Axios.post(url, data)
         .then((res) => {
