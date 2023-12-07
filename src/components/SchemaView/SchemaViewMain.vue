@@ -81,9 +81,9 @@
       />
       <SchemaSidebarEditView
         v-if="clickedLabel !== null && !clickedIsNewTable && modeStore.isReadWrite"
+        ref="editView"
         :schema="schema"
         :label="clickedLabel"
-        ref="editView"
         :is-node="clickedIsNode"
         @drop-property="dropProperty"
         @back="resetClick"
