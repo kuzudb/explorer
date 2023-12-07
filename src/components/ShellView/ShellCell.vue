@@ -135,7 +135,7 @@ export default {
       if (!token) {
         this.errorMessage = "OpenAI API token is not set. Please set the token in the settings and try again.";
       }
-      if (!question) {
+      else if (!question) {
         this.errorMessage = "The question cannot be empty. Please type a question and try again.";
       }
       if (this.errorMessage) {
