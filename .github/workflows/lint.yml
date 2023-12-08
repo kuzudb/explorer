@@ -28,6 +28,22 @@ jobs:
         run: npm install
 
       - name: Run linters
-        run: ./node_modules/.bin/eslint --ext .js,.vue src
+        run: |
+          ./node_modules/.bin/eslint --ext .js,.vue src --save
+
+          # Check if there are any changes
+          git diff --exit-code || {
+            # Configure Git user
+            git config user.name "Lint Bot"
+            git config user.email "lint-bot@example.com"
+
+            # Commit the changes
+            git add .
+            git commit -m "Lint fixes"
+
+            # Push the changes back to the branch
+            git push origin main
+          }
+
 
 
