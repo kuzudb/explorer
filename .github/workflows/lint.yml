@@ -39,10 +39,10 @@ jobs:
 
             # Commit the changes
             git add .
-            git commit -m "Lint fixes"
+            git commit -m "Auto-fix linting issues"
 
-            # Push the changes back to the branch
-            git push origin main
+            # Push the changes back to the current branch
+            git push origin HEAD
           }
 
 
