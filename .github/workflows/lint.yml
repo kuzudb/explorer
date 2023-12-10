@@ -42,7 +42,7 @@ jobs:
             git commit -m "Auto-fix linting issues"
 
             # Push the changes back to the current branch
-            git push origin HEAD
+            git push
           }
 
 
