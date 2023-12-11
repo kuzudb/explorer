@@ -259,9 +259,6 @@ import { DATA_TYPES, PLACEHOLDER_NODE_TABLE, PLACEHOLDER_REL_TABLE } from "../..
 import { v4 as uuidv4 } from "uuid";
 export default {
   name: "SchemaSidebarAddView",
-  components: {
-    SchemaPropertyEditCell,
-  },
   props: {
     schema: {
       type: Object,
@@ -279,6 +276,9 @@ export default {
       type: Boolean,
       required: true,
     }
+  },
+  components: {
+    SchemaPropertyEditCell,
   },
   emits: ["save", "discard", "updateNodeTableLabel", "updatePlaceholderRelTable"],
   data: () => ({
