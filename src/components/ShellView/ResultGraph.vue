@@ -158,7 +158,6 @@ import ValueFormatter from "../../utils/ValueFormatter";
 
 export default {
   name: "ResultGraph",
-  emits: ["graphEmpty"],
   props: {
     queryResult: {
       type: Object,
@@ -176,6 +175,7 @@ export default {
       default: "auto",
     },
   },
+  emits: ["graphEmpty"],
   data: () => ({
     graphCreated: false,
     isMaximized: false,
