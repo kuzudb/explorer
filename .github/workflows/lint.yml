@@ -30,16 +30,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run linters
-        run: |
-          ./node_modules/.bin/eslint --ext .js,.vue src --fix
+      - name: Run linters without auto-fix (on master)
+        if: github.event_name == 'push' && github.event.ref == 'refs/heads/master'
+        run: ./node_modules/.bin/eslint --ext .js,.vue src
 
-      - name: Check if fixes were made
-        id: check-fixes
-        run: echo "::set-output name=has_fixes::$(git status --porcelain | grep -E '^(M| M)' | wc -l)"
+      - name: Run linters with auto-fix (on non-master branches)
+        if: github.event_name == 'push' && github.event.ref != 'refs/heads/master'
+        run: ./node_modules/.bin/eslint --ext .js,.vue src --fix
 
-      - name: Commit changes (if fixes were made)
-        if: steps.check-fixes.outputs.has_fixes > 0
+      - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
           author_name: Lint Bot
