@@ -1,14 +1,13 @@
 name: Build-And-Deploy
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
+  workflow_run:
+      workflows: [ "Lint"]
+      types:
+        - completed
 
 jobs:
   docker:
-    needs: lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
