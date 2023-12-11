@@ -262,7 +262,6 @@ export default {
   components: {
     SchemaPropertyEditCell,
   },
-  emits: ["save", "discard"],
   props: {
     schema: {
       type: Object,
@@ -281,6 +280,7 @@ export default {
       required: true,
     }
   },
+  emits: ["save", "discard"],
   data: () => ({
     editingPropertyIndex: -1,
     defaultNewProperty: {
