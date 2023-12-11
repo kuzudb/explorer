@@ -31,11 +31,11 @@ jobs:
         run: npm install
 
       - name: Run linters without auto-fix (on master)
-        if: github.event_name == 'push' && github.event.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/master'
         run: ./node_modules/.bin/eslint --ext .js,.vue src
 
       - name: Run linters with auto-fix (on non-master branches)
-        if: github.event_name == 'push' && github.event.ref != 'refs/heads/master'
+        if: github.ref != 'refs/heads/master'
         run: ./node_modules/.bin/eslint --ext .js,.vue src --fix
 
       - name: Commit changes
