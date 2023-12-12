@@ -1,21 +1,21 @@
 <template>
   <div
-    class="result-container__wrapper"
     ref="wrapper"
+    class="result-container__wrapper"
     :style="{ height: containerHeight }"
   >
     <div
-      class="result-container__tools_container"
-      ref="toolsContainer"
-      :style="{ minWidth: toolbarWidth + 'px' }"
       v-show="!errorMessage"
+      ref="toolsContainer"
+      class="result-container__tools_container"
+      :style="{ minWidth: toolbarWidth + 'px' }"
     >
       <div
+        v-show="!isGraphEmpty"
         :class="
           `result-container__button` +
-          (showGraph ? ` result-container__button--active` : ``)
+            (showGraph ? ` result-container__button--active` : ``)
         "
-        v-show="!isGraphEmpty"
       >
         <i
           class="fa-lg fa-solid fa-circle-nodes"
@@ -23,12 +23,12 @@
           data-bs-placement="right"
           title="Graph View"
           @click="toggleGraphView"
-        ></i>
+        />
       </div>
       <div
         :class="
           `result-container__button` +
-          (showTable ? ` result-container__button--active` : ``)
+            (showTable ? ` result-container__button--active` : ``)
         "
       >
         <i
@@ -37,12 +37,12 @@
           data-bs-placement="right"
           title="Table View"
           @click="toggleTableView"
-        ></i>
+        />
       </div>
       <div
         :class="
           `result-container__button` +
-          (showCode ? ` result-container__button--active` : ``)
+            (showCode ? ` result-container__button--active` : ``)
         "
       >
         <i
@@ -51,10 +51,13 @@
           data-bs-placement="right"
           title="JSON View"
           @click="toggleCodeView"
-        ></i>
+        />
       </div>
 
-      <div class="result-container__tools_container--bottom" v-show="showGraph">
+      <div
+        v-show="showGraph"
+        class="result-container__tools_container--bottom"
+      >
         <div class="result-container__button">
           <i
             class="fa-lg fa-solid fa-magnifying-glass-plus"
@@ -62,7 +65,7 @@
             data-bs-placement="right"
             title="Zoom In"
             @click="$refs.resultGraph.zoomIn()"
-          ></i>
+          />
         </div>
         <div class="result-container__button">
           <i
@@ -71,7 +74,7 @@
             data-bs-placement="right"
             title="Zoom Out"
             @click="$refs.resultGraph.zoomOut()"
-          ></i>
+          />
         </div>
         <div class="result-container__button">
           <i
@@ -80,7 +83,7 @@
             data-bs-placement="right"
             title="Fit to View"
             @click="$refs.resultGraph.fitToView()"
-          ></i>
+          />
         </div>
         <div class="result-container__button">
           <i
@@ -89,7 +92,7 @@
             data-bs-placement="right"
             title="Actual Size"
             @click="$refs.resultGraph.actualSize()"
-          ></i>
+          />
         </div>
       </div>
     </div>
@@ -97,31 +100,31 @@
     <ResultGraph
       v-if="queryResult"
       v-show="showGraph"
-      :queryResult="queryResult"
-      :schema="schema"
-      :containerHeight="containerHeight"
       ref="resultGraph"
-      @graphEmpty="handleGraphEmpty"
+      :query-result="queryResult"
+      :schema="schema"
+      :container-height="containerHeight"
+      @graph-empty="handleGraphEmpty"
     />
     <ResultTable
       v-if="queryResult && showTable"
-      :queryResult="queryResult"
-      :schema="schema"
-      :containerHeight="containerHeight"
       ref="resultTable"
+      :query-result="queryResult"
+      :schema="schema"
+      :container-height="containerHeight"
     />
     <ResultCode
       v-if="queryResultString && showCode"
-      :queryResultString="queryResultString"
-      :schema="schema"
-      :containerHeight="containerHeight"
       ref="resultCode"
+      :query-result-string="queryResultString"
+      :schema="schema"
+      :container-height="containerHeight"
     />
     <ResultError
       v-if="errorMessage"
-      :errorMessage="errorMessage"
-      :isInfo="errorMessage === emptyResultMessage"
       ref="resultError"
+      :error-message="errorMessage"
+      :is-info="errorMessage === emptyResultMessage"
     />
   </div>
 </template>
@@ -140,6 +143,18 @@ export default {
     ResultCode,
     ResultError,
   },
+  props: {
+    navbarHeight: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+    isMaximized: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
   data: () => ({
     queryResultDefaultHeight: 400,
     toolbarWidth: UI_SIZE.SHELL_TOOL_BAR_WIDTH,
@@ -153,16 +168,22 @@ export default {
     errorMessage: "",
     emptyResultMessage: "The query executed successfully but the result is empty.",
   }),
-  props: {
-    navbarHeight: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
-    isMaximized: {
-      type: Boolean,
-      required: false,
-      default: false,
+  computed: {
+    containerHeight() {
+      if (this.errorMessage) {
+        return "auto"
+      }
+      else if (this.queryResult) {
+        if (this.isMaximized) {
+          return window.innerHeight - this.navbarHeight - UI_SIZE.DEFAULT_EDITOR_HEIGHT - 2 * UI_SIZE.DEFAULT_MARGIN + 'px';
+        }
+        else {
+          return this.queryResultDefaultHeight + 'px';
+        }
+      }
+      else {
+        return "auto";
+      }
     },
   },
   watch: {
@@ -181,6 +202,10 @@ export default {
         }
       });
     },
+  },
+  mounted() {
+  },
+  beforeUnmount() {
   },
   methods: {
     handleDataChange(schema, queryResult, errorMessage) {
@@ -226,28 +251,6 @@ export default {
       this.isGraphEmpty = true;
       this.toggleTableView();
     }
-  },
-  computed: {
-    containerHeight() {
-      if (this.errorMessage) {
-        return "auto"
-      }
-      else if (this.queryResult) {
-        if (this.isMaximized) {
-          return window.innerHeight - this.navbarHeight - UI_SIZE.DEFAULT_EDITOR_HEIGHT - 2 * UI_SIZE.DEFAULT_MARGIN + 'px';
-        }
-        else {
-          return this.queryResultDefaultHeight + 'px';
-        }
-      }
-      else {
-        return "auto";
-      }
-    },
-  },
-  mounted() {
-  },
-  beforeUnmount() {
   },
 };
 </script>

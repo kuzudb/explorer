@@ -1,13 +1,16 @@
 <template>
-  <div class="result-graph__wrapper" ref="wrapper">
+  <div
+    ref="wrapper"
+    class="result-graph__wrapper"
+  >
     <div
-      class="result_container__graph"
       ref="graph"
+      class="result_container__graph"
       :style="{ width: graphWidth + 'px' }"
-    ></div>
+    />
     <div
-      class="result-container__tools_container"
       ref="toolsContainer"
+      class="result-container__tools_container"
       :style="{ width: toolbarContainerWidth + 'px' }"
     >
       <div class="result-container__button">
@@ -17,11 +20,15 @@
           data-bs-placement="right"
           :data-bs-original-title="sidePanelButtonTitle"
           @click="toggleSidePanel"
-        ></i>
+        />
       </div>
     </div>
-    <div class="result-container__side-panel" ref="sidePanel" v-show="isSidePanelOpen">
-      <br />
+    <div
+      v-show="isSidePanelOpen"
+      ref="sidePanel"
+      class="result-container__side-panel"
+    >
+      <br>
       <div v-if="displayLabel">
         <div class="result-container__summary-section">
           <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
@@ -30,7 +37,7 @@
             class="btn btn-sm btn-outline-secondary"
             @click="hideNode()"
           >
-            <i class="fa-solid fa-eye-slash"></i> Hide Node
+            <i class="fa-solid fa-eye-slash" /> Hide Node
           </button>
         </div>
         <span
@@ -40,15 +47,20 @@
             color: `${getTextColor(displayLabel)} !important`,
           }"
         >
-          {{ displayLabel }}</span
-        >
-        <hr />
+          {{ displayLabel }}</span>
+        <hr>
         <table class="table table-sm table-bordered result-container__result-table">
           <tbody>
-            <tr v-for="property in displayProperties" :key="property.name">
+            <tr
+              v-for="property in displayProperties"
+              :key="property.name"
+            >
               <th scope="row">
                 {{ property.name }}
-                <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
+                <span
+                  v-if="property.isPrimaryKey"
+                  class="badge bg-primary"
+                >PK</span>
               </th>
               <td>{{ property.value }}</td>
             </tr>
@@ -62,8 +74,7 @@
             <p>
               Showing
               <span v-if="numHiddenNodes > 0">
-                {{ counters.total.node - numHiddenNodes }}/</span
-              >{{ counters.total.node }} nodes
+                {{ counters.total.node - numHiddenNodes }}/</span>{{ counters.total.node }} nodes
               <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
             </p>
             <button
@@ -71,40 +82,44 @@
               class="btn btn-sm btn-outline-secondary"
               @click="showAllNodesRels()"
             >
-              <i class="fa-solid fa-eye"></i>
+              <i class="fa-solid fa-eye" />
               Show All
             </button>
           </div>
-          <hr />
+          <hr>
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
-              <tr v-for="label in Object.keys(counters.node)" :key="label">
+              <tr
+                v-for="label in Object.keys(counters.node)"
+                :key="label"
+              >
                 <th scope="row">
                   <span
                     class="badge bg-primary"
                     :style="{ backgroundColor: ` ${getColor(label)} !important` }"
-                    >{{ label }}</span
-                  >
+                  >{{ label }}</span>
                 </th>
                 <td>{{ counters.node[label] }}</td>
               </tr>
             </tbody>
           </table>
-          <br />
+          <br>
         </div>
 
         <div v-if="counters.total.rel > 0">
           <p>
             Showing
             <span v-if="numHiddenRels > 0">
-              {{ counters.total.rel - numHiddenRels }}/</span
-            >{{ counters.total.rel }} rels
+              {{ counters.total.rel - numHiddenRels }}/</span>{{ counters.total.rel }} rels
             <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
           </p>
-          <hr />
+          <hr>
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
-              <tr v-for="label in Object.keys(counters.rel)" :key="label">
+              <tr
+                v-for="label in Object.keys(counters.rel)"
+                :key="label"
+              >
                 <th scope="row">
                   <span
                     class="badge bg-primary"
@@ -124,7 +139,7 @@
 
         <div v-if="counters.total.node === 0 && counters.total.rel === 0">
           <p>
-            <i class="fa-solid fa-circle-info"></i>
+            <i class="fa-solid fa-circle-info" />
             No nodes or rels to show.
           </p>
         </div>
@@ -143,6 +158,24 @@ import ValueFormatter from "../../utils/ValueFormatter";
 
 export default {
   name: "ResultGraph",
+  props: {
+    queryResult: {
+      type: Object,
+      required: false,
+      default: null,
+    },
+    schema: {
+      type: Object,
+      required: false,
+      default: null,
+    },
+    containerHeight: {
+      type: String,
+      required: false,
+      default: "auto",
+    },
+  },
+  emits: ["graphEmpty"],
   data: () => ({
     graphCreated: false,
     isMaximized: false,
@@ -174,23 +207,6 @@ export default {
       },
     }
   }),
-  props: {
-    queryResult: {
-      type: Object,
-      required: false,
-      default: null,
-    },
-    schema: {
-      type: Object,
-      required: false,
-      default: null,
-    },
-    containerHeight: {
-      type: String,
-      required: false,
-      default: "auto",
-    },
-  },
   computed: {
     graphVizSettings() {
       return this.settingsStore.graphVizSettings;
@@ -256,6 +272,16 @@ export default {
       this.handleSettingsChange();
     },
 
+  },
+  mounted() {
+    this.computeGraphWidth();
+    window.addEventListener("resize", this.handleResize);
+  },
+  beforeUnmount() {
+    if (this.g6graph) {
+      this.g6graph.destroy();
+    }
+    window.removeEventListener("resize", this.handleResize);
   },
   methods: {
     getColor(label) {
@@ -698,16 +724,6 @@ export default {
       this.g6graph.changeData({ nodes, edges });
       this.counters = counters;
     }
-  },
-  mounted() {
-    this.computeGraphWidth();
-    window.addEventListener("resize", this.handleResize);
-  },
-  beforeUnmount() {
-    if (this.g6graph) {
-      this.g6graph.destroy();
-    }
-    window.removeEventListener("resize", this.handleResize);
   },
 };
 </script>

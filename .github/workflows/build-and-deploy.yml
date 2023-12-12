@@ -3,10 +3,17 @@ name: Build-And-Deploy
 on:
   push:
     branches:
-      - "master"
+      - master
 
 jobs:
+  lint:
+    name: Lint
+    uses: ./.github/workflows/lint.yml
+    secrets: inherit
+
   docker:
+    needs: lint
+    name: Build and push Docker image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

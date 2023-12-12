@@ -12,7 +12,7 @@
           {{ hoveredLabel }}
         </span>
       </h5>
-      <hr />
+      <hr>
 
       <div v-if="!hoveredIsNode">
         <h6>
@@ -25,7 +25,7 @@
             {{ source }}
           </span>
           &nbsp;
-          <i class="fa-solid fa-arrow-right"></i>
+          <i class="fa-solid fa-arrow-right" />
           &nbsp;
           <span
             class="badge bg-primary"
@@ -36,27 +36,39 @@
             {{ destination }}
           </span>
         </h6>
-        <br />
+        <br>
       </div>
 
       <table
-        class="table table-sm table-bordered schema_side-panel__overview-table"
         v-if="schema"
+        class="table table-sm table-bordered schema_side-panel__overview-table"
       >
         <thead>
           <tr v-if="tableProperties.length > 0">
-            <th scope="col">Name</th>
-            <th scope="col">Type</th>
+            <th scope="col">
+              Name
+            </th>
+            <th scope="col">
+              Type
+            </th>
           </tr>
           <tr v-else>
-            <th scope="col">There are no properties in this table</th>
+            <th scope="col">
+              There are no properties in this table
+            </th>
           </tr>
         </thead>
         <tbody v-if="tableProperties.length > 0">
-          <tr v-for="property in tableProperties" :key="property.name">
+          <tr
+            v-for="property in tableProperties"
+            :key="property.name"
+          >
             <td scope="row">
               {{ property.name }}
-              <span class="badge bg-primary" v-if="property.isPrimaryKey"> PK </span>
+              <span
+                v-if="property.isPrimaryKey"
+                class="badge bg-primary"
+              > PK </span>
             </td>
             <td>
               {{ property.type }}
