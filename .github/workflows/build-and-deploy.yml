@@ -1,15 +1,18 @@
 name: Build-And-Deploy
 
 on:
-  workflow_run:
-    workflows: [ "Lint"]
-    types:
-      - completed
+  push:
     branches:
       - master
 
 jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+    secrets: inherit
+
   docker:
+    needs: lint
+    name: Build and push Docker image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
