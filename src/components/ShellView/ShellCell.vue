@@ -1,25 +1,28 @@
 <template>
   <div class="shell-cell__wrapper">
     <CypherEditor
+      ref="editor"
       :schema="schema"
-      :navbarHeight="navbarHeight"
-      :isMaximizable="
+      :navbar-height="navbarHeight"
+      :is-maximizable="
         (queryResult && queryResult.rows && queryResult.rows.length > 0) || isMaximized
       "
-      :isLoading="isLoading"
-      @evaluateCypher="evaluateCypher"
-      @generateAndEvaluateQuery="generateAndEvaluateQuery"
+      :is-loading="isLoading"
+      @evaluate-cypher="evaluateCypher"
+      @generate-and-evaluate-query="generateAndEvaluateQuery"
       @remove="removeCell"
-      @toggleMaximize="toggleMaximize"
-      ref="editor"
+      @toggle-maximize="toggleMaximize"
     />
     <ResultContainer
-      :isMaximized="isMaximized"
-      :navbarHeight="navbarHeight"
-      ref="resultContainer"
       v-if="queryResult || errorMessage"
+      ref="resultContainer"
+      :is-maximized="isMaximized"
+      :navbar-height="navbarHeight"
     />
-    <div class="d-flex align-items-center" v-if="isLoading">
+    <div
+      v-if="isLoading"
+      class="d-flex align-items-center"
+    >
       <strong class="text-secondary">{{
         loadingText ? loadingText : "Loading..."
       }}</strong>
@@ -27,7 +30,7 @@
         class="spinner-border text-secondary ms-auto"
         role="status"
         aria-hidden="true"
-      ></div>
+      />
     </div>
   </div>
 </template>
@@ -46,20 +49,11 @@ export default {
     CypherEditor,
     ResultContainer,
   },
-  data: () => ({
-    queryString: "",
-    queryResult: null,
-    errorMessage: "",
-    loadingText: "",
-    isEvaluated: false,
-    isMaximized: false,
-    isLoading: false,
-  }),
-
   props: {
     schema: {
       type: Object,
       required: false,
+      default: null,
     },
     navbarHeight: {
       type: Number,
@@ -72,6 +66,16 @@ export default {
       default: "",
     },
   },
+  emits: ["reloadSchema", "addCell", "maximize", "minimize", "remove"],
+  data: () => ({
+    queryString: "",
+    queryResult: null,
+    errorMessage: "",
+    loadingText: "",
+    isEvaluated: false,
+    isMaximized: false,
+    isLoading: false,
+  }),
 
   computed: {
     ...mapStores(useModeStore, useSettingsStore),

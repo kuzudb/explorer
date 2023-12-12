@@ -1,17 +1,20 @@
 <template>
-  <div class="shell-main-view__wrapper" :style="{ height: `${containerHeight}px` }">
+  <div
+    class="shell-main-view__wrapper"
+    :style="{ height: `${containerHeight}px` }"
+  >
     <ShellCell
       v-for="(cell, index) in shellCell"
+      v-show="index === maximizedCellIndex || maximizedCellIndex < 0"
       :key="cell.cellId"
       :schema="schema"
-      :navbarHeight="navbarHeight"
-      :cellId="cell.cellId"
+      :navbar-height="navbarHeight"
+      :cell-id="cell.cellId"
       @remove="removeCell(index)"
-      @addCell="addCell()"
+      @add-cell="addCell()"
       @maximize="maximize(index)"
       @minimize="minimize()"
-      @reloadSchema="reloadSchema()"
-      v-show="index === maximizedCellIndex || maximizedCellIndex < 0"
+      @reload-schema="reloadSchema()"
     />
   </div>
 </template>
@@ -24,6 +27,19 @@ export default {
   components: {
     ShellCell,
   },
+  props: {
+    schema: {
+      type: Object,
+      required: false,
+      default: null,
+    },
+    navbarHeight: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+  },
+  emits: ["reloadSchema"],
   data: () => ({
     shellCell: [
       {
@@ -35,16 +51,15 @@ export default {
     containerHeight: 0,
   }),
 
-  props: {
-    schema: {
-      type: Object,
-      required: false,
-    },
-    navbarHeight: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
+  mounted() {
+    this.$nextTick(() => {
+      this.updateContainerHeight();
+    });
+    window.addEventListener("resize", this.updateContainerHeight);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener("resize", this.updateContainerHeight);
   },
 
   methods: {
@@ -82,17 +97,6 @@ export default {
     reloadSchema() {
       this.$emit("reloadSchema");
     },
-  },
-
-  mounted() {
-    this.$nextTick(() => {
-      this.updateContainerHeight();
-    });
-    window.addEventListener("resize", this.updateContainerHeight);
-  },
-
-  beforeUnmount() {
-    window.removeEventListener("resize", this.updateContainerHeight);
   },
 
 }

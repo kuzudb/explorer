@@ -3,26 +3,45 @@
     class="result-table__wrapper"
     :style="{ height: containerHeight, width: tableWidth + 'px' }"
   >
-    <div class="result-table__pagination__wrapper" v-if="totalPages > 1">
+    <div
+      v-if="totalPages > 1"
+      class="result-table__pagination__wrapper"
+    >
       <nav>
         <ul class="pagination">
           <li :class="['page-item', { disabled: isPrevDisabled }]">
-            <a class="page-link" href="#" @click="page -= 1">
+            <a
+              class="page-link"
+              href="#"
+              @click="page -= 1"
+            >
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
           <li
             v-for="currPage in pageList"
             :key="currPage"
-            :class="['page-item', { active: currPage === this.page }]"
+            :class="['page-item', { active: currPage === page }]"
           >
-            <a v-if="currPage > 0" class="page-link" href="#" @click="page = currPage">
+            <a
+              v-if="currPage > 0"
+              class="page-link"
+              href="#"
+              @click="page = currPage"
+            >
               {{ currPage }}
             </a>
-            <span v-else class="page-link">...</span>
+            <span
+              v-else
+              class="page-link"
+            >...</span>
           </li>
           <li :class="['page-item', { disabled: isNextDisabled }]">
-            <a class="page-link" href="#" @click="page += 1">
+            <a
+              class="page-link"
+              href="#"
+              @click="page += 1"
+            >
               <span aria-hidden="true">&raquo;</span>
             </a>
           </li>
@@ -34,30 +53,56 @@
       <table class="table table-hover">
         <thead class="fixed-top">
           <tr>
-            <th v-for="header in tableHeaders" :key="header.text">
+            <th
+              v-for="header in tableHeaders"
+              :key="header.text"
+            >
               {{ header.text }}
               <span class="badge bg-primary">{{ header.type }}</span>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(row, i) in rows" :key="i">
-            <td v-for="(cell, j) in row" :key="j">
-              <ul v-if="Array.isArray(cell)" class="list-group">
-                <li v-for="(item, k) in cell" :key="k" class="list-group-item">
+          <tr
+            v-for="(row, i) in rows"
+            :key="i"
+          >
+            <td
+              v-for="(cell, j) in row"
+              :key="j"
+            >
+              <ul
+                v-if="Array.isArray(cell)"
+                class="list-group"
+              >
+                <li
+                  v-for="(item, k) in cell"
+                  :key="k"
+                  class="list-group-item"
+                >
                   <b>{{ item.name }}:</b> {{ item.value }}
                 </li>
               </ul>
               <div
-                class="result-table__recursive-rel__wrapper"
                 v-else-if="isColumnRecursiveRel(j)"
+                class="result-table__recursive-rel__wrapper"
               >
-                <div v-for="(subcolumn, subcolumnId) in cell" :key="subcolumnId">
-                  <div v-for="(item, k) in subcolumn" :key="k">
+                <div
+                  v-for="(subcolumn, subcolumnId) in cell"
+                  :key="subcolumnId"
+                >
+                  <div
+                    v-for="(item, k) in subcolumn"
+                    :key="k"
+                  >
                     <ul class="list-group">
-                      <li v-for="(field, k) in item" :key="k" class="list-group-item">
-                        <b>{{ k === 0 ? field.value : field.name + ":" }}</b>
-                        <span v-if="k > 0">{{ field.value }}</span>
+                      <li
+                        v-for="(field, m) in item"
+                        :key="m"
+                        class="list-group-item"
+                      >
+                        <b>{{ m === 0 ? field.value : field.name + ":" }}</b>
+                        <span v-if="m > 0">{{ field.value }}</span>
                       </li>
                     </ul>
                   </div>
@@ -79,13 +124,6 @@ import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
 export default {
   name: "ResultTable",
-  data: () => ({
-    page: 1,
-    maxLength: 8,
-    rows: [],
-    tableHeaders: [],
-    tableWidth: 0,
-  }),
   props: {
     queryResult: {
       type: Object,
@@ -103,6 +141,13 @@ export default {
       default: "auto"
     },
   },
+  data: () => ({
+    page: 1,
+    maxLength: 8,
+    rows: [],
+    tableHeaders: [],
+    tableWidth: 0,
+  }),
   computed: {
     totalPages() {
       const numRows = this.queryResult ? this.queryResult.rows.length : 0;
@@ -159,6 +204,13 @@ export default {
       this.renderTable();
     }
   },
+  mounted() {
+    this.computeTableWidth();
+    window.addEventListener("resize", this.computeTableWidth);
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.computeTableWidth);
+  },
   methods: {
     isColumnRecursiveRel(columnIndex) {
       return this.tableHeaders[columnIndex].type === DATA_TYPES.RECURSIVE_REL;
@@ -214,13 +266,6 @@ export default {
       this.tableWidth = width;
       return width;
     },
-  },
-  mounted() {
-    this.computeTableWidth();
-    window.addEventListener("resize", this.computeTableWidth);
-  },
-  beforeUnmount() {
-    window.removeEventListener("resize", this.computeTableWidth);
   },
 };
 </script>
