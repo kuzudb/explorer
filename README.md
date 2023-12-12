@@ -160,9 +160,12 @@ env KUZU_PATH=path/to/database npm run serve
 ### Check code style with ESLint
 
 ```
-eslint --ext .js,.vue src --fix
+npm run eslint
 ```
-Include `--fix` for automatic correction of fixable styles.
+Include `-fix` for automatic correction of fixable styles.
+```
+npm run eslint-fix
+```
 
 ## Build and serve for production
 
