@@ -32,11 +32,11 @@ jobs:
 
       - name: Run linters without auto-fix (on master)
         if: github.ref == 'refs/heads/master'
-        run: ./node_modules/.bin/eslint --ext .js,.vue src
+        run: npm run eslint
 
       - name: Run linters with auto-fix (on non-master branches)
         if: github.ref != 'refs/heads/master'
-        run: ./node_modules/.bin/eslint --ext .js,.vue src --fix
+        run: npm run eslint-fix
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v9

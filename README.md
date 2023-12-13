@@ -157,6 +157,16 @@ npm run fetch-datasets
 env KUZU_PATH=path/to/database npm run serve
 ```
 
+### Check code style with ESLint
+
+```
+npm run eslint
+```
+Include `-fix` for automatic correction of fixable styles.
+```
+npm run eslint-fix
+```
+
 ## Build and serve for production
 
 ### Run production server locally
