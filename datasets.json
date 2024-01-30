@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/kuzudb/kuzu",
-  "commitHash": "5d7ad0045c026e711edbd446e4c3d90ed2823c14",
+  "commitHash": "41e469268a00b8245001cf735c9db5005fa89a46",
   "datasetsRoot": "dataset",
   "datasets": [
     {
@@ -31,6 +31,24 @@
       "name": "SNAP Twitter",
       "path": "snap/twitter/csv",
       "isProduction": true,
+      "description": ""
+    },
+    {
+      "name": "RDF Taxonomy",
+      "path": "copy-test/rdf",
+      "isProduction": false,
+      "description": ""
+    },
+    {
+      "name": "RDF SPB",
+      "path": "rdf/spb",
+      "isProduction": false,
+      "description": ""
+    },
+    {
+      "name": "RDFox Example",
+      "path": "rdf/rdfox_example",
+      "isProduction": false,
       "description": ""
     }
   ]
