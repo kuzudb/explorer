@@ -5,7 +5,10 @@ const TABLE_TYPES = {
   NODE: "NODE",
   REL: "REL",
   REL_GROUP: "REL_GROUP",
+  RDF: "RDF",
 };
+const RDF_NODE_TABLE_SUFFIXES = ["_l", "_r"];
+const RDF_REL_TABLE_SUFFIXES = ["_lt", "_rt"];
 const MODES = require("./Constants").MODES;
 const READ_WRITE_MODE = MODES.READ_WRITE;
 
@@ -137,6 +140,7 @@ class Database {
       const nodeTables = [];
       const relTables = [];
       const relGroups = [];
+      const rdf = [];
       for (const table of tables) {
         const properties = (
           await conn
@@ -168,6 +172,8 @@ class Database {
         } else if (table.type === TABLE_TYPES.REL_GROUP) {
           const name = table.name;
           relGroups.push({ name });
+        } else if (table.type === TABLE_TYPES.RDF) {
+          rdf.push(table);
         }
       }
       relGroups.forEach((relGroup) => {
@@ -175,10 +181,19 @@ class Database {
           .filter((relTable) => isBelongToGroup(relTable, relGroup.name))
           .map((relTable) => relTable.name);
       });
+      rdf.forEach((rdfTable) => {
+        rdf.nodeTables = RDF_NODE_TABLE_SUFFIXES.map(
+          (suffix) => rdfTable.name + suffix
+        );
+        rdf.relTables = RDF_REL_TABLE_SUFFIXES.map(
+          (suffix) => rdfTable.name + suffix
+        );
+      });
       nodeTables.sort((a, b) => a.name.localeCompare(b.name));
       relTables.sort((a, b) => a.name.localeCompare(b.name));
       relGroups.sort((a, b) => a.name.localeCompare(b.name));
-      return { nodeTables, relTables, relGroups };
+      rdf.sort((a, b) => a.name.localeCompare(b.name));
+      return { nodeTables, relTables, relGroups, rdf };
     } finally {
       this.releaseConnection(conn);
     }
