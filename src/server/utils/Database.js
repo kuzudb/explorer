@@ -182,10 +182,10 @@ class Database {
           .map((relTable) => relTable.name);
       });
       rdf.forEach((rdfTable) => {
-        rdf.nodeTables = RDF_NODE_TABLE_SUFFIXES.map(
+        rdfTable.nodeTables = RDF_NODE_TABLE_SUFFIXES.map(
           (suffix) => rdfTable.name + suffix
         );
-        rdf.relTables = RDF_REL_TABLE_SUFFIXES.map(
+        rdfTable.relTables = RDF_REL_TABLE_SUFFIXES.map(
           (suffix) => rdfTable.name + suffix
         );
       });

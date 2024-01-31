@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="wrapper"
-    class="schema-view__wrapper"
-  >
+  <div ref="wrapper" class="schema-view__wrapper">
     <div
       ref="toolsContainer"
       class="schema-view__tools_container"
@@ -52,11 +49,8 @@
       class="schema_graph__wrapper"
       :style="{ width: graphWidth + 'px' }"
     />
-    <div
-      ref="sidePanel"
-      class="schema_side-panel__wrapper"
-    >
-      <br>
+    <div ref="sidePanel" class="schema_side-panel__wrapper">
+      <br />
       <SchemaSidebarOverview
         v-if="schema"
         v-show="!hoveredLabel && clickedLabel === null"
@@ -239,7 +233,7 @@ export default {
       if (!this.schema) {
         return;
       }
-      const { nodes, edges } = this.extractGraphFromSchema(this.schema);
+      const { nodes, edges, groups} = this.extractGraphFromSchema(this.schema);
       const container = this.$refs.graph;
       const width = container.offsetWidth;
       const height = container.offsetHeight;
@@ -304,9 +298,17 @@ export default {
         modes: {
           default: ['drag-canvas', 'zoom-canvas', 'drag-node'],
         },
+        groupType: 'circle',
+  groupStyle: {
+    default: {},
+    hover: {},
+    collapse: {},
+  },
       });
+      console.log(groups)
 
-      this.g6graph.data({ nodes, edges, });
+      this.g6graph.data({ nodes, edges, groups});
+      console.log(this.g6graph)
 
       this.g6graph.on('node:mouseenter', (e) => {
         const nodeItem = e.item;
@@ -402,6 +404,15 @@ export default {
         "left",
         "top-left",
       ];
+      const rdfTableMap = {};
+      schema.rdf.forEach(r => {
+       r.nodeTables.forEach(n => {
+        rdfTableMap[n] = r;
+       });
+       r.relTables.forEach(n => {
+        rdfTableMap[n] = r;
+       });
+      });
       const nodes = schema.nodeTables.map(n => {
         return {
           id: n.name,
@@ -411,8 +422,9 @@ export default {
             fill:
               n.isPlaceholder ? this.getColor(PLACEHOLDER_NODE_TABLE) : this.getColor(n.name),
           },
+          groupId: rdfTableMap[n.name] ? rdfTableMap[n.name].name : "no",
         };
-      })
+      });
 
       const edges = schema.relTables.
         map(r => {
@@ -449,7 +461,19 @@ export default {
           }
           return edge;
         }).filter(e => Boolean(e));
-      return { nodes, edges };
+
+        const groups = schema.rdf.map(r => {
+          return {
+            id: r.name,
+            title: r.name,
+          };
+        });
+        groups.push({
+          id: "no",
+          title: "no",
+        });
+        console.log({ nodes, edges, groups})
+      return { nodes, edges, groups};
     },
 
     handleResize() {
@@ -595,8 +619,8 @@ export default {
     },
 
     handleSettingsChange() {
-      const { nodes, edges, counters } = this.extractGraphFromSchema(this.schema);
-      this.g6graph.changeData({ nodes, edges });
+      const { nodes, edges, groups, counters } = this.extractGraphFromSchema(this.schema);
+      this.g6graph.changeData({ nodes, edges, groups });
       const layoutConfig = this.getLayoutConfig(edges);
       this.g6graph.updateLayout(layoutConfig);
       this.counters = counters;
