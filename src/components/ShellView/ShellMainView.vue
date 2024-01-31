@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="shell-main-view__wrapper"
-    :style="{ height: `${containerHeight}px` }"
-  >
+  <div class="shell-main-view__wrapper" :style="{ height: `${containerHeight}px` }">
     <ShellCell
       v-for="(cell, index) in shellCell"
       v-show="index === maximizedCellIndex || maximizedCellIndex < 0"
@@ -57,12 +54,12 @@ export default {
       this.updateContainerHeight();
     });
     window.addEventListener("resize", this.updateContainerHeight);
-    document.addEventListener("keydown",this.handleKeyDown);
+    document.addEventListener("keydown", this.handleKeyDown);
   },
 
   beforeUnmount() {
     window.removeEventListener("resize", this.updateContainerHeight);
-    document.removeEventListener("keydown",this.handleKeyDown);
+    document.removeEventListener("keydown", this.handleKeyDown);
   },
 
   methods: {
@@ -110,16 +107,16 @@ export default {
       }
     },
     evaluateCurrentCell() {
-      for(let i = 0; i < this.shellCell.length; ++i) {
+      for (let i = 0; i < this.shellCell.length; ++i) {
         const currentCell = this.$refs[this.getCellRef(i)][0];
-        if(currentCell.isActive()) {
+        if (currentCell.isActive()) {
           return currentCell.evaluateCell();
         }
       }
-      try{
-      const currentCell = this.$refs[this.getCellRef(0)][0];
-      return currentCell.evaluateCell();
-      }catch(e){
+      try {
+        const currentCell = this.$refs[this.getCellRef(0)][0];
+        return currentCell.evaluateCell();
+      } catch (e) {
         // Do nothing, there is no cell to evaluate
       }
     },

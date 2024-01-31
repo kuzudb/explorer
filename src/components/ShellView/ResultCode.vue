@@ -1,13 +1,6 @@
 <template>
-  <div
-    ref="wrapper"
-    class="result-code__wrapper"
-    :style="{ height: containerHeight }"
-  >
-    <div
-      ref="editor"
-      class="result-code__editor"
-    />
+  <div ref="wrapper" class="result-code__wrapper" :style="{ height: containerHeight }">
+    <div ref="editor" class="result-code__editor" />
   </div>
 </template>
 
