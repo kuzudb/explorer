@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="wrapper"
-    class="schema-view__wrapper"
-  >
+  <div ref="wrapper" class="schema-view__wrapper">
     <div
       ref="toolsContainer"
       class="schema-view__tools_container"
@@ -52,11 +49,8 @@
       class="schema_graph__wrapper"
       :style="{ width: graphWidth + 'px' }"
     />
-    <div
-      ref="sidePanel"
-      class="schema_side-panel__wrapper"
-    >
-      <br>
+    <div ref="sidePanel" class="schema_side-panel__wrapper">
+      <br />
       <SchemaSidebarOverview
         v-if="schema"
         v-show="!hoveredLabel && clickedLabel === null"
@@ -128,6 +122,8 @@ import SchemaSidebarAddView from './SchemaSidebarAddView.vue';
 import SchemaSidebarHoverView from './SchemaSidebarHoverView.vue';
 import SchemaSidebarOverview from './SchemaSidebarOverview.vue';
 import SchemaActionDialog from './SchemaActionDialog.vue';
+
+const COMBO_LABEL_FONT_SIZE = 18;
 
 export default {
   name: "SchemaViewMain",
@@ -224,10 +220,11 @@ export default {
     getLayoutConfig(edges) {
       const nodeSpacing = edges.length * 5;
       return {
-        type: 'force',
+        type: 'comboForce',
         preventOverlap: true,
+        preventNodeOverlap: true,
         linkDistance: 250,
-        nodeStrength: -100,
+        nodeStrength: 100,
         nodeSize: 100,
         nodeSpacing,
       };
@@ -239,7 +236,7 @@ export default {
       if (!this.schema) {
         return;
       }
-      const { nodes, edges, groups} = this.extractGraphFromSchema(this.schema);
+      const { nodes, edges, combos } = this.extractGraphFromSchema(this.schema);
       const container = this.$refs.graph;
       const width = container.offsetWidth;
       const height = container.offsetHeight;
@@ -249,6 +246,7 @@ export default {
         width,
         height,
         linkCenter: false,
+        groupByTypes: false,
         layout: this.getLayoutConfig(edges),
         defaultNode: {
           shape: "circle",
@@ -302,19 +300,34 @@ export default {
           },
         },
         modes: {
-          default: ['drag-canvas', 'zoom-canvas', 'drag-node'],
+          default: [
+            'drag-canvas',
+            'zoom-canvas',
+            { type: 'drag-node', onlyChangeComboSize: true },
+            { type: 'drag-combo', onlyChangeComboSize: true },
+            { type: 'collapse-expand-combo', relayout: false },
+          ],
         },
-        groupType: 'circle',
-  groupStyle: {
-    default: {},
-    hover: {},
-    collapse: {},
-  },
+        defaultCombo: {
+          type: 'rect',
+          size: [10, 10],
+          padding: [120, 20, 10, 20],
+          style: {
+            lineWidth: 2,
+          },
+          labelCfg: {
+            style: {
+              fontSize: COMBO_LABEL_FONT_SIZE,
+              fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+              fontWeight: 600,
+              fill: "#000",
+            },
+          },
+        },
+        comboStateStyles: {},
       });
-      console.log(groups)
 
-      this.g6graph.data({ nodes, edges, groups});
-      console.log(this.g6graph)
+      this.g6graph.data({ nodes, edges, combos });
 
       this.g6graph.on('node:mouseenter', (e) => {
         const nodeItem = e.item;
@@ -327,7 +340,6 @@ export default {
         this.g6graph.setItemState(nodeItem, 'hover', false);
         this.resetHover();
       });
-
 
       this.g6graph.on('node:click', (e) => {
         if (this.clickedIsNewTable) {
@@ -412,12 +424,12 @@ export default {
       ];
       const rdfTableMap = {};
       schema.rdf.forEach(r => {
-       r.nodeTables.forEach(n => {
-        rdfTableMap[n] = r;
-       });
-       r.relTables.forEach(n => {
-        rdfTableMap[n] = r;
-       });
+        r.nodeTables.forEach(n => {
+          rdfTableMap[n] = r;
+        });
+        r.relTables.forEach(n => {
+          rdfTableMap[n] = r;
+        });
       });
       const nodes = schema.nodeTables.map(n => {
         return {
@@ -428,7 +440,7 @@ export default {
             fill:
               n.isPlaceholder ? this.getColor(PLACEHOLDER_NODE_TABLE) : this.getColor(n.name),
           },
-          groupId: rdfTableMap[n.name] ? rdfTableMap[n.name].name : "no",
+          comboId: rdfTableMap[n.name] ? rdfTableMap[n.name].name : "no",
         };
       });
 
@@ -468,18 +480,16 @@ export default {
           return edge;
         }).filter(e => Boolean(e));
 
-        const groups = schema.rdf.map(r => {
-          return {
-            id: r.name,
-            title: r.name,
-          };
-        });
-        groups.push({
-          id: "no",
-          title: "no",
-        });
-        console.log({ nodes, edges, groups})
-      return { nodes, edges, groups};
+      const combos = schema.rdf.map(r => {
+        const label = `RDF Graph: ${r.name}`;
+        const textWidth = G6Utils.calcTextWidth(label, COMBO_LABEL_FONT_SIZE) / 2;
+        return {
+          id: r.name,
+          label: `RDF Graph: ${r.name}`,
+          fixCollapseSize: [textWidth, COMBO_LABEL_FONT_SIZE],
+        };
+      });
+      return { nodes, edges, combos };
     },
 
     handleResize() {
@@ -488,6 +498,7 @@ export default {
         const height = this.computeGraphHeight();
         if (this.g6graph) {
           this.g6graph.changeSize(width, height);
+          this.layoutGraph();
           this.g6graph.fitCenter();
         }
       });
@@ -625,11 +636,10 @@ export default {
     },
 
     handleSettingsChange() {
-      const { nodes, edges, groups, counters } = this.extractGraphFromSchema(this.schema);
-      this.g6graph.changeData({ nodes, edges, groups });
+      const { nodes, edges, combos } = this.extractGraphFromSchema(this.schema);
+      this.g6graph.changeData({ nodes, edges, combos });
       const layoutConfig = this.getLayoutConfig(edges);
       this.g6graph.updateLayout(layoutConfig);
-      this.counters = counters;
       if (this.clickedLabel) {
         this.setG6Click(this.clickedLabel);
       }
@@ -870,7 +880,7 @@ export default {
         },
       });
       window.g6AddEdgeBehaviorRegistered = true;
-    }
+    },
   },
 };
 </script>
