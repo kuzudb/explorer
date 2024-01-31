@@ -27,10 +27,19 @@
       class="shell-editor__tools_container"
       :style="{ width: toolbarWidth + 'px' }"
     >
-      <div v-show="!isMaximized" class="shell-editor__button">
-        <i class="fa-lg fa-solid fa-times" @click="removeCell" />
+      <div
+        v-show="!isMaximized"
+        class="shell-editor__button"
+      >
+        <i
+          class="fa-lg fa-solid fa-times"
+          @click="removeCell"
+        />
       </div>
-      <div v-show="!isLoading" class="shell-editor__button">
+      <div
+        v-show="!isLoading"
+        class="shell-editor__button"
+      >
         <i
           class="fa-lg fa-solid fa-play"
           data-bs-toggle="tooltip"
@@ -39,7 +48,10 @@
           @click="evaluateCell"
         />
       </div>
-      <div v-show="!isLoading" class="shell-editor__button">
+      <div
+        v-show="!isLoading"
+        class="shell-editor__button"
+      >
         <i
           :class="gptButtonClass"
           data-bs-toggle="tooltip"
@@ -48,7 +60,10 @@
           @click="toggleQueryGeneration"
         />
       </div>
-      <div v-show="isMaximizable" class="shell-editor__button">
+      <div
+        v-show="isMaximizable"
+        class="shell-editor__button"
+      >
         <i
           :class="maximizeButtonClass"
           data-bs-toggle="tooltip"

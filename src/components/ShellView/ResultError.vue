@@ -1,17 +1,28 @@
 <template>
-  <div ref="wrapper" class="result-error__wrapper">
-    <div v-if="!isInfo" class="alert alert-danger" role="alert">
+  <div
+    ref="wrapper"
+    class="result-error__wrapper"
+  >
+    <div
+      v-if="!isInfo"
+      class="alert alert-danger"
+      role="alert"
+    >
       <div>
         <i class="fa-solid fa-circle-exclamation" />
         The evaluation of this cell failed with the following error:
-        <br />
+        <br>
         <b>
           {{ errorMessage }}
         </b>
       </div>
     </div>
 
-    <div v-if="isInfo" class="alert alert-info" role="alert">
+    <div
+      v-if="isInfo"
+      class="alert alert-info"
+      role="alert"
+    >
       <div>
         <i class="fa-solid fa-circle-info" />
         {{ errorMessage }}

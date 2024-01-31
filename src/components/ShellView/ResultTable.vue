@@ -3,11 +3,18 @@
     class="result-table__wrapper"
     :style="{ height: containerHeight, width: tableWidth + 'px' }"
   >
-    <div v-if="totalPages > 1" class="result-table__pagination__wrapper">
+    <div
+      v-if="totalPages > 1"
+      class="result-table__pagination__wrapper"
+    >
       <nav>
         <ul class="pagination">
           <li :class="['page-item', { disabled: isPrevDisabled }]">
-            <a class="page-link" href="#" @click="page -= 1">
+            <a
+              class="page-link"
+              href="#"
+              @click="page -= 1"
+            >
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
@@ -16,13 +23,25 @@
             :key="currPage"
             :class="['page-item', { active: currPage === page }]"
           >
-            <a v-if="currPage > 0" class="page-link" href="#" @click="page = currPage">
+            <a
+              v-if="currPage > 0"
+              class="page-link"
+              href="#"
+              @click="page = currPage"
+            >
               {{ currPage }}
             </a>
-            <span v-else class="page-link">...</span>
+            <span
+              v-else
+              class="page-link"
+            >...</span>
           </li>
           <li :class="['page-item', { disabled: isNextDisabled }]">
-            <a class="page-link" href="#" @click="page += 1">
+            <a
+              class="page-link"
+              href="#"
+              @click="page += 1"
+            >
               <span aria-hidden="true">&raquo;</span>
             </a>
           </li>
@@ -34,17 +53,33 @@
       <table class="table table-hover">
         <thead class="fixed-top">
           <tr>
-            <th v-for="header in tableHeaders" :key="header.text">
+            <th
+              v-for="header in tableHeaders"
+              :key="header.text"
+            >
               {{ header.text }}
               <span class="badge bg-primary">{{ header.type }}</span>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(row, i) in rows" :key="i">
-            <td v-for="(cell, j) in row" :key="j">
-              <ul v-if="Array.isArray(cell)" class="list-group">
-                <li v-for="(item, k) in cell" :key="k" class="list-group-item">
+          <tr
+            v-for="(row, i) in rows"
+            :key="i"
+          >
+            <td
+              v-for="(cell, j) in row"
+              :key="j"
+            >
+              <ul
+                v-if="Array.isArray(cell)"
+                class="list-group"
+              >
+                <li
+                  v-for="(item, k) in cell"
+                  :key="k"
+                  class="list-group-item"
+                >
                   <b>{{ item.name }}:</b> {{ item.value }}
                 </li>
               </ul>
@@ -52,10 +87,20 @@
                 v-else-if="isColumnRecursiveRel(j)"
                 class="result-table__recursive-rel__wrapper"
               >
-                <div v-for="(subcolumn, subcolumnId) in cell" :key="subcolumnId">
-                  <div v-for="(item, k) in subcolumn" :key="k">
+                <div
+                  v-for="(subcolumn, subcolumnId) in cell"
+                  :key="subcolumnId"
+                >
+                  <div
+                    v-for="(item, k) in subcolumn"
+                    :key="k"
+                  >
                     <ul class="list-group">
-                      <li v-for="(field, m) in item" :key="m" class="list-group-item">
+                      <li
+                        v-for="(field, m) in item"
+                        :key="m"
+                        class="list-group-item"
+                      >
                         <b>{{ m === 0 ? field.value : field.name + ":" }}</b>
                         <span v-if="m > 0">{{ field.value }}</span>
                       </li>
