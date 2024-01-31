@@ -16,6 +16,7 @@
       :style="{ width: editorWidth + 'px' }"
     >
       <textarea
+        ref="gptQuestionTextArea"
         v-model="gptQuestion"
         class="form-control"
         placeholder="Type your question here..."
@@ -26,31 +27,19 @@
       class="shell-editor__tools_container"
       :style="{ width: toolbarWidth + 'px' }"
     >
-      <div
-        v-show="!isMaximized"
-        class="shell-editor__button"
-      >
-        <i
-          class="fa-lg fa-solid fa-times"
-          @click="removeCell"
-        />
+      <div v-show="!isMaximized" class="shell-editor__button">
+        <i class="fa-lg fa-solid fa-times" @click="removeCell" />
       </div>
-      <div
-        v-show="!isLoading"
-        class="shell-editor__button"
-      >
+      <div v-show="!isLoading" class="shell-editor__button">
         <i
           class="fa-lg fa-solid fa-play"
           data-bs-toggle="tooltip"
           data-bs-placement="right"
           title="Run"
-          @click="evaluateCurrentCell"
+          @click="evaluateCell"
         />
       </div>
-      <div
-        v-show="!isLoading"
-        class="shell-editor__button"
-      >
+      <div v-show="!isLoading" class="shell-editor__button">
         <i
           :class="gptButtonClass"
           data-bs-toggle="tooltip"
@@ -59,10 +48,7 @@
           @click="toggleQueryGeneration"
         />
       </div>
-      <div
-        v-show="isMaximizable"
-        class="shell-editor__button"
-      >
+      <div v-show="isMaximizable" class="shell-editor__button">
         <i
           :class="maximizeButtonClass"
           data-bs-toggle="tooltip"
@@ -194,11 +180,6 @@ emits: ['remove', 'evaluateCypher', 'toggleMaximize', 'generateAndEvaluateQuery'
         fontSize: 16,
         scrollBeyondLastLine: false,
       });
-
-      this.editor.addCommand(window.Monaco.KeyMod.Shift | window.Monaco.KeyCode.Enter, () => {
-        this.evaluateCypher();
-      });
-
       new PlaceholderContentWidget('Type your Cypher code here...', this.editor);
     },
     toggleMaximize() {
@@ -220,7 +201,7 @@ emits: ['remove', 'evaluateCypher', 'toggleMaximize', 'generateAndEvaluateQuery'
     generateAndEvaluateQuery() {
       this.$emit("generateAndEvaluateQuery", this.gptQuestion);
     },
-    evaluateCurrentCell() {
+    evaluateCell() {
       if (this.isQueryGenerationMode) {
         this.generateAndEvaluateQuery();
       } else {
@@ -232,6 +213,10 @@ emits: ['remove', 'evaluateCypher', 'toggleMaximize', 'generateAndEvaluateQuery'
     },
     removeCell() {
       this.$emit("remove");
+    },
+    isActive(){
+      return (this.isQueryGenerationMode && this.$refs.gptQuestionTextArea === document.activeElement) ||
+        (!this.isQueryGenerationMode && this.editor && this.editor.hasTextFocus());
     }
   },
 }
