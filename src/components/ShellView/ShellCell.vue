@@ -82,6 +82,9 @@ export default {
   },
 
   methods: {
+    isActive(){
+      return this.$refs.editor.isActive();
+    },
     evaluateCypher(query) {
       this.queryResult = null;
       this.errorMessage = "";
@@ -187,6 +190,9 @@ export default {
             });
           }
         })
+    },
+    evaluateCell() {
+      this.$refs.editor.evaluateCell();
     },
     toggleMaximize() {
       if (this.isMaximized) {

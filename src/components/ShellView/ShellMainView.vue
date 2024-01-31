@@ -6,6 +6,7 @@
     <ShellCell
       v-for="(cell, index) in shellCell"
       v-show="index === maximizedCellIndex || maximizedCellIndex < 0"
+      :ref="getCellRef(index)"
       :key="cell.cellId"
       :schema="schema"
       :navbar-height="navbarHeight"
@@ -56,10 +57,12 @@ export default {
       this.updateContainerHeight();
     });
     window.addEventListener("resize", this.updateContainerHeight);
+    document.addEventListener("keydown",this.handleKeyDown);
   },
 
   beforeUnmount() {
     window.removeEventListener("resize", this.updateContainerHeight);
+    document.removeEventListener("keydown",this.handleKeyDown);
   },
 
   methods: {
@@ -96,6 +99,29 @@ export default {
     },
     reloadSchema() {
       this.$emit("reloadSchema");
+    },
+    getCellRef(index) {
+      return `shell-cell-${this.shellCell[index].cellId}`;
+    },
+    handleKeyDown(event) {
+      if (event.shiftKey && event.key === "Enter") {
+        event.preventDefault();
+        this.evaluateCurrentCell();
+      }
+    },
+    evaluateCurrentCell() {
+      for(let i = 0; i < this.shellCell.length; ++i) {
+        const currentCell = this.$refs[this.getCellRef(i)][0];
+        if(currentCell.isActive()) {
+          return currentCell.evaluateCell();
+        }
+      }
+      try{
+      const currentCell = this.$refs[this.getCellRef(0)][0];
+      return currentCell.evaluateCell();
+      }catch(e){
+        // Do nothing, there is no cell to evaluate
+      }
     },
   },
 
