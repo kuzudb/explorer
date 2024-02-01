@@ -36,10 +36,6 @@
       </div>
       <hr>
 
-      <h6 v-if="rdf">
-        <b>{{ rdf }} </b> RDF graph
-      </h6>
-
       <div v-if="!isNode">
         <h6 v-if="relGroup">
           <b>{{ relGroup }} </b> group
@@ -261,17 +257,6 @@ export default {
       }
       return this.schema.relTables.find(t => t.name === this.label).group;
     },
-
-    rdf() {
-      if (!this.schema || !this.label) {
-        return null;
-      }
-      if (this.isNode) {
-        return this.schema.nodeTables.find(t => t.name === this.label).rdf;
-      }
-      return this.schema.relTables.find(t => t.name === this.label).rdf;
-    },
-
     tableProperties() {
       if (this.isEditingLabel) {
         if (this.isNode) {

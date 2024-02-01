@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="wrapper"
-    class="schema-view__wrapper"
-  >
+  <div ref="wrapper" class="schema-view__wrapper">
     <div
       ref="toolsContainer"
       class="schema-view__tools_container"
@@ -52,11 +49,8 @@
       class="schema_graph__wrapper"
       :style="{ width: graphWidth + 'px' }"
     />
-    <div
-      ref="sidePanel"
-      class="schema_side-panel__wrapper"
-    >
-      <br>
+    <div ref="sidePanel" class="schema_side-panel__wrapper">
+      <br />
       <SchemaSidebarOverview
         v-if="schema"
         v-show="!hoveredLabel && clickedLabel === null"
@@ -73,15 +67,15 @@
       <SchemaSidebarReadOnlyView
         v-if="hoveredLabel !== null && (clickedLabel === null || isClickedReadOnly())"
         :schema="schema"
-        :hovered-label="hoveredLabel"
-        :hovered-is-node="hoveredIsNode"
+        :label="hoveredLabel"
+        :is-node="hoveredIsNode"
       />
       <!-- Read only view for clicked label (if it cannot be edited) -->
       <SchemaSidebarReadOnlyView
         v-if="clickedLabel !== null && hoveredLabel === null && isClickedReadOnly()"
         :schema="schema"
-        :hovered-label="clickedLabel"
-        :hovered-is-node="clickedIsNode"
+        :label="clickedLabel"
+        :is-node="clickedIsNode"
       />
       <!-- Edit view for clicked label -->
       <SchemaSidebarEditView
