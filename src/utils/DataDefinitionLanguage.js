@@ -26,7 +26,12 @@ class DataDefinitionLanguage {
     tableName = this._escapeName(tableName);
     return `DROP TABLE ${tableName};`;
   }
-  
+
+  addRdf(name) {
+    name = this._escapeName(name);
+    return `CREATE RDFGRAPH ${name};`;
+  }
+
   dropRdf(name) {
     name = this._escapeName(name);
     return `DROP RDFGRAPH ${name};`;

@@ -1,30 +1,13 @@
 <template>
-  <div
-    ref="modal"
-    class="modal"
-    tabindex="-1"
-  >
+  <div ref="modal" class="modal" tabindex="-1">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
-          <h5
-            v-if="!isExecuting && !isExecuted"
-            class="modal-title"
-          >
+          <h5 v-if="!isExecuting && !isExecuted" class="modal-title">
             Confirm DDL Statement
           </h5>
-          <h5
-            v-if="isExecuting"
-            class="modal-title"
-          >
-            Executing...
-          </h5>
-          <h5
-            v-if="isExecuted"
-            class="modal-title"
-          >
-            Result
-          </h5>
+          <h5 v-if="isExecuting" class="modal-title">Executing...</h5>
+          <h5 v-if="isExecuted" class="modal-title">Result</h5>
         </div>
         <div class="modal-body">
           <div v-if="!isExecuting && !isExecuted">
@@ -33,28 +16,17 @@
           </div>
           <div v-if="isExecuting">
             <div class="d-flex justify-content-center">
-              <div
-                class="spinner-border"
-                role="status"
-              >
+              <div class="spinner-border" role="status">
                 <span class="visually-hidden">Loading...</span>
               </div>
             </div>
           </div>
           <div v-if="isExecuted">
-            <div
-              v-if="errorMessage"
-              class="alert alert-danger"
-              role="alert"
-            >
+            <div v-if="errorMessage" class="alert alert-danger" role="alert">
               <i class="fa-solid fa-exclamation-circle" />
               {{ errorMessage }}
             </div>
-            <div
-              v-else
-              class="alert alert-success"
-              role="alert"
-            >
+            <div v-else class="alert alert-success" role="alert">
               <i class="fa-solid fa-check-circle" />
               The statement has been executed successfully. This dialog will be closed
               automatically in
@@ -62,15 +34,8 @@
             </div>
           </div>
         </div>
-        <div
-          v-if="!isExecuting"
-          class="modal-footer"
-        >
-          <button
-            type="button"
-            class="btn btn-secondary"
-            @click="hideModal"
-          >
+        <div v-if="!isExecuting" class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="hideModal">
             {{ isExecuted ? "Close" : "Cancel" }}
           </button>
           <button
@@ -168,6 +133,17 @@ export default {
     dropTable(tableName) {
       this.reset();
       const statement = DataDefinitionLanguage.dropTable(tableName);
+      this.statement = statement;
+      this.showModal();
+    },
+    addRdf(tableName, rdf) {
+      this.reset();
+      this.currentAction = {
+        type: SCHEMA_ACTION_TYPES.ADD_RDF,
+        table: tableName,
+        rdf,
+      };
+      const statement = DataDefinitionLanguage.addRdf(tableName, rdf);
       this.statement = statement;
       this.showModal();
     },

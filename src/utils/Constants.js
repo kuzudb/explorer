@@ -48,6 +48,7 @@ export const SCHEMA_ACTION_TYPES = {
   ADD_NODE_TABLE: "addNodeTable",
   ADD_REL_TABLE: "addRelTable",
   ADD_REL_GROUP: "addRelGroup",
+  ADD_RDF: "addRdf",
 };
 
 export const UI_SIZE = {

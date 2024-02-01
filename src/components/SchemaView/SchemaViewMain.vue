@@ -60,6 +60,7 @@
       <SchemaSidebarOverview
         v-if="schema"
         v-show="!hoveredLabel && clickedLabel === null"
+        ref="overview"
         :schema="schema"
         @drop-table="dropTable"
         @drop-rdf="dropRdf"
@@ -67,6 +68,7 @@
         @add-node-table="enterAddNodeTableMode"
         @add-rel-table="enterAddRelTableMode"
         @add-rel-group="enterAddRelGroupMode"
+        @add-rdf="addRdf"
       />
       <!-- Read only view for hovered label -->
       <!-- If edit view is shown, hovering over another label will not change the view -->
@@ -541,6 +543,8 @@ export default {
         this.$nextTick(() => {
           this.cancelAdd();
         });
+      }else if (action.type === SCHEMA_ACTION_TYPES.ADD_RDF) {
+        this.$refs.overview.cancelAddRdf();
       }
     },
 
@@ -797,6 +801,10 @@ export default {
       this.$nextTick(() => {
         this.handleSettingsChange();
       });
+    },
+
+    addRdf(name){
+      this.$refs.actionDialog.addRdf(name);
     },
 
     dropRdf(rdf) {
