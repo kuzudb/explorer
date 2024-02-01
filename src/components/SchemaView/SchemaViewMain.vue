@@ -422,15 +422,6 @@ export default {
         "left",
         "top-left",
       ];
-      const rdfTableMap = {};
-      schema.rdf.forEach(r => {
-        r.nodeTables.forEach(n => {
-          rdfTableMap[n] = r;
-        });
-        r.relTables.forEach(n => {
-          rdfTableMap[n] = r;
-        });
-      });
       const nodes = schema.nodeTables.map(n => {
         return {
           id: n.name,
@@ -440,7 +431,7 @@ export default {
             fill:
               n.isPlaceholder ? this.getColor(PLACEHOLDER_NODE_TABLE) : this.getColor(n.name),
           },
-          comboId: rdfTableMap[n.name] ? rdfTableMap[n.name].name : "no",
+          comboId: n.rdf,
         };
       });
 

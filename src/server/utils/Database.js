@@ -181,12 +181,12 @@ class Database {
           .filter((relTable) => isBelongToGroup(relTable, relGroup.name))
           .map((relTable) => relTable.name);
       });
-      rdf.forEach((rdfTable) => {
-        rdfTable.nodeTables = RDF_NODE_TABLE_SUFFIXES.map(
-          (suffix) => rdfTable.name + suffix
+      rdf.forEach((r) => {
+        r.nodes = RDF_NODE_TABLE_SUFFIXES.map(
+          (suffix) => r.name + suffix
         );
-        rdfTable.relTables = RDF_REL_TABLE_SUFFIXES.map(
-          (suffix) => rdfTable.name + suffix
+        r.rels = RDF_REL_TABLE_SUFFIXES.map(
+          (suffix) => r.name + suffix
         );
       });
       nodeTables.sort((a, b) => a.name.localeCompare(b.name));

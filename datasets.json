@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/kuzudb/kuzu",
-  "commitHash": "41e469268a00b8245001cf735c9db5005fa89a46",
+  "commitHash": "83e28e4eba40594835156903f0a2826fcd2e865c",
   "datasetsRoot": "dataset",
   "datasets": [
     {
