@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="wrapper"
-    class="schema-view__wrapper"
-  >
+  <div ref="wrapper" class="schema-view__wrapper">
     <div
       ref="toolsContainer"
       class="schema-view__tools_container"
@@ -52,35 +49,37 @@
       class="schema_graph__wrapper"
       :style="{ width: graphWidth + 'px' }"
     />
-    <div
-      ref="sidePanel"
-      class="schema_side-panel__wrapper"
-    >
-      <br>
+    <div ref="sidePanel" class="schema_side-panel__wrapper">
+      <br />
       <SchemaSidebarOverview
         v-if="schema"
         v-show="!hoveredLabel && clickedLabel === null"
         :schema="schema"
         @drop-table="dropTable"
+        @drop-rdf="dropRdf"
         @edit-table="enterEditTableMode"
         @add-node-table="enterAddNodeTableMode"
         @add-rel-table="enterAddRelTableMode"
         @add-rel-group="enterAddRelGroupMode"
       />
-      <SchemaSidebarHoverView
-        v-if="hoveredLabel !== null && (clickedLabel === null || !modeStore.isReadWrite)"
+      <!-- Read only view for hovered label -->
+      <!-- If edit view is shown, hovering over another label will not change the view -->
+      <SchemaSidebarReadOnlyView
+        v-if="hoveredLabel !== null && (clickedLabel === null || isClickedReadOnly())"
         :schema="schema"
         :hovered-label="hoveredLabel"
         :hovered-is-node="hoveredIsNode"
       />
-      <SchemaSidebarHoverView
-        v-if="clickedLabel !== null && hoveredLabel === null && !modeStore.isReadWrite"
+      <!-- Read only view for clicked label (if it cannot be edited) -->
+      <SchemaSidebarReadOnlyView
+        v-if="clickedLabel !== null && hoveredLabel === null && isClickedReadOnly()"
         :schema="schema"
         :hovered-label="clickedLabel"
         :hovered-is-node="clickedIsNode"
       />
+      <!-- Edit view for clicked label -->
       <SchemaSidebarEditView
-        v-if="clickedLabel !== null && !clickedIsNewTable && modeStore.isReadWrite"
+        v-if="clickedLabel !== null && !clickedIsNewTable && !isClickedReadOnly()"
         ref="editView"
         :schema="schema"
         :label="clickedLabel"
@@ -125,7 +124,7 @@ import { useModeStore } from "../../store/ModeStore";
 import { mapStores } from 'pinia'
 import SchemaSidebarEditView from './SchemaSidebarEditView.vue';
 import SchemaSidebarAddView from './SchemaSidebarAddView.vue';
-import SchemaSidebarHoverView from './SchemaSidebarHoverView.vue';
+import SchemaSidebarReadOnlyView from './SchemaSidebarReadOnlyView.vue';
 import SchemaSidebarOverview from './SchemaSidebarOverview.vue';
 import SchemaActionDialog from './SchemaActionDialog.vue';
 
@@ -134,7 +133,7 @@ const COMBO_LABEL_FONT_SIZE = 18;
 export default {
   name: "SchemaViewMain",
   components: {
-    SchemaSidebarOverview, SchemaSidebarHoverView, SchemaSidebarEditView,
+    SchemaSidebarOverview, SchemaSidebarReadOnlyView, SchemaSidebarEditView,
     SchemaSidebarAddView, SchemaActionDialog
   },
   props: {
@@ -794,6 +793,10 @@ export default {
       });
     },
 
+    dropRdf(rdf) {
+      this.$refs.actionDialog.dropRdf(rdf);
+    },
+
     dropTable(tableName) {
       this.$refs.actionDialog.dropTable(tableName);
     },
@@ -820,6 +823,13 @@ export default {
 
     addProperty({ table, property, defaultValue }) {
       this.$refs.actionDialog.addProperty(table, property, defaultValue);
+    },
+
+    isClickedReadOnly() {
+      const clickedItem = this.clickedIsNode ?
+        this.schema.nodeTables.find(t => t.name === this.clickedLabel) :
+        this.schema.relTables.find(t => t.name === this.clickedLabel);
+      return !this.modeStore.isReadWrite || (clickedItem && (clickedItem.rdf || clickedItem.group));
     },
 
     reloadSchema() {
