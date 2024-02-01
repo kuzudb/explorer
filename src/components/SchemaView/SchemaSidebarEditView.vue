@@ -12,20 +12,29 @@
               backgroundColor: ` ${getBackgroundColorForEditingTable()} !important`,
               color: isNode ? '#ffffff' : '#000000',
             }"
-          />
+          >
         </div>
-        <div v-if="isEditingLabel" class="d-flex">
+        <div
+          v-if="isEditingLabel"
+          class="d-flex"
+        >
           &nbsp;
-          <button class="btn btn-sm btn-outline-primary" @click="renameTable">
+          <button
+            class="btn btn-sm btn-outline-primary"
+            @click="renameTable"
+          >
             <i class="fa-solid fa-check" />
           </button>
           &nbsp;
-          <button class="btn btn-sm btn-outline-danger" @click="cancelTableRename">
+          <button
+            class="btn btn-sm btn-outline-danger"
+            @click="cancelTableRename"
+          >
             <i class="fa-solid fa-times" />
           </button>
         </div>
       </div>
-      <hr />
+      <hr>
 
       <h6 v-if="rdf">
         <b>{{ rdf }} </b> RDF graph
@@ -57,7 +66,7 @@
             {{ destination }}
           </span>
         </h6>
-        <br />
+        <br>
       </div>
 
       <div class="schema_side-panel__edit-table-actions-container">
@@ -89,7 +98,7 @@
         </button>
         &nbsp;
       </div>
-      <br />
+      <br>
 
       <table
         v-if="schema"
@@ -97,14 +106,23 @@
       >
         <thead>
           <tr v-if="tableProperties.length > 0 || addingProperty">
-            <th scope="col">Name</th>
-            <th scope="col">Type</th>
-            <th scope="col" class="schema_side-panel__edit-table-buttons-container">
+            <th scope="col">
+              Name
+            </th>
+            <th scope="col">
+              Type
+            </th>
+            <th
+              scope="col"
+              class="schema_side-panel__edit-table-buttons-container"
+            >
               Actions
             </th>
           </tr>
           <tr v-else>
-            <th scope="col">There are no properties in this table</th>
+            <th scope="col">
+              There are no properties in this table
+            </th>
           </tr>
         </thead>
         <tbody v-if="tableProperties.length > 0 || addingProperty">
@@ -120,10 +138,19 @@
               @save="addProperty"
             />
           </tr>
-          <tr v-for="(property, i) in tableProperties" :key="property.name">
-            <td v-if="i !== editingPropertyIndex" scope="row">
+          <tr
+            v-for="(property, i) in tableProperties"
+            :key="property.name"
+          >
+            <td
+              v-if="i !== editingPropertyIndex"
+              scope="row"
+            >
               {{ property.name }}
-              <span v-if="property.isPrimaryKey" class="badge bg-primary"> PK </span>
+              <span
+                v-if="property.isPrimaryKey"
+                class="badge bg-primary"
+              > PK </span>
             </td>
             <td v-if="i !== editingPropertyIndex">
               {{ property.type }}

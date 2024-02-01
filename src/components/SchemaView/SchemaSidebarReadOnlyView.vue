@@ -12,7 +12,7 @@
           {{ hoveredLabel }}
         </span>
       </h5>
-      <hr />
+      <hr>
 
       <div v-if="!hoveredIsNode">
         <h6>
@@ -36,7 +36,7 @@
             {{ destination }}
           </span>
         </h6>
-        <br />
+        <br>
       </div>
 
       <table
@@ -45,18 +45,30 @@
       >
         <thead>
           <tr v-if="tableProperties.length > 0">
-            <th scope="col">Name</th>
-            <th scope="col">Type</th>
+            <th scope="col">
+              Name
+            </th>
+            <th scope="col">
+              Type
+            </th>
           </tr>
           <tr v-else>
-            <th scope="col">There are no properties in this table</th>
+            <th scope="col">
+              There are no properties in this table
+            </th>
           </tr>
         </thead>
         <tbody v-if="tableProperties.length > 0">
-          <tr v-for="property in tableProperties" :key="property.name">
+          <tr
+            v-for="property in tableProperties"
+            :key="property.name"
+          >
             <td scope="row">
               {{ property.name }}
-              <span v-if="property.isPrimaryKey" class="badge bg-primary"> PK </span>
+              <span
+                v-if="property.isPrimaryKey"
+                class="badge bg-primary"
+              > PK </span>
             </td>
             <td>
               {{ property.type }}
