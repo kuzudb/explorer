@@ -11,20 +11,25 @@
           Add
         </button>
       </div>
-      <hr />
+      <hr>
       <table
         v-if="schema"
         class="table table-sm table-bordered schema_side-panel__overview-table"
       >
         <tbody>
-          <tr v-for="nodeTable in schema.nodeTables" :key="nodeTable.name">
-            <td scope="row" :colspan="nodeTable.rdf ? 2 : 1">
+          <tr
+            v-for="nodeTable in schema.nodeTables"
+            :key="nodeTable.name"
+          >
+            <td
+              scope="row"
+              :colspan="nodeTable.rdf ? 2 : 1"
+            >
               <span
                 class="badge bg-primary"
                 :style="{ backgroundColor: `${getColor(nodeTable.name)} !important` }"
-                >{{ nodeTable.name }}</span
-              >
-              <br />
+              >{{ nodeTable.name }}</span>
+              <br>
               <small v-if="!nodeTable.rdf">
                 {{ nodeTable.properties.length }} properties
               </small>
@@ -54,14 +59,22 @@
             </td>
           </tr>
           <tr v-if="schema.nodeTables.length === 0">
-            <td v-if="modeStore.isReadWrite" colspan="2">
+            <td
+              v-if="modeStore.isReadWrite"
+              colspan="2"
+            >
               There are no node tables in this schema. Click "Add" to add one.
             </td>
-            <td v-else colspan="2">There are no node tables in this schema.</td>
+            <td
+              v-else
+              colspan="2"
+            >
+              There are no node tables in this schema.
+            </td>
           </tr>
         </tbody>
       </table>
-      <br />
+      <br>
     </div>
 
     <div>
@@ -75,14 +88,20 @@
           Add
         </button>
       </div>
-      <hr />
+      <hr>
       <table
         v-if="schema"
         class="table table-sm table-bordered schema_side-panel__overview-table"
       >
         <tbody>
-          <tr v-for="relTable in schema.relTables" :key="relTable.name">
-            <td scope="row" :colspan="relTable.rdf ? 2 : 1">
+          <tr
+            v-for="relTable in schema.relTables"
+            :key="relTable.name"
+          >
+            <td
+              scope="row"
+              :colspan="relTable.rdf ? 2 : 1"
+            >
               <span
                 class="badge bg-primary"
                 :style="{
@@ -90,9 +109,8 @@
                   color: '#000000',
                 }"
               >
-                {{ relTable.name }}</span
-              >
-              <br />
+                {{ relTable.name }}</span>
+              <br>
               <small v-if="!relTable.rdf">
                 {{ relTable.properties.length }}
                 {{ relTable.properties.length <= 1 ? "property" : "properties" }}
@@ -127,14 +145,22 @@
             </td>
           </tr>
           <tr v-if="schema.relTables.length === 0">
-            <td v-if="modeStore.isReadWrite" colspan="2">
+            <td
+              v-if="modeStore.isReadWrite"
+              colspan="2"
+            >
               There are no relationship tables in this schema. Click "Add" to add one.
             </td>
-            <td v-else colspan="2">There are no relationship tables in this schema.</td>
+            <td
+              v-else
+              colspan="2"
+            >
+              There are no relationship tables in this schema.
+            </td>
           </tr>
         </tbody>
       </table>
-      <br />
+      <br>
     </div>
 
     <div>
@@ -148,21 +174,26 @@
           Add
         </button>
       </div>
-      <hr />
+      <hr>
       <table
         v-if="schema"
         class="table table-sm table-bordered schema_side-panel__overview-table"
       >
         <tbody>
-          <tr v-for="relGroup in schema.relGroups" :key="relGroup.name">
+          <tr
+            v-for="relGroup in schema.relGroups"
+            :key="relGroup.name"
+          >
             <td scope="row">
-              <small
-                >{{ relGroup.name }} ({{ relGroup.rels.length }}
+              <small>{{ relGroup.name }} ({{ relGroup.rels.length }}
                 {{ relGroup.rels.length <= 1 ? "relationship" : "relationships" }})
               </small>
-              <br />
+              <br>
               <ul>
-                <li v-for="relTableName in relGroup.rels" :key="relTableName">
+                <li
+                  v-for="relTableName in relGroup.rels"
+                  :key="relTableName"
+                >
                   <span
                     class="badge bg-primary"
                     :style="{
@@ -191,14 +222,22 @@
             </td>
           </tr>
           <tr v-if="schema.relGroups.length === 0">
-            <td v-if="modeStore.isReadWrite" colspan="2">
+            <td
+              v-if="modeStore.isReadWrite"
+              colspan="2"
+            >
               There are no relationship groups in this schema. Click "Add" to add one.
             </td>
-            <td v-else colspan="2">There are no relationship groups in this schema.</td>
+            <td
+              v-else
+              colspan="2"
+            >
+              There are no relationship groups in this schema.
+            </td>
           </tr>
         </tbody>
       </table>
-      <br />
+      <br>
     </div>
 
     <div>
@@ -212,18 +251,24 @@
           Add
         </button>
       </div>
-      <hr />
+      <hr>
       <table
         v-if="schema"
         class="table table-sm table-bordered schema_side-panel__overview-table"
       >
         <tbody>
-          <tr v-for="rdf in schema.rdf" :key="rdf.name">
+          <tr
+            v-for="rdf in schema.rdf"
+            :key="rdf.name"
+          >
             <td scope="row">
               <small>{{ rdf.name }} </small>
-              <br />
+              <br>
               <ul>
-                <li v-for="nodeTableName in rdf.nodes" :key="nodeTableName">
+                <li
+                  v-for="nodeTableName in rdf.nodes"
+                  :key="nodeTableName"
+                >
                   <span
                     class="badge bg-primary"
                     :style="{
@@ -235,7 +280,10 @@
                     {{ nodeTableName }}
                   </span>
                 </li>
-                <li v-for="relTableName in rdf.rels" :key="relTableName">
+                <li
+                  v-for="relTableName in rdf.rels"
+                  :key="relTableName"
+                >
                   <span
                     class="badge bg-primary"
                     :style="{
@@ -264,10 +312,18 @@
             </td>
           </tr>
           <tr v-if="schema.rdf.length === 0">
-            <td v-if="modeStore.isReadWrite" colspan="2">
+            <td
+              v-if="modeStore.isReadWrite"
+              colspan="2"
+            >
               There are no RDF graphs in this schema. Click "Add" to add one.
             </td>
-            <td v-else colspan="2">There are no RDF graphs in this schema.</td>
+            <td
+              v-else
+              colspan="2"
+            >
+              There are no RDF graphs in this schema.
+            </td>
           </tr>
         </tbody>
       </table>
