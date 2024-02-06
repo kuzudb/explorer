@@ -505,7 +505,7 @@ export default {
         } else {
           g6Rel.label = rawRel[relLabelProp];
           if (relLabelProp in expectedPropertiesType) {
-            g6Rel.label = ValueFormatter.beautifyValue(rawRel[relLabelProp], expectedPropertiesType[relLabelProp]);
+            g6Rel.label = ValueFormatter.beautifyValue(rawRel[relLabelProp], expectedPropertiesType[relLabelProp], relLabelProp);
           }
           g6Rel.label = String(g6Rel.label);
           const fontSize = relSettings.g6Settings.labelCfg.style.fontSize;
