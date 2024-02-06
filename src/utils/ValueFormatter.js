@@ -1,5 +1,5 @@
 import Moment from "moment";
-import { DATA_TYPES } from "./Constants";
+import { DATA_TYPES, IRI_PROPERTY_NAME } from "./Constants";
 
 class ValueFormatter {
   constructor() {
@@ -52,7 +52,7 @@ class ValueFormatter {
   }
 
   beautifyValue(value, type, propName = "") {
-    if (type === DATA_TYPES.STRING && propName === "iri") {
+    if (type === DATA_TYPES.STRING && propName === IRI_PROPERTY_NAME) {
       if (value.startsWith("http")) {
         // Extract the last part of the IRI as the label
         const parts = value.split("/");
@@ -84,6 +84,10 @@ class ValueFormatter {
           }
         }
       );
+      // Check if the value is an array or an object
+      if (Array.isArray(value) || typeof value === "object") {
+        return JSON.stringify(value);
+      }
       return value;
     }
   }
