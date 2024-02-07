@@ -420,7 +420,6 @@ export default {
       });
 
       this.g6graph.render();
-      this.g6graph.layout();
       this.graphCreated = true;
     },
 
@@ -504,6 +503,7 @@ export default {
           lineWidth: 0,
           fillOpacity: 0,
         },
+        padding: [0, 0, 0, 0],
       });
       return { nodes, edges, combos };
     },
