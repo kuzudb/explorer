@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="wrapper"
-    class="schema-view__wrapper"
-  >
+  <div ref="wrapper" class="schema-view__wrapper">
     <div
       ref="toolsContainer"
       class="schema-view__tools_container"
@@ -52,11 +49,8 @@
       class="schema_graph__wrapper"
       :style="{ width: graphWidth + 'px' }"
     />
-    <div
-      ref="sidePanel"
-      class="schema_side-panel__wrapper"
-    >
-      <br>
+    <div ref="sidePanel" class="schema_side-panel__wrapper">
+      <br />
       <SchemaSidebarOverview
         v-if="schema"
         v-show="!hoveredLabel && clickedLabel === null"
@@ -242,8 +236,7 @@ export default {
         nodeStrength: 100,
         nodeSize: 100,
         nodeSpacing,
-        comboSpacing: 20,
-        comboPadding: 20,
+        comboCollideStrength: 0.2,
       };
       return config;
     },
