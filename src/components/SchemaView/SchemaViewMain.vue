@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="wrapper"
-    class="schema-view__wrapper"
-  >
+  <div ref="wrapper" class="schema-view__wrapper">
     <div
       ref="toolsContainer"
       class="schema-view__tools_container"
@@ -52,11 +49,8 @@
       class="schema_graph__wrapper"
       :style="{ width: graphWidth + 'px' }"
     />
-    <div
-      ref="sidePanel"
-      class="schema_side-panel__wrapper"
-    >
-      <br>
+    <div ref="sidePanel" class="schema_side-panel__wrapper">
+      <br />
       <SchemaSidebarOverview
         v-if="schema"
         v-show="!hoveredLabel && clickedLabel === null"
@@ -137,6 +131,7 @@ import SchemaSidebarOverview from './SchemaSidebarOverview.vue';
 import SchemaActionDialog from './SchemaActionDialog.vue';
 
 const COMBO_LABEL_FONT_SIZE = 18;
+const NULL_PLACEHOLDER_RDF_GRAPH = "null";
 
 export default {
   name: "SchemaViewMain",
@@ -232,15 +227,19 @@ export default {
     },
     getLayoutConfig(edges) {
       const nodeSpacing = edges.length * 5;
-      return {
+      const config = {
         type: 'comboForce',
         preventOverlap: true,
         preventNodeOverlap: true,
+        preventComboOverlap: true,
         linkDistance: 250,
         nodeStrength: 100,
         nodeSize: 100,
         nodeSpacing,
+        comboSpacing: 20,
+        comboPadding: 20,
       };
+      return config;
     },
     drawGraph() {
       if (this.graphCreated && this.g6graph) {
@@ -318,7 +317,6 @@ export default {
             'zoom-canvas',
             { type: 'drag-node', onlyChangeComboSize: true },
             { type: 'drag-combo', onlyChangeComboSize: true },
-            { type: 'collapse-expand-combo', relayout: false },
           ],
         },
         defaultCombo: {
@@ -417,6 +415,7 @@ export default {
       });
 
       this.g6graph.render();
+      this.g6graph.layout();
       this.graphCreated = true;
     },
 
@@ -444,7 +443,7 @@ export default {
             fill:
               n.isPlaceholder ? this.getColor(PLACEHOLDER_NODE_TABLE) : this.getColor(n.name),
           },
-          comboId: n.rdf,
+          comboId: n.rdf ? n.rdf : NULL_PLACEHOLDER_RDF_GRAPH,
         };
       });
 
@@ -492,6 +491,14 @@ export default {
           label: `RDF Graph: ${r.name}`,
           fixCollapseSize: [textWidth, COMBO_LABEL_FONT_SIZE],
         };
+      });
+      combos.push({
+        id: NULL_PLACEHOLDER_RDF_GRAPH,
+        label: "",
+        style: {
+          lineWidth: 0,
+          fillOpacity: 0,
+        },
       });
       return { nodes, edges, combos };
     },
