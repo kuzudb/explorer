@@ -272,7 +272,7 @@ export default {
             style: {
               fontSize: 14,
               fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
-              fontWeight: 600,
+              fontWeight: 500,
               fill: "#ffffff",
             },
           },
@@ -303,7 +303,7 @@ export default {
             style: {
               fontSize: 12,
               fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
-              fontWeight: 600,
+              fontWeight: 350,
             },
             refY: -10,
             autoRotate: true,
