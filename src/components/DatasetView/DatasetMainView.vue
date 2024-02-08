@@ -156,17 +156,18 @@ export default {
   },
   methods: {
     fetchDatasets() {
+      Axios.get('/api/mode').then((response) => {
+        const isProduction = response.mode.isProduction;
+        this.isProduction = isProduction;
+      }).catch((error) => {
+        console.error(error);
+        this.isProduction = true;
+      });
       Axios.get('/api/datasets')
         .then((response) => {
           this.allDatasets = response.data;
           if (!this.selectedDataset && this.allDatasets.length > 0) {
             this.selectedDataset = this.allDatasets[0];
-          }
-          for (const dataset of this.allDatasets) {
-            if (!dataset.isProduction) {
-              this.isProduction = false;
-              break;
-            }
           }
         })
         .catch((error) => {
