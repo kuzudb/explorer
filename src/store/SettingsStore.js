@@ -5,6 +5,7 @@ import {
   PLACEHOLDER_NODE_TABLE,
   PLACEHOLDER_REL_TABLE,
   GPT_MODELS,
+  IRI_PROPERTY_NAME,
 } from "../utils/Constants";
 
 const COLOR_PALETTE = [
@@ -170,11 +171,27 @@ export const useSettingsStore = defineStore("settings", {
       this.graphViz.rels = {};
       schema.nodeTables.forEach((node) => {
         const nodeSettings = this.initDefaultNode(node);
+        if (node.rdf) {
+          const isIriPropertyExist = node.properties.some(
+            (property) => property.name === IRI_PROPERTY_NAME
+          );
+          if (isIriPropertyExist) {
+            nodeSettings.label = IRI_PROPERTY_NAME;
+          }
+        }
         this.graphViz.nodes[node.name] = nodeSettings;
       });
 
       schema.relTables.forEach((rel) => {
         const relSettings = this.initDefaultRel(rel);
+        if (rel.rdf) {
+          const isIriPropertyExist = rel.properties.some(
+            (property) => property.name === IRI_PROPERTY_NAME
+          );
+          if (isIriPropertyExist) {
+            relSettings.label = IRI_PROPERTY_NAME;
+          }
+        }
         this.graphViz.rels[rel.name] = relSettings;
       });
     },

@@ -5,16 +5,20 @@
         <span
           class="badge bg-primary"
           :style="{
-            backgroundColor: ` ${getColor(hoveredLabel)} !important`,
-            color: hoveredIsNode ? '#ffffff' : '#000000',
+            backgroundColor: ` ${getColor(label)} !important`,
+            color: isNode ? '#ffffff' : '#000000',
           }"
         >
-          {{ hoveredLabel }}
+          {{ label }}
         </span>
       </h5>
       <hr>
 
-      <div v-if="!hoveredIsNode">
+      <h6 v-if="rdf">
+        <b>{{ rdf }} </b> RDF graph
+      </h6>
+
+      <div v-if="!isNode">
         <h6>
           <span
             class="badge bg-primary"
@@ -84,48 +88,59 @@
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
 export default {
-  name: "SchemaSidebarOverview",
+  name: "SchemaSidebarReadOnlyView",
   props: {
     schema: {
       type: Object,
       required: true,
     },
-    hoveredLabel: {
+    label: {
       type: String,
       required: true,
     },
-    hoveredIsNode: {
+    isNode: {
       type: Boolean,
       required: true,
     },
   },
   computed: {
     ...mapStores(useSettingsStore),
-    source() {
-      if (!this.schema || !this.hoveredLabel || this.hoveredIsNode) {
+
+    rdf() {
+      if (!this.schema || !this.label) {
         return null;
       }
-      return this.schema.relTables.find(t => t.name === this.hoveredLabel).src;
+      if (this.isNode) {
+        return this.schema.nodeTables.find(t => t.name === this.label).rdf;
+      }
+      return this.schema.relTables.find(t => t.name === this.label).rdf;
+    },
+
+    source() {
+      if (!this.schema || !this.label || this.isNode) {
+        return null;
+      }
+      return this.schema.relTables.find(t => t.name === this.label).src;
     },
 
     destination() {
-      if (!this.schema || !this.hoveredLabel || this.hoveredIsNode) {
+      if (!this.schema || !this.label || this.isNode) {
         return null;
       }
-      return this.schema.relTables.find(t => t.name === this.hoveredLabel).dst;
+      return this.schema.relTables.find(t => t.name === this.label).dst;
     },
 
     tableProperties() {
-      if (!this.schema || !this.hoveredLabel) {
+      if (!this.schema || !this.label) {
         return [];
       }
-      if (this.hoveredIsNode) {
+      if (this.isNode) {
         return this.schema.nodeTables
-          .find(t => t.name === this.hoveredLabel)
+          .find(t => t.name === this.label)
           .properties;
       } else {
         return this.schema.relTables
-          .find(t => t.name === this.hoveredLabel)
+          .find(t => t.name === this.label)
           .properties;
       }
     },

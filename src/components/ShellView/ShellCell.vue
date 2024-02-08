@@ -82,7 +82,7 @@ export default {
   },
 
   methods: {
-    isActive(){
+    isActive() {
       return this.$refs.editor.isActive();
     },
     evaluateCypher(query) {

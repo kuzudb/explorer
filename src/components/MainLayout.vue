@@ -260,6 +260,25 @@ export default {
           r.group = relGroupsMap[r.name];
         }
       });
+      const rdfMap = {};
+      this.schema.rdf.forEach((r) => {
+        r.nodes.forEach((n) => {
+          rdfMap[n] = r.name;
+        });
+        r.rels.forEach((rel) => {
+          rdfMap[rel] = r.name;
+        });
+      });
+      this.schema.nodeTables.forEach((n) => {
+        if (rdfMap[n.name]) {
+          n.rdf = rdfMap[n.name];
+        }
+      });
+      this.schema.relTables.forEach((r) => {
+        if (rdfMap[r.name]) {
+          r.rdf = rdfMap[r.name];
+        }
+      });
     },
     async getMode() {
       const response = await Axios.get("/api/mode");

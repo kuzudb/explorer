@@ -5,7 +5,7 @@
     class="dataset-view__wrapper"
   >
     <div
-      v-if="!isSchemaEmpty && !datasetLoadingLog && modeStore.isReadWrite"
+      v-if="!isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite"
       class="alert alert-warning"
       role="alert"
     >
@@ -16,13 +16,23 @@
     </div>
 
     <div
-      v-if="isSchemaEmpty && !datasetLoadingLog && modeStore.isReadWrite"
+      v-if="isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite"
       class="alert alert-info"
       role="alert"
     >
       <i class="fa-solid fa-info-circle" />
       The schema of the current database is empty. You can load a dataset into the
       database.
+    </div>
+
+    <div
+      v-if="!isProduction && modeStore.isReadWrite"
+      class="alert alert-warning"
+      role="alert"
+    >
+      <i class="fa-solid fa-info-circle" />
+      You are running KùzuExplorer in development mode. You can load any dataset into the
+      database. However, please make sure there is no conflict with the existing schema.
     </div>
 
     <div
@@ -84,7 +94,7 @@
         class="btn btn-lg btn-primary"
         title="Load Dataset"
         :disabled="
-          !isSchemaEmpty ||
+          (!isSchemaEmpty && isProduction) ||
             !selectedDatasetSchema ||
             datasetLoadingLog ||
             !modeStore.isReadWrite
@@ -128,6 +138,7 @@ export default {
     datasetLoadingEnded: false,
     databaseSchemaHash: {},
     allDatasets: [],
+    isProduction: true,
   }),
   computed: {
     isSchemaEmpty() {
@@ -150,6 +161,12 @@ export default {
           this.allDatasets = response.data;
           if (!this.selectedDataset && this.allDatasets.length > 0) {
             this.selectedDataset = this.allDatasets[0];
+          }
+          for (const dataset of this.allDatasets) {
+            if (!dataset.isProduction) {
+              this.isProduction = false;
+              break;
+            }
           }
         })
         .catch((error) => {

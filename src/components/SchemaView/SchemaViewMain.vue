@@ -60,27 +60,34 @@
       <SchemaSidebarOverview
         v-if="schema"
         v-show="!hoveredLabel && clickedLabel === null"
+        ref="overview"
         :schema="schema"
         @drop-table="dropTable"
+        @drop-rdf="dropRdf"
         @edit-table="enterEditTableMode"
         @add-node-table="enterAddNodeTableMode"
         @add-rel-table="enterAddRelTableMode"
         @add-rel-group="enterAddRelGroupMode"
+        @add-rdf="addRdf"
       />
-      <SchemaSidebarHoverView
-        v-if="hoveredLabel !== null && (clickedLabel === null || !modeStore.isReadWrite)"
+      <!-- Read only view for hovered label -->
+      <!-- If edit view is shown, hovering over another label will not change the view -->
+      <SchemaSidebarReadOnlyView
+        v-if="hoveredLabel !== null && (clickedLabel === null || isClickedReadOnly())"
         :schema="schema"
-        :hovered-label="hoveredLabel"
-        :hovered-is-node="hoveredIsNode"
+        :label="hoveredLabel"
+        :is-node="hoveredIsNode"
       />
-      <SchemaSidebarHoverView
-        v-if="clickedLabel !== null && hoveredLabel === null && !modeStore.isReadWrite"
+      <!-- Read only view for clicked label (if it cannot be edited) -->
+      <SchemaSidebarReadOnlyView
+        v-if="clickedLabel !== null && hoveredLabel === null && isClickedReadOnly()"
         :schema="schema"
-        :hovered-label="clickedLabel"
-        :hovered-is-node="clickedIsNode"
+        :label="clickedLabel"
+        :is-node="clickedIsNode"
       />
+      <!-- Edit view for clicked label -->
       <SchemaSidebarEditView
-        v-if="clickedLabel !== null && !clickedIsNewTable && modeStore.isReadWrite"
+        v-if="clickedLabel !== null && !clickedIsNewTable && !isClickedReadOnly()"
         ref="editView"
         :schema="schema"
         :label="clickedLabel"
@@ -125,14 +132,17 @@ import { useModeStore } from "../../store/ModeStore";
 import { mapStores } from 'pinia'
 import SchemaSidebarEditView from './SchemaSidebarEditView.vue';
 import SchemaSidebarAddView from './SchemaSidebarAddView.vue';
-import SchemaSidebarHoverView from './SchemaSidebarHoverView.vue';
+import SchemaSidebarReadOnlyView from './SchemaSidebarReadOnlyView.vue';
 import SchemaSidebarOverview from './SchemaSidebarOverview.vue';
 import SchemaActionDialog from './SchemaActionDialog.vue';
+
+const COMBO_LABEL_FONT_SIZE = 18;
+const NULL_PLACEHOLDER_RDF_GRAPH = "null";
 
 export default {
   name: "SchemaViewMain",
   components: {
-    SchemaSidebarOverview, SchemaSidebarHoverView, SchemaSidebarEditView,
+    SchemaSidebarOverview, SchemaSidebarReadOnlyView, SchemaSidebarEditView,
     SchemaSidebarAddView, SchemaActionDialog
   },
   props: {
@@ -223,14 +233,18 @@ export default {
     },
     getLayoutConfig(edges) {
       const nodeSpacing = edges.length * 5;
-      return {
-        type: 'force',
+      const config = {
+        type: 'comboForce',
         preventOverlap: true,
+        preventNodeOverlap: true,
+        preventComboOverlap: true,
         linkDistance: 250,
-        nodeStrength: -100,
+        nodeStrength: 100,
         nodeSize: 100,
         nodeSpacing,
+        comboCollideStrength: 0.2,
       };
+      return config;
     },
     drawGraph() {
       if (this.graphCreated && this.g6graph) {
@@ -239,7 +253,7 @@ export default {
       if (!this.schema) {
         return;
       }
-      const { nodes, edges } = this.extractGraphFromSchema(this.schema);
+      const { nodes, edges, combos } = this.extractGraphFromSchema(this.schema);
       const container = this.$refs.graph;
       const width = container.offsetWidth;
       const height = container.offsetHeight;
@@ -249,6 +263,7 @@ export default {
         width,
         height,
         linkCenter: false,
+        groupByTypes: false,
         layout: this.getLayoutConfig(edges),
         defaultNode: {
           shape: "circle",
@@ -256,7 +271,7 @@ export default {
             style: {
               fontSize: 14,
               fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
-              fontWeight: 600,
+              fontWeight: 500,
               fill: "#ffffff",
             },
           },
@@ -287,7 +302,7 @@ export default {
             style: {
               fontSize: 12,
               fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
-              fontWeight: 600,
+              fontWeight: 350,
             },
             refY: -10,
             autoRotate: true,
@@ -302,11 +317,33 @@ export default {
           },
         },
         modes: {
-          default: ['drag-canvas', 'zoom-canvas', 'drag-node'],
+          default: [
+            'drag-canvas',
+            'zoom-canvas',
+            { type: 'drag-node', onlyChangeComboSize: true },
+            { type: 'drag-combo', onlyChangeComboSize: true },
+          ],
         },
+        defaultCombo: {
+          type: 'rect',
+          size: [10, 10],
+          padding: [120, 20, 10, 20],
+          style: {
+            lineWidth: 2,
+          },
+          labelCfg: {
+            style: {
+              fontSize: COMBO_LABEL_FONT_SIZE,
+              fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+              fontWeight: 600,
+              fill: "#000",
+            },
+          },
+        },
+        comboStateStyles: {},
       });
 
-      this.g6graph.data({ nodes, edges, });
+      this.g6graph.data({ nodes, edges, combos });
 
       this.g6graph.on('node:mouseenter', (e) => {
         const nodeItem = e.item;
@@ -319,7 +356,6 @@ export default {
         this.g6graph.setItemState(nodeItem, 'hover', false);
         this.resetHover();
       });
-
 
       this.g6graph.on('node:click', (e) => {
         if (this.clickedIsNewTable) {
@@ -411,8 +447,9 @@ export default {
             fill:
               n.isPlaceholder ? this.getColor(PLACEHOLDER_NODE_TABLE) : this.getColor(n.name),
           },
+          comboId: n.rdf ? n.rdf : NULL_PLACEHOLDER_RDF_GRAPH,
         };
-      })
+      });
 
       const edges = schema.relTables.
         map(r => {
@@ -449,7 +486,26 @@ export default {
           }
           return edge;
         }).filter(e => Boolean(e));
-      return { nodes, edges };
+
+      const combos = schema.rdf.map(r => {
+        const label = `RDF Graph: ${r.name}`;
+        const textWidth = G6Utils.calcTextWidth(label, COMBO_LABEL_FONT_SIZE) / 2;
+        return {
+          id: r.name,
+          label: `RDF Graph: ${r.name}`,
+          fixCollapseSize: [textWidth, COMBO_LABEL_FONT_SIZE],
+        };
+      });
+      combos.push({
+        id: NULL_PLACEHOLDER_RDF_GRAPH,
+        label: "",
+        style: {
+          lineWidth: 0,
+          fillOpacity: 0,
+        },
+        padding: [0, 0, 0, 0],
+      });
+      return { nodes, edges, combos };
     },
 
     handleResize() {
@@ -458,6 +514,7 @@ export default {
         const height = this.computeGraphHeight();
         if (this.g6graph) {
           this.g6graph.changeSize(width, height);
+          this.layoutGraph();
           this.g6graph.fitCenter();
         }
       });
@@ -498,6 +555,8 @@ export default {
         this.$nextTick(() => {
           this.cancelAdd();
         });
+      }else if (action.type === SCHEMA_ACTION_TYPES.ADD_RDF) {
+        this.$refs.overview.cancelAddRdf();
       }
     },
 
@@ -595,11 +654,10 @@ export default {
     },
 
     handleSettingsChange() {
-      const { nodes, edges, counters } = this.extractGraphFromSchema(this.schema);
-      this.g6graph.changeData({ nodes, edges });
+      const { nodes, edges, combos } = this.extractGraphFromSchema(this.schema);
+      this.g6graph.changeData({ nodes, edges, combos });
       const layoutConfig = this.getLayoutConfig(edges);
       this.g6graph.updateLayout(layoutConfig);
-      this.counters = counters;
       if (this.clickedLabel) {
         this.setG6Click(this.clickedLabel);
       }
@@ -757,6 +815,14 @@ export default {
       });
     },
 
+    addRdf(name){
+      this.$refs.actionDialog.addRdf(name);
+    },
+
+    dropRdf(rdf) {
+      this.$refs.actionDialog.dropRdf(rdf);
+    },
+
     dropTable(tableName) {
       this.$refs.actionDialog.dropTable(tableName);
     },
@@ -783,6 +849,13 @@ export default {
 
     addProperty({ table, property, defaultValue }) {
       this.$refs.actionDialog.addProperty(table, property, defaultValue);
+    },
+
+    isClickedReadOnly() {
+      const clickedItem = this.clickedIsNode ?
+        this.schema.nodeTables.find(t => t.name === this.clickedLabel) :
+        this.schema.relTables.find(t => t.name === this.clickedLabel);
+      return !this.modeStore.isReadWrite || (clickedItem && (clickedItem.rdf || clickedItem.group));
     },
 
     reloadSchema() {
@@ -840,7 +913,7 @@ export default {
         },
       });
       window.g6AddEdgeBehaviorRegistered = true;
-    }
+    },
   },
 };
 </script>

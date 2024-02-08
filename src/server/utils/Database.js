@@ -5,8 +5,13 @@ const TABLE_TYPES = {
   NODE: "NODE",
   REL: "REL",
   REL_GROUP: "REL_GROUP",
+  RDF: "RDF",
 };
-const MODES = require("./Constants").MODES;
+const RDF_NODE_TABLE_SUFFIXES = ["_l", "_r"];
+const RDF_REL_TABLE_SUFFIXES = ["_lt", "_rt"];
+const CONSTANTS = require("./Constants");
+const MODES = CONSTANTS.MODES;
+const IRI_PROPERTY_NAME = CONSTANTS.IRI_PROPERTY_NAME;
 const READ_WRITE_MODE = MODES.READ_WRITE;
 
 let kuzu;
@@ -137,6 +142,7 @@ class Database {
       const nodeTables = [];
       const relTables = [];
       const relGroups = [];
+      const rdf = [];
       for (const table of tables) {
         const properties = (
           await conn
@@ -168,6 +174,8 @@ class Database {
         } else if (table.type === TABLE_TYPES.REL_GROUP) {
           const name = table.name;
           relGroups.push({ name });
+        } else if (table.type === TABLE_TYPES.RDF) {
+          rdf.push(table);
         }
       }
       relGroups.forEach((relGroup) => {
@@ -175,10 +183,37 @@ class Database {
           .filter((relTable) => isBelongToGroup(relTable, relGroup.name))
           .map((relTable) => relTable.name);
       });
+      const rdfRelTables = new Set();
+      rdf.forEach((r) => {
+        r.nodes = RDF_NODE_TABLE_SUFFIXES.map((suffix) => r.name + suffix);
+        r.rels = RDF_REL_TABLE_SUFFIXES.map((suffix) => {
+          const name = r.name + suffix;
+          rdfRelTables.add(name);
+          return name;
+        });
+      });
+      relTables.forEach((relTable) => {
+        // iri is a virtual property of RDF relationships. It will is not stored
+        // in the schema but will be added when returning a RDF relationship
+        // from the database. We treat it as a property of RDF relationships
+        // for the UI app to be able to display it.
+        if (rdfRelTables.has(relTable.name)) {
+          const isIriPropertyExist = relTable.properties.some((property) => {
+            return property.name === IRI_PROPERTY_NAME;
+          });
+          if (!isIriPropertyExist) {
+            relTable.properties.push({
+              name: IRI_PROPERTY_NAME,
+              type: "STRING",
+            });
+          }
+        }
+      });
       nodeTables.sort((a, b) => a.name.localeCompare(b.name));
       relTables.sort((a, b) => a.name.localeCompare(b.name));
       relGroups.sort((a, b) => a.name.localeCompare(b.name));
-      return { nodeTables, relTables, relGroups };
+      rdf.sort((a, b) => a.name.localeCompare(b.name));
+      return { nodeTables, relTables, relGroups, rdf };
     } finally {
       this.releaseConnection(conn);
     }

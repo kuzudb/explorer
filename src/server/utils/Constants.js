@@ -4,6 +4,9 @@ const MODES = {
     READ_ONLY: "READ_ONLY",
 };
 
+const IRI_PROPERTY_NAME = "iri";
+
 module.exports = {
     MODES,
+    IRI_PROPERTY_NAME,
 };

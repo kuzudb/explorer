@@ -468,7 +468,7 @@ export default {
         } else {
           g6Node.label = rawNode[nodeLabelProp];
           if (nodeLabelProp in expectedPropertiesType) {
-            g6Node.label = ValueFormatter.beautifyValue(rawNode[nodeLabelProp], expectedPropertiesType[nodeLabelProp]);
+            g6Node.label = ValueFormatter.beautifyValue(rawNode[nodeLabelProp], expectedPropertiesType[nodeLabelProp], nodeLabelProp);
           }
           g6Node.label = String(g6Node.label);
           const nodeSize = nodeSettings.g6Settings.size;
@@ -505,7 +505,7 @@ export default {
         } else {
           g6Rel.label = rawRel[relLabelProp];
           if (relLabelProp in expectedPropertiesType) {
-            g6Rel.label = ValueFormatter.beautifyValue(rawRel[relLabelProp], expectedPropertiesType[relLabelProp]);
+            g6Rel.label = ValueFormatter.beautifyValue(rawRel[relLabelProp], expectedPropertiesType[relLabelProp], relLabelProp);
           }
           g6Rel.label = String(g6Rel.label);
           const fontSize = relSettings.g6Settings.labelCfg.style.fontSize;
