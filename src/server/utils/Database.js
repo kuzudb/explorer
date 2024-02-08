@@ -206,6 +206,7 @@ class Database {
       });
       nodeTables.sort((a, b) => a.name.localeCompare(b.name));
       relTables.sort((a, b) => a.name.localeCompare(b.name));
+      
       relGroups.sort((a, b) => a.name.localeCompare(b.name));
       rdf.sort((a, b) => a.name.localeCompare(b.name));
       return { nodeTables, relTables, relGroups, rdf };
