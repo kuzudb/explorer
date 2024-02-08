@@ -1,5 +1,8 @@
 import Moment from "moment";
-import { DATA_TYPES, IRI_PROPERTY_NAME } from "./Constants";
+import {
+  DATA_TYPES,
+  IRI_PROPERTY_NAME,
+} from "./Constants";
 
 class ValueFormatter {
   constructor() {
@@ -52,7 +55,11 @@ class ValueFormatter {
   }
 
   beautifyValue(value, type, propName = "") {
-    if (type === DATA_TYPES.STRING && propName === IRI_PROPERTY_NAME) {
+    if (
+      type === DATA_TYPES.STRING &&
+      (propName === IRI_PROPERTY_NAME)
+    ) {
+      console.log("IRI", value);
       if (value.startsWith("http")) {
         // Extract the last part of the IRI as the label
         const parts = value.split("/");

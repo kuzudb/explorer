@@ -12,6 +12,8 @@ const RDF_REL_TABLE_SUFFIXES = ["_lt", "_rt"];
 const CONSTANTS = require("./Constants");
 const MODES = CONSTANTS.MODES;
 const READ_WRITE_MODE = MODES.READ_WRITE;
+const IRI_PROPERTY_NAME = CONSTANTS.IRI_PROPERTY_NAME;
+const IRI_VIRTUAL_PROPERTY_NAME = CONSTANTS.IRI_VIRTUAL_PROPERTY_NAME;
 
 let kuzu;
 if (process.env.NODE_ENV !== "production") {
@@ -190,6 +192,17 @@ class Database {
           rdfRelTables.add(name);
           return name;
         });
+      });
+      relTables.forEach((relTable) => {
+        if (rdfRelTables.has(relTable.name)) {
+          const indexOfVirtualProperty = relTable.properties.findIndex(
+            (property) => property.name === IRI_VIRTUAL_PROPERTY_NAME
+          );
+          if (indexOfVirtualProperty > -1) {
+            relTable.properties[indexOfVirtualProperty].name =
+              IRI_PROPERTY_NAME;
+          }
+        }
       });
       nodeTables.sort((a, b) => a.name.localeCompare(b.name));
       relTables.sort((a, b) => a.name.localeCompare(b.name));

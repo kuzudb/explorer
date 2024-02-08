@@ -76,4 +76,3 @@ export const PLACEHOLDER_NODE_TABLE = "__placeholder_node_table__";
 export const PLACEHOLDER_REL_TABLE = "__placeholder_rel_table__";
 
 export const IRI_PROPERTY_NAME = "iri";
-export const IRI_VIRTUAL_PROPERTY_NAME = "iri (Virtual)";
