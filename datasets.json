@@ -42,7 +42,7 @@
     {
       "name": "RDF SPB",
       "path": "rdf/spb",
-      "isProduction": false,
+      "isProduction": true,
       "description": ""
     },
     {
