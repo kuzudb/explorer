@@ -242,6 +242,7 @@ export default {
         nodeStrength: 100,
         nodeSize: 100,
         nodeSpacing,
+        comboSpacing: 10,
         comboCollideStrength: 0.2,
       };
       return config;

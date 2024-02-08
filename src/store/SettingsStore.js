@@ -6,6 +6,7 @@ import {
   PLACEHOLDER_REL_TABLE,
   GPT_MODELS,
   IRI_PROPERTY_NAME,
+  IRI_VIRTUAL_PROPERTY_NAME,
 } from "../utils/Constants";
 
 const COLOR_PALETTE = [
@@ -186,10 +187,10 @@ export const useSettingsStore = defineStore("settings", {
         const relSettings = this.initDefaultRel(rel);
         if (rel.rdf) {
           const isIriPropertyExist = rel.properties.some(
-            (property) => property.name === IRI_PROPERTY_NAME
+            (property) => property.name === IRI_VIRTUAL_PROPERTY_NAME
           );
           if (isIriPropertyExist) {
-            relSettings.label = IRI_PROPERTY_NAME;
+            relSettings.label = IRI_VIRTUAL_PROPERTY_NAME;
           }
         }
         this.graphViz.rels[rel.name] = relSettings;

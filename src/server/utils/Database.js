@@ -5,13 +5,12 @@ const TABLE_TYPES = {
   NODE: "NODE",
   REL: "REL",
   REL_GROUP: "REL_GROUP",
-  RDF: "RDF",
+  RDF: "RDFGraph",
 };
 const RDF_NODE_TABLE_SUFFIXES = ["_l", "_r"];
 const RDF_REL_TABLE_SUFFIXES = ["_lt", "_rt"];
 const CONSTANTS = require("./Constants");
 const MODES = CONSTANTS.MODES;
-const IRI_PROPERTY_NAME = CONSTANTS.IRI_PROPERTY_NAME;
 const READ_WRITE_MODE = MODES.READ_WRITE;
 
 let kuzu;
@@ -191,23 +190,6 @@ class Database {
           rdfRelTables.add(name);
           return name;
         });
-      });
-      relTables.forEach((relTable) => {
-        // iri is a virtual property of RDF relationships. It will is not stored
-        // in the schema but will be added when returning a RDF relationship
-        // from the database. We treat it as a property of RDF relationships
-        // for the UI app to be able to display it.
-        if (rdfRelTables.has(relTable.name)) {
-          const isIriPropertyExist = relTable.properties.some((property) => {
-            return property.name === IRI_PROPERTY_NAME;
-          });
-          if (!isIriPropertyExist) {
-            relTable.properties.push({
-              name: IRI_PROPERTY_NAME,
-              type: "STRING",
-            });
-          }
-        }
       });
       nodeTables.sort((a, b) => a.name.localeCompare(b.name));
       relTables.sort((a, b) => a.name.localeCompare(b.name));
