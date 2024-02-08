@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-if="schema"
-    ref="wrapper"
-    class="dataset-view__wrapper"
-  >
+  <div v-if="schema" ref="wrapper" class="dataset-view__wrapper">
     <div
       v-if="!isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite"
       class="alert alert-warning"
@@ -35,59 +31,38 @@
       database. However, please make sure there is no conflict with the existing schema.
     </div>
 
-    <div
-      v-if="modeStore.isReadOnly"
-      class="alert alert-warning"
-      role="alert"
-    >
+    <div v-if="modeStore.isReadOnly" class="alert alert-warning" role="alert">
       <i class="fa-solid fa-info-circle" />
       KùzuExplorer is running in read-only mode. You can still review the schema of the
       bundled datasets. If you want to load a dataset, please restart your KùzuExplorer
       Docker image in read-write mode with an empty database.
     </div>
 
-    <div
-      v-if="modeStore.isDemo"
-      class="alert alert-warning"
-      role="alert"
-    >
+    <div v-if="modeStore.isDemo" class="alert alert-warning" role="alert">
       <i class="fa-solid fa-info-circle" />
       KùzuExplorer is running in demo mode. You can still review the schema of the bundled
       datasets. Loading a dataset is not possible in this demo. However, you can load a
       bundled dataset or use your own dataset if you run KùzuExplorer locally. Please
       refer to
-      <a
-        target="_blank"
-        href="https://kuzudb.com/docusaurus/kuzuexplorer/"
-      >
-        the documentation </a>for more information.
+      <a target="_blank" href="https://kuzudb.com/docusaurus/kuzuexplorer/">
+        the documentation </a
+      >for more information.
     </div>
-    <div
-      v-if="!datasetLoadingLog"
-      class="form-group"
-    >
+    <div v-if="!datasetLoadingLog" class="form-group">
       <label for="dataset-select">
         <h6>Select a dataset from the list below to review its schema.</h6>
       </label>
-      <select
-        id="dataset-select"
-        v-model="selectedDataset"
-        class="form-select"
-      >
-        <option
-          v-for="dataset in allDatasets"
-          :key="dataset"
-          :value="dataset"
-        >
+      <select id="dataset-select" v-model="selectedDataset" class="form-select">
+        <option v-for="dataset in allDatasets" :key="dataset" :value="dataset">
           {{ dataset }}
         </option>
       </select>
     </div>
-    <br>
+    <br />
     <code v-if="selectedDatasetSchema || datasetLoadingLog">
       <pre v-text="datasetLoadingLog ? datasetLoadingLog : selectedDatasetSchema" />
     </code>
-    <br>
+    <br />
     <div>
       <button
         v-if="!datasetLoadingEnded"
@@ -95,9 +70,9 @@
         title="Load Dataset"
         :disabled="
           (!isSchemaEmpty && isProduction) ||
-            !selectedDatasetSchema ||
-            datasetLoadingLog ||
-            !modeStore.isReadWrite
+          !selectedDatasetSchema ||
+          datasetLoadingLog ||
+          !modeStore.isReadWrite
         "
         @click="copyDataset"
       >
@@ -156,17 +131,18 @@ export default {
   },
   methods: {
     fetchDatasets() {
+      Axios.get('/api/mode').then((response) => {
+        const isProduction = response.mode.isProduction;
+        this.isProduction = isProduction;
+      }).catch((error) => {
+        console.error(error);
+        this.isProduction = true;
+      });
       Axios.get('/api/datasets')
         .then((response) => {
           this.allDatasets = response.data;
           if (!this.selectedDataset && this.allDatasets.length > 0) {
             this.selectedDataset = this.allDatasets[0];
-          }
-          for (const dataset of this.allDatasets) {
-            if (!dataset.isProduction) {
-              this.isProduction = false;
-              break;
-            }
           }
         })
         .catch((error) => {
