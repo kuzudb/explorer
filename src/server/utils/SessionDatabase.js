@@ -3,7 +3,6 @@ const fs = require("fs").promises;
 const sqlite3 = require("sqlite3");
 const sqlite = require("sqlite");
 const constants = require("./Constants");
-const logger = require("./Logger");
 
 const MODES = constants.MODES;
 const DB_FILE_NAME = "explorer.db";
@@ -76,11 +75,6 @@ class SessionDatabase {
           return;
         }
       }
-      setTimeout(() => {
-        logger.info(
-          `isDbFileExists: ${isDbFileExists}, this.isReadOnly: ${this.isReadOnly}`
-        );
-      }, 10000);
       this.db = await sqlite.open({
         filename: this.dbPath,
         driver: sqlite3.Database,
