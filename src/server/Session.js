@@ -21,4 +21,22 @@ router.post("/settings", async (req, res) => {
   }
 });
 
+router.get("/history", async (_, res) => {
+  try {
+    const history = await sessionDb.getHistoryItems();
+    res.send(history);
+  } catch (err) {
+    return res.status(400).send({ error: err.message });
+  }
+});
+
+router.delete("/history/:uuid", async (req, res) => {
+  try {
+    await sessionDb.deleteHistoryItem(req.params.uuid);
+    res.send({ success: true });
+  } catch (err) {
+    return res.status(400).send({ error: err.message });
+  }
+});
+
 module.exports = router;
