@@ -19,10 +19,7 @@
       :is-maximized="isMaximized"
       :navbar-height="navbarHeight"
     />
-    <div
-      v-if="isLoading"
-      class="d-flex align-items-center"
-    >
+    <div v-if="isLoading" class="d-flex align-items-center">
       <strong class="text-secondary">{{
         loadingText ? loadingText : "Loading..."
       }}</strong>
@@ -90,7 +87,12 @@ export default {
       this.errorMessage = "";
       this.isLoading = true;
       this.loadingText = "Evaluating query...";
-      Axios.post("/api/cypher", { query })
+      Axios.post("/api/cypher",
+        {
+          query,
+          uuid: this.cellId,
+          isQueryGenerationMode: this.$refs.editor.isQueryGenerationMode
+        })
         .then((res) => {
           this.queryResult = res.data;
           this.queryString = query;
@@ -158,6 +160,8 @@ export default {
         question,
         token,
         model,
+        uuid: this.cellId,
+        isQueryGenerationMode: this.$refs.editor.isQueryGenerationMode
       };
       Axios.post(url, data)
         .then((res) => {

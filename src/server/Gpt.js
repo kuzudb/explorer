@@ -2,6 +2,7 @@ const openai = require("openai").OpenAI;
 const express = require("express");
 const router = express.Router();
 const database = require("./utils/Database");
+const sessionDb = require("./utils/SessionDatabase");
 
 const getPrompt = (question, schema) => {
   const prompt = `Task:Generate Cypher statement for Kùzu Graph Database Mangagement System to query a graph database.
@@ -61,7 +62,18 @@ router.post("/", async (req, res) => {
   let query;
   try {
     query = chatCompletion.choices[0].message.content;
-    query  = query.split("\n").join(" ");
+    query = query.split("\n").join(" ");
+    try {
+      await sessionDb.upsertHistoryItem({
+        uuid: req.body.uuid,
+        isQueryGenerationMode: Boolean(req.body.isQueryGenerationMode),
+        gptQuestion: question,
+        cypherQuery: query,
+      });
+    } catch (err) {
+      // Ignore the error. It fails to record the history, but the query is
+      // still executed.
+    }
     res.send({ query, prompt, schema, model });
   } catch (err) {
     return res

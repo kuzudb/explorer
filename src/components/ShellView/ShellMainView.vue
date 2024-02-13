@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="shell-main-view__wrapper"
-    :style="{ height: `${containerHeight}px` }"
-  >
+  <div class="shell-main-view__wrapper" :style="{ height: `${containerHeight}px` }">
     <ShellCell
       v-for="(cell, index) in shellCell"
       v-show="index === maximizedCellIndex || maximizedCellIndex < 0"
@@ -23,6 +20,7 @@
 <script lang="js">
 import ShellCell from "./ShellCell.vue";
 import { v4 as uuidv4 } from 'uuid';
+import Axios from "axios";
 export default {
   name: "ShellMainView",
   components: {
@@ -75,12 +73,24 @@ export default {
       this.containerHeight = window.innerHeight - this.navbarHeight;
     },
     removeCell(index) {
+      const uuid = this.shellCell[index].cellId;
       this.shellCell.splice(index, 1);
       this.$nextTick(() => {
         if (this.shellCell.length === 0) {
           this.shellCell.push(this.createCell());
         }
       });
+      if (!uuid) {
+        return;
+      }
+      try {
+        this.removeCellFromHistory(uuid);
+      } catch (e) {
+        // Ignore
+      }
+    },
+    removeCellFromHistory(uuid) {
+      return Axios.delete(`/api/session/history/${uuid}`);
     },
     addCell() {
       const cell = this.createCell();

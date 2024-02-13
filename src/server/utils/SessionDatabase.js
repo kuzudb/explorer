@@ -139,15 +139,13 @@ class SessionDatabase {
     }
     await this.db.run("BEGIN TRANSACTION;");
     try {
-      const { uuid, isQueryGenerationMode, gptQuestion, cypherQuery } =
+      let { uuid, isQueryGenerationMode, gptQuestion, cypherQuery } =
         historyItem;
-      const count = (
-        await this.db.get(
-          "SELECT COUNT(*) as count FROM history WHERE uuid = ?",
-          uuid
-        )
-      ).count;
-      if (count === 0) {
+      const currentRow = await this.db.get(
+        "SELECT * FROM history WHERE uuid = ?",
+        uuid
+      );
+      if (!currentRow) {
         await this.db.run(
           "INSERT INTO history (uuid, isQueryGenerationMode, gptQuestion, cypherQuery) VALUES (?, ?, ?, ?)",
           uuid,
@@ -156,6 +154,12 @@ class SessionDatabase {
           cypherQuery
         );
       } else {
+        if (!gptQuestion) {
+          gptQuestion = currentRow.gptQuestion;
+        }
+        if (!cypherQuery) {
+          cypherQuery = currentRow.cypherQuery;
+        }
         await this.db.run(
           "UPDATE history SET isQueryGenerationMode = ?, gptQuestion = ?, cypherQuery = ? WHERE uuid = ?",
           isQueryGenerationMode,
