@@ -108,7 +108,7 @@ export default {
       default: false,
     },
   },
-emits: ['remove', 'evaluateCypher', 'toggleMaximize', 'generateAndEvaluateQuery'],
+  emits: ['remove', 'evaluateCypher', 'toggleMaximize', 'generateAndEvaluateQuery'],
   data: () => {
     return {
       name: "CypherEditor",
@@ -229,10 +229,15 @@ emits: ['remove', 'evaluateCypher', 'toggleMaximize', 'generateAndEvaluateQuery'
     removeCell() {
       this.$emit("remove");
     },
-    isActive(){
+    isActive() {
       return (this.isQueryGenerationMode && this.$refs.gptQuestionTextArea === document.activeElement) ||
         (!this.isQueryGenerationMode && this.editor && this.editor.hasTextFocus());
-    }
+    },
+    loadFromHistory(history) {
+      this.isQueryGenerationMode = history.isQueryGenerationMode;
+      this.gptQuestion = history.gptQuestion;
+      this.setEditorContent(history.cypherQuery);
+    },
   },
 }
 </script>

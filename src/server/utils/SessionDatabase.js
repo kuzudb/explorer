@@ -87,6 +87,10 @@ class SessionDatabase {
     return this.sqlInitPromise;
   }
 
+  isWritable() {
+    return this.isInitialized && !this.isReadOnly;
+  }
+
   async createDbSchema() {
     await this.db.exec(`
       CREATE TABLE settings (
@@ -118,10 +122,7 @@ class SessionDatabase {
 
   async setSetting(value, key = "allSettings") {
     await this.initSqlite();
-    if (!this.isInitialized) {
-      return;
-    }
-    if (this.isReadOnly) {
+    if (!this.isWritable()) {
       return;
     }
     await this.db.run(
@@ -129,6 +130,67 @@ class SessionDatabase {
       key,
       JSON.stringify(value)
     );
+  }
+
+  async upsertHistoryItem(historyItem) {
+    await this.initSqlite();
+    if (!this.isWritable()) {
+      return;
+    }
+    await this.db.run("BEGIN TRANSACTION;");
+    try {
+      let { uuid, isQueryGenerationMode, gptQuestion, cypherQuery } =
+        historyItem;
+      const currentRow = await this.db.get(
+        "SELECT * FROM history WHERE uuid = ?",
+        uuid
+      );
+      if (!currentRow) {
+        await this.db.run(
+          "INSERT INTO history (uuid, isQueryGenerationMode, gptQuestion, cypherQuery) VALUES (?, ?, ?, ?)",
+          uuid,
+          isQueryGenerationMode,
+          gptQuestion,
+          cypherQuery
+        );
+      } else {
+        if (!gptQuestion) {
+          gptQuestion = currentRow.gptQuestion;
+        }
+        if (!cypherQuery) {
+          cypherQuery = currentRow.cypherQuery;
+        }
+        await this.db.run(
+          "UPDATE history SET isQueryGenerationMode = ?, gptQuestion = ?, cypherQuery = ? WHERE uuid = ?",
+          isQueryGenerationMode,
+          gptQuestion,
+          cypherQuery,
+          uuid
+        );
+      }
+      await this.db.run("COMMIT;");
+    } catch (err) {
+      await this.db.run("ROLLBACK;");
+    }
+  }
+
+  async deleteHistoryItem(uuid) {
+    await this.initSqlite();
+    if (!this.isWritable()) {
+      return;
+    }
+    await this.db.run("DELETE FROM history WHERE uuid = ?", uuid);
+  }
+
+  async getHistoryItems() {
+    await this.initSqlite();
+    if (!this.isInitialized) {
+      return [];
+    }
+    const historyItems = await this.db.all(
+      "SELECT *, rowid FROM history ORDER BY rowid DESC"
+    );
+    return historyItems;
   }
 }
 

@@ -1,8 +1,9 @@
-const database = require("./utils/Database");
 const express = require("express");
 const router = express.Router();
 const logger = require("./utils/Logger");
 const MODES = require("./utils/Constants").MODES;
+const database = require("./utils/Database");
+const sessionDb = require("./utils/SessionDatabase");
 
 const DEMO_MODE = MODES.DEMO;
 
@@ -67,16 +68,29 @@ router.post("/", async (req, res) => {
     if (mode === MODES.READ_WRITE) {
       const currentSchema = await database.getSchema();
       isSchemaChanged =
-          JSON.stringify(schema) !== JSON.stringify(currentSchema);
+        JSON.stringify(schema) !== JSON.stringify(currentSchema);
     }
     // This is a workaround for the JSON stringify issue with INT128 values
     const replacer = (key, value) => {
-      if (typeof value === 'bigint') {
+      if (typeof value === "bigint") {
         return value.toString();
       }
       return value;
     };
-    const responseBody = JSON.stringify({ rows, dataTypes, isSchemaChanged }, replacer);
+    const responseBody = JSON.stringify(
+      { rows, dataTypes, isSchemaChanged },
+      replacer
+    );
+    try {
+      await sessionDb.upsertHistoryItem({
+        uuid: req.body.uuid,
+        isQueryGenerationMode: Boolean(req.body.isQueryGenerationMode),
+        cypherQuery: query,
+      });
+    } catch (err) {
+      // Ignore the error. It fails to record the history, but the query is
+      // still executed.
+    }
     return res.send(responseBody);
   } catch (err) {
     return res.status(400).send({ error: err.message });

@@ -85,12 +85,21 @@ export default {
     isActive() {
       return this.$refs.editor.isActive();
     },
+    loadEditorFromHistory(history) {
+      this.isEvaluated = true;
+      this.$refs.editor.loadFromHistory(history);
+    },
     evaluateCypher(query) {
       this.queryResult = null;
       this.errorMessage = "";
       this.isLoading = true;
       this.loadingText = "Evaluating query...";
-      Axios.post("/api/cypher", { query })
+      Axios.post("/api/cypher",
+        {
+          query,
+          uuid: this.cellId,
+          isQueryGenerationMode: this.$refs.editor.isQueryGenerationMode
+        })
         .then((res) => {
           this.queryResult = res.data;
           this.queryString = query;
@@ -158,6 +167,8 @@ export default {
         question,
         token,
         model,
+        uuid: this.cellId,
+        isQueryGenerationMode: this.$refs.editor.isQueryGenerationMode
       };
       Axios.post(url, data)
         .then((res) => {

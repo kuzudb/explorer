@@ -23,6 +23,7 @@
 <script lang="js">
 import ShellCell from "./ShellCell.vue";
 import { v4 as uuidv4 } from 'uuid';
+import Axios from "axios";
 export default {
   name: "ShellMainView",
   components: {
@@ -58,6 +59,7 @@ export default {
     });
     window.addEventListener("resize", this.updateContainerHeight);
     document.addEventListener("keydown", this.handleKeyDown);
+    this.loadCellsFromHistory();
   },
 
   beforeUnmount() {
@@ -75,11 +77,48 @@ export default {
       this.containerHeight = window.innerHeight - this.navbarHeight;
     },
     removeCell(index) {
+      const uuid = this.shellCell[index].cellId;
       this.shellCell.splice(index, 1);
       this.$nextTick(() => {
         if (this.shellCell.length === 0) {
           this.shellCell.push(this.createCell());
         }
+      });
+      if (!uuid) {
+        return;
+      }
+      try {
+        this.removeCellFromHistory(uuid);
+      } catch (e) {
+        // Ignore
+      }
+    },
+    removeCellFromHistory(uuid) {
+      return Axios.delete(`/api/session/history/${uuid}`);
+    },
+    loadCellHistoryFromServer() {
+      return Axios.get("/api/session/history").then(res => res.data);
+    },
+    async loadCellsFromHistory() {
+      const history = await this.loadCellHistoryFromServer();
+      history.map(cell => {
+        return {
+          cellId: cell.uuid,
+        };
+      }).forEach(cell => {
+        if (this.isCellAddedToTheEnd) {
+          this.shellCell.unshift(cell);
+        }
+        else {
+          this.shellCell.push(cell);
+        }
+      });
+      this.$nextTick(() => {
+        history.forEach((cell) => {
+          const uuid = cell.uuid;
+          const cellRef = this.$refs[this.getCellRefById(uuid)][0];
+          cellRef.loadEditorFromHistory(cell);
+        });
       });
     },
     addCell() {
@@ -102,6 +141,9 @@ export default {
     },
     getCellRef(index) {
       return `shell-cell-${this.shellCell[index].cellId}`;
+    },
+    getCellRefById(uuid) {
+      return `shell-cell-${uuid}`;
     },
     handleKeyDown(event) {
       if (event.shiftKey && event.key === "Enter") {
