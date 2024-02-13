@@ -721,6 +721,9 @@ export default {
 
     handleSettingsChange() {
       const { nodes, edges, counters } = this.extractGraphFromQueryResult(this.queryResult);
+      if (!this.g6graph) {
+        return;
+      }
       this.g6graph.changeData({ nodes, edges });
       this.counters = counters;
     }

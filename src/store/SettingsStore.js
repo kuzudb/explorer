@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import randomcolor from "randomcolor";
+import Axios from "axios";
 import {
   SHOW_REL_LABELS_OPTIONS,
   PLACEHOLDER_NODE_TABLE,
@@ -150,6 +151,14 @@ export const useSettingsStore = defineStore("settings", {
         g6Settings,
         label,
       };
+      if (node.rdf) {
+        const isIriPropertyExist = node.properties.some(
+          (property) => property.name === IRI_PROPERTY_NAME
+        );
+        if (isIriPropertyExist) {
+          nodeSettings.label = IRI_PROPERTY_NAME;
+        }
+      }
       return nodeSettings;
     },
 
@@ -163,37 +172,55 @@ export const useSettingsStore = defineStore("settings", {
         g6Settings,
         label,
       };
+      if (rel.rdf) {
+        const isIriPropertyExist = rel.properties.some(
+          (property) => property.name === IRI_PROPERTY_NAME
+        );
+        if (isIriPropertyExist) {
+          relSettings.label = IRI_PROPERTY_NAME;
+        }
+      }
       return relSettings;
     },
 
-    initDefaultSettings(schema) {
+    initSettings(schema, storedSettings) {
+      const storedSettingsCopy = JSON.parse(JSON.stringify(storedSettings));
+      if (storedSettingsCopy.graphViz) {
+        this.graphViz = storedSettingsCopy.graphViz;
+      }
+      if (storedSettingsCopy.performance) {
+        this.performance = storedSettingsCopy.performance;
+      }
+      if (storedSettingsCopy.tableView) {
+        this.tableView = storedSettingsCopy.tableView;
+      }
+      if (storedSettingsCopy.schemaView) {
+        this.schemaView = storedSettingsCopy.schemaView;
+      }
+      if (storedSettingsCopy.gpt) {
+        this.gpt.model = storedSettingsCopy.gpt.model;
+      }
+      if (storedSettingsCopy.colors) {
+        this.colors = storedSettingsCopy.colors;
+      }
+      // The schema may be changed outside of KùzuExplorer, so we reset the
+      // graphViz settings and merge the stored settings with current schema.
       this.graphViz.nodes = {};
       this.graphViz.rels = {};
+      const storedGraphViz = storedSettings.graphViz || { nodes: {}, rels: {} };
       schema.nodeTables.forEach((node) => {
-        const nodeSettings = this.initDefaultNode(node);
-        if (node.rdf) {
-          const isIriPropertyExist = node.properties.some(
-            (property) => property.name === IRI_PROPERTY_NAME
-          );
-          if (isIriPropertyExist) {
-            nodeSettings.label = IRI_PROPERTY_NAME;
-          }
-        }
+        const nodeSettings =
+          storedGraphViz.nodes[node.name] || this.initDefaultNode(node);
         this.graphViz.nodes[node.name] = nodeSettings;
       });
 
       schema.relTables.forEach((rel) => {
-        const relSettings = this.initDefaultRel(rel);
-        if (rel.rdf) {
-          const isIriPropertyExist = rel.properties.some(
-            (property) => property.name === IRI_PROPERTY_NAME
-          );
-          if (isIriPropertyExist) {
-            relSettings.label = IRI_PROPERTY_NAME;
-          }
-        }
+        const relSettings =
+          storedGraphViz.rels[rel.name] || this.initDefaultRel(rel);
         this.graphViz.rels[rel.name] = relSettings;
       });
+      this.loadGptApiTokenFromLocalStorage();
+      this.uploadSettings();
     },
 
     updateSettings(settings) {
@@ -202,6 +229,8 @@ export const useSettingsStore = defineStore("settings", {
       this.tableView = settings.tableView;
       this.schemaView = settings.schemaView;
       this.gpt = settings.gpt;
+      this.saveGptApiTokenToLocalStorage();
+      this.uploadSettings();
     },
 
     handleSchemaReload(schema) {
@@ -229,6 +258,7 @@ export const useSettingsStore = defineStore("settings", {
           this.graphViz.rels[rel.name] = relSettings;
         }
       });
+      this.uploadSettings();
     },
 
     addNewNodeTable(name) {
@@ -322,6 +352,19 @@ export const useSettingsStore = defineStore("settings", {
       } else {
         localStorage.setItem("gptApiToken", this.gpt.apiToken);
       }
+    },
+
+    clearGptApiToken() {
+      localStorage.removeItem("gptApiToken");
+    },
+
+    uploadSettings() {
+      const settings = JSON.parse(JSON.stringify(this.allSettings));
+      settings.colors = this.colors;
+      delete settings.gpt.apiToken;
+      return Axios.post("/api/session/settings", settings).then((response) => {
+        return response.data;
+      });
     },
   },
 });

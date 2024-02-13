@@ -208,7 +208,12 @@
               href="https://platform.openai.com/"
               target="_blank"
             >OpenAI</a>. We only
-            store the API key in your browser.
+            store the API key in your browser. Click
+            <a
+              href="#"
+              @click="clearGptToken()"
+            >here</a> to clear the API key from the
+            browser.
           </small>
         </div>
 
@@ -289,7 +294,6 @@ export default {
     },
     saveAndHideModal() {
       this.settingsStore.updateSettings(this.currentSettings);
-      this.settingsStore.saveGptApiTokenToLocalStorage();
       this.$nextTick(() => {
         this.hideModal();
       });
@@ -330,6 +334,10 @@ export default {
       // Bootstrap modal can also be closed by clicking outside of the modal.
       // This way ensures that we can get the event when the modal is closed.
       this.currentSettings = {};
+    },
+    clearGptToken() {
+      this.currentSettings.gpt.apiToken = "";
+      this.settingsStore.clearGptApiToken();
     },
   },
 }

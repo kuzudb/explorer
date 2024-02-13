@@ -231,7 +231,6 @@ export default {
     this.updateNavbarHeight();
     this.accessModeModal = new Modal(this.$refs.modal);
     window.addEventListener("resize", this.updateNavbarHeight);
-    this.loadGptApiTokenFromLocalStorage();
   },
   beforeUnmount() {
     this.accessModeModal.dispose();
@@ -239,8 +238,9 @@ export default {
   },
   created() {
     this.getMode();
-    this.getSchema().then(() => {
-      this.initDefaultSettings(this.schema);
+    Promise.all([this.getSchema(), this.getStoredSettings()]).then((res) => {
+      const storedSettings = res[1];
+      this.initSettings(this.schema, storedSettings);
       this.$refs.schemaView.drawGraph();
     });
   },
@@ -289,6 +289,9 @@ export default {
           this.accessModeModal.show();
         }
       });
+    },
+    async getStoredSettings() {
+      return (await Axios.get("/api/session/settings")).data;
     },
     async reloadSchema() {
       await this.getSchema();
@@ -384,13 +387,12 @@ export default {
       this.navbarHeight = this.$refs.navbar.clientHeight;
     },
     ...mapActions(useSettingsStore, [
-      'initDefaultSettings',
+      'initSettings',
       'handleSchemaReload',
       'setPlaceholderNodeTable',
       'setPlaceholderRelTable',
       'unsetPlaceholderNodeTable',
       'unsetPlaceholderRelTable',
-      'loadGptApiTokenFromLocalStorage'
     ])
   },
 };
