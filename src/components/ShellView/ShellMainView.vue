@@ -1,5 +1,8 @@
 <template>
-  <div class="shell-main-view__wrapper" :style="{ height: `${containerHeight}px` }">
+  <div
+    class="shell-main-view__wrapper"
+    :style="{ height: `${containerHeight}px` }"
+  >
     <ShellCell
       v-for="(cell, index) in shellCell"
       v-show="index === maximizedCellIndex || maximizedCellIndex < 0"
