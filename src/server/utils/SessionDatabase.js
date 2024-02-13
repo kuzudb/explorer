@@ -1,5 +1,5 @@
 const path = require("path");
-const fs = require("fs/promises");
+const fs = require("fs").promises;
 const sqlite3 = require("sqlite3");
 const sqlite = require("sqlite");
 const constants = require("./Constants");
@@ -16,7 +16,9 @@ class SessionDatabase {
       return;
     }
     this.dbPath = path.resolve(path.join(dbPath, DB_FILE_NAME));
-    this.isReadOnly = process.env.MODE && process.env.MODE !== MODES.READ_WRITE;
+    this.isReadOnly = !!(
+      process.env.MODE && process.env.MODE !== MODES.READ_WRITE
+    );
     this.initSqlite();
   }
 
@@ -28,14 +30,28 @@ class SessionDatabase {
       return this.sqlInitPromise;
     }
     this.sqlInitPromise = (async () => {
-      console.log("this.dbPath", this.dbPath);
       let isDbFileExists = false;
       try {
-        isDbFileExists = await fs.access(this.dbPath, fs.constants.F_OK);
+        await fs.access(this.dbPath, fs.constants.R_OK);
+        isDbFileExists = true;
       } catch (err) {
         // File does not exist
       }
-      if (!isDbFileExists) {
+      // Double check if the file is writable
+      if (isDbFileExists) {
+        try {
+          await fs.access(this.dbPath, fs.constants.W_OK);
+        } catch (err) {
+          this.isReadOnly = true;
+        }
+      } else {
+        try {
+          await fs.writeFile(this.dbPath, "");
+          await fs.access(this.dbPath, fs.constants.W_OK);
+          await fs.unlink(this.dbPath);
+        } catch (err) {
+          this.isReadOnly = true;
+        }
         if (this.isReadOnly) {
           // In read-only mode, if the db file does not exist, we should not create it,
           // but if it exists, we can still use it.
@@ -60,6 +76,11 @@ class SessionDatabase {
           return;
         }
       }
+      setTimeout(() => {
+        logger.info(
+          `isDbFileExists: ${isDbFileExists}, this.isReadOnly: ${this.isReadOnly}`
+        );
+      }, 10000);
       this.db = await sqlite.open({
         filename: this.dbPath,
         driver: sqlite3.Database,
@@ -102,15 +123,18 @@ class SessionDatabase {
     return settings;
   }
 
-  async setSetting(key = "allSettings", value) {
+  async setSetting(value, key = "allSettings") {
     await this.initSqlite();
     if (!this.isInitialized) {
       return;
     }
+    if (this.isReadOnly) {
+      return;
+    }
     await this.db.run(
-      "INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)",
+      `INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)`,
       key,
-      value
+      JSON.stringify(value)
     );
   }
 }

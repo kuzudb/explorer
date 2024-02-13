@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import randomcolor from "randomcolor";
+import Axios from "axios";
 import {
   SHOW_REL_LABELS_OPTIONS,
   PLACEHOLDER_NODE_TABLE,
@@ -203,6 +204,7 @@ export const useSettingsStore = defineStore("settings", {
         this.graphViz.rels[rel.name] = relSettings;
       });
       this.loadGptApiTokenFromLocalStorage();
+      this.uploadSettings();
     },
 
     updateSettings(settings) {
@@ -212,6 +214,7 @@ export const useSettingsStore = defineStore("settings", {
       this.schemaView = settings.schemaView;
       this.gpt = settings.gpt;
       this.saveGptApiTokenToLocalStorage();
+      this.uploadSettings();
     },
 
     handleSchemaReload(schema) {
@@ -239,6 +242,7 @@ export const useSettingsStore = defineStore("settings", {
           this.graphViz.rels[rel.name] = relSettings;
         }
       });
+      this.uploadSettings();
     },
 
     addNewNodeTable(name) {
@@ -332,6 +336,18 @@ export const useSettingsStore = defineStore("settings", {
       } else {
         localStorage.setItem("gptApiToken", this.gpt.apiToken);
       }
+    },
+
+    clearGptApiToken() {
+      localStorage.removeItem("gptApiToken");
+    },
+
+    uploadSettings() {
+      const settings = JSON.parse(JSON.stringify(this.allSettings));
+      delete settings.gpt.apiToken;
+      return Axios.post("/api/session/settings", settings).then((response) => {
+        return response.data;
+      });
     },
   },
 });

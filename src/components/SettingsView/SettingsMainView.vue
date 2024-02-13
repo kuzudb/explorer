@@ -296,6 +296,10 @@ export default {
       // This way ensures that we can get the event when the modal is closed.
       this.currentSettings = {};
     },
+    clearGptToken() {
+      this.currentSettings.gpt.apiToken = "";
+      this.settingsStore.clearGptApiToken();
+    },
   },
 }
 </script>

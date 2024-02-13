@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="wrapper"
-    class="schema-view__wrapper"
-  >
+  <div ref="wrapper" class="schema-view__wrapper">
     <div
       ref="toolsContainer"
       class="schema-view__tools_container"
@@ -52,11 +49,8 @@
       class="schema_graph__wrapper"
       :style="{ width: graphWidth + 'px' }"
     />
-    <div
-      ref="sidePanel"
-      class="schema_side-panel__wrapper"
-    >
-      <br>
+    <div ref="sidePanel" class="schema_side-panel__wrapper">
+      <br />
       <SchemaSidebarOverview
         v-if="schema"
         v-show="!hoveredLabel && clickedLabel === null"
@@ -556,7 +550,7 @@ export default {
         this.$nextTick(() => {
           this.cancelAdd();
         });
-      }else if (action.type === SCHEMA_ACTION_TYPES.ADD_RDF) {
+      } else if (action.type === SCHEMA_ACTION_TYPES.ADD_RDF) {
         this.$refs.overview.cancelAddRdf();
       }
     },
@@ -656,6 +650,9 @@ export default {
 
     handleSettingsChange() {
       const { nodes, edges, combos } = this.extractGraphFromSchema(this.schema);
+      if (!this.g6graph) {
+        return;
+      }
       this.g6graph.changeData({ nodes, edges, combos });
       const layoutConfig = this.getLayoutConfig(edges);
       this.g6graph.updateLayout(layoutConfig);
@@ -816,7 +813,7 @@ export default {
       });
     },
 
-    addRdf(name){
+    addRdf(name) {
       this.$refs.actionDialog.addRdf(name);
     },
 

@@ -13,9 +13,10 @@ router.get("/settings", async (_, res) => {
 
 router.post("/settings", async (req, res) => {
   try {
-    await sessionDb.setSetting(req.body.key);
+    await sessionDb.setSetting(req.body);
     res.send({ success: true });
   } catch (err) {
+    console.error(err);
     return res.status(400).send({ error: err.message });
   }
 });
