@@ -58,7 +58,6 @@ class SessionDatabase {
         }
         try {
           await new Promise((resolve, reject) => {
-            console.log(this.dbPath);
             const newDb = new sqlite3.Database(
               this.dbPath,
               sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,

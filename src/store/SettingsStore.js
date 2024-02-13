@@ -184,8 +184,24 @@ export const useSettingsStore = defineStore("settings", {
     },
 
     initSettings(schema, storedSettings) {
-      for (let key of [Object.keys(storedSettings)]) {
-        this[key] = storedSettings[key];
+      const storedSettingsCopy = JSON.parse(JSON.stringify(storedSettings));
+      if (storedSettingsCopy.graphViz) {
+        this.graphViz = storedSettingsCopy.graphViz;
+      }
+      if (storedSettingsCopy.performance) {
+        this.performance = storedSettingsCopy.performance;
+      }
+      if (storedSettingsCopy.tableView) {
+        this.tableView = storedSettingsCopy.tableView;
+      }
+      if (storedSettingsCopy.schemaView) {
+        this.schemaView = storedSettingsCopy.schemaView;
+      }
+      if (storedSettingsCopy.gpt) {
+        this.gpt.model = storedSettingsCopy.gpt.model;
+      }
+      if (storedSettingsCopy.colors) {
+        this.colors = storedSettingsCopy.colors;
       }
       // The schema may be changed outside of KùzuExplorer, so we reset the
       // graphViz settings and merge the stored settings with current schema.
