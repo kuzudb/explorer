@@ -1,20 +1,9 @@
 <template>
   <div>
-    <nav
-      ref="navbar"
-      class="navbar navbar-expand-lg navbar-dark bg-dark"
-    >
+    <nav ref="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container">
-        <a
-          class="navbar-brand"
-          href="https://kuzudb.com"
-          target="_blank"
-        >
-          <img
-            src="/img/kuzu-logo-inverse.png"
-            alt="Kuzu Logo"
-            class="navbar__logo"
-          >
+        <a class="navbar-brand" href="https://kuzudb.com" target="_blank">
+          <img src="/img/kuzu-logo-inverse.png" alt="Kuzu Logo" class="navbar__logo" />
         </a>
         <button
           class="navbar-toggler"
@@ -26,80 +15,49 @@
           <span class="navbar-toggler-icon" />
         </button>
         <div class="collapse navbar-collapse navbar__buttons">
-          <ul
-            v-if="modeStore.isReadOnly"
-            class="navbar-nav me-auto"
-          >
+          <ul v-if="modeStore.isReadOnly" class="navbar-nav me-auto">
             <li class="nav-item">
-              <span
-                class="badge bg-primary"
-                @click="accessModeModal.show()"
-              >Read-only Mode</span>
+              <span class="badge bg-primary" @click="accessModeModal.show()"
+                >Read-only Mode</span
+              >
             </li>
           </ul>
-          <ul
-            v-if="modeStore.isDemo"
-            class="navbar-nav me-auto"
-          >
+          <ul v-if="modeStore.isDemo" class="navbar-nav me-auto">
             <li class="nav-item">
-              <span
-                class="badge bg-primary"
-                @click="accessModeModal.show()"
-              >Demo Mode</span>
+              <span class="badge bg-primary" @click="accessModeModal.show()"
+                >Demo Mode</span
+              >
             </li>
           </ul>
           <ul class="navbar-nav ms-auto">
             <li :class="['nav-item', { active: showShell }]">
-              <a
-                class="nav-link"
-                href="#"
-                @click="toggleShell()"
-              >
+              <a class="nav-link" href="#" @click="toggleShell()">
                 <i class="fa-solid fa-terminal" />
                 Shell
               </a>
             </li>
             <li :class="['nav-item', { active: showSchema }]">
-              <a
-                class="nav-link"
-                href="#"
-                @click="toggleSchema()"
-              >
+              <a class="nav-link" href="#" @click="toggleSchema()">
                 <i class="fa-solid fa-circle-nodes" />
                 Schema
               </a>
             </li>
-            <li
-              v-if="!modeStore.isDemo"
-              :class="['nav-item', { active: showLoader }]"
-            >
-              <a
-                class="nav-link"
-                href="#"
-                @click="toggleLoader()"
-              >
+            <li v-if="!modeStore.isDemo" :class="['nav-item', { active: showLoader }]">
+              <a class="nav-link" href="#" @click="toggleLoader()">
                 <i class="fa-solid fa-database" />
                 Datasets
               </a>
             </li>
 
             <li class="nav-item">
-              <a
-                class="nav-link"
-                href="#"
-                @click="showSettingsModal()"
-              >
+              <a class="nav-link" href="#" @click="showSettingsModal()">
                 <i class="fa-solid fa-cog" />
                 Settings
               </a>
             </li>
 
             <li class="nav-item">
-              <a
-                class="nav-link"
-                href="https://kuzudb.com/docusaurus/"
-                target="_blank"
-              >
+              <a class="nav-link" href="https://kuzudb.com/docusaurus/" target="_blank">
                 <i class="fa-solid fa-book" />
                 Docs
               </a>
@@ -132,11 +90,7 @@
         :navbar-height="navbarHeight"
         @reload-schema="reloadSchema"
       />
-      <SettingsMainView
-        v-if="showSettings"
-        ref="settings"
-        :schema="schema"
-      />
+      <SettingsMainView v-if="showSettings" ref="settings" :schema="schema" />
       <DatasetMainView
         v-show="showLoader"
         :schema="schema"
@@ -145,20 +99,11 @@
       />
     </div>
 
-    <div
-      ref="modal"
-      class="modal"
-      tabindex="-1"
-    >
+    <div ref="modal" class="modal" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
-          <div
-            v-if="modeStore.isDemo"
-            class="modal-header"
-          >
-            <h5 class="modal-title">
-              Welcome to KùzuExplorer!
-            </h5>
+          <div v-if="modeStore.isDemo" class="modal-header">
+            <h5 class="modal-title">Welcome to KùzuExplorer!</h5>
           </div>
           <div class="modal-body">
             <p v-if="modeStore.isDemo">
@@ -168,9 +113,10 @@
               </a>
               scale factor 0.1 dataset. Please run KùzuExplorer locally to load a
               different dataset (see the
-              <a href="https://kuzudb.com/docusaurus/kuzuexplorer/"> documentation here</a>).
-              <br>
-              <br>
+              <a href="https://kuzudb.com/docusaurus/kuzuexplorer/"> documentation here</a
+              >).
+              <br />
+              <br />
               You can visualize the schema of LDBC SNB in the Schema tab and execute
               interactive Cypher queries in the Shell tab.
             </p>
@@ -182,11 +128,7 @@
             </p>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-primary"
-              @click="accessModeModal.hide()"
-            >
+            <button type="button" class="btn btn-primary" @click="accessModeModal.hide()">
               OK
             </button>
           </div>
@@ -241,6 +183,7 @@ export default {
     Promise.all([this.getSchema(), this.getStoredSettings()]).then((res) => {
       const storedSettings = res[1];
       this.initSettings(this.schema, storedSettings);
+      this.$refs.schemaView.drawGraph();
     });
   },
   methods: {
