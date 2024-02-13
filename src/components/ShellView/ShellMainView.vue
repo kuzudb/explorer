@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="shell-main-view__wrapper"
-    :style="{ height: `${containerHeight}px` }"
-  >
+  <div class="shell-main-view__wrapper" :style="{ height: `${containerHeight}px` }">
     <ShellCell
       v-for="(cell, index) in shellCell"
       v-show="index === maximizedCellIndex || maximizedCellIndex < 0"
@@ -59,6 +56,7 @@ export default {
     });
     window.addEventListener("resize", this.updateContainerHeight);
     document.addEventListener("keydown", this.handleKeyDown);
+    this.loadCellsFromHistory();
   },
 
   beforeUnmount() {
@@ -95,6 +93,31 @@ export default {
     removeCellFromHistory(uuid) {
       return Axios.delete(`/api/session/history/${uuid}`);
     },
+    loadCellHistoryFromServer() {
+      return Axios.get("/api/session/history").then(res => res.data);
+    },
+    async loadCellsFromHistory() {
+      const history = await this.loadCellHistoryFromServer();
+      history.map(cell => {
+        return {
+          cellId: cell.uuid,
+        };
+      }).forEach(cell => {
+        if (this.isCellAddedToTheEnd) {
+          this.shellCell.unshift(cell);
+        }
+        else {
+          this.shellCell.push(cell);
+        }
+      });
+      this.$nextTick(() => {
+        history.forEach((cell) => {
+          const uuid = cell.uuid;
+          const cellRef = this.$refs[this.getCellRefById(uuid)][0];
+          cellRef.loadEditorFromHistory(cell);
+        });
+      });
+    },
     addCell() {
       const cell = this.createCell();
       if (this.isCellAddedToTheEnd) {
@@ -115,6 +138,9 @@ export default {
     },
     getCellRef(index) {
       return `shell-cell-${this.shellCell[index].cellId}`;
+    },
+    getCellRefById(uuid) {
+      return `shell-cell-${uuid}`;
     },
     handleKeyDown(event) {
       if (event.shiftKey && event.key === "Enter") {

@@ -19,10 +19,7 @@
       :is-maximized="isMaximized"
       :navbar-height="navbarHeight"
     />
-    <div
-      v-if="isLoading"
-      class="d-flex align-items-center"
-    >
+    <div v-if="isLoading" class="d-flex align-items-center">
       <strong class="text-secondary">{{
         loadingText ? loadingText : "Loading..."
       }}</strong>
@@ -84,6 +81,10 @@ export default {
   methods: {
     isActive() {
       return this.$refs.editor.isActive();
+    },
+    loadEditorFromHistory(history) {
+      this.isEvaluated = true;
+      this.$refs.editor.loadFromHistory(history);
     },
     evaluateCypher(query) {
       this.queryResult = null;
