@@ -36,24 +36,21 @@ class SessionDatabase {
       } catch (err) {
         // File does not exist
       }
-      // Double check if the file is writable
       if (isDbFileExists) {
-        try {
-          await fs.access(this.dbPath, fs.constants.W_OK);
-        } catch (err) {
-          this.isReadOnly = true;
+        if (!this.isReadOnly) {
+          // Double check if the file is writable if we are not in read-only
+          // mode. This will help us to detect if the file is read-only due to
+          // file permissions.
+          try {
+            await fs.access(this.dbPath, fs.constants.W_OK);
+          } catch (err) {
+            this.isReadOnly = true;
+          }
         }
       } else {
-        try {
-          await fs.writeFile(this.dbPath, "");
-          await fs.access(this.dbPath, fs.constants.W_OK);
-          await fs.unlink(this.dbPath);
-        } catch (err) {
-          this.isReadOnly = true;
-        }
         if (this.isReadOnly) {
-          // In read-only mode, if the db file does not exist, we should not create it,
-          // but if it exists, we can still use it.
+          // In read-only mode, if the db file does not exist, we should not
+          // create it.
           return;
         }
         try {
@@ -71,12 +68,14 @@ class SessionDatabase {
             );
           });
         } catch (err) {
+          this.isReadOnly = true;
           return;
         }
       }
       this.db = await sqlite.open({
         filename: this.dbPath,
         driver: sqlite3.Database,
+        mode: this.isReadOnly ? sqlite3.OPEN_READONLY : sqlite3.OPEN_READWRITE,
       });
       if (!isDbFileExists) {
         await this.createDbSchema();
