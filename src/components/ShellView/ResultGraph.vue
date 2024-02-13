@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="wrapper"
-    class="result-graph__wrapper"
-  >
+  <div ref="wrapper" class="result-graph__wrapper">
     <div
       ref="graph"
       class="result_container__graph"
@@ -23,12 +20,8 @@
         />
       </div>
     </div>
-    <div
-      v-show="isSidePanelOpen"
-      ref="sidePanel"
-      class="result-container__side-panel"
-    >
-      <br>
+    <div v-show="isSidePanelOpen" ref="sidePanel" class="result-container__side-panel">
+      <br />
       <div v-if="displayLabel">
         <div class="result-container__summary-section">
           <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
@@ -47,20 +40,15 @@
             color: `${getTextColor(displayLabel)} !important`,
           }"
         >
-          {{ displayLabel }}</span>
-        <hr>
+          {{ displayLabel }}</span
+        >
+        <hr />
         <table class="table table-sm table-bordered result-container__result-table">
           <tbody>
-            <tr
-              v-for="property in displayProperties"
-              :key="property.name"
-            >
+            <tr v-for="property in displayProperties" :key="property.name">
               <th scope="row">
                 {{ property.name }}
-                <span
-                  v-if="property.isPrimaryKey"
-                  class="badge bg-primary"
-                >PK</span>
+                <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
               </th>
               <td>{{ property.value }}</td>
             </tr>
@@ -74,7 +62,8 @@
             <p>
               Showing
               <span v-if="numHiddenNodes > 0">
-                {{ counters.total.node - numHiddenNodes }}/</span>{{ counters.total.node }} nodes
+                {{ counters.total.node - numHiddenNodes }}/</span
+              >{{ counters.total.node }} nodes
               <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
             </p>
             <button
@@ -86,40 +75,36 @@
               Show All
             </button>
           </div>
-          <hr>
+          <hr />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
-              <tr
-                v-for="label in Object.keys(counters.node)"
-                :key="label"
-              >
+              <tr v-for="label in Object.keys(counters.node)" :key="label">
                 <th scope="row">
                   <span
                     class="badge bg-primary"
                     :style="{ backgroundColor: ` ${getColor(label)} !important` }"
-                  >{{ label }}</span>
+                    >{{ label }}</span
+                  >
                 </th>
                 <td>{{ counters.node[label] }}</td>
               </tr>
             </tbody>
           </table>
-          <br>
+          <br />
         </div>
 
         <div v-if="counters.total.rel > 0">
           <p>
             Showing
             <span v-if="numHiddenRels > 0">
-              {{ counters.total.rel - numHiddenRels }}/</span>{{ counters.total.rel }} rels
+              {{ counters.total.rel - numHiddenRels }}/</span
+            >{{ counters.total.rel }} rels
             <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
           </p>
-          <hr>
+          <hr />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
-              <tr
-                v-for="label in Object.keys(counters.rel)"
-                :key="label"
-              >
+              <tr v-for="label in Object.keys(counters.rel)" :key="label">
                 <th scope="row">
                   <span
                     class="badge bg-primary"
@@ -369,6 +354,9 @@ export default {
         this.deselectAll();
         this.g6graph.setItemState(nodeItem, 'click', true);
         this.handleClick(nodeModel);
+        if (!this.isSidePanelOpen) {
+          this.toggleSidePanel();
+        }
       });
 
       this.g6graph.on('edge:mouseenter', (e) => {
@@ -389,6 +377,9 @@ export default {
         this.deselectAll();
         this.g6graph.setItemState(edgeItem, 'click', true);
         this.handleClick(edgeModel);
+        if (!this.isSidePanelOpen) {
+          this.toggleSidePanel();
+        }
       });
 
       this.g6graph.on('canvas:click', () => {
