@@ -369,6 +369,9 @@ export default {
         this.deselectAll();
         this.g6graph.setItemState(nodeItem, 'click', true);
         this.handleClick(nodeModel);
+        if (!this.isSidePanelOpen) {
+          this.toggleSidePanel();
+        }
       });
 
       this.g6graph.on('edge:mouseenter', (e) => {
@@ -389,6 +392,9 @@ export default {
         this.deselectAll();
         this.g6graph.setItemState(edgeItem, 'click', true);
         this.handleClick(edgeModel);
+        if (!this.isSidePanelOpen) {
+          this.toggleSidePanel();
+        }
       });
 
       this.g6graph.on('canvas:click', () => {
