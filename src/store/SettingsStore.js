@@ -150,6 +150,14 @@ export const useSettingsStore = defineStore("settings", {
         g6Settings,
         label,
       };
+      if (node.rdf) {
+        const isIriPropertyExist = node.properties.some(
+          (property) => property.name === IRI_PROPERTY_NAME
+        );
+        if (isIriPropertyExist) {
+          nodeSettings.label = IRI_PROPERTY_NAME;
+        }
+      }
       return nodeSettings;
     },
 
@@ -163,37 +171,38 @@ export const useSettingsStore = defineStore("settings", {
         g6Settings,
         label,
       };
+      if (rel.rdf) {
+        const isIriPropertyExist = rel.properties.some(
+          (property) => property.name === IRI_PROPERTY_NAME
+        );
+        if (isIriPropertyExist) {
+          relSettings.label = IRI_PROPERTY_NAME;
+        }
+      }
       return relSettings;
     },
 
-    initDefaultSettings(schema) {
+    initSettings(schema, storedSettings) {
+      for (let key of [Object.keys(storedSettings)]) {
+        this[key] = storedSettings[key];
+      }
+      // The schema may be changed outside of KùzuExplorer, so we reset the
+      // graphViz settings and merge the stored settings with current schema.
       this.graphViz.nodes = {};
       this.graphViz.rels = {};
+      const storedGraphViz = storedSettings.graphViz || { nodes: {}, rels: {} };
       schema.nodeTables.forEach((node) => {
-        const nodeSettings = this.initDefaultNode(node);
-        if (node.rdf) {
-          const isIriPropertyExist = node.properties.some(
-            (property) => property.name === IRI_PROPERTY_NAME
-          );
-          if (isIriPropertyExist) {
-            nodeSettings.label = IRI_PROPERTY_NAME;
-          }
-        }
+        const nodeSettings =
+          storedGraphViz.nodes[node.name] || this.initDefaultNode(node);
         this.graphViz.nodes[node.name] = nodeSettings;
       });
 
       schema.relTables.forEach((rel) => {
-        const relSettings = this.initDefaultRel(rel);
-        if (rel.rdf) {
-          const isIriPropertyExist = rel.properties.some(
-            (property) => property.name === IRI_PROPERTY_NAME
-          );
-          if (isIriPropertyExist) {
-            relSettings.label = IRI_PROPERTY_NAME;
-          }
-        }
+        const relSettings =
+          storedGraphViz.rels[rel.name] || this.initDefaultRel(rel);
         this.graphViz.rels[rel.name] = relSettings;
       });
+      this.loadGptApiTokenFromLocalStorage();
     },
 
     updateSettings(settings) {
@@ -202,6 +211,7 @@ export const useSettingsStore = defineStore("settings", {
       this.tableView = settings.tableView;
       this.schemaView = settings.schemaView;
       this.gpt = settings.gpt;
+      this.saveGptApiTokenToLocalStorage();
     },
 
     handleSchemaReload(schema) {
