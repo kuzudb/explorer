@@ -344,6 +344,7 @@ export const useSettingsStore = defineStore("settings", {
 
     uploadSettings() {
       const settings = JSON.parse(JSON.stringify(this.allSettings));
+      settings.colors = this.colors;
       delete settings.gpt.apiToken;
       return Axios.post("/api/session/settings", settings).then((response) => {
         return response.data;
