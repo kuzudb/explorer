@@ -22,6 +22,7 @@ const COLOR_PALETTE = [
 ];
 
 const NULL_COLOR = "#d9d9d9";
+const DEFAULT_NUMBER_OF_NODES_TO_EXPAND = 100;
 
 export const useSettingsStore = defineStore("settings", {
   state: () => ({
@@ -64,6 +65,7 @@ export const useSettingsStore = defineStore("settings", {
     },
     performance: {
       maxNumberOfNodes: 300,
+      maxNumberOfNodesToExpand: DEFAULT_NUMBER_OF_NODES_TO_EXPAND,
     },
     tableView: {
       rowsPerPage: 10,
@@ -189,6 +191,11 @@ export const useSettingsStore = defineStore("settings", {
         this.graphViz = storedSettingsCopy.graphViz;
       }
       if (storedSettingsCopy.performance) {
+        if (!storedSettingsCopy.performance.maxNumberOfNodesToExpand) {
+          // Migrate old settings
+          storedSettingsCopy.performance.maxNumberOfNodesToExpand =
+            DEFAULT_NUMBER_OF_NODES_TO_EXPAND;
+        }
         this.performance = storedSettingsCopy.performance;
       }
       if (storedSettingsCopy.tableView) {

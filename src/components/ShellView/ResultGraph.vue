@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="wrapper"
-    class="result-graph__wrapper"
-  >
+  <div ref="wrapper" class="result-graph__wrapper">
     <div
       ref="graph"
       class="result_container__graph"
@@ -23,12 +20,8 @@
         />
       </div>
     </div>
-    <div
-      v-show="isSidePanelOpen"
-      ref="sidePanel"
-      class="result-container__side-panel"
-    >
-      <br>
+    <div v-show="isSidePanelOpen" ref="sidePanel" class="result-container__side-panel">
+      <br />
       <div v-if="displayLabel">
         <div class="result-container__summary-section">
           <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
@@ -47,20 +40,15 @@
             color: `${getTextColor(displayLabel)} !important`,
           }"
         >
-          {{ displayLabel }}</span>
-        <hr>
+          {{ displayLabel }}</span
+        >
+        <hr />
         <table class="table table-sm table-bordered result-container__result-table">
           <tbody>
-            <tr
-              v-for="property in displayProperties"
-              :key="property.name"
-            >
+            <tr v-for="property in displayProperties" :key="property.name">
               <th scope="row">
                 {{ property.name }}
-                <span
-                  v-if="property.isPrimaryKey"
-                  class="badge bg-primary"
-                >PK</span>
+                <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
               </th>
               <td>{{ property.value }}</td>
             </tr>
@@ -74,7 +62,8 @@
             <p>
               Showing
               <span v-if="numHiddenNodes > 0">
-                {{ counters.total.node - numHiddenNodes }}/</span>{{ counters.total.node }} nodes
+                {{ counters.total.node - numHiddenNodes }}/</span
+              >{{ counters.total.node }} nodes
               <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
             </p>
             <button
@@ -86,40 +75,36 @@
               Show All
             </button>
           </div>
-          <hr>
+          <hr />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
-              <tr
-                v-for="label in Object.keys(counters.node)"
-                :key="label"
-              >
+              <tr v-for="label in Object.keys(counters.node)" :key="label">
                 <th scope="row">
                   <span
                     class="badge bg-primary"
                     :style="{ backgroundColor: ` ${getColor(label)} !important` }"
-                  >{{ label }}</span>
+                    >{{ label }}</span
+                  >
                 </th>
                 <td>{{ counters.node[label] }}</td>
               </tr>
             </tbody>
           </table>
-          <br>
+          <br />
         </div>
 
         <div v-if="counters.total.rel > 0">
           <p>
             Showing
             <span v-if="numHiddenRels > 0">
-              {{ counters.total.rel - numHiddenRels }}/</span>{{ counters.total.rel }} rels
+              {{ counters.total.rel - numHiddenRels }}/</span
+            >{{ counters.total.rel }} rels
             <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
           </p>
-          <hr>
+          <hr />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
-              <tr
-                v-for="label in Object.keys(counters.rel)"
-                :key="label"
-              >
+              <tr v-for="label in Object.keys(counters.rel)" :key="label">
                 <th scope="row">
                   <span
                     class="badge bg-primary"
@@ -152,6 +137,7 @@
 import G6 from '@antv/g6';
 import G6Utils from "../../utils/G6Utils";
 import { DATA_TYPES, UI_SIZE } from "../../utils/Constants";
+import NeighborsFetcher from "../../utils/NeighborsFetcher";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
 import ValueFormatter from "../../utils/ValueFormatter";
@@ -193,7 +179,6 @@ export default {
     clickedProperties: [],
     clickedLabel: "",
     clickedIsNode: false,
-    nodeTableNameMap: {},
     delta: 0.05, // used for zooming, copied from G6
     zoomSensitivity: 2, // used for zooming, copied from G6
     toolbarDebounceTimeout: 100,
@@ -278,8 +263,8 @@ export default {
     window.addEventListener("resize", this.handleResize);
   },
   beforeUnmount() {
-    if (this.g6graph) {
-      this.g6graph.destroy();
+    if (this.g6Graph) {
+      this.g6Graph.destroy();
     }
     window.removeEventListener("resize", this.handleResize);
   },
@@ -288,29 +273,26 @@ export default {
       return this.settingsStore.colorForLabel(label);
     },
     getTextColor(label) {
-      if (!Object.values(this.nodeTableNameMap).includes(label)) {
-        return "#000000"
-      }
-      return "#ffffff";
+      const isNode = this.schema.nodeTables.find((table) => table.name === label);
+      return isNode ? "#ffffff" : "#000000";
     },
     drawGraph() {
-      if (this.graphCreated && this.g6graph) {
-        this.g6graph.destroy();
+      if (this.graphCreated && this.g6Graph) {
+        this.g6Graph.destroy();
       }
       if (!this.queryResult) {
         return;
       }
-      const { counters, nodes, edges, nodeTableNameMap } = this.extractGraphFromQueryResult(this.queryResult);
+      const { counters, nodes, edges, } = this.extractGraphFromQueryResult(this.queryResult);
       this.counters = counters;
       if (nodes.length === 0) {
         this.$emit("graphEmpty");
       }
-      this.nodeTableNameMap = nodeTableNameMap;
       const container = this.$refs.graph;
       const width = container.offsetWidth;
       const height = container.offsetHeight;
 
-      this.g6graph = new G6.Graph({
+      this.g6Graph = new G6.Graph({
         container,
         width,
         height,
@@ -349,69 +331,81 @@ export default {
         },
       });
 
-      this.g6graph.data({ nodes, edges, });
+      this.g6Graph.data({ nodes, edges, });
 
-      this.g6graph.on('node:mouseenter', (e) => {
+      this.g6Graph.on('node:mouseenter', (e) => {
         const nodeItem = e.item;
-        this.g6graph.setItemState(nodeItem, 'hover', true);
+        this.g6Graph.setItemState(nodeItem, 'hover', true);
         this.handleHover(nodeItem.getModel());
       });
 
-      this.g6graph.on('node:mouseleave', (e) => {
+      this.g6Graph.on('node:mouseleave', (e) => {
         const nodeItem = e.item;
-        this.g6graph.setItemState(nodeItem, 'hover', false);
+        this.g6Graph.setItemState(nodeItem, 'hover', false);
         this.resetHover();
       });
 
-      this.g6graph.on('node:click', (e) => {
+      this.g6Graph.on('node:click', (e) => {
         const nodeItem = e.item;
         const nodeModel = nodeItem.getModel();
         this.deselectAll();
-        this.g6graph.setItemState(nodeItem, 'click', true);
+        this.g6Graph.setItemState(nodeItem, 'click', true);
         this.handleClick(nodeModel);
         if (!this.isSidePanelOpen) {
-          this.toggleSidePanel();
+          // Add a small delay to avoid conflicting with double click
+          window.setTimeout(() => {
+            this.isSidePanelOpen = true;
+            this.$nextTick(() => {
+              this.handleResize();
+            });
+          }, 200);
         }
       });
 
-      this.g6graph.on('edge:mouseenter', (e) => {
+      this.g6Graph.on('node:dblclick', (e) => {
+        const nodeItem = e.item;
+        const nodeModel = nodeItem.getModel();
+        this.expandOnNode(nodeModel);
+      });
+
+      this.g6Graph.on('edge:mouseenter', (e) => {
         const edgeItem = e.item;
-        this.g6graph.setItemState(edgeItem, 'hover', true);
+        this.g6Graph.setItemState(edgeItem, 'hover', true);
         this.handleHover(edgeItem.getModel());
       });
 
-      this.g6graph.on('edge:mouseleave', (e) => {
+      this.g6Graph.on('edge:mouseleave', (e) => {
         const edgeItem = e.item;
-        this.g6graph.setItemState(edgeItem, 'hover', false);
+        this.g6Graph.setItemState(edgeItem, 'hover', false);
         this.resetHover();
       });
 
-      this.g6graph.on('edge:click', (e) => {
+      this.g6Graph.on('edge:click', (e) => {
         const edgeItem = e.item;
         const edgeModel = edgeItem.getModel();
         this.deselectAll();
-        this.g6graph.setItemState(edgeItem, 'click', true);
+        this.g6Graph.setItemState(edgeItem, 'click', true);
         this.handleClick(edgeModel);
         if (!this.isSidePanelOpen) {
           this.toggleSidePanel();
         }
       });
 
-      this.g6graph.on('canvas:click', () => {
+      this.g6Graph.on('canvas:click', () => {
         this.deselectAll();
       });
 
-      this.g6graph.render();
+      this.g6Graph.render();
       this.graphCreated = true;
     },
 
     hideNode() {
-      const currentSelectedNode = this.g6graph.findAllByState('node', 'click')[0];
+      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
       const nodeId = currentSelectedNode.getModel().id;
       this.numHiddenNodes += 1;
       currentSelectedNode.hide();
       this.deselectAll();
-      const relatedEdges = this.g6graph.getEdges().filter((edge) => {
+      const relatedEdges = this.g6Graph.getEdges().filter((edge) => {
         const edgeModel = edge.getModel();
         return edgeModel.source === nodeId || edgeModel.target === nodeId;
       });
@@ -422,12 +416,12 @@ export default {
     },
 
     showAllNodesRels() {
-      this.g6graph.getNodes().forEach((node) => {
+      this.g6Graph.getNodes().forEach((node) => {
         if (!node.isVisible()) {
           node.show();
         }
       });
-      this.g6graph.getEdges().forEach((edge) => {
+      this.g6Graph.getEdges().forEach((edge) => {
         if (!edge.isVisible()) {
           edge.show();
         }
@@ -620,16 +614,15 @@ export default {
         edges: Object.values(edges),
         nodesMap: nodes,
         edgesMap: edges,
-        nodeTableNameMap: nodeLabels,
       };
     },
 
     handleResize() {
       this.$nextTick(() => {
-        if (this.g6graph) {
+        if (this.g6Graph) {
           const width = this.computeGraphWidth();
-          this.g6graph.changeSize(width, parseInt(this.containerHeight));
-          this.g6graph.fitCenter();
+          this.g6Graph.changeSize(width, parseInt(this.containerHeight));
+          this.g6Graph.fitCenter();
         }
       });
     },
@@ -648,17 +641,71 @@ export default {
       this.clickedIsNode = !(model.properties._src && model.properties._dst);
     },
 
-    deselectAll() {
-      if (!this.g6graph) {
+    async expandOnNode(model) {
+      const tableName = model.properties._label;
+      const primaryKey = this.schema.nodeTables
+        .find((table) => table.name === tableName)
+        .properties
+        .find((prop) => prop.isPrimaryKey);
+      const primaryKeyValue = model.properties[primaryKey.name];
+      const primaryKeyName = primaryKey.name;
+      const sizeLimit = this.settingsStore.performance.maxNumberOfNodesToExpand;
+      let neighbors = null;
+      try {
+        neighbors = await NeighborsFetcher.fetchNeighbors(
+          tableName,
+          primaryKeyName,
+          primaryKeyValue,
+          sizeLimit,
+        );
+      } catch (e) {
+        // Ignore error for now. Just don't expand if the core does not execute the query.
+        console.error(e);
+      }
+      if (!neighbors) {
         return;
       }
-      const currentSelectedNode = this.g6graph.findAllByState('node', 'click')[0];
-      if (currentSelectedNode) {
-        this.g6graph.setItemState(currentSelectedNode, 'click', false);
+      const { nodes, edges } = this.extractGraphFromQueryResult(neighbors);
+      const nodesToAdd = [];
+      for (let key in nodes) {
+        const node = nodes[key];
+        if (this.g6Graph.findById(node.id)) {
+          continue;
+        }
+        nodesToAdd.push(node);
+        this.counters.node[node.properties._label] += 1;
+        this.counters.total.node += 1;
       }
-      const currentSelectedEdge = this.g6graph.findAllByState('edge', 'click')[0];
+      const edgesToAdd = [];
+      for (let key in edges) {
+        const edge = edges[key];
+        if (this.g6Graph.findById(edge.id)) {
+          continue;
+        }
+        edgesToAdd.push(edge);
+        this.counters.rel[edge.properties._label] += 1;
+        this.counters.total.rel += 1;
+      }
+      const currentNodes = this.g6Graph.getNodes().map((node) => node.getModel());
+      const currentEdges = this.g6Graph.getEdges().map((edge) => edge.getModel());
+      const newData = {
+        nodes: currentNodes.concat(nodesToAdd),
+        edges: currentEdges.concat(edgesToAdd),
+      };
+      this.g6Graph.changeData(newData);
+    },
+
+    deselectAll() {
+      if (!this.g6Graph) {
+        return;
+      }
+      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
+      if (currentSelectedNode) {
+        this.g6Graph.setItemState(currentSelectedNode, 'click', false);
+      }
+      const currentSelectedEdge = this.g6Graph.findAllByState('edge', 'click')[0];
       if (currentSelectedEdge) {
-        this.g6graph.setItemState(currentSelectedEdge, 'click', false);
+        this.g6Graph.setItemState(currentSelectedEdge, 'click', false);
       }
       this.clickedLabel = "";
       this.clickedProperties = [];
@@ -693,7 +740,7 @@ export default {
         clearTimeout(this.toolbarDebounceTimer);
       }
       this.toolbarDebounceTimer = setTimeout(() => {
-        G6Utils.zoomIn(this.g6graph);
+        G6Utils.zoomIn(this.g6Graph);
       }, this.toolbarDebounceTimeout);
     },
 
@@ -702,7 +749,7 @@ export default {
         clearTimeout(this.toolbarDebounceTimer);
       }
       this.toolbarDebounceTimer = setTimeout(() => {
-        G6Utils.zoomOut(this.g6graph);
+        G6Utils.zoomOut(this.g6Graph);
       }, this.toolbarDebounceTimeout);
     },
 
@@ -711,7 +758,7 @@ export default {
         clearTimeout(this.toolbarDebounceTimer);
       }
       this.toolbarDebounceTimer = setTimeout(() => {
-        G6Utils.fitToView(this.g6graph);
+        G6Utils.fitToView(this.g6Graph);
       }, this.toolbarDebounceTimeout);
     },
 
@@ -720,17 +767,17 @@ export default {
         clearTimeout(this.toolbarDebounceTimer);
       }
       this.toolbarDebounceTimer = setTimeout(() => {
-        G6Utils.actualSize(this.g6graph);
+        G6Utils.actualSize(this.g6Graph);
       }, this.toolbarDebounceTimeout);
     },
 
 
     handleSettingsChange() {
       const { nodes, edges, counters } = this.extractGraphFromQueryResult(this.queryResult);
-      if (!this.g6graph) {
+      if (!this.g6Graph) {
         return;
       }
-      this.g6graph.changeData({ nodes, edges });
+      this.g6Graph.changeData({ nodes, edges });
       this.counters = counters;
     }
   },

@@ -19,10 +19,7 @@
       :is-maximized="isMaximized"
       :navbar-height="navbarHeight"
     />
-    <div
-      v-if="isLoading"
-      class="d-flex align-items-center"
-    >
+    <div v-if="isLoading" class="d-flex align-items-center">
       <strong class="text-secondary">{{
         loadingText ? loadingText : "Loading..."
       }}</strong>
@@ -98,7 +95,8 @@ export default {
         {
           query,
           uuid: this.cellId,
-          isQueryGenerationMode: this.$refs.editor.isQueryGenerationMode
+          isQueryGenerationMode: this.$refs.editor.isQueryGenerationMode,
+          updateHistory: true
         })
         .then((res) => {
           this.queryResult = res.data;
