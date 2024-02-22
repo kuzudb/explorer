@@ -190,7 +190,9 @@ export default {
         node: 0,
         rel: 0,
       },
-    }
+    },
+    draggedNodeDebounceTimer: null,
+    expansions: [],
   }),
   computed: {
     graphVizSettings() {
@@ -368,6 +370,21 @@ export default {
         this.expandOnNode(nodeModel);
       });
 
+      // Auto layout after drag
+      this.g6Graph.on('node:dragstart', (e) => {
+        this.g6Graph.layout();
+      });
+
+      this.g6Graph.on('node:drag', (e) => {
+        this.refreshDraggedNodePosition(e);
+      });
+
+      this.g6Graph.on('node:dragend', (e) => {
+        this.refreshDraggedNodePosition(e);
+        e.item.get('model').fx = null;
+        e.item.get('model').fy = null;
+      });
+
       this.g6Graph.on('edge:mouseenter', (e) => {
         const edgeItem = e.item;
         this.g6Graph.setItemState(edgeItem, 'hover', true);
@@ -397,6 +414,12 @@ export default {
 
       this.g6Graph.render();
       this.graphCreated = true;
+    },
+
+    refreshDraggedNodePosition(e) {
+      const model = e.item.get('model');
+      model.fx = e.x;
+      model.fy = e.y;
     },
 
     hideNode() {
@@ -665,7 +688,19 @@ export default {
       if (!neighbors) {
         return;
       }
-      const { nodes, edges } = this.extractGraphFromQueryResult(neighbors);
+      this.addDataWithQueryResult(neighbors);
+      this.expansions.push(neighbors);
+    },
+
+    addDataWithQueryResult(queryResult) {
+      const { nodes, edges } = this.extractGraphFromQueryResult(queryResult);
+      this.addData(nodes, edges);
+    },
+
+    addData(nodes, edges) {
+      if (!this.g6Graph) {
+        return;
+      }
       const nodesToAdd = [];
       for (let key in nodes) {
         const node = nodes[key];
@@ -779,6 +814,7 @@ export default {
       }
       this.g6Graph.changeData({ nodes, edges });
       this.counters = counters;
+      this.expansions.forEach(e => this.addDataWithQueryResult(e));
     }
   },
 };
