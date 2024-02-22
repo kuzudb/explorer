@@ -68,7 +68,9 @@ class ValueFormatter {
     if (type === DATA_TYPES.DATE) {
       return Moment(value).format("YYYY-MM-DD");
     } else if (type === DATA_TYPES.TIMESTAMP) {
-      return Moment(value).format("YYYY-MM-DD HH:mm:ss");
+      const moment = Moment(value);
+      moment.utc();
+      return moment.format();
     } else if (type === DATA_TYPES.FLOAT || type === DATA_TYPES.DOUBLE) {
       return Number(value).toFixed(2);
     } else {
