@@ -233,6 +233,10 @@ export default {
 <style lang="scss" scoped>
 .shell-cell__wrapper {
   display: block;
+
+  &:last-child {
+    padding-bottom: 10px;
+  }
 }
 
 div.d-flex.align-items-center {
