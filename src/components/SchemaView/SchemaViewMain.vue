@@ -865,59 +865,6 @@ export default {
     reloadSchema() {
       this.$emit("reloadSchema");
     },
-
-    registerAddEdgeBehavior() {
-      if (window.g6AddEdgeBehaviorRegistered) {
-        return;
-      }
-      G6.registerBehavior('click-add-edge', {
-        getEvents() {
-          return {
-            'node:click': 'onClick',
-            mousemove: 'onMousemove',
-            'edge:click': 'onEdgeClick',
-          };
-        },
-        onClick(ev) {
-          const node = ev.item;
-          const graph = this.graph;
-          const point = { x: ev.x, y: ev.y };
-          const model = node.getModel();
-          if (this.addingEdge && this.edge) {
-            graph.updateItem(this.edge, {
-              target: model.id,
-            });
-
-            this.edge = null;
-            this.addingEdge = false;
-          } else {
-            this.edge = graph.addItem('edge', {
-              source: model.id,
-              target: point,
-            });
-            this.addingEdge = true;
-          }
-        },
-        onMousemove(ev) {
-          const point = { x: ev.x, y: ev.y };
-          if (this.addingEdge && this.edge) {
-            this.graph.updateItem(this.edge, {
-              target: point,
-            });
-          }
-        },
-        onEdgeClick(ev) {
-          const graph = this.graph;
-          const currentEdge = ev.item;
-          if (this.addingEdge && this.edge == currentEdge) {
-            graph.removeItem(this.edge);
-            this.edge = null;
-            this.addingEdge = false;
-          }
-        },
-      });
-      window.g6AddEdgeBehaviorRegistered = true;
-    },
   },
 };
 </script>

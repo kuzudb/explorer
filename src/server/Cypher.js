@@ -81,15 +81,17 @@ router.post("/", async (req, res) => {
       { rows, dataTypes, isSchemaChanged },
       replacer
     );
-    try {
-      await sessionDb.upsertHistoryItem({
-        uuid: req.body.uuid,
-        isQueryGenerationMode: Boolean(req.body.isQueryGenerationMode),
-        cypherQuery: query,
-      });
-    } catch (err) {
-      // Ignore the error. It fails to record the history, but the query is
-      // still executed.
+    if (req.body.updateHistory) {
+      try {
+        await sessionDb.upsertHistoryItem({
+          uuid: req.body.uuid,
+          isQueryGenerationMode: Boolean(req.body.isQueryGenerationMode),
+          cypherQuery: query,
+        });
+      } catch (err) {
+        // Ignore the error. It fails to record the history, but the query is
+        // still executed.
+      }
     }
     return res.send(responseBody);
   } catch (err) {

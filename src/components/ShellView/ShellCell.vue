@@ -98,7 +98,8 @@ export default {
         {
           query,
           uuid: this.cellId,
-          isQueryGenerationMode: this.$refs.editor.isQueryGenerationMode
+          isQueryGenerationMode: this.$refs.editor.isQueryGenerationMode,
+          updateHistory: true
         })
         .then((res) => {
           this.queryResult = res.data;
