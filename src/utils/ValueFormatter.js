@@ -71,8 +71,8 @@ class ValueFormatter {
       const moment = Moment(value);
       moment.utc();
       return moment.format();
-    } else if (type === DATA_TYPES.FLOAT || type === DATA_TYPES.DOUBLE) {
-      return Number(value).toFixed(2);
+    } else if (type === DATA_TYPES.FLOAT || type === DATA_TYPES.DOUBLE) {      
+      return Number.parseFloat(value).toExponential();
     } else {
       [DATA_TYPES.FIXED_LIST, DATA_TYPES.VAR_LIST].forEach((dataType) => {
         if (type.startsWith(dataType)) {
