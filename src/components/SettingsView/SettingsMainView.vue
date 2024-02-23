@@ -139,6 +139,17 @@
               max="2000"
             >
           </div>
+          <div class="input-group flex-nowrap">
+            <span class="input-group-text">Max number of nodes to expand on double click</span>
+            <input
+              v-model="currentSettings.performance.maxNumberOfNodesToExpand"
+              type="number"
+              class="form-control"
+              title="Choose max number of nodes to expand on double click"
+              min="5"
+              max="1000"
+            >
+          </div>
 
           <br>
           <h4>Schema View Options</h4>
