@@ -3,7 +3,10 @@ const router = express.Router();
 const logger = require("./utils/Logger");
 const MODES = require("./utils/Constants").MODES;
 const database = require("./utils/Database");
-const sessionDb = require("./utils/SessionDatabase");
+let sessionDb;
+try {
+  sessionDb = require("./utils/SessionDatabase");
+} catch (err) {}
 
 const DEMO_MODE = MODES.DEMO;
 
@@ -81,7 +84,7 @@ router.post("/", async (req, res) => {
       { rows, dataTypes, isSchemaChanged },
       replacer
     );
-    if (req.body.updateHistory) {
+    if (sessionDb && req.body.updateHistory) {
       try {
         await sessionDb.upsertHistoryItem({
           uuid: req.body.uuid,
