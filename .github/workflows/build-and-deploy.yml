@@ -32,6 +32,11 @@ jobs:
         run: npm run fetch-datasets
       - name: Prebuild - cleanup
         run: rm -rf node_modules
+      - name: Prebuild - get version
+        shell: bash
+        run: |
+          VERSION=$(node -e 'fs=require("fs");console.log(JSON.parse(fs.readFileSync("package.json")).dependencies.kuzu)')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -47,7 +52,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: kuzudb/explorer:latest
+          tags: kuzudb/explorer:latest, kuzudb/explorer:${{ env.VERSION }}
           build-args: |
             SKIP_GRAMMAR=true
             SKIP_BUILD_APP=true
