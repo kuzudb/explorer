@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="wrapper"
-    class="schema-view__wrapper"
-  >
+  <div ref="wrapper" class="schema-view__wrapper">
     <div
       ref="toolsContainer"
       class="schema-view__tools_container"
@@ -52,11 +49,8 @@
       class="schema_graph__wrapper"
       :style="{ width: graphWidth + 'px' }"
     />
-    <div
-      ref="sidePanel"
-      class="schema_side-panel__wrapper"
-    >
-      <br>
+    <div ref="sidePanel" class="schema_side-panel__wrapper">
+      <br />
       <SchemaSidebarOverview
         v-if="schema"
         v-show="!hoveredLabel && clickedLabel === null"
@@ -304,10 +298,16 @@ export default {
               fontSize: 12,
               fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
               fontWeight: 350,
+              background: {
+                fill: "#ffffff",
+                padding: [2, 2, 2, 2],
+                radius: 2,
+              },
             },
-            refY: -10,
+            refY: -14,
             autoRotate: true,
           },
+
         },
         edgeStateStyles: {
           hover: {
@@ -427,7 +427,7 @@ export default {
     extractGraphFromSchema(schema) {
       const overlapEdgeHash = {};
       const ARC_CURVE_OFFSETS = [
-        60, -60, 80, -80, 100, -100, 120, -120, 140, -140, 160, -160, 180, -180, 200, -200,
+        0, 60, -60, 80, -80, 100, -100, 120, -120, 140, -140, 160, -160, 180, -180, 200, -200,
       ]
       const LOOP_POSITIONS = [
         "top",
@@ -440,16 +440,34 @@ export default {
         "top-left",
       ];
       const nodes = schema.nodeTables.map(n => {
-        return {
+        const returnVal = {
           id: n.name,
           label: n.name,
           isPlaceholder: Boolean(n.isPlaceholder),
           style: {
             fill:
               n.isPlaceholder ? this.getColor(PLACEHOLDER_NODE_TABLE) : this.getColor(n.name),
+            lineWidth: 4,
+
           },
           comboId: n.rdf ? n.rdf : NULL_PLACEHOLDER_RDF_GRAPH,
         };
+        returnVal.style.stroke = G6Utils.shadeColor(returnVal.style.fill, -20);
+        return returnVal;
+      });
+
+      const getEdgeKey = (src, dst, sorted = false) => {
+        return sorted ?
+          (src < dst ? `${src}-${dst}` : `${dst}-${src}`) :
+          `${src}-${dst}`;
+      }
+      const numberOfEdgesBetweenNodesHash = {};
+      schema.relTables.forEach(r => {
+        const key = getEdgeKey(r.src, r.dst, true);
+        if (!numberOfEdgesBetweenNodesHash[key]) {
+          numberOfEdgesBetweenNodesHash[key] = 0;
+        }
+        numberOfEdgesBetweenNodesHash[key] += 1;
       });
 
       const edges = schema.relTables.
@@ -468,22 +486,42 @@ export default {
           if (!edge.source || !edge.target) {
             return null;
           }
-          const hashKey = `${r.src}-${r.dst}`;
-          if (!overlapEdgeHash[hashKey]) {
-            overlapEdgeHash[hashKey] = 0;
+          const hashKey = getEdgeKey(r.src, r.dst);
+          const sortedHashKey = getEdgeKey(r.src, r.dst, true);
+          if (!overlapEdgeHash[sortedHashKey]) {
+            overlapEdgeHash[sortedHashKey] = 0;
           }
-          overlapEdgeHash[hashKey] += 1;
+          overlapEdgeHash[sortedHashKey] += 1;
 
           if (edge.source === edge.target) {
             edge.type = 'loop';
             edge.loopCfg = {
-              position: LOOP_POSITIONS[(overlapEdgeHash[hashKey] - 1) % LOOP_POSITIONS.length],
+              position: LOOP_POSITIONS[(overlapEdgeHash[sortedHashKey] - 1) % LOOP_POSITIONS.length],
               dist: 100,
             };
           }
           else {
-            edge.type = 'quadratic';
-            edge.curveOffset = ARC_CURVE_OFFSETS[(overlapEdgeHash[hashKey] - 1) % ARC_CURVE_OFFSETS.length];
+            if (numberOfEdgesBetweenNodesHash[sortedHashKey] > 1) {
+              edge.type = 'quadratic';
+              edge.curveOffset = ARC_CURVE_OFFSETS[(overlapEdgeHash[sortedHashKey] - 1) % ARC_CURVE_OFFSETS.length];
+              if (sortedHashKey !== hashKey) {
+                // There is a second edge between the same nodes, but in the opposite direction
+                // In this case, G6 by default draws the second edge with a slightly different start and end point
+                // Which looks weird, so we add a workaround
+
+                // Exchange source and target
+                const temp = edge.source;
+                edge.source = edge.target;
+                edge.target = temp;
+
+                // Set start arrow to true
+                edge.style.startArrow = true;
+                // Set end arrow to false
+                edge.style.endArrow = false;
+              }
+            } else {
+              edge.type = 'line';
+            }
           }
           return edge;
         }).filter(e => Boolean(e));
