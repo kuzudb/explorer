@@ -447,6 +447,7 @@ export default {
         const edgeItem = e.item;
         const edgeModel = edgeItem.getModel();
         this.deselectAll();
+        this.unhightlightEverything();
         this.g6Graph.setItemState(edgeItem, 'click', true);
         this.handleClick(edgeModel);
         if (!this.isSidePanelOpen) {
