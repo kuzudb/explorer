@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="wrapper"
-    class="result-graph__wrapper"
-  >
+  <div ref="wrapper" class="result-graph__wrapper">
     <div
       ref="graph"
       class="result_container__graph"
@@ -23,22 +20,39 @@
         />
       </div>
     </div>
-    <div
-      v-show="isSidePanelOpen"
-      ref="sidePanel"
-      class="result-container__side-panel"
-    >
-      <br>
+    <div v-show="isSidePanelOpen" ref="sidePanel" class="result-container__side-panel">
+      <div v-if="isNodeSelectedOrHovered">
+        <br />
+
+        <h5>Actions</h5>
+        <button class="btn btn-sm btn-outline-secondary" @click="hideNode()">
+          <i class="fa-solid fa-eye-slash" /> Hide Node
+        </button>
+
+        &nbsp;
+
+        <button
+          v-if="!isHighlightedMode"
+          class="btn btn-sm btn-outline-secondary"
+          @click="enableHightlightMode()"
+        >
+          <i class="fa-solid fa-arrows-to-circle" /> Hightlight Mode
+        </button>
+
+        <button
+          v-if="isHighlightedMode"
+          class="btn btn-sm btn-outline-primary"
+          @click="disableHightlightMode()"
+        >
+          <i class="fa-solid fa-arrows-to-circle" />
+          Disable Hightlight Mode
+        </button>
+      </div>
+
+      <br />
       <div v-if="displayLabel">
         <div class="result-container__summary-section">
           <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
-          <button
-            v-if="isNodeSelectedOrHovered"
-            class="btn btn-sm btn-outline-secondary"
-            @click="hideNode()"
-          >
-            <i class="fa-solid fa-eye-slash" /> Hide Node
-          </button>
         </div>
         <span
           class="badge bg-primary"
@@ -47,20 +61,15 @@
             color: `${getTextColor(displayLabel)} !important`,
           }"
         >
-          {{ displayLabel }}</span>
-        <hr>
+          {{ displayLabel }}</span
+        >
+        <hr />
         <table class="table table-sm table-bordered result-container__result-table">
           <tbody>
-            <tr
-              v-for="property in displayProperties"
-              :key="property.name"
-            >
+            <tr v-for="property in displayProperties" :key="property.name">
               <th scope="row">
                 {{ property.name }}
-                <span
-                  v-if="property.isPrimaryKey"
-                  class="badge bg-primary"
-                >PK</span>
+                <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
               </th>
               <td>{{ property.value }}</td>
             </tr>
@@ -74,7 +83,8 @@
             <p>
               Showing
               <span v-if="numHiddenNodes > 0">
-                {{ counters.total.node - numHiddenNodes }}/</span>{{ counters.total.node }} nodes
+                {{ counters.total.node - numHiddenNodes }}/</span
+              >{{ counters.total.node }} nodes
               <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
             </p>
             <button
@@ -86,40 +96,36 @@
               Show All
             </button>
           </div>
-          <hr>
+          <hr />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
-              <tr
-                v-for="label in Object.keys(counters.node)"
-                :key="label"
-              >
+              <tr v-for="label in Object.keys(counters.node)" :key="label">
                 <th scope="row">
                   <span
                     class="badge bg-primary"
                     :style="{ backgroundColor: ` ${getColor(label)} !important` }"
-                  >{{ label }}</span>
+                    >{{ label }}</span
+                  >
                 </th>
                 <td>{{ counters.node[label] }}</td>
               </tr>
             </tbody>
           </table>
-          <br>
+          <br />
         </div>
 
         <div v-if="counters.total.rel > 0">
           <p>
             Showing
             <span v-if="numHiddenRels > 0">
-              {{ counters.total.rel - numHiddenRels }}/</span>{{ counters.total.rel }} rels
+              {{ counters.total.rel - numHiddenRels }}/</span
+            >{{ counters.total.rel }} rels
             <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
           </p>
-          <hr>
+          <hr />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
-              <tr
-                v-for="label in Object.keys(counters.rel)"
-                :key="label"
-              >
+              <tr v-for="label in Object.keys(counters.rel)" :key="label">
                 <th scope="row">
                   <span
                     class="badge bg-primary"
@@ -181,6 +187,7 @@ export default {
     graphCreated: false,
     isMaximized: false,
     isSidePanelOpen: false,
+    isHighlightedMode: false,
     margin: UI_SIZE.DEFAULT_MARGIN,
     toolbarContainerWidth: UI_SIZE.SHELL_TOOL_BAR_WIDTH,
     sidebarWidth: 500,
@@ -333,6 +340,9 @@ export default {
             lineWidth: 3,
             stroke: '#1848FF',
           },
+          opaque: {
+            opacity: 0.2,
+          },
         },
         defaultEdge: this.settingsStore.defaultRel,
         edgeStateStyles: {
@@ -341,6 +351,9 @@ export default {
           },
           click: {
             stroke: '#1848FF',
+          },
+          opaque: {
+            opacity: 0.2,
           },
         },
         modes: {
@@ -425,6 +438,7 @@ export default {
 
       this.g6Graph.on('canvas:click', () => {
         this.deselectAll();
+        this.unhightlightEverything();
       });
 
       this.g6Graph.render();
@@ -451,6 +465,19 @@ export default {
         this.numHiddenRels += 1;
         edge.hide();
       });
+    },
+
+    enableHightlightMode() {
+      this.isHighlightedMode = true;
+      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
+      if (currentSelectedNode) {
+        this.highlightNode(currentSelectedNode.getModel());
+      }
+    },
+
+    disableHightlightMode() {
+      this.unhightlightEverything();
+      this.isHighlightedMode = false;
     },
 
     showAllNodesRels() {
@@ -559,11 +586,17 @@ export default {
         for (let key in row) {
           switch (dataTypes[key]) {
             case DATA_TYPES.NODE: {
+              if (!row[key] || !row[key]._id) {
+                continue;
+              }
               const node = { ...row[key] };
               processNode(node);
               break;
             }
             case DATA_TYPES.REL: {
+              if (!row[key] || !row[key]._src || !row[key]._dst) {
+                continue;
+              }
               const rel = { ...row[key] };
               processRel(rel);
               break;
@@ -677,6 +710,65 @@ export default {
       this.clickedLabel = label;
       this.clickedProperties = ValueFormatter.filterAndBeautifyProperties(model.properties, this.schema);
       this.clickedIsNode = !(model.properties._src && model.properties._dst);
+      this.highlightNode(model);
+    },
+
+    highlightNode(model) {
+      if (!this.isHighlightedMode) {
+        return;
+      }
+      if (model.properties._src || model.properties._dst) {
+        return;
+      }
+      const srcDstSet = new Set();
+      this.g6Graph.getEdges().forEach((edge) => {
+        const sourceNode = edge.getModel().source;
+        const targetNode = edge.getModel().target;
+        if (!edge.getModel().labelBackup) {
+          edge.getModel().labelBackup = edge.getModel().label;
+        }
+        if (sourceNode !== model.id && targetNode !== model.id) {
+          this.g6Graph.setItemState(edge, 'opaque', true);
+          this.g6Graph.setItemState(edge, 'click', false);
+          edge.getModel().label = "";
+          this.g6Graph.refreshItem(edge);
+        } else {
+          this.g6Graph.setItemState(edge, 'opaque', false);
+          this.g6Graph.setItemState(edge, 'click', true);
+          srcDstSet.add(sourceNode);
+          srcDstSet.add(targetNode);
+          if (edge.getModel().labelBackup) {
+            edge.getModel().label = edge.getModel().labelBackup;
+            delete edge.getModel().labelBackup;
+            this.g6Graph.refreshItem(edge);
+          }
+        }
+      });
+      this.g6Graph.getNodes().forEach((node) => {
+        if (node.getModel().id !== model.id && !srcDstSet.has(node.getModel().id)) {
+          this.g6Graph.setItemState(node, 'opaque', true);
+        } else {
+          this.g6Graph.setItemState(node, 'opaque', false);
+        }
+      });
+    },
+
+    unhightlightEverything() {
+      if (!this.isHighlightedMode) {
+        return;
+      }
+      this.g6Graph.getNodes().forEach((node) => {
+        this.g6Graph.setItemState(node, 'opaque', false);
+      });
+      this.g6Graph.getEdges().forEach((edge) => {
+        this.g6Graph.setItemState(edge, 'opaque', false);
+        this.g6Graph.setItemState(edge, 'click', false);
+        if (edge.getModel().labelBackup) {
+            edge.getModel().label = edge.getModel().labelBackup;
+            delete edge.getModel().labelBackup;
+            this.g6Graph.refreshItem(edge);
+          }
+      });
     },
 
     async expandOnNode(model) {
