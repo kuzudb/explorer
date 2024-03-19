@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="wrapper"
-    class="result-graph__wrapper"
-  >
+  <div ref="wrapper" class="result-graph__wrapper">
     <div
       ref="graph"
       class="result_container__graph"
@@ -23,19 +20,12 @@
         />
       </div>
     </div>
-    <div
-      v-show="isSidePanelOpen"
-      ref="sidePanel"
-      class="result-container__side-panel"
-    >
+    <div v-show="isSidePanelOpen" ref="sidePanel" class="result-container__side-panel">
       <div v-if="isNodeSelectedOrHovered">
-        <br>
+        <br />
 
         <h5>Actions</h5>
-        <button
-          class="btn btn-sm btn-outline-secondary"
-          @click="hideNode()"
-        >
+        <button class="btn btn-sm btn-outline-secondary" @click="hideNode()">
           <i class="fa-solid fa-eye-slash" /> Hide Node
         </button>
 
@@ -79,7 +69,7 @@
         </button>
       </div>
 
-      <br>
+      <br />
       <div v-if="displayLabel">
         <div class="result-container__summary-section">
           <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
@@ -91,20 +81,15 @@
             color: `${getTextColor(displayLabel)} !important`,
           }"
         >
-          {{ displayLabel }}</span>
-        <hr>
+          {{ displayLabel }}</span
+        >
+        <hr />
         <table class="table table-sm table-bordered result-container__result-table">
           <tbody>
-            <tr
-              v-for="property in displayProperties"
-              :key="property.name"
-            >
+            <tr v-for="property in displayProperties" :key="property.name">
               <th scope="row">
                 {{ property.name }}
-                <span
-                  v-if="property.isPrimaryKey"
-                  class="badge bg-primary"
-                >PK</span>
+                <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
               </th>
               <td>{{ property.value }}</td>
             </tr>
@@ -118,7 +103,8 @@
             <p>
               Showing
               <span v-if="numHiddenNodes > 0">
-                {{ counters.total.node - numHiddenNodes }}/</span>{{ counters.total.node }} nodes
+                {{ counters.total.node - numHiddenNodes }}/</span
+              >{{ counters.total.node }} nodes
               <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
             </p>
             <button
@@ -130,40 +116,36 @@
               Show All
             </button>
           </div>
-          <hr>
+          <hr />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
-              <tr
-                v-for="label in Object.keys(counters.node)"
-                :key="label"
-              >
+              <tr v-for="label in Object.keys(counters.node)" :key="label">
                 <th scope="row">
                   <span
                     class="badge bg-primary"
                     :style="{ backgroundColor: ` ${getColor(label)} !important` }"
-                  >{{ label }}</span>
+                    >{{ label }}</span
+                  >
                 </th>
                 <td>{{ counters.node[label] }}</td>
               </tr>
             </tbody>
           </table>
-          <br>
+          <br />
         </div>
 
         <div v-if="counters.total.rel > 0">
           <p>
             Showing
             <span v-if="numHiddenRels > 0">
-              {{ counters.total.rel - numHiddenRels }}/</span>{{ counters.total.rel }} rels
+              {{ counters.total.rel - numHiddenRels }}/</span
+            >{{ counters.total.rel }} rels
             <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
           </p>
-          <hr>
+          <hr />
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
-              <tr
-                v-for="label in Object.keys(counters.rel)"
-                :key="label"
-              >
+              <tr v-for="label in Object.keys(counters.rel)" :key="label">
                 <th scope="row">
                   <span
                     class="badge bg-primary"
@@ -600,6 +582,7 @@ export default {
           };
         }
         const expectedPropertiesType = {};
+        const relTable = this.schema.relTables.find((table) => table.name === rawRel._label);
         const expectedProperties = this.schema.relTables.find((table) => table.name === rawRel._label).properties;
         expectedProperties.forEach((property) => {
           expectedPropertiesType[property.name] = property.type;
@@ -609,6 +592,9 @@ export default {
           g6Rel.label = "";
         } else {
           g6Rel.label = rawRel[relLabelProp];
+          if (relLabelProp === '_label' && relTable.group) {
+            g6Rel.label = relTable.group;
+          }
           if (relLabelProp in expectedPropertiesType) {
             g6Rel.label = ValueFormatter.beautifyValue(rawRel[relLabelProp], expectedPropertiesType[relLabelProp], relLabelProp);
           }

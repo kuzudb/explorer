@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="wrapper"
-    class="schema-view__wrapper"
-  >
+  <div ref="wrapper" class="schema-view__wrapper">
     <div
       ref="toolsContainer"
       class="schema-view__tools_container"
@@ -52,11 +49,8 @@
       class="schema_graph__wrapper"
       :style="{ width: graphWidth + 'px' }"
     />
-    <div
-      ref="sidePanel"
-      class="schema_side-panel__wrapper"
-    >
-      <br>
+    <div ref="sidePanel" class="schema_side-panel__wrapper">
+      <br />
       <SchemaSidebarOverview
         v-if="schema"
         v-show="!hoveredLabel && clickedLabel === null"
@@ -231,6 +225,13 @@ export default {
     getColor(label) {
       return this.settingsStore.colorForLabel(label);
     },
+    getRelTableDisplayLabel(relTableName) {
+      const relTable = this.schema.relTables.find(t => t.name === relTableName);
+      if (!relTable) {
+        return relTableName;
+      }
+      return relTable.group ? relTable.group : relTableName;
+    },
     getLayoutConfig(edges) {
       const nodeSpacing = edges.length * 5;
       const config = {
@@ -380,7 +381,7 @@ export default {
         this.g6graph.setItemState(edgeItem, 'hover', true);
         if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
           this.g6graph.updateItem(edgeItem, {
-            label: edgeItem._cfg.model._label
+            label: this.getRelTableDisplayLabel(edgeItem._cfg.model._label)
           });
           edgeItem.toFront();
         }
@@ -411,7 +412,7 @@ export default {
         this.g6graph.setItemState(edgeItem, 'click', true);
         if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
           this.g6graph.updateItem(edgeItem, {
-            label: edgeItem._cfg.model._label
+            label: this.getRelTableDisplayLabel(edgeItem._cfg.model._label)
           });
           edgeItem.toFront();
         }
@@ -482,7 +483,7 @@ export default {
             id: r.name,
             source: r.src,
             target: r.dst,
-            label: this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.ALWAYS ? r.name : "",
+            label: this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.ALWAYS ? this.getRelTableDisplayLabel(r.name) : "",
             _label: r.name,
             isPlaceholder: Boolean(r.isPlaceholder),
             style: {
@@ -732,7 +733,7 @@ export default {
       }
       if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
         this.g6graph.updateItem(g6Item, {
-          label: tableName
+          label: this.getRelTableDisplayLabel(tableName),
         });
         g6Item.toFront();
       }
