@@ -465,7 +465,7 @@ export default {
           },
           comboId: n.rdf ? n.rdf : NULL_PLACEHOLDER_RDF_GRAPH,
         };
-        returnVal.style.stroke = G6Utils.shadeColor(returnVal.style.fill, -20);
+        returnVal.style.stroke = G6Utils.shadeColor(returnVal.style.fill);
         return returnVal;
       });
 
