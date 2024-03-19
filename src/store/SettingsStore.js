@@ -10,15 +10,15 @@ import {
 } from "../utils/Constants";
 
 const COLOR_PALETTE = [
-  "#4e79a7",
-  "#d97f27",
-  "#e15759",
-  "#76b7b2",
-  "#59a14f",
-  "#d5b441",
-  "#af7aa1",
-  "#e58d96",
-  "#9c755f",
+  "#76b7b2",  // teal
+  "#9c755f",  // brown
+  "#e58d96",  // pink
+  "#d5b441",  // yellow
+  "#af7aa1",  // purple
+  "#d97f27",  // orange
+  "#e15759",  // red
+  "#59a14f",  // green
+  "#4e79a7",  // blue
 ];
 
 const NULL_COLOR = "#d9d9d9";
