@@ -2,6 +2,7 @@ class G6Utils {
   constructor() {
     this.delta = 0.05; // used for zooming, copied from G6
     this.zoomSensitivity = 2; // used for zooming, copied from G6
+    this.colorShadeHash = {}; // cache for shadeColor, this is used to avoid recalculating the same color shade
   }
 
   // Toolbar actions copied from https://github.com/antvis/G6/blob/abca3c0845182c636b43163257f9439aa3d7e738/packages/plugin/src/toolBar/
@@ -78,7 +79,11 @@ class G6Utils {
     return str;
   }
 
-  shadeColor(color, percent) {
+  shadeColor(color, percent=-20) {
+    if (this.colorShadeHash[color] && this.colorShadeHash[color][percent]) {
+      return this.colorShadeHash[color][percent];
+    }
+
     let R = parseInt(color.substring(1, 3), 16);
     let G = parseInt(color.substring(3, 5), 16);
     let B = parseInt(color.substring(5, 7), 16);
@@ -98,6 +103,11 @@ class G6Utils {
     let RR = R.toString(16).length == 1 ? "0" + R.toString(16) : R.toString(16);
     let GG = G.toString(16).length == 1 ? "0" + G.toString(16) : G.toString(16);
     let BB = B.toString(16).length == 1 ? "0" + B.toString(16) : B.toString(16);
+
+    if (!this.colorShadeHash[color]) {
+      this.colorShadeHash[color] = {};
+    }
+    this.colorShadeHash[color][percent] = "#" + RR + GG + BB;
 
     return "#" + RR + GG + BB;
   }

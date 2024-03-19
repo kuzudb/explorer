@@ -8,17 +8,18 @@ import {
   GPT_MODELS,
   IRI_PROPERTY_NAME,
 } from "../utils/Constants";
+import G6Utils from "../utils/G6Utils";
 
 const COLOR_PALETTE = [
-  "#76b7b2",  // teal
-  "#9c755f",  // brown
-  "#e58d96",  // pink
-  "#d5b441",  // yellow
-  "#af7aa1",  // purple
-  "#d97f27",  // orange
-  "#e15759",  // red
-  "#59a14f",  // green
-  "#4e79a7",  // blue
+  "#76b7b2", // teal
+  "#9c755f", // brown
+  "#e58d96", // pink
+  "#d5b441", // yellow
+  "#af7aa1", // purple
+  "#d97f27", // orange
+  "#e15759", // red
+  "#59a14f", // green
+  "#4e79a7", // blue
 ];
 
 const NULL_COLOR = "#d9d9d9";
@@ -39,7 +40,7 @@ export const useSettingsStore = defineStore("settings", {
           },
           size: 40,
           style: {
-            lineWidth: 0,
+            lineWidth: 3,
             fill: "#FF0000",
           },
         },
@@ -143,6 +144,7 @@ export const useSettingsStore = defineStore("settings", {
         color = randomcolor({ luminosity: "dark", hue: "random" });
       }
       g6Settings.style.fill = color;
+      g6Settings.style.stroke = G6Utils.shadeColor(color);
       let primaryKey = node.properties.filter((p) => p.isPrimaryKey)[0];
       if (!primaryKey) {
         primaryKey = node.properties[0];
@@ -219,6 +221,12 @@ export const useSettingsStore = defineStore("settings", {
         const nodeSettings =
           storedGraphViz.nodes[node.name] || this.initDefaultNode(node);
         this.graphViz.nodes[node.name] = nodeSettings;
+        // Migrate old settings
+        this.graphViz.nodes[node.name].g6Settings.style.stroke =
+          G6Utils.shadeColor(
+            this.graphViz.nodes[node.name].g6Settings.style.fill
+          );
+        this.graphViz.nodes[node.name].g6Settings.style.lineWidth = 3;
       });
 
       schema.relTables.forEach((rel) => {
