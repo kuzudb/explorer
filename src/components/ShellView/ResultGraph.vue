@@ -600,6 +600,7 @@ export default {
           };
         }
         const expectedPropertiesType = {};
+        const relTable = this.schema.relTables.find((table) => table.name === rawRel._label);
         const expectedProperties = this.schema.relTables.find((table) => table.name === rawRel._label).properties;
         expectedProperties.forEach((property) => {
           expectedPropertiesType[property.name] = property.type;
@@ -609,6 +610,9 @@ export default {
           g6Rel.label = "";
         } else {
           g6Rel.label = rawRel[relLabelProp];
+          if (relLabelProp === '_label' && relTable.group) {
+            g6Rel.label = relTable.group;
+          }
           if (relLabelProp in expectedPropertiesType) {
             g6Rel.label = ValueFormatter.beautifyValue(rawRel[relLabelProp], expectedPropertiesType[relLabelProp], relLabelProp);
           }
