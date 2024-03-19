@@ -50,12 +50,32 @@
         </button>
 
         <button
-          v-if="isHighlightedMode"
+          v-else
           class="btn btn-sm btn-outline-primary"
           @click="disableHightlightMode()"
         >
           <i class="fa-solid fa-arrows-to-circle" />
           Disable Hightlight Mode
+        </button>
+
+        &nbsp;
+
+        <button
+          v-if="!isCurrentNodeExpanded"
+          class="btn btn-sm btn-outline-secondary"
+          @click="expandSelectedNode()"
+        >
+          <i class="fa-solid fa-up-down-left-right" />
+          Expand Neighbors
+        </button>
+
+        <button
+          v-else
+          class="btn btn-sm btn-outline-primary"
+          @click="unexpandSelectedNode()"
+        >
+          <i class="fa-solid fa-up-down-left-right" />
+          Unexpand Neighbors
         </button>
       </div>
 
@@ -219,6 +239,7 @@ export default {
     clickedProperties: [],
     clickedLabel: "",
     clickedIsNode: false,
+    isCurrentNodeExpanded: false,
     delta: 0.05, // used for zooming, copied from G6
     zoomSensitivity: 2, // used for zooming, copied from G6
     toolbarDebounceTimeout: 100,
@@ -722,6 +743,9 @@ export default {
       this.hoveredLabel = label;
       this.hoveredProperties = ValueFormatter.filterAndBeautifyProperties(model.properties, this.schema);
       this.hoveredIsNode = !(model.properties._src && model.properties._dst);
+      if (this.hoveredIsNode) {
+        this.isCurrentNodeExpanded = this.isNeighborExpanded(model);
+      }
     },
 
     handleClick(model) {
@@ -730,6 +754,9 @@ export default {
       this.clickedProperties = ValueFormatter.filterAndBeautifyProperties(model.properties, this.schema);
       this.clickedIsNode = !(model.properties._src && model.properties._dst);
       this.highlightNode(model);
+      if (this.clickedIsNode) {
+        this.isCurrentNodeExpanded = this.isNeighborExpanded(model);
+      }
     },
 
     highlightNode(model) {
@@ -783,14 +810,14 @@ export default {
         this.g6Graph.setItemState(edge, 'opaque', false);
         this.g6Graph.setItemState(edge, 'click', false);
         if (edge.getModel().labelBackup) {
-            edge.getModel().label = edge.getModel().labelBackup;
-            delete edge.getModel().labelBackup;
-            this.g6Graph.refreshItem(edge);
-          }
+          edge.getModel().label = edge.getModel().labelBackup;
+          delete edge.getModel().labelBackup;
+          this.g6Graph.refreshItem(edge);
+        }
       });
     },
 
-    async expandOnNode(model) {
+    getInfoForExpansion(model) {
       const tableName = model.properties._label;
       const primaryKey = this.schema.nodeTables
         .find((table) => table.name === tableName)
@@ -798,6 +825,11 @@ export default {
         .find((prop) => prop.isPrimaryKey);
       const primaryKeyValue = model.properties[primaryKey.name];
       const primaryKeyName = primaryKey.name;
+      return { tableName, primaryKey, primaryKeyValue, primaryKeyName };
+    },
+
+    async expandOnNode(model) {
+      const { tableName, primaryKey, primaryKeyValue, primaryKeyName } = this.getInfoForExpansion(model);
       const sizeLimit = this.settingsStore.performance.maxNumberOfNodesToExpand;
       let neighbors = null;
       try {
@@ -814,8 +846,58 @@ export default {
       if (!neighbors) {
         return;
       }
+      // Remove neighbors that are already in the graph
+      neighbors.rows = neighbors.rows.filter((n) => {
+        return !this.g6Graph.findById(this.encodeNodeId(n.dst._id));
+      });
       this.addDataWithQueryResult(neighbors);
-      this.expansions.push(neighbors);
+      this.expansions.push({
+        id: model.id, neighbors
+      });
+    },
+
+    isNeighborExpanded(model) {
+      const id = model.id;
+      return this.expansions.some((e) => {
+        return e.id === id;
+      });
+    },
+
+    expandSelectedNode() {
+      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
+      if (!currentSelectedNode) {
+        return;
+      }
+      this.expandOnNode(currentSelectedNode.getModel());
+      this.deselectAll();
+    },
+
+    unexpandNode(id) {
+      const expansion = this.expansions.find((e) => e.id === id);
+      if (!expansion) {
+        return;
+      }
+      const neighbors = expansion.neighbors;
+      this.expansions = this.expansions.filter((e) => e.id !== id);
+      // Recursively unexpand neighbors
+      neighbors.rows.forEach((neighbor) => {
+        if (neighbor.dst) {
+          const id = this.encodeNodeId(neighbor.dst._id);
+          this.unexpandNode(id);
+        }
+      });
+    },
+
+    unexpandSelectedNode() {
+      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
+      if (!currentSelectedNode) {
+        return;
+      }
+      const id = currentSelectedNode.getModel().id;
+      this.unexpandNode(id);
+      this.handleSettingsChange();
+      this.isCurrentNodeExpanded = false;
+      this.deselectAll();
     },
 
     addDataWithQueryResult(queryResult) {
@@ -877,6 +959,14 @@ export default {
       this.hoveredLabel = "";
       this.hoveredProperties = [];
       this.hoveredIsNode = false;
+      // If there is still a node selected, we need to check if it is expanded
+      // and update the state accordingly
+      if (this.clickedLabel) {
+        const currentSelectedNode = this.g6Graph.findAllByState('node', 'click');
+        if (currentSelectedNode && currentSelectedNode.length > 0) {
+          this.isCurrentNodeExpanded = this.isNeighborExpanded(currentSelectedNode[0].getModel());
+        }
+      }
     },
 
     toggleSidePanel() {
@@ -940,7 +1030,7 @@ export default {
       }
       this.g6Graph.changeData({ nodes, edges });
       this.counters = counters;
-      this.expansions.forEach(e => this.addDataWithQueryResult(e));
+      this.expansions.forEach(e => this.addDataWithQueryResult(e.neighbors));
     }
   },
 };
