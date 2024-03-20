@@ -12,9 +12,7 @@
         <i class="fa-solid fa-circle-exclamation" />
         The evaluation of this cell failed with the following error:
         <br>
-        <b>
-          {{ errorMessage }}
-        </b>
+        <pre>{{ errorMessage }}</pre>
       </div>
     </div>
 
@@ -25,7 +23,9 @@
     >
       <div>
         <i class="fa-solid fa-circle-info" />
-        {{ errorMessage }}
+        The evaluation of this cell succeeded with the following message:
+        <br>
+        <pre>{{ errorMessage }}</pre>
       </div>
     </div>
   </div>
@@ -64,6 +64,10 @@ export default {
     border-radius: 0;
     border: none;
     margin: 0;
+
+    pre {
+      margin-bottom: 0;
+    }
   }
 }
 </style>
