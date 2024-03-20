@@ -377,7 +377,7 @@ export default {
           },
           click: {
             lineWidth: 3,
-            stroke: '#1848FF',
+            stroke: '#1890FF',
           },
           opaque: {
             opacity: 0.2,
@@ -387,9 +387,17 @@ export default {
         edgeStateStyles: {
           hover: {
             stroke: '#1890FF',
+            endArrow: {
+              path: G6.Arrow.triangle(),
+              fill: '#1848FF',
+            },
           },
           click: {
-            stroke: '#1848FF',
+            stroke: '#1890FF',
+            endArrow: {
+              path: G6.Arrow.triangle(),
+              fill: '#1848FF',
+            },
           },
           opaque: {
             opacity: 0.2,

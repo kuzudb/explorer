@@ -9,6 +9,7 @@ import {
   IRI_PROPERTY_NAME,
 } from "../utils/Constants";
 import G6Utils from "../utils/G6Utils";
+import G6 from "@antv/g6";
 
 const COLOR_PALETTE = [
   "#76b7b2", // teal
@@ -48,14 +49,22 @@ export const useSettingsStore = defineStore("settings", {
           size: 3,
           opacity: 1,
           style: {
-            endArrow: true,
+            endArrow: {
+              path: G6.Arrow.triangle(),
+              fill: "#e2e2e2",
+            },
             stroke: "#e2e2e2",
           },
           labelCfg: {
             style: {
               fontSize: 12,
               fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
-              fontWeight: 600,
+              fontWeight: 300,
+              background: {
+                fill: "#ffffff",
+                padding: [2, 2, 2, 2],
+                radius: 2,
+              },
             },
             autoRotate: true,
           },
@@ -233,6 +242,17 @@ export const useSettingsStore = defineStore("settings", {
         const relSettings =
           storedGraphViz.rels[rel.name] || this.initDefaultRel(rel);
         this.graphViz.rels[rel.name] = relSettings;
+        // Migrate old settings
+        this.graphViz.rels[rel.name].g6Settings.style.endArrow = {
+          path: G6.Arrow.triangle(),
+          fill: "#e2e2e2",
+        };
+        this.graphViz.rels[rel.name].g6Settings.labelCfg.style.background = {
+          fill: "#ffffff",
+          padding: [2, 2, 2, 2],
+          radius: 2,
+        };
+        this.graphViz.rels[rel.name].g6Settings.labelCfg.style.fontWeight = 300;
       });
       this.loadGptApiTokenFromLocalStorage();
       this.uploadSettings();
