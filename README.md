@@ -76,6 +76,16 @@ docker run -p 8000:8000 \
            --rm kuzudb/explorer:latest
 ```
 
+### Updating KùzuExplorer
+
+When a new version of KùzuExplorer is released after the initial launch, re-launching the container WILL NOT automatically update the local image to the latest version. To update the local image to the latest version, you can run the following command.
+
+```bash
+docker pull kuzudb/explorer:latest
+```
+
+After pulling the latest image, you can re-launch the container with the same command as before.
+
 ### Launch with Podman
 
 If you are using [Podman](https://podman.io/) instead of Docker, you can launch KùzuExplorer by replacing `docker` with `podman` in the commands above. However, note that by default Podman maps the default user account to the `root` user in the container. This may cause permission issues when mounting local database files to the container. To avoid this, you can use the `--userns=keep-id` flag to keep the user ID of the current user inside the container, or enable `:U` option for each volume to change the owner and group of the source volume to the current user.
@@ -162,7 +172,9 @@ env KUZU_PATH=path/to/database npm run serve
 ```
 npm run eslint
 ```
+
 Include `-fix` for automatic correction of fixable styles.
+
 ```
 npm run eslint-fix
 ```
