@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="wrapper"
-    class="schema-view__wrapper"
-  >
+  <div ref="wrapper" class="schema-view__wrapper">
     <div
       ref="toolsContainer"
       class="schema-view__tools_container"
@@ -52,11 +49,8 @@
       class="schema_graph__wrapper"
       :style="{ width: graphWidth + 'px' }"
     />
-    <div
-      ref="sidePanel"
-      class="schema_side-panel__wrapper"
-    >
-      <br>
+    <div ref="sidePanel" class="schema_side-panel__wrapper">
+      <br />
       <SchemaSidebarOverview
         v-if="schema"
         v-show="!hoveredLabel && clickedLabel === null"
@@ -541,14 +535,14 @@ export default {
                 // Which looks weird, so we add a workaround
 
                 // Exchange source and target
-                const temp = edge.source;
+                let temp = edge.source;
                 edge.source = edge.target;
                 edge.target = temp;
 
-                // Set start arrow to true
-                edge.style.startArrow = true;
-                // Set end arrow to false
-                edge.style.endArrow = false;
+                // Exchange start and end arrow
+                temp = edge.style.startArrow;
+                edge.style.startArrow = edge.style.endArrow;
+                edge.style.endArrow = temp;
               }
             } else {
               edge.type = 'line';
