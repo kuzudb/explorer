@@ -44,18 +44,18 @@
         <button
           v-if="!isHighlightedMode"
           class="btn btn-sm btn-outline-secondary"
-          @click="enableHightlightMode()"
+          @click="enableHighlightMode()"
         >
-          <i class="fa-solid fa-arrows-to-circle" /> Hightlight Mode
+          <i class="fa-solid fa-arrows-to-circle" /> Highlight Mode
         </button>
 
         <button
           v-else
           class="btn btn-sm btn-outline-primary"
-          @click="disableHightlightMode()"
+          @click="disableHighlightMode()"
         >
           <i class="fa-solid fa-arrows-to-circle" />
-          Disable Hightlight Mode
+          Disable Highlight Mode
         </button>
 
         &nbsp;
@@ -72,10 +72,10 @@
         <button
           v-else
           class="btn btn-sm btn-outline-primary"
-          @click="unexpandSelectedNode()"
+          @click="collapseSelectedNode()"
         >
           <i class="fa-solid fa-up-down-left-right" />
-          Unexpand Neighbors
+          Collapse Neighbors
         </button>
       </div>
 
@@ -468,7 +468,7 @@ export default {
         const edgeItem = e.item;
         const edgeModel = edgeItem.getModel();
         this.deselectAll();
-        this.unhightlightEverything();
+        this.unhighlightEverything();
         this.g6Graph.setItemState(edgeItem, 'click', true);
         this.handleClick(edgeModel);
         if (!this.isSidePanelOpen) {
@@ -478,7 +478,7 @@ export default {
 
       this.g6Graph.on('canvas:click', () => {
         this.deselectAll();
-        this.unhightlightEverything();
+        this.unhighlightEverything();
       });
 
       this.g6Graph.render();
@@ -507,7 +507,7 @@ export default {
       });
     },
 
-    enableHightlightMode() {
+    enableHighlightMode() {
       this.isHighlightedMode = true;
       const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
       if (currentSelectedNode) {
@@ -515,8 +515,8 @@ export default {
       }
     },
 
-    disableHightlightMode() {
-      this.unhightlightEverything();
+    disableHighlightMode() {
+      this.unhighlightEverything();
       this.isHighlightedMode = false;
     },
 
@@ -803,7 +803,7 @@ export default {
       });
     },
 
-    unhightlightEverything() {
+    unhighlightEverything() {
       if (!this.isHighlightedMode) {
         return;
       }
@@ -876,29 +876,29 @@ export default {
       this.deselectAll();
     },
 
-    unexpandNode(id) {
+    collapseNode(id) {
       const expansion = this.expansions.find((e) => e.id === id);
       if (!expansion) {
         return;
       }
       const neighbors = expansion.neighbors;
       this.expansions = this.expansions.filter((e) => e.id !== id);
-      // Recursively unexpand neighbors
+      // Recursively collapse neighbors
       neighbors.rows.forEach((neighbor) => {
         if (neighbor.dst) {
           const id = this.encodeNodeId(neighbor.dst._id);
-          this.unexpandNode(id);
+          this.collapseNode(id);
         }
       });
     },
 
-    unexpandSelectedNode() {
+    collapseSelectedNode() {
       const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
       if (!currentSelectedNode) {
         return;
       }
       const id = currentSelectedNode.getModel().id;
-      this.unexpandNode(id);
+      this.collapseNode(id);
       this.handleSettingsChange();
       this.isCurrentNodeExpanded = false;
       this.deselectAll();
