@@ -304,10 +304,12 @@ export default {
           opacity: 1,
           style: {
             stroke: "#e2e2e2",
-            endArrow: {
-              path: G6.Arrow.triangle(),
-              fill: "#e2e2e2",
-            }
+            endArrow: true,
+            // TODO: investigate why the endArrow causes rendering issues
+            // endArrow: {
+            //   path: G6.Arrow.triangle(),
+            //   fill: "#e2e2e2",
+            // }
           },
           labelCfg: {
             style: {
@@ -328,17 +330,17 @@ export default {
         edgeStateStyles: {
           hover: {
             stroke: '#1890FF',
-            endArrow: {
-              path: G6.Arrow.triangle(),
-              fill: "#1890FF",
-            },
+            // endArrow: {
+            //   path: G6.Arrow.triangle(),
+            //   fill: "#1890FF",
+            // },
           },
           click: {
             stroke: '#1848FF',
-            endArrow: {
-              path: G6.Arrow.triangle(),
-              fill: "#1848FF",
-            },
+            // endArrow: {
+            //   path: G6.Arrow.triangle(),
+            //   fill: "#1848FF",
+            // },
           },
         },
         modes: {
