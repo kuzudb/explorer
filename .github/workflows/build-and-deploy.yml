@@ -5,6 +5,20 @@ on:
     branches:
       - master
 
+  schedule:
+    # Schedule a nightly build two hours after publishing the daily build
+    # of kuzu (see https://github.com/kuzudb/kuzu/blob/master/.github/workflows/build-and-deploy.yml)
+    # The kuzu daily build is scheduled at 8:00 UTC. The two hours delay
+    # should give enough time for the kuzu build to finish.
+    - cron: "0 10 * * *"
+
+  workflow_dispatch:
+    inputs:
+      isNightly:
+        description: "Whether the build is a nightly build?"
+        required: true
+        default: "false"
+
 jobs:
   lint:
     name: Lint
@@ -22,6 +36,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20"
+      - name: Prebuild - update dev version
+        if: ${{ github.event_name == 'schedule' || github.event.inputs.isNightly == 'true' }}
+        working-directory: scripts
+        run: node UpdateDevVersion
       - name: Prebuild - install dependencies
         run: npm install
       - name: Prebuild - generate grammar
@@ -31,12 +49,20 @@ jobs:
       - name: Prebuild - fetch datasets
         run: npm run fetch-datasets
       - name: Prebuild - cleanup
-        run: rm -rf node_modules
+        run: rm -rf node_modules .git
       - name: Prebuild - get version
         shell: bash
         run: |
           VERSION=$(node -e 'fs=require("fs");console.log(JSON.parse(fs.readFileSync("package.json")).dependencies.kuzu)')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Prebuild - set tag for nightly build
+        if: ${{ github.event_name == 'schedule' || github.event.inputs.isNightly == 'true' }}
+        run: echo "TAGS=kuzudb/explorer:dev" >> $GITHUB_ENV
+      - name: Prebuild - set tag for release build
+        if: ${{ github.event_name != 'schedule' && github.event.inputs.isNightly != 'true' }}
+        run: echo "TAGS=kuzudb/explorer:latest,kuzudb/explorer:${{ env.VERSION }}" >> $GITHUB_ENV
+      - name: Prebuild - show tags
+        run: echo $TAGS
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -52,7 +78,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: kuzudb/explorer:latest, kuzudb/explorer:${{ env.VERSION }}
+          tags: ${{ env.TAGS }}
           build-args: |
             SKIP_GRAMMAR=true
             SKIP_BUILD_APP=true
