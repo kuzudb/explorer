@@ -16,8 +16,9 @@ on:
     inputs:
       isNightly:
         description: "Whether the build is a nightly build?"
+        type: boolean
         required: true
-        default: "false"
+        default: false
 
 jobs:
   lint:
