@@ -76,6 +76,18 @@ docker run -p 8000:8000 \
            --rm kuzudb/explorer:latest
 ```
 
+#### Dev builds
+
+If you want to launch KùzuExplorer with the latest development build of Kùzu, you can do so by using the `dev` tag instead of `latest`.
+
+```bash
+docker run -p 8000:8000 \
+           -v /absolute/path/to/database:/database \
+           --rm kuzudb/explorer:dev
+```
+
+The `dev` tag is updated daily, approximately two hours after the latest dev build of Kùzu is released.
+
 ### Updating KùzuExplorer
 
 When a new version of KùzuExplorer is released after the initial launch, re-launching the container WILL NOT automatically update the local image to the latest version. To update the local image to the latest version, you can run the following command.
