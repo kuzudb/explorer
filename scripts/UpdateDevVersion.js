@@ -21,7 +21,7 @@ const CMD = "npm view kuzu@next version";
         process.exit(1);
       }
       const packageJson = JSON.parse(data);
-      packageJson.dependencies.kuzu = `^${latestVersion}`;
+      packageJson.dependencies.kuzu = `${latestVersion}`;
       fs.writeFile(
         PACKAGE_JSON_PATH,
         JSON.stringify(packageJson, null, 2),
