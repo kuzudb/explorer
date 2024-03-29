@@ -54,7 +54,7 @@ Promise.all([getDbVersionFromQuery(conn), getDbVersionFromPackage()])
       ? packageVersion
       : queryVersion;
     logger.info("Version of Kùzu: " + version);
-    const storageVersion = db.kuzu.STORAGE_VERSION;
+    const storageVersion = database.kuzu.STORAGE_VERSION;
     logger.info("Storage version of Kùzu: " + storageVersion);
     app.listen(PORT, () => {
       logger.info("Deployed server started on port: " + PORT);
