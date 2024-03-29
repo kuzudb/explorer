@@ -239,7 +239,10 @@ export default {
   created() {
     this.getMode();
     Promise.all([this.getSchema(), this.getStoredSettings()]).then((res) => {
-      const storedSettings = res[1];
+      let storedSettings = res[1];
+      if (!storedSettings || Object.keys(storedSettings).length === 0) {
+        storedSettings = this.loadSettingsFromLocalStorage();
+      }
       this.initSettings(this.schema, storedSettings);
       this.$refs.schemaView.drawGraph();
     });
@@ -388,6 +391,7 @@ export default {
     },
     ...mapActions(useSettingsStore, [
       'initSettings',
+      'loadSettingsFromLocalStorage',
       'handleSchemaReload',
       'setPlaceholderNodeTable',
       'setPlaceholderRelTable',
