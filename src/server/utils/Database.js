@@ -90,6 +90,10 @@ class Database {
     }
   }
 
+  get kuzu() {
+    return kuzu;
+  }
+
   getAccessModeString() {
     return process.env.MODE ? process.env.MODE.toUpperCase() : READ_WRITE_MODE;
   }
