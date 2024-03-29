@@ -393,10 +393,19 @@ export const useSettingsStore = defineStore("settings", {
       localStorage.removeItem("gptApiToken");
     },
 
+    loadSettingsFromLocalStorage() {
+      const settings = localStorage.getItem("settings");
+      if (settings) {
+        return JSON.parse(settings);
+      }
+      return {};
+    },
+
     uploadSettings() {
       const settings = JSON.parse(JSON.stringify(this.allSettings));
       settings.colors = this.colors;
       delete settings.gpt.apiToken;
+      localStorage.setItem("settings", JSON.stringify(settings));
       return Axios.post("/api/session/settings", settings).then((response) => {
         return response.data;
       });
