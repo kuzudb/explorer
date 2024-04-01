@@ -12,6 +12,7 @@
       @generate-and-evaluate-query="generateAndEvaluateQuery"
       @remove="removeCell"
       @toggle-maximize="toggleMaximize"
+      @editor-resize="handleEditorResize"
     />
     <ResultContainer
       v-if="queryResult || errorMessage"
@@ -226,6 +227,16 @@ export default {
     },
     removeCell() {
       this.$emit("remove");
+    },
+    getEditorHeight() {
+      return this.$refs.editor.editorHeight;
+    },
+    handleEditorResize() {
+      if (!this.$refs.resultContainer) {
+        return;
+      }
+      this.$refs.resultContainer.updateContainerHeight();
+      this.$refs.resultContainer.handleGraphResize();
     },
   },
 }

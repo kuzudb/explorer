@@ -2,7 +2,7 @@
   <div
     ref="wrapper"
     class="shell-editor__wrapper"
-    :style="{ height: editorHeight + 'px' }"
+    :style="{ maxHeight: isMaximized ? '550px' : '100%' }"
   >
     <div
       v-show="!isQueryGenerationMode"
@@ -108,18 +108,20 @@ export default {
       default: false,
     },
   },
-  emits: ['remove', 'evaluateCypher', 'toggleMaximize', 'generateAndEvaluateQuery'],
+  emits: ['remove', 'evaluateCypher', 'toggleMaximize', 'generateAndEvaluateQuery', 'editorResize'],
   data: () => {
     return {
       name: "CypherEditor",
       cypherLanguage: new CypherLanguage(),
       isCommandPaletteOpen: false,
       editorWidth: 0,
-      editorHeight: UI_SIZE.DEFAULT_EDITOR_HEIGHT,
+      editorHeight: 0,
       toolbarWidth: UI_SIZE.SHELL_TOOL_BAR_WIDTH,
       isMaximized: false,
       isQueryGenerationMode: false,
       gptQuestion: "",
+      observer: null,
+      editorResizeDebounce: null,
     }
   },
 
@@ -138,13 +140,36 @@ export default {
     },
   },
 
+  watch: {
+    editorHeight() {
+      if (this.editorResizeDebounce) {
+        clearTimeout(this.editorResizeDebounce);
+      }
+      this.editorResizeDebounce = setTimeout(() => {
+        this.$emit("editorResize", this.editorHeight);
+        this.editorResizeDebounce = null;
+      }, 200);
+    }
+  },
+
   mounted() {
     this.initMonacoEditor();
+    // Set height mutation observer for wrapper element
+    this.observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        this.editorHeight = entry.contentRect.height;
+      }
+    });
+    this.observer.observe(this.$refs.wrapper);
   },
 
   beforeUnmount() {
     if (this.editor) {
       this.editor.dispose();
+    }
+    if (this.observer) {
+      this.observer.disconnect();
+      this.observer = null;
     }
   },
 
@@ -252,11 +277,15 @@ $margin: 20px;
   border: 2px solid $gray-300;
   display: flex;
   flex-direction: row-reverse;
+  resize: vertical;
+  overflow: auto;
+  min-height: 132px;
 }
 
 .shell-editor__container {
-  height: 100%;
-  flex-grow: 1;
+  flex: 1;
+  resize: vertical;
+  overflow: auto;
 
   textarea {
     height: 100%;

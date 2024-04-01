@@ -167,32 +167,16 @@ export default {
     queryResultString: "",
     errorMessage: "",
     emptyResultMessage: "The query executed successfully but the result is empty.",
+    containerHeight: "auto",
   }),
-  computed: {
-    containerHeight() {
-      if (this.errorMessage) {
-        return "auto"
-      }
-      else if (this.queryResult) {
-        if (this.isMaximized) {
-          return window.innerHeight - this.navbarHeight - UI_SIZE.DEFAULT_EDITOR_HEIGHT - 2 * UI_SIZE.DEFAULT_MARGIN + 'px';
-        }
-        else {
-          return this.queryResultDefaultHeight + 'px';
-        }
-      }
-      else {
-        return "auto";
-      }
-    },
-  },
   watch: {
     isMaximized() {
       if (!this.$refs.resultGraph) {
         return;
       }
       this.$nextTick(() => {
-        this.$refs.resultGraph.handleResize();
+        this.updateContainerHeight();
+        this.handleGraphResize();
       });
     },
     showTable() {
@@ -219,7 +203,7 @@ export default {
         this.queryResultString = "";
         this.errorMessage = this.emptyResultMessage;
       }
-
+      this.updateContainerHeight();
       if (this.errorMessage) {
         return;
       }
@@ -250,7 +234,24 @@ export default {
     handleGraphEmpty() {
       this.isGraphEmpty = true;
       this.toggleTableView();
-    }
+    },
+    handleGraphResize() {
+      this.$refs.resultGraph.handleResize();
+    },
+    updateContainerHeight() {
+      if (this.errorMessage) {
+        this.containerHeight = "auto";
+      }
+      else if (this.queryResult) {
+        const editorHeight = this.$parent.getEditorHeight();
+        if (this.isMaximized) {
+          this.containerHeight = window.innerHeight - this.navbarHeight - editorHeight - 2 * UI_SIZE.DEFAULT_MARGIN + 'px';
+        }
+        else {
+          this.containerHeight = this.queryResultDefaultHeight + 'px';
+        }
+      }
+    },
   },
 };
 </script>
