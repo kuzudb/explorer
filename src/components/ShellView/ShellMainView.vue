@@ -1,6 +1,6 @@
 <template>
   <div class="shell-main-view__wrapper" :style="{ height: `${containerHeight}px` }">
-    <div class="shell-main-view__placeholder" v-if="this.maximizedCellIndex >= 0">
+    <div class="shell-main-view__placeholder" v-if="this.maximizedCellIndex < 0">
       <a href="#" @click="addCell">
         <i class="fa-lg fa-solid fa-plus" />
         Click here to add a new cell</a
