@@ -1,15 +1,10 @@
 <template>
-  <div
-    class="shell-main-view__wrapper"
-    :style="{ height: `${containerHeight}px` }"
-  >
-    <div class="shell-main-view__placeholder">
-      <a
-        href="#"
-        @click="addCell"
-      >
+  <div class="shell-main-view__wrapper" :style="{ height: `${containerHeight}px` }">
+    <div class="shell-main-view__placeholder" v-if="this.maximizedCellIndex >= 0">
+      <a href="#" @click="addCell">
         <i class="fa-lg fa-solid fa-plus" />
-        Click here to add a new cell</a>
+        Click here to add a new cell</a
+      >
     </div>
     <ShellCell
       v-for="(cell, index) in shellCell"
@@ -182,16 +177,19 @@ export default {
 .shell-main-view__wrapper {
   width: 100%;
   overflow-y: scroll;
+
   .shell-main-view__placeholder {
     margin: 20px;
     margin-top: 20px;
     padding: 8px;
     border: 2px solid $gray-300;
+
     a {
       font-style: italic;
       font-weight: 400;
       color: $body-tertiary-color;
       text-decoration: none;
+
       i {
         margin-right: 24px;
       }
