@@ -1,10 +1,15 @@
 <template>
-  <div class="shell-main-view__wrapper" :style="{ height: `${containerHeight}px` }">
+  <div
+    class="shell-main-view__wrapper"
+    :style="{ height: `${containerHeight}px` }"
+  >
     <div class="shell-main-view__placeholder">
-      <a href="#" @click="addCell">
-        <i class="fa-lg fa-solid fa-plus" />
-        Click here to add a new cell</a
+      <a
+        href="#"
+        @click="addCell"
       >
+        <i class="fa-lg fa-solid fa-plus" />
+        Click here to add a new cell</a>
     </div>
     <ShellCell
       v-for="(cell, index) in shellCell"
