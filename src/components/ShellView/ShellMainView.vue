@@ -3,7 +3,10 @@
     class="shell-main-view__wrapper"
     :style="{ height: `${containerHeight}px` }"
   >
-    <div class="shell-main-view__placeholder">
+    <div
+      v-if="maximizedCellIndex < 0"
+      class="shell-main-view__placeholder"
+    >
       <a
         href="#"
         @click="addCell"
@@ -182,16 +185,19 @@ export default {
 .shell-main-view__wrapper {
   width: 100%;
   overflow-y: scroll;
+
   .shell-main-view__placeholder {
     margin: 20px;
     margin-top: 20px;
     padding: 8px;
     border: 2px solid $gray-300;
+
     a {
       font-style: italic;
       font-weight: 400;
       color: $body-tertiary-color;
       text-decoration: none;
+
       i {
         margin-right: 24px;
       }
