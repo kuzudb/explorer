@@ -171,13 +171,30 @@ class CypherLanguage {
   }
 
   provideCompletionItemsForMonaco(model, position, schema) {
+    // Get the position of last ";" before the current position
+    let lastSemiColonPosition = { lineNumber: 1, column: 1 };
+    const found = model.findPreviousMatch(
+      ";",
+      position,
+      false,
+      false,
+      null,
+      false
+    );
+    if (found) {
+      lastSemiColonPosition = {
+        lineNumber: found.range.endLineNumber,
+        column: found.range.endColumn,
+      };
+    }
+
     const textUntilPosition = model.getValueInRange({
-      startLineNumber: 1,
-      startColumn: 1,
+      startLineNumber: lastSemiColonPosition.lineNumber,
+      startColumn: lastSemiColonPosition.column,
       endLineNumber: position.lineNumber,
       endColumn: position.column,
     });
-    const wordUntilPosition = model.getWordUntilPosition(position);
+    let wordUntilPosition = model.getWordUntilPosition(position);
 
     const suggestions =
       this.getCompletionItemsForLastParsedSymbol(textUntilPosition);
