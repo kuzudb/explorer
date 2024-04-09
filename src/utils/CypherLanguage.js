@@ -188,7 +188,7 @@ class CypherLanguage {
       endLineNumber: position.lineNumber,
       endColumn: wordUntilPosition.endColumn,
     };
-    let addSymobolicName = false;
+    let addSymbolicName = false;
     for (let s of suggestions) {
       if (s.isKeyword) {
         monacoSuggestions.push({
@@ -199,10 +199,10 @@ class CypherLanguage {
         });
       }
       if (s.isSymbolicName) {
-        addSymobolicName = true;
+        addSymbolicName = true;
       }
     }
-    if (addSymobolicName) {
+    if (addSymbolicName) {
       schema.nodeTables.forEach((nodeTable) => {
         monacoSuggestions.push({
           range,
