@@ -11,7 +11,7 @@
     >
       <i class="fa-solid fa-info-circle" />
       You have already loaded a database. You can still review the schema of the bundled
-      datasets. If you want to load a different dataset, please restart your KùzuExplorer
+      datasets. If you want to load a different dataset, please restart your Kùzu Explorer
       Docker image with an empty database or drop all tables in the current database.
     </div>
 
@@ -31,7 +31,7 @@
       role="alert"
     >
       <i class="fa-solid fa-info-circle" />
-      You are running KùzuExplorer in development mode. You can load any dataset into the
+      You are running Kùzu Explorer in development mode. You can load any dataset into the
       database. However, please make sure there is no conflict with the existing schema.
     </div>
 
@@ -41,8 +41,8 @@
       role="alert"
     >
       <i class="fa-solid fa-info-circle" />
-      KùzuExplorer is running in read-only mode. You can still review the schema of the
-      bundled datasets. If you want to load a dataset, please restart your KùzuExplorer
+      Kùzu Explorer is running in read-only mode. You can still review the schema of the
+      bundled datasets. If you want to load a dataset, please restart your Kùzu Explorer
       Docker image in read-write mode with an empty database.
     </div>
 
@@ -52,9 +52,9 @@
       role="alert"
     >
       <i class="fa-solid fa-info-circle" />
-      KùzuExplorer is running in demo mode. You can still review the schema of the bundled
+      Kùzu Explorer is running in demo mode. You can still review the schema of the bundled
       datasets. Loading a dataset is not possible in this demo. However, you can load a
-      bundled dataset or use your own dataset if you run KùzuExplorer locally. Please
+      bundled dataset or use your own dataset if you run Kùzu Explorer locally. Please
       refer to
       <a
         target="_blank"

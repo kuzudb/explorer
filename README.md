@@ -78,7 +78,7 @@ docker run -p 8000:8000 \
 
 #### Dev builds
 
-If you want to launch KùzuExplorer with the latest development build of Kùzu, you can do so by using the `dev` tag instead of `latest`.
+If you want to launch Kùzu Explorer with the latest development build of Kùzu, you can do so by using the `dev` tag instead of `latest`.
 
 ```bash
 docker run -p 8000:8000 \
@@ -88,9 +88,9 @@ docker run -p 8000:8000 \
 
 The `dev` tag is updated daily, approximately two hours after the latest dev build of Kùzu is released.
 
-### Updating KùzuExplorer
+### Updating Kùzu Explorer
 
-When a new version of KùzuExplorer is released after the initial launch, re-launching the container WILL NOT automatically update the local image to the latest version. To update the local image to the latest version, you can run the following command.
+When a new version of Kùzu Explorer is released after the initial launch, re-launching the container WILL NOT automatically update the local image to the latest version. To update the local image to the latest version, you can run the following command.
 
 ```bash
 docker pull kuzudb/explorer:latest
