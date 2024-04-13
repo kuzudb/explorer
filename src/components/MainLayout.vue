@@ -97,7 +97,7 @@
             <li class="nav-item">
               <a
                 class="nav-link"
-                href="https://kuzudb.com/docusaurus/"
+                href="https://docs.kuzudb.com"
                 target="_blank"
               >
                 <i class="fa-solid fa-book" />

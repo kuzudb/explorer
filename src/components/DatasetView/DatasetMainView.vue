@@ -58,7 +58,7 @@
       refer to
       <a
         target="_blank"
-        href="https://kuzudb.com/docusaurus/kuzuexplorer/"
+        href="https://docs.kuzudb.com"
       >
         the documentation </a>for more information.
     </div>
