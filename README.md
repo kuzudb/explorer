@@ -123,7 +123,7 @@ Please refer to the official Podman docs for [mounting external volumes](https:/
 
 ## Documentation
 
-For more information regarding launching and using Kùzu Explorer, please refer to the [documentation](https://kuzudb.com/docusaurus/kuzuexplorer).
+For more information regarding launching and using Kùzu Explorer, please refer to the [documentation](https://docs.kuzudb.com).
 
 ## Development (with Kùzu compiled from source)
 
@@ -143,7 +143,7 @@ For more information regarding launching and using Kùzu Explorer, please refer 
 
 - [Node.js v20](https://nodejs.org/dist/latest-v20.x/)
 - [JDK 11+](https://jdk.java.net/11/)
-- [Toolchain for building Kùzu](https://kuzudb.com/docusaurus/development/building-kuzu)
+- [Toolchain for building Kùzu](https://docs.kuzudb.com/developer-guide/)
 - [Git](https://git-scm.com/)
 
 ### Environment setup
