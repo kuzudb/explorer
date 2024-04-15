@@ -11,7 +11,7 @@ module.exports = defineConfig({
   pages: {
     index: {
       entry: "src/main.js",
-      title: "KùzuExplorer",
+      title: "Kùzu Explorer",
     },
   },
   css: {

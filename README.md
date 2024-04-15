@@ -1,4 +1,4 @@
-# KùzuExplorer
+# Kùzu Explorer
 
 Browser-based user interface for the [Kùzu](https://github.com/kuzudb/kuzu) graph database.
 
@@ -6,11 +6,11 @@ Browser-based user interface for the [Kùzu](https://github.com/kuzudb/kuzu) gra
 
 ## Get started
 
-KùzuExplorer is a web application that is launched from a deployed Docker image.
+Kùzu Explorer is a web application that is launched from a deployed Docker image.
 Please refer to the [Docker documentation](https://docs.docker.com/get-docker/) for details on how to install and use Docker.
 
-Below we show two different ways to launch KùzuExplorer. Each of these options make
-KùzuExplorer accessible on [http://localhost:8000](http://localhost:8000). If the launching is successful, you should see the logs similar to the following in your shell:
+Below we show two different ways to launch Kùzu Explorer. Each of these options make
+Kùzu Explorer accessible on [http://localhost:8000](http://localhost:8000). If the launching is successful, you should see the logs similar to the following in your shell:
 
 ```
 Access mode: READ_WRITE
@@ -35,7 +35,7 @@ The `--rm` flag tells docker that the container should automatically be removed 
 
 ### Option 2: Start with an empty database with example data
 
-You can also launch KùzuExplorer without specifying an existing database. KùzuExplorer comes with
+You can also launch Kùzu Explorer without specifying an existing database. Kùzu Explorer comes with
 bundled datasets that you can use to explore the basic functionalities of Kùzu.
 This is simply done by removing the `-v` flag in the example above. If no database path is specified
 with `-v`, the server will be started with an empty database.
@@ -46,13 +46,13 @@ docker run -p 8000:8000 --rm kuzudb/explorer:latest
 
 Click on the `Datasets` tab on the top right corner and then: (i) you can select one of the bundled dataset
 of your choice from the drow-down menu; (ii) load it into Kùzu by clicking the "Load Dataset" button; and (iii)
-finally use KùzuExplorer to explore it.
+finally use Kùzu Explorer to explore it.
 
 ### Additional launch configurations
 
 #### Access mode
 
-By default, KùzuExplorer is launched in read-write mode, which means that you can modify the database. If you want to launch KùzuExplorer in read-only mode, you can do so by setting the `MODE` environment variable to `READ_ONLY` as follows.
+By default, Kùzu Explorer is launched in read-write mode, which means that you can modify the database. If you want to launch Kùzu Explorer in read-only mode, you can do so by setting the `MODE` environment variable to `READ_ONLY` as follows.
 
 ```bash
 docker run -p 8000:8000 \
@@ -65,9 +65,9 @@ In read-only mode, you can still issue read queries and visualize the results, b
 
 #### Buffer pool size
 
-By default, KùzuExplorer is launched with a maximum buffer pool size of 80% of the available memory. If you want to launch KùzuExplorer with a different buffer pool size, you can do so by setting the `KUZU_BUFFER_POOL_SIZE` environment variable to the desired value in bytes as follows.
+By default, Kùzu Explorer is launched with a maximum buffer pool size of 80% of the available memory. If you want to launch Kùzu Explorer with a different buffer pool size, you can do so by setting the `KUZU_BUFFER_POOL_SIZE` environment variable to the desired value in bytes as follows.
 
-For example, to launch KùzuExplorer with a buffer pool size of 1GB, you can run the following command.
+For example, to launch Kùzu Explorer with a buffer pool size of 1GB, you can run the following command.
 
 ```bash
 docker run -p 8000:8000 \
@@ -78,7 +78,7 @@ docker run -p 8000:8000 \
 
 #### Dev builds
 
-If you want to launch KùzuExplorer with the latest development build of Kùzu, you can do so by using the `dev` tag instead of `latest`.
+If you want to launch Kùzu Explorer with the latest development build of Kùzu, you can do so by using the `dev` tag instead of `latest`.
 
 ```bash
 docker run -p 8000:8000 \
@@ -88,9 +88,9 @@ docker run -p 8000:8000 \
 
 The `dev` tag is updated daily, approximately two hours after the latest dev build of Kùzu is released.
 
-### Updating KùzuExplorer
+### Updating Kùzu Explorer
 
-When a new version of KùzuExplorer is released after the initial launch, re-launching the container WILL NOT automatically update the local image to the latest version. To update the local image to the latest version, you can run the following command.
+When a new version of Kùzu Explorer is released after the initial launch, re-launching the container WILL NOT automatically update the local image to the latest version. To update the local image to the latest version, you can run the following command.
 
 ```bash
 docker pull kuzudb/explorer:latest
@@ -100,7 +100,7 @@ After pulling the latest image, you can re-launch the container with the same co
 
 ### Launch with Podman
 
-If you are using [Podman](https://podman.io/) instead of Docker, you can launch KùzuExplorer by replacing `docker` with `podman` in the commands above. However, note that by default Podman maps the default user account to the `root` user in the container. This may cause permission issues when mounting local database files to the container. To avoid this, you can use the `--userns=keep-id` flag to keep the user ID of the current user inside the container, or enable `:U` option for each volume to change the owner and group of the source volume to the current user.
+If you are using [Podman](https://podman.io/) instead of Docker, you can launch Kùzu Explorer by replacing `docker` with `podman` in the commands above. However, note that by default Podman maps the default user account to the `root` user in the container. This may cause permission issues when mounting local database files to the container. To avoid this, you can use the `--userns=keep-id` flag to keep the user ID of the current user inside the container, or enable `:U` option for each volume to change the owner and group of the source volume to the current user.
 
 For example:
 
@@ -123,7 +123,7 @@ Please refer to the official Podman docs for [mounting external volumes](https:/
 
 ## Documentation
 
-For more information regarding launching and using KùzuExplorer, please refer to the [documentation](https://kuzudb.com/docusaurus/kuzuexplorer).
+For more information regarding launching and using Kùzu Explorer, please refer to the [documentation](https://docs.kuzudb.com).
 
 ## Development (with Kùzu compiled from source)
 
@@ -143,7 +143,7 @@ For more information regarding launching and using KùzuExplorer, please refer t
 
 - [Node.js v20](https://nodejs.org/dist/latest-v20.x/)
 - [JDK 11+](https://jdk.java.net/11/)
-- [Toolchain for building Kùzu](https://kuzudb.com/docusaurus/development/building-kuzu)
+- [Toolchain for building Kùzu](https://docs.kuzudb.com/developer-guide/)
 - [Git](https://git-scm.com/)
 
 ### Environment setup
@@ -217,4 +217,4 @@ for both `amd64` and `arm64` platforms.
 
 ## Contributing
 
-We welcome contributions to KùzuExplorer. By contributing to KùzuExplorer, you agree that your contributions will be licensed under the [MIT License](LICENSE).
+We welcome contributions to Kùzu Explorer. By contributing to Kùzu Explorer, you agree that your contributions will be licensed under the [MIT License](LICENSE).

@@ -97,7 +97,7 @@
             <li class="nav-item">
               <a
                 class="nav-link"
-                href="https://kuzudb.com/docusaurus/"
+                href="https://docs.kuzudb.com"
                 target="_blank"
               >
                 <i class="fa-solid fa-book" />
@@ -157,7 +157,7 @@
             class="modal-header"
           >
             <h5 class="modal-title">
-              Welcome to KùzuExplorer!
+              Welcome to Kùzu Explorer!
             </h5>
           </div>
           <div class="modal-body">
@@ -166,7 +166,7 @@
               <a href="https://ldbcouncil.org/benchmarks/snb/">
                 LDBC Social Network Benchmark
               </a>
-              scale factor 0.1 dataset. Please run KùzuExplorer locally to load a
+              scale factor 0.1 dataset. Please run Kùzu Explorer locally to load a
               different dataset (see the
               <a href="https://kuzudb.com/docusaurus/kuzuexplorer/"> documentation here</a>).
               <br>
@@ -175,9 +175,9 @@
               interactive Cypher queries in the Shell tab.
             </p>
             <p v-if="modeStore.isReadOnly">
-              KùzuExplorer is running in read-only mode. In this mode, you cannot load a
+              Kùzu Explorer is running in read-only mode. In this mode, you cannot load a
               dataset, modify the schema, or execute write queries. If you want to make
-              changes to the database, please restart your KùzuExplorer Docker image in
+              changes to the database, please restart your Kùzu Explorer Docker image in
               read-write mode.
             </p>
           </div>
