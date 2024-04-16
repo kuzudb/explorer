@@ -45,7 +45,7 @@ router.post("/", async (req, res) => {
   }
   try {
     let result;
-    if (!params) {
+    if (!params || Object.keys(params).length === 0) {
       result = await conn.query(query);
     } else {
       const preparedStatment = await conn.prepare(query);
