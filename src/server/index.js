@@ -25,7 +25,7 @@ if (CROSS_ORIGIN) {
   app.use(cors());
   logger.info("CORS enabled for all origins");
 }
-const PORT = 8000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 8000;
 app.use(express.json({ limit: "128mb" }));
 app.use("/api", api);
 const distPath = path.join(__dirname, "..", "..", "dist");
