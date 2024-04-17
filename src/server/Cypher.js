@@ -48,8 +48,8 @@ router.post("/", async (req, res) => {
     if (!params || Object.keys(params).length === 0) {
       result = await conn.query(query);
     } else {
-      const preparedStatment = await conn.prepare(query);
-      result = await conn.execute(preparedStatment, params);
+      const preparedStatement = await conn.prepare(query);
+      result = await conn.execute(preparedStatement, params);
     }
     let rows;
     const resultSize = result.getNumTuples();

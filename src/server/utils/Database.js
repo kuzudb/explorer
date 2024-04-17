@@ -1,6 +1,7 @@
 const path = require("path");
 const process = require("process");
 const logger = require("./Logger");
+const fs = require("fs");
 const TABLE_TYPES = {
   NODE: "NODE",
   REL: "REL",
@@ -216,6 +217,44 @@ class Database {
     } finally {
       this.releaseConnection(conn);
     }
+  }
+
+  getDbVersionFromQuery() {
+    const conn = this.getConnection();
+    return conn
+      .query("CALL db_version() RETURN *;")
+      .then((res) => {
+        return res.getAll();
+      })
+      .then((res) => {
+        const row = res[0];
+        const version = Object.values(row)[0];
+        return version;
+      })
+      .finally(() => {
+        this.releaseConnection(conn);
+      });
+  }
+
+  getDbVersionFromPackage() {
+    const packagePath = path.join(__dirname, "..", "..", "..", "package.json");
+    return fs.promises.readFile(packagePath, "utf8").then((data) => {
+      const packageJson = JSON.parse(data);
+      return packageJson.dependencies.kuzu;
+    });
+  }
+
+  getDbVersion() {
+    return Promise.all([
+      this.getDbVersionFromQuery(),
+      this.getDbVersionFromPackage(),
+    ]).then(([queryVersion, packageVersion]) => {
+      const version = packageVersion.includes("dev")
+        ? packageVersion
+        : queryVersion;
+      const storageVersion = this.kuzu.STORAGE_VERSION;
+      return { version, storageVersion };
+    });
   }
 }
 
