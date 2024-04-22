@@ -14,7 +14,7 @@
         v-show="!isGraphEmpty"
         :class="
           `result-container__button` +
-            (showGraph ? ` result-container__button--active` : ``)
+          (showGraph ? ` result-container__button--active` : ``)
         "
       >
         <i
@@ -28,7 +28,7 @@
       <div
         :class="
           `result-container__button` +
-            (showTable ? ` result-container__button--active` : ``)
+          (showTable ? ` result-container__button--active` : ``)
         "
       >
         <i
@@ -42,7 +42,7 @@
       <div
         :class="
           `result-container__button` +
-            (showCode ? ` result-container__button--active` : ``)
+          (showCode ? ` result-container__button--active` : ``)
         "
       >
         <i
@@ -54,10 +54,7 @@
         />
       </div>
 
-      <div
-        v-show="showGraph"
-        class="result-container__tools_container--bottom"
-      >
+      <div v-show="showGraph" class="result-container__tools_container--bottom">
         <div class="result-container__button">
           <i
             class="fa-lg fa-solid fa-magnifying-glass-plus"
@@ -263,10 +260,14 @@ $margin: 20px;
   width: calc(100% - #{$margin * 2});
   margin: $margin;
   margin-top: 0;
+  margin-bottom: 0;
   border: 2px solid $gray-300;
   border-top: 0;
   display: flex;
   flex-direction: row;
+  &:last-child {
+    margin-bottom: 20px;
+  }
 }
 
 .result-container__tools_container {
