@@ -4,9 +4,7 @@
       ref="editor"
       :schema="schema"
       :navbar-height="navbarHeight"
-      :is-maximizable="
-        (queryResult && queryResult.rows && queryResult.rows.length > 0) || isMaximized
-      "
+      :is-maximizable="isMaximizable"
       :is-loading="isLoading"
       @evaluate-cypher="evaluateCypher"
       @generate-and-evaluate-query="generateAndEvaluateQuery"
@@ -15,9 +13,16 @@
       @editor-resize="handleEditorResize"
     />
     <ResultContainer
-      v-if="queryResult || errorMessage"
-      ref="resultContainer"
+      v-for="(_, index) in queryResults"
+      :key="index"
+      :ref="getRefName(index)"
       :is-maximized="isMaximized"
+      :navbar-height="navbarHeight"
+    />
+    <ResultContainer
+      v-if="errorMessage"
+      ref="resultErrorContainer"
+      is-maximized="false"
       :navbar-height="navbarHeight"
     />
     <div
@@ -70,7 +75,7 @@ export default {
   emits: ["reloadSchema", "addCell", "maximize", "minimize", "remove"],
   data: () => ({
     queryString: "",
-    queryResult: null,
+    queryResults: [],
     errorMessage: "",
     loadingText: "",
     isEvaluated: false,
@@ -80,6 +85,15 @@ export default {
 
   computed: {
     ...mapStores(useModeStore, useSettingsStore),
+    isMaximizable() {
+      return (
+        (this.queryResults &&
+          this.queryResults.length === 1 &&
+          this.queryResults[0].rows &&
+          this.queryResults[0].rows.length > 0) ||
+        this.isMaximized
+      );
+    },
   },
 
   methods: {
@@ -90,8 +104,11 @@ export default {
       this.isEvaluated = true;
       this.$refs.editor.loadFromHistory(history);
     },
+    getRefName(index) {
+      return `resultContainer_${index}`;
+    },
     evaluateCypher(query) {
-      this.queryResult = null;
+      this.queryResults = [];
       this.errorMessage = "";
       this.isLoading = true;
       this.loadingText = "Evaluating query...";
@@ -103,10 +120,19 @@ export default {
           updateHistory: true
         })
         .then((res) => {
-          this.queryResult = res.data;
+          this.queryResults = res.data.isMultiStatement ? res.data.results : [res.data];
+          if (this.queryResults.length > 1) {
+            this.minimize();
+          }
           this.queryString = query;
           this.$nextTick(() => {
-            this.$refs.resultContainer.handleDataChange(this.schema, this.queryResult, "");
+            for (let i = 0; i < this.queryResults.length; ++i) {
+              const resultContainer =
+                this.$refs[
+                this.getRefName(i)
+                ][0];
+              resultContainer.handleDataChange(this.schema, this.queryResults[i], "");
+            }
           });
           const isSchemaChanged = res.data && res.data.isSchemaChanged;
           if (isSchemaChanged) {
@@ -133,7 +159,9 @@ export default {
           }
           if (this.errorMessage) {
             this.$nextTick(() => {
-              this.$refs.resultContainer.handleDataChange(this.schema, null, this.errorMessage);
+              const errorContainer = this.$refs.resultErrorContainer;
+              console.log(errorContainer);
+              errorContainer.handleDataChange(this.schema, null, this.errorMessage);
             });
           }
         }).finally(() => {
@@ -145,7 +173,7 @@ export default {
       this.isEvaluated = true;
     },
     generateAndEvaluateQuery(question) {
-      this.queryResult = null;
+      this.queryResults = null;
       this.errorMessage = "";
       question = question.trim();
       const token = this.settingsStore.gpt.apiToken;
@@ -158,7 +186,9 @@ export default {
       }
       if (this.errorMessage) {
         this.$nextTick(() => {
-          this.$refs.resultContainer.handleDataChange(this.schema, null, this.errorMessage);
+          const errorContainer = this.$refs.resultErrorContainer;
+          console.log(errorContainer);
+          errorContainer.handleDataChange(this.schema, null, this.errorMessage);
         });
         return;
       }
@@ -199,7 +229,9 @@ export default {
           }
           if (this.errorMessage) {
             this.$nextTick(() => {
-              this.$refs.resultContainer.handleDataChange(this.schema, null, this.errorMessage);
+              const errorContainer = this.$refs.resultErrorContainer;
+              console.log(errorContainer);
+              errorContainer.handleDataChange(this.schema, null, this.errorMessage);
             });
           }
         })

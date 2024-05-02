@@ -263,10 +263,14 @@ $margin: 20px;
   width: calc(100% - #{$margin * 2});
   margin: $margin;
   margin-top: 0;
+  margin-bottom: 0;
   border: 2px solid $gray-300;
   border-top: 0;
   display: flex;
   flex-direction: row;
+  &:last-child {
+    margin-bottom: 20px;
+  }
 }
 
 .result-container__tools_container {

@@ -17,6 +17,34 @@ if (querySizeLimit) {
 }
 let schema = null;
 
+const processSingleResult = async (result) => {
+  let rows;
+  const resultSize = result.getNumTuples();
+  if (!querySizeLimit || resultSize <= querySizeLimit) {
+    rows = await result.getAll();
+  } else {
+    rows = [];
+    for (let i = 0; i < querySizeLimit; ++i) {
+      rows.push(await result.getNext());
+    }
+  }
+  const columnTypes = await result.getColumnDataTypes();
+  const columnNames = await result.getColumnNames();
+  const dataTypes = {};
+  columnNames.forEach((name, i) => {
+    dataTypes[name] = columnTypes[i];
+  });
+  return { rows, dataTypes };
+};
+
+// This is a workaround for the JSON stringify issue with BigInt values.
+const int128Replacer = (_, value) => {
+  if (typeof value === "bigint") {
+    return value.toString();
+  }
+  return value;
+};
+
 router.post("/", async (req, res) => {
   const mode = database.getAccessModeString();
   if (!schema && mode === MODES.READ_WRITE) {
@@ -51,39 +79,11 @@ router.post("/", async (req, res) => {
       const preparedStatement = await conn.prepare(query);
       result = await conn.execute(preparedStatement, params);
     }
-    let rows;
-    const resultSize = result.getNumTuples();
-    if (!querySizeLimit || resultSize <= querySizeLimit) {
-      rows = await result.getAll();
-    } else {
-      rows = [];
-      for (let i = 0; i < querySizeLimit; ++i) {
-        rows.push(await result.getNext());
-      }
-    }
-    const columnTypes = await result.getColumnDataTypes();
-    const columnNames = await result.getColumnNames();
-    const dataTypes = {};
-    columnNames.forEach((name, i) => {
-      dataTypes[name] = columnTypes[i];
-    });
-    let isSchemaChanged = false;
     if (mode === MODES.READ_WRITE) {
       const currentSchema = await database.getSchema();
       isSchemaChanged =
         JSON.stringify(schema) !== JSON.stringify(currentSchema);
     }
-    // This is a workaround for the JSON stringify issue with INT128 values
-    const replacer = (key, value) => {
-      if (typeof value === "bigint") {
-        return value.toString();
-      }
-      return value;
-    };
-    const responseBody = JSON.stringify(
-      { rows, dataTypes, isSchemaChanged },
-      replacer
-    );
     if (sessionDb && req.body.updateHistory) {
       try {
         await sessionDb.upsertHistoryItem({
@@ -96,6 +96,23 @@ router.post("/", async (req, res) => {
         // still executed.
       }
     }
+    let responseBody;
+    if (!Array.isArray(result)) {
+      responseBody = await processSingleResult(result);
+      responseBody.isSchemaChanged = isSchemaChanged;
+      responseBody.isMultiStatement = false;
+    } else {
+      responseBody = {
+        isSchemaChanged,
+        isMultiStatement: true,
+        results: [],
+      };
+      for (const singleResult of result) {
+        const singleResultBody = await processSingleResult(singleResult);
+        responseBody.results.push(singleResultBody);
+      }
+    }
+    responseBody = JSON.stringify(responseBody, int128Replacer);
     return res.send(responseBody);
   } catch (err) {
     return res.status(400).send({ error: err.message });

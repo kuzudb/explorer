@@ -10,7 +10,7 @@
     >
       <div>
         <i class="fa-solid fa-circle-exclamation" />
-        The evaluation of this cell failed with the following error:
+        The evaluation of this query failed with the following error:
         <br>
         <pre>{{ errorMessage }}</pre>
       </div>
@@ -23,7 +23,7 @@
     >
       <div>
         <i class="fa-solid fa-circle-info" />
-        The evaluation of this cell succeeded with the following message:
+        The evaluation of this query succeeded with the following message:
         <br>
         <pre>{{ errorMessage }}</pre>
       </div>
