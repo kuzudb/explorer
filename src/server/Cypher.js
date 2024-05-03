@@ -79,6 +79,7 @@ router.post("/", async (req, res) => {
       const preparedStatement = await conn.prepare(query);
       result = await conn.execute(preparedStatement, params);
     }
+    let isSchemaChanged = false;
     if (mode === MODES.READ_WRITE) {
       const currentSchema = await database.getSchema();
       isSchemaChanged =
