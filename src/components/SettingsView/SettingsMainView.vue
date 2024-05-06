@@ -98,6 +98,7 @@
                     type="color"
                     class="form-control form-control-color"
                     title="Choose color for rel"
+                    @change="syncRelFill(rel)"
                   >
                 </td>
                 <td>
@@ -349,6 +350,12 @@ export default {
     clearGptToken() {
       this.currentSettings.gpt.apiToken = "";
       this.settingsStore.clearGptApiToken();
+    },
+    syncRelFill(rel) {
+      if (!rel.g6Settings.style.endArrow) {
+        rel.g6Settings.style.endArrow = {};
+      }
+      rel.g6Settings.style.endArrow.fill = rel.g6Settings.style.stroke;
     },
   },
 }

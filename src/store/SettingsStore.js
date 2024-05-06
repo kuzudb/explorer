@@ -243,15 +243,21 @@ export const useSettingsStore = defineStore("settings", {
           storedGraphViz.rels[rel.name] || this.initDefaultRel(rel);
         this.graphViz.rels[rel.name] = relSettings;
         // Migrate old settings
-        this.graphViz.rels[rel.name].g6Settings.style.endArrow = {
-          path: G6.Arrow.triangle(),
-          fill: "#e2e2e2",
-        };
-        this.graphViz.rels[rel.name].g6Settings.labelCfg.style.background = {
-          fill: "#ffffff",
-          padding: [2, 2, 2, 2],
-          radius: 2,
-        };
+        if (!this.graphViz.rels[rel.name].g6Settings.style.endArrow) {
+          this.graphViz.rels[rel.name].g6Settings.style.endArrow = {
+            path: G6.Arrow.triangle(),
+            fill: "#e2e2e2",
+          };
+        }
+        if (
+          !this.graphViz.rels[rel.name].g6Settings.labelCfg.style.background
+        ) {
+          this.graphViz.rels[rel.name].g6Settings.labelCfg.style.background = {
+            fill: "#ffffff",
+            padding: [2, 2, 2, 2],
+            radius: 2,
+          };
+        }
         this.graphViz.rels[rel.name].g6Settings.labelCfg.style.fontWeight = 300;
       });
       this.loadGptApiTokenFromLocalStorage();
