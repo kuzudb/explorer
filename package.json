@@ -16,7 +16,7 @@
     "eslint-fix": "eslint --ext .js,.vue src --fix"
   },
   "dependencies": {
-    "@antv/g6": "^4.8.22",
+    "@antv/g6": "^4.8.24",
     "@popperjs/core": "^2.11.8",
     "antlr4-c3": "3.2.3",
     "antlr4ng": "1.0.7",
