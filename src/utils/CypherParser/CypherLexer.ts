@@ -241,7 +241,7 @@ export class CypherLexer extends antlr.Lexer {
 
     public constructor(input: antlr.CharStream) {
         super(input);
-        this._interp = new antlr.LexerATNSimulator(this, CypherLexer._ATN, CypherLexer.decisionsToDFA, new antlr.PredictionContextCache());
+        this.interpreter = new antlr.LexerATNSimulator(this, CypherLexer._ATN, CypherLexer.decisionsToDFA, new antlr.PredictionContextCache());
     }
 
     public get grammarFileName(): string { return "Cypher.g4"; }
@@ -966,7 +966,7 @@ export class CypherLexer extends antlr.Lexer {
 
     private static readonly vocabulary = new antlr.Vocabulary(CypherLexer.literalNames, CypherLexer.symbolicNames, []);
 
-    public override getVocabulary(): antlr.Vocabulary {
+    public override get vocabulary(): antlr.Vocabulary {
         return CypherLexer.vocabulary;
     }
 
