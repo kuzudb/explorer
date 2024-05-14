@@ -409,29 +409,29 @@ export class CypherParser extends antlr.Parser {
 
     public constructor(input: antlr.TokenStream) {
         super(input);
-        this.interpreter = new antlr.ParserATNSimulator(this, CypherParser._ATN, CypherParser.decisionsToDFA, new antlr.PredictionContextCache());
+        this._interp = new antlr.ParserATNSimulator(this, CypherParser._ATN, CypherParser.decisionsToDFA, new antlr.PredictionContextCache());
     }
     public ku_Statements(): Ku_StatementsContext {
-        let localContext = new Ku_StatementsContext(this.context, this.state);
-        this.enterRule(localContext, 0, CypherParser.RULE_ku_Statements);
+        let localctx: Ku_StatementsContext = new Ku_StatementsContext(this._ctx, this.state);
+        this.enterRule(localctx, 0, CypherParser.RULE_ku_Statements);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 296;
             this.oC_Cypher();
             this.state = 307;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 2, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 2, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 298;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 297;
                         this.match(CypherParser.SP);
@@ -441,8 +441,8 @@ export class CypherParser extends antlr.Parser {
                     this.state = 300;
                     this.match(CypherParser.T__0);
                     this.state = 302;
-                    this.errorHandler.sync(this);
-                    switch (this.interpreter.adaptivePredict(this.tokenStream, 1, this.context) ) {
+                    this._errHandler.sync(this);
+                    switch ( this._interp.adaptivePredict(this._input, 1, this._ctx) ) {
                     case 1:
                         {
                         this.state = 301;
@@ -456,13 +456,13 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 309;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 2, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 2, this._ctx);
             }
             this.state = 311;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 310;
                 this.match(CypherParser.SP);
@@ -475,8 +475,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -484,19 +485,19 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Cypher(): OC_CypherContext {
-        let localContext = new OC_CypherContext(this.context, this.state);
-        this.enterRule(localContext, 2, CypherParser.RULE_oC_Cypher);
+        let localctx: OC_CypherContext = new OC_CypherContext(this._ctx, this.state);
+        this.enterRule(localctx, 2, CypherParser.RULE_oC_Cypher);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 316;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 72 || _la === 73) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===72 || _la===73) {
                 {
                 this.state = 315;
                 this.oC_AnyCypherOption();
@@ -504,9 +505,9 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 319;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 318;
                 this.match(CypherParser.SP);
@@ -518,14 +519,14 @@ export class CypherParser extends antlr.Parser {
             this.oC_Statement();
             }
             this.state = 326;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 7, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 7, this._ctx) ) {
             case 1:
                 {
                 this.state = 323;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 322;
                     this.match(CypherParser.SP);
@@ -541,8 +542,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -550,150 +552,150 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Statement(): OC_StatementContext {
-        let localContext = new OC_StatementContext(this.context, this.state);
-        this.enterRule(localContext, 4, CypherParser.RULE_oC_Statement);
+        let localctx: OC_StatementContext = new OC_StatementContext(this._ctx, this.state);
+        this.enterRule(localctx, 4, CypherParser.RULE_oC_Statement);
         try {
             this.state = 348;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 8, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 8, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 328;
                 this.oC_Query();
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 329;
                 this.kU_CreateNodeTable();
                 }
                 break;
             case 3:
-                this.enterOuterAlt(localContext, 3);
+                this.enterOuterAlt(localctx, 3);
                 {
                 this.state = 330;
                 this.kU_CreateRelTable();
                 }
                 break;
             case 4:
-                this.enterOuterAlt(localContext, 4);
+                this.enterOuterAlt(localctx, 4);
                 {
                 this.state = 331;
                 this.kU_CreateRelTableGroup();
                 }
                 break;
             case 5:
-                this.enterOuterAlt(localContext, 5);
+                this.enterOuterAlt(localctx, 5);
                 {
                 this.state = 332;
                 this.kU_CreateRdfGraph();
                 }
                 break;
             case 6:
-                this.enterOuterAlt(localContext, 6);
+                this.enterOuterAlt(localctx, 6);
                 {
                 this.state = 333;
                 this.kU_DropTable();
                 }
                 break;
             case 7:
-                this.enterOuterAlt(localContext, 7);
+                this.enterOuterAlt(localctx, 7);
                 {
                 this.state = 334;
                 this.kU_AlterTable();
                 }
                 break;
             case 8:
-                this.enterOuterAlt(localContext, 8);
+                this.enterOuterAlt(localctx, 8);
                 {
                 this.state = 335;
                 this.kU_CopyFrom();
                 }
                 break;
             case 9:
-                this.enterOuterAlt(localContext, 9);
+                this.enterOuterAlt(localctx, 9);
                 {
                 this.state = 336;
                 this.kU_CopyFromByColumn();
                 }
                 break;
             case 10:
-                this.enterOuterAlt(localContext, 10);
+                this.enterOuterAlt(localctx, 10);
                 {
                 this.state = 337;
                 this.kU_CopyTO();
                 }
                 break;
             case 11:
-                this.enterOuterAlt(localContext, 11);
+                this.enterOuterAlt(localctx, 11);
                 {
                 this.state = 338;
                 this.kU_StandaloneCall();
                 }
                 break;
             case 12:
-                this.enterOuterAlt(localContext, 12);
+                this.enterOuterAlt(localctx, 12);
                 {
                 this.state = 339;
                 this.kU_CreateMacro();
                 }
                 break;
             case 13:
-                this.enterOuterAlt(localContext, 13);
+                this.enterOuterAlt(localctx, 13);
                 {
                 this.state = 340;
                 this.kU_CommentOn();
                 }
                 break;
             case 14:
-                this.enterOuterAlt(localContext, 14);
+                this.enterOuterAlt(localctx, 14);
                 {
                 this.state = 341;
                 this.kU_Transaction();
                 }
                 break;
             case 15:
-                this.enterOuterAlt(localContext, 15);
+                this.enterOuterAlt(localctx, 15);
                 {
                 this.state = 342;
                 this.kU_Extension();
                 }
                 break;
             case 16:
-                this.enterOuterAlt(localContext, 16);
+                this.enterOuterAlt(localctx, 16);
                 {
                 this.state = 343;
                 this.kU_ExportDatabase();
                 }
                 break;
             case 17:
-                this.enterOuterAlt(localContext, 17);
+                this.enterOuterAlt(localctx, 17);
                 {
                 this.state = 344;
                 this.kU_ImportDatabase();
                 }
                 break;
             case 18:
-                this.enterOuterAlt(localContext, 18);
+                this.enterOuterAlt(localctx, 18);
                 {
                 this.state = 345;
                 this.kU_AttachDatabase();
                 }
                 break;
             case 19:
-                this.enterOuterAlt(localContext, 19);
+                this.enterOuterAlt(localctx, 19);
                 {
                 this.state = 346;
                 this.kU_DetachDatabase();
                 }
                 break;
             case 20:
-                this.enterOuterAlt(localContext, 20);
+                this.enterOuterAlt(localctx, 20);
                 {
                 this.state = 347;
                 this.kU_UseDatabase();
@@ -703,8 +705,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -712,14 +715,14 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_CopyFrom(): KU_CopyFromContext {
-        let localContext = new KU_CopyFromContext(this.context, this.state);
-        this.enterRule(localContext, 6, CypherParser.RULE_kU_CopyFrom);
+        let localctx: KU_CopyFromContext = new KU_CopyFromContext(this._ctx, this.state);
+        this.enterRule(localctx, 6, CypherParser.RULE_kU_CopyFrom);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 350;
             this.match(CypherParser.COPY);
@@ -728,15 +731,15 @@ export class CypherParser extends antlr.Parser {
             this.state = 352;
             this.oC_SchemaName();
             this.state = 361;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 11, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 11, this._ctx) ) {
             case 1:
                 {
                 {
                 this.state = 354;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 353;
                     this.match(CypherParser.SP);
@@ -746,9 +749,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 356;
                 this.kU_ColumnNames();
                 this.state = 358;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 357;
                     this.match(CypherParser.SP);
@@ -772,14 +775,14 @@ export class CypherParser extends antlr.Parser {
             this.state = 365;
             this.kU_ScanSource();
             this.state = 370;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 13, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 13, this._ctx) ) {
             case 1:
                 {
                 this.state = 367;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 366;
                     this.match(CypherParser.SP);
@@ -795,8 +798,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -804,22 +808,22 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_ColumnNames(): KU_ColumnNamesContext {
-        let localContext = new KU_ColumnNamesContext(this.context, this.state);
-        this.enterRule(localContext, 8, CypherParser.RULE_kU_ColumnNames);
+        let localctx: KU_ColumnNamesContext = new KU_ColumnNamesContext(this._ctx, this.state);
+        this.enterRule(localctx, 8, CypherParser.RULE_kU_ColumnNames);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 372;
             this.match(CypherParser.T__1);
             this.state = 374;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 373;
                 this.match(CypherParser.SP);
@@ -829,16 +833,16 @@ export class CypherParser extends antlr.Parser {
             this.state = 376;
             this.oC_SchemaName();
             this.state = 387;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 17, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 17, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 378;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 377;
                         this.match(CypherParser.SP);
@@ -848,9 +852,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 380;
                     this.match(CypherParser.T__2);
                     this.state = 382;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 381;
                         this.match(CypherParser.SP);
@@ -863,13 +867,13 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 389;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 17, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 17, this._ctx);
             }
             this.state = 391;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 390;
                 this.match(CypherParser.SP);
@@ -882,8 +886,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -891,32 +896,32 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_ScanSource(): KU_ScanSourceContext {
-        let localContext = new KU_ScanSourceContext(this.context, this.state);
-        this.enterRule(localContext, 10, CypherParser.RULE_kU_ScanSource);
+        let localctx: KU_ScanSourceContext = new KU_ScanSourceContext(this._ctx, this.state);
+        this.enterRule(localctx, 10, CypherParser.RULE_kU_ScanSource);
         let _la: number;
         try {
             this.state = 414;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 22, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 22, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 395;
                 this.kU_FilePaths();
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 396;
                 this.match(CypherParser.T__1);
                 this.state = 398;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 397;
                     this.match(CypherParser.SP);
@@ -926,9 +931,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 400;
                 this.oC_Query();
                 this.state = 402;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 401;
                     this.match(CypherParser.SP);
@@ -940,23 +945,23 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case 3:
-                this.enterOuterAlt(localContext, 3);
+                this.enterOuterAlt(localctx, 3);
                 {
                 this.state = 406;
                 this.oC_Variable();
                 }
                 break;
             case 4:
-                this.enterOuterAlt(localContext, 4);
+                this.enterOuterAlt(localctx, 4);
                 {
                 this.state = 407;
                 this.oC_Variable();
                 this.state = 408;
                 this.match(CypherParser.T__4);
                 this.state = 410;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 409;
                     this.match(CypherParser.SP);
@@ -971,8 +976,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -980,14 +986,14 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_CopyFromByColumn(): KU_CopyFromByColumnContext {
-        let localContext = new KU_CopyFromByColumnContext(this.context, this.state);
-        this.enterRule(localContext, 12, CypherParser.RULE_kU_CopyFromByColumn);
+        let localctx: KU_CopyFromByColumnContext = new KU_CopyFromByColumnContext(this._ctx, this.state);
+        this.enterRule(localctx, 12, CypherParser.RULE_kU_CopyFromByColumn);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 416;
             this.match(CypherParser.COPY);
@@ -1004,9 +1010,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 422;
             this.match(CypherParser.T__1);
             this.state = 424;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 423;
                 this.match(CypherParser.SP);
@@ -1016,15 +1022,15 @@ export class CypherParser extends antlr.Parser {
             this.state = 426;
             this.match(CypherParser.StringLiteral);
             this.state = 437;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            while (_la === 3 || _la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            while (_la===3 || _la===150) {
                 {
                 {
                 this.state = 428;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 427;
                     this.match(CypherParser.SP);
@@ -1034,9 +1040,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 430;
                 this.match(CypherParser.T__2);
                 this.state = 432;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 431;
                     this.match(CypherParser.SP);
@@ -1048,8 +1054,8 @@ export class CypherParser extends antlr.Parser {
                 }
                 }
                 this.state = 439;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
             }
             this.state = 440;
             this.match(CypherParser.T__3);
@@ -1065,8 +1071,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -1074,14 +1081,14 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_CopyTO(): KU_CopyTOContext {
-        let localContext = new KU_CopyTOContext(this.context, this.state);
-        this.enterRule(localContext, 14, CypherParser.RULE_kU_CopyTO);
+        let localctx: KU_CopyTOContext = new KU_CopyTOContext(this._ctx, this.state);
+        this.enterRule(localctx, 14, CypherParser.RULE_kU_CopyTO);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 446;
             this.match(CypherParser.COPY);
@@ -1090,9 +1097,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 448;
             this.match(CypherParser.T__1);
             this.state = 450;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 449;
                 this.match(CypherParser.SP);
@@ -1102,9 +1109,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 452;
             this.oC_Query();
             this.state = 454;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 453;
                 this.match(CypherParser.SP);
@@ -1122,14 +1129,14 @@ export class CypherParser extends antlr.Parser {
             this.state = 460;
             this.match(CypherParser.StringLiteral);
             this.state = 465;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 30, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 30, this._ctx) ) {
             case 1:
                 {
                 this.state = 462;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 461;
                     this.match(CypherParser.SP);
@@ -1145,8 +1152,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -1154,14 +1162,14 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_ExportDatabase(): KU_ExportDatabaseContext {
-        let localContext = new KU_ExportDatabaseContext(this.context, this.state);
-        this.enterRule(localContext, 16, CypherParser.RULE_kU_ExportDatabase);
+        let localctx: KU_ExportDatabaseContext = new KU_ExportDatabaseContext(this._ctx, this.state);
+        this.enterRule(localctx, 16, CypherParser.RULE_kU_ExportDatabase);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 467;
             this.match(CypherParser.EXPORT);
@@ -1174,14 +1182,14 @@ export class CypherParser extends antlr.Parser {
             this.state = 471;
             this.match(CypherParser.StringLiteral);
             this.state = 476;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 32, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 32, this._ctx) ) {
             case 1:
                 {
                 this.state = 473;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 472;
                     this.match(CypherParser.SP);
@@ -1197,8 +1205,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -1206,13 +1215,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_ImportDatabase(): KU_ImportDatabaseContext {
-        let localContext = new KU_ImportDatabaseContext(this.context, this.state);
-        this.enterRule(localContext, 18, CypherParser.RULE_kU_ImportDatabase);
+        let localctx: KU_ImportDatabaseContext = new KU_ImportDatabaseContext(this._ctx, this.state);
+        this.enterRule(localctx, 18, CypherParser.RULE_kU_ImportDatabase);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 478;
             this.match(CypherParser.IMPORT);
@@ -1228,8 +1237,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -1237,14 +1247,14 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_AttachDatabase(): KU_AttachDatabaseContext {
-        let localContext = new KU_AttachDatabaseContext(this.context, this.state);
-        this.enterRule(localContext, 20, CypherParser.RULE_kU_AttachDatabase);
+        let localctx: KU_AttachDatabaseContext = new KU_AttachDatabaseContext(this._ctx, this.state);
+        this.enterRule(localctx, 20, CypherParser.RULE_kU_AttachDatabase);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 484;
             this.match(CypherParser.ATTACH);
@@ -1253,8 +1263,8 @@ export class CypherParser extends antlr.Parser {
             this.state = 486;
             this.match(CypherParser.StringLiteral);
             this.state = 493;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 33, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 33, this._ctx) ) {
             case 1:
                 {
                 this.state = 487;
@@ -1271,14 +1281,14 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 509;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 37, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 37, this._ctx) ) {
             case 1:
                 {
                 this.state = 496;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 495;
                     this.match(CypherParser.SP);
@@ -1288,9 +1298,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 498;
                 this.match(CypherParser.T__1);
                 this.state = 500;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 499;
                     this.match(CypherParser.SP);
@@ -1304,9 +1314,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 504;
                 this.match(CypherParser.StringLiteral);
                 this.state = 506;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 505;
                     this.match(CypherParser.SP);
@@ -1322,8 +1332,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -1331,13 +1342,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_DetachDatabase(): KU_DetachDatabaseContext {
-        let localContext = new KU_DetachDatabaseContext(this.context, this.state);
-        this.enterRule(localContext, 22, CypherParser.RULE_kU_DetachDatabase);
+        let localctx: KU_DetachDatabaseContext = new KU_DetachDatabaseContext(this._ctx, this.state);
+        this.enterRule(localctx, 22, CypherParser.RULE_kU_DetachDatabase);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 511;
             this.match(CypherParser.DETACH);
@@ -1349,8 +1360,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -1358,13 +1370,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_UseDatabase(): KU_UseDatabaseContext {
-        let localContext = new KU_UseDatabaseContext(this.context, this.state);
-        this.enterRule(localContext, 24, CypherParser.RULE_kU_UseDatabase);
+        let localctx: KU_UseDatabaseContext = new KU_UseDatabaseContext(this._ctx, this.state);
+        this.enterRule(localctx, 24, CypherParser.RULE_kU_UseDatabase);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 515;
             this.match(CypherParser.USE);
@@ -1376,8 +1388,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -1385,14 +1398,14 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_StandaloneCall(): KU_StandaloneCallContext {
-        let localContext = new KU_StandaloneCallContext(this.context, this.state);
-        this.enterRule(localContext, 26, CypherParser.RULE_kU_StandaloneCall);
+        let localctx: KU_StandaloneCallContext = new KU_StandaloneCallContext(this._ctx, this.state);
+        this.enterRule(localctx, 26, CypherParser.RULE_kU_StandaloneCall);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 519;
             this.match(CypherParser.CALL);
@@ -1401,9 +1414,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 521;
             this.oC_SymbolicName();
             this.state = 523;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 522;
                 this.match(CypherParser.SP);
@@ -1413,9 +1426,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 525;
             this.match(CypherParser.T__5);
             this.state = 527;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 526;
                 this.match(CypherParser.SP);
@@ -1428,8 +1441,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -1437,13 +1451,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_CommentOn(): KU_CommentOnContext {
-        let localContext = new KU_CommentOnContext(this.context, this.state);
-        this.enterRule(localContext, 28, CypherParser.RULE_kU_CommentOn);
+        let localctx: KU_CommentOnContext = new KU_CommentOnContext(this._ctx, this.state);
+        this.enterRule(localctx, 28, CypherParser.RULE_kU_CommentOn);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 531;
             this.match(CypherParser.COMMENT_);
@@ -1471,8 +1485,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -1480,15 +1495,15 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_CreateMacro(): KU_CreateMacroContext {
-        let localContext = new KU_CreateMacroContext(this.context, this.state);
-        this.enterRule(localContext, 30, CypherParser.RULE_kU_CreateMacro);
+        let localctx: KU_CreateMacroContext = new KU_CreateMacroContext(this._ctx, this.state);
+        this.enterRule(localctx, 30, CypherParser.RULE_kU_CreateMacro);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 543;
             this.match(CypherParser.CREATE);
@@ -1501,9 +1516,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 547;
             this.oC_FunctionName();
             this.state = 549;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 548;
                 this.match(CypherParser.SP);
@@ -1513,8 +1528,8 @@ export class CypherParser extends antlr.Parser {
             this.state = 551;
             this.match(CypherParser.T__1);
             this.state = 553;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 41, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 41, this._ctx) ) {
             case 1:
                 {
                 this.state = 552;
@@ -1523,8 +1538,8 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 556;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 42, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 42, this._ctx) ) {
             case 1:
                 {
                 this.state = 555;
@@ -1533,8 +1548,8 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 559;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 43, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 43, this._ctx) ) {
             case 1:
                 {
                 this.state = 558;
@@ -1543,8 +1558,8 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 562;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
             if (((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 121)) & ~0x1F) === 0 && ((1 << (_la - 121)) & 302256385) !== 0)) {
                 {
                 this.state = 561;
@@ -1553,16 +1568,16 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 574;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 47, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 47, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 565;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 564;
                         this.match(CypherParser.SP);
@@ -1572,9 +1587,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 567;
                     this.match(CypherParser.T__2);
                     this.state = 569;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 568;
                         this.match(CypherParser.SP);
@@ -1587,13 +1602,13 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 576;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 47, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 47, this._ctx);
             }
             this.state = 578;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 577;
                 this.match(CypherParser.SP);
@@ -1614,8 +1629,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -1623,29 +1639,29 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_PositionalArgs(): KU_PositionalArgsContext {
-        let localContext = new KU_PositionalArgsContext(this.context, this.state);
-        this.enterRule(localContext, 32, CypherParser.RULE_kU_PositionalArgs);
+        let localctx: KU_PositionalArgsContext = new KU_PositionalArgsContext(this._ctx, this.state);
+        this.enterRule(localctx, 32, CypherParser.RULE_kU_PositionalArgs);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 586;
             this.oC_SymbolicName();
             this.state = 597;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 51, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 51, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 588;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 587;
                         this.match(CypherParser.SP);
@@ -1655,9 +1671,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 590;
                     this.match(CypherParser.T__2);
                     this.state = 592;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 591;
                         this.match(CypherParser.SP);
@@ -1670,15 +1686,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 599;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 51, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 51, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -1686,21 +1703,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_DefaultArg(): KU_DefaultArgContext {
-        let localContext = new KU_DefaultArgContext(this.context, this.state);
-        this.enterRule(localContext, 34, CypherParser.RULE_kU_DefaultArg);
+        let localctx: KU_DefaultArgContext = new KU_DefaultArgContext(this._ctx, this.state);
+        this.enterRule(localctx, 34, CypherParser.RULE_kU_DefaultArg);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 600;
             this.oC_SymbolicName();
             this.state = 602;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 601;
                 this.match(CypherParser.SP);
@@ -1712,9 +1729,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 605;
             this.match(CypherParser.T__5);
             this.state = 607;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 606;
                 this.match(CypherParser.SP);
@@ -1727,8 +1744,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -1736,25 +1754,25 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_FilePaths(): KU_FilePathsContext {
-        let localContext = new KU_FilePathsContext(this.context, this.state);
-        this.enterRule(localContext, 36, CypherParser.RULE_kU_FilePaths);
+        let localctx: KU_FilePathsContext = new KU_FilePathsContext(this._ctx, this.state);
+        this.enterRule(localctx, 36, CypherParser.RULE_kU_FilePaths);
         let _la: number;
         try {
             this.state = 644;
-            this.errorHandler.sync(this);
-            switch (this.tokenStream.LA(1)) {
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
             case CypherParser.T__6:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 611;
                 this.match(CypherParser.T__6);
                 this.state = 613;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 612;
                     this.match(CypherParser.SP);
@@ -1764,15 +1782,15 @@ export class CypherParser extends antlr.Parser {
                 this.state = 615;
                 this.match(CypherParser.StringLiteral);
                 this.state = 626;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                while (_la === 3 || _la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                while (_la===3 || _la===150) {
                     {
                     {
                     this.state = 617;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 616;
                         this.match(CypherParser.SP);
@@ -1782,9 +1800,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 619;
                     this.match(CypherParser.T__2);
                     this.state = 621;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 620;
                         this.match(CypherParser.SP);
@@ -1796,29 +1814,29 @@ export class CypherParser extends antlr.Parser {
                     }
                     }
                     this.state = 628;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
                 }
                 this.state = 629;
                 this.match(CypherParser.T__7);
                 }
                 break;
             case CypherParser.StringLiteral:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 630;
                 this.match(CypherParser.StringLiteral);
                 }
                 break;
             case CypherParser.GLOB:
-                this.enterOuterAlt(localContext, 3);
+                this.enterOuterAlt(localctx, 3);
                 {
                 this.state = 631;
                 this.match(CypherParser.GLOB);
                 this.state = 633;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 632;
                     this.match(CypherParser.SP);
@@ -1828,9 +1846,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 635;
                 this.match(CypherParser.T__1);
                 this.state = 637;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 636;
                     this.match(CypherParser.SP);
@@ -1840,9 +1858,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 639;
                 this.match(CypherParser.StringLiteral);
                 this.state = 641;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 640;
                     this.match(CypherParser.SP);
@@ -1859,8 +1877,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -1868,22 +1887,22 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_ParsingOptions(): KU_ParsingOptionsContext {
-        let localContext = new KU_ParsingOptionsContext(this.context, this.state);
-        this.enterRule(localContext, 38, CypherParser.RULE_kU_ParsingOptions);
+        let localctx: KU_ParsingOptionsContext = new KU_ParsingOptionsContext(this._ctx, this.state);
+        this.enterRule(localctx, 38, CypherParser.RULE_kU_ParsingOptions);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 646;
             this.match(CypherParser.T__1);
             this.state = 648;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 647;
                 this.match(CypherParser.SP);
@@ -1893,16 +1912,16 @@ export class CypherParser extends antlr.Parser {
             this.state = 650;
             this.kU_ParsingOption();
             this.state = 661;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 65, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 65, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 652;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 651;
                         this.match(CypherParser.SP);
@@ -1912,9 +1931,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 654;
                     this.match(CypherParser.T__2);
                     this.state = 656;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 655;
                         this.match(CypherParser.SP);
@@ -1927,13 +1946,13 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 663;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 65, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 65, this._ctx);
             }
             this.state = 665;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 664;
                 this.match(CypherParser.SP);
@@ -1946,8 +1965,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -1955,21 +1975,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_ParsingOption(): KU_ParsingOptionContext {
-        let localContext = new KU_ParsingOptionContext(this.context, this.state);
-        this.enterRule(localContext, 40, CypherParser.RULE_kU_ParsingOption);
+        let localctx: KU_ParsingOptionContext = new KU_ParsingOptionContext(this._ctx, this.state);
+        this.enterRule(localctx, 40, CypherParser.RULE_kU_ParsingOption);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 669;
             this.oC_SymbolicName();
             this.state = 671;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 670;
                 this.match(CypherParser.SP);
@@ -1979,9 +1999,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 673;
             this.match(CypherParser.T__5);
             this.state = 675;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 674;
                 this.match(CypherParser.SP);
@@ -1994,8 +2014,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2003,14 +2024,14 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_CreateNodeTable(): KU_CreateNodeTableContext {
-        let localContext = new KU_CreateNodeTableContext(this.context, this.state);
-        this.enterRule(localContext, 42, CypherParser.RULE_kU_CreateNodeTable);
+        let localctx: KU_CreateNodeTableContext = new KU_CreateNodeTableContext(this._ctx, this.state);
+        this.enterRule(localctx, 42, CypherParser.RULE_kU_CreateNodeTable);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 679;
             this.match(CypherParser.CREATE);
@@ -2027,9 +2048,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 685;
             this.oC_SchemaName();
             this.state = 687;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 686;
                 this.match(CypherParser.SP);
@@ -2039,9 +2060,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 689;
             this.match(CypherParser.T__1);
             this.state = 691;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 690;
                 this.match(CypherParser.SP);
@@ -2051,9 +2072,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 693;
             this.kU_PropertyDefinitions();
             this.state = 695;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 694;
                 this.match(CypherParser.SP);
@@ -2064,9 +2085,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 697;
             this.match(CypherParser.T__2);
             this.state = 699;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 698;
                 this.match(CypherParser.SP);
@@ -2077,9 +2098,9 @@ export class CypherParser extends antlr.Parser {
             this.kU_CreateNodeConstraint();
             }
             this.state = 704;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 703;
                 this.match(CypherParser.SP);
@@ -2092,8 +2113,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2101,14 +2123,14 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_CreateRelTable(): KU_CreateRelTableContext {
-        let localContext = new KU_CreateRelTableContext(this.context, this.state);
-        this.enterRule(localContext, 44, CypherParser.RULE_kU_CreateRelTable);
+        let localctx: KU_CreateRelTableContext = new KU_CreateRelTableContext(this._ctx, this.state);
+        this.enterRule(localctx, 44, CypherParser.RULE_kU_CreateRelTable);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 708;
             this.match(CypherParser.CREATE);
@@ -2125,9 +2147,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 714;
             this.oC_SchemaName();
             this.state = 716;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 715;
                 this.match(CypherParser.SP);
@@ -2137,9 +2159,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 718;
             this.match(CypherParser.T__1);
             this.state = 720;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 719;
                 this.match(CypherParser.SP);
@@ -2149,9 +2171,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 722;
             this.kU_RelTableConnection();
             this.state = 724;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 723;
                 this.match(CypherParser.SP);
@@ -2159,16 +2181,16 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 734;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 79, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 79, this._ctx) ) {
             case 1:
                 {
                 this.state = 726;
                 this.match(CypherParser.T__2);
                 this.state = 728;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 727;
                     this.match(CypherParser.SP);
@@ -2178,9 +2200,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 730;
                 this.kU_PropertyDefinitions();
                 this.state = 732;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 731;
                     this.match(CypherParser.SP);
@@ -2191,16 +2213,16 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 744;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 3) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===3) {
                 {
                 this.state = 736;
                 this.match(CypherParser.T__2);
                 this.state = 738;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 737;
                     this.match(CypherParser.SP);
@@ -2210,9 +2232,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 740;
                 this.oC_SymbolicName();
                 this.state = 742;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 741;
                     this.match(CypherParser.SP);
@@ -2228,8 +2250,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2237,15 +2260,15 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_CreateRelTableGroup(): KU_CreateRelTableGroupContext {
-        let localContext = new KU_CreateRelTableGroupContext(this.context, this.state);
-        this.enterRule(localContext, 46, CypherParser.RULE_kU_CreateRelTableGroup);
+        let localctx: KU_CreateRelTableGroupContext = new KU_CreateRelTableGroupContext(this._ctx, this.state);
+        this.enterRule(localctx, 46, CypherParser.RULE_kU_CreateRelTableGroup);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 748;
             this.match(CypherParser.CREATE);
@@ -2266,9 +2289,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 756;
             this.oC_SchemaName();
             this.state = 758;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 757;
                 this.match(CypherParser.SP);
@@ -2278,9 +2301,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 760;
             this.match(CypherParser.T__1);
             this.state = 762;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 761;
                 this.match(CypherParser.SP);
@@ -2290,9 +2313,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 764;
             this.kU_RelTableConnection();
             this.state = 766;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 765;
                 this.match(CypherParser.SP);
@@ -2300,19 +2323,19 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 773;
-            this.errorHandler.sync(this);
-            alternative = 1;
+            this._errHandler.sync(this);
+            _alt = 1;
             do {
-                switch (alternative) {
+                switch (_alt) {
                 case 1:
                     {
                     {
                     this.state = 768;
                     this.match(CypherParser.T__2);
                     this.state = 770;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 769;
                         this.match(CypherParser.SP);
@@ -2328,13 +2351,13 @@ export class CypherParser extends antlr.Parser {
                     throw new antlr.NoViableAltException(this);
                 }
                 this.state = 775;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 87, this.context);
-            } while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 87, this._ctx);
+            } while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER);
             this.state = 778;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 777;
                 this.match(CypherParser.SP);
@@ -2342,16 +2365,16 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 788;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 91, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 91, this._ctx) ) {
             case 1:
                 {
                 this.state = 780;
                 this.match(CypherParser.T__2);
                 this.state = 782;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 781;
                     this.match(CypherParser.SP);
@@ -2361,9 +2384,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 784;
                 this.kU_PropertyDefinitions();
                 this.state = 786;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 785;
                     this.match(CypherParser.SP);
@@ -2374,16 +2397,16 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 798;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 3) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===3) {
                 {
                 this.state = 790;
                 this.match(CypherParser.T__2);
                 this.state = 792;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 791;
                     this.match(CypherParser.SP);
@@ -2393,9 +2416,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 794;
                 this.oC_SymbolicName();
                 this.state = 796;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 795;
                     this.match(CypherParser.SP);
@@ -2411,8 +2434,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2420,13 +2444,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_RelTableConnection(): KU_RelTableConnectionContext {
-        let localContext = new KU_RelTableConnectionContext(this.context, this.state);
-        this.enterRule(localContext, 48, CypherParser.RULE_kU_RelTableConnection);
+        let localctx: KU_RelTableConnectionContext = new KU_RelTableConnectionContext(this._ctx, this.state);
+        this.enterRule(localctx, 48, CypherParser.RULE_kU_RelTableConnection);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 802;
             this.match(CypherParser.FROM);
@@ -2446,8 +2470,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2455,13 +2480,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_CreateRdfGraph(): KU_CreateRdfGraphContext {
-        let localContext = new KU_CreateRdfGraphContext(this.context, this.state);
-        this.enterRule(localContext, 50, CypherParser.RULE_kU_CreateRdfGraph);
+        let localctx: KU_CreateRdfGraphContext = new KU_CreateRdfGraphContext(this._ctx, this.state);
+        this.enterRule(localctx, 50, CypherParser.RULE_kU_CreateRdfGraph);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 810;
             this.match(CypherParser.CREATE);
@@ -2477,8 +2502,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2486,26 +2512,26 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_DropTable(): KU_DropTableContext {
-        let localContext = new KU_DropTableContext(this.context, this.state);
-        this.enterRule(localContext, 52, CypherParser.RULE_kU_DropTable);
+        let localctx: KU_DropTableContext = new KU_DropTableContext(this._ctx, this.state);
+        this.enterRule(localctx, 52, CypherParser.RULE_kU_DropTable);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 816;
             this.match(CypherParser.DROP);
             this.state = 817;
             this.match(CypherParser.SP);
             this.state = 818;
-            _la = this.tokenStream.LA(1);
-            if(!(_la === 60 || _la === 62)) {
-            this.errorHandler.recoverInline(this);
+            _la = this._input.LA(1);
+            if(!(_la===60 || _la===62)) {
+            this._errHandler.recoverInline(this);
             }
             else {
-                this.errorHandler.reportMatch(this);
+                this._errHandler.reportMatch(this);
                 this.consume();
             }
             this.state = 819;
@@ -2516,8 +2542,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2525,13 +2552,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_AlterTable(): KU_AlterTableContext {
-        let localContext = new KU_AlterTableContext(this.context, this.state);
-        this.enterRule(localContext, 54, CypherParser.RULE_kU_AlterTable);
+        let localctx: KU_AlterTableContext = new KU_AlterTableContext(this._ctx, this.state);
+        this.enterRule(localctx, 54, CypherParser.RULE_kU_AlterTable);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 822;
             this.match(CypherParser.ALTER);
@@ -2551,8 +2578,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2560,38 +2588,38 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_AlterOptions(): KU_AlterOptionsContext {
-        let localContext = new KU_AlterOptionsContext(this.context, this.state);
-        this.enterRule(localContext, 56, CypherParser.RULE_kU_AlterOptions);
+        let localctx: KU_AlterOptionsContext = new KU_AlterOptionsContext(this._ctx, this.state);
+        this.enterRule(localctx, 56, CypherParser.RULE_kU_AlterOptions);
         try {
             this.state = 834;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 95, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 95, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 830;
                 this.kU_AddProperty();
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 831;
                 this.kU_DropProperty();
                 }
                 break;
             case 3:
-                this.enterOuterAlt(localContext, 3);
+                this.enterOuterAlt(localctx, 3);
                 {
                 this.state = 832;
                 this.kU_RenameTable();
                 }
                 break;
             case 4:
-                this.enterOuterAlt(localContext, 4);
+                this.enterOuterAlt(localctx, 4);
                 {
                 this.state = 833;
                 this.kU_RenameProperty();
@@ -2601,8 +2629,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2610,13 +2639,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_AddProperty(): KU_AddPropertyContext {
-        let localContext = new KU_AddPropertyContext(this.context, this.state);
-        this.enterRule(localContext, 58, CypherParser.RULE_kU_AddProperty);
+        let localctx: KU_AddPropertyContext = new KU_AddPropertyContext(this._ctx, this.state);
+        this.enterRule(localctx, 58, CypherParser.RULE_kU_AddProperty);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 836;
             this.match(CypherParser.ADD);
@@ -2629,8 +2658,8 @@ export class CypherParser extends antlr.Parser {
             this.state = 840;
             this.kU_DataType(0);
             this.state = 845;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 96, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 96, this._ctx) ) {
             case 1:
                 {
                 this.state = 841;
@@ -2648,8 +2677,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2657,13 +2687,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_DropProperty(): KU_DropPropertyContext {
-        let localContext = new KU_DropPropertyContext(this.context, this.state);
-        this.enterRule(localContext, 60, CypherParser.RULE_kU_DropProperty);
+        let localctx: KU_DropPropertyContext = new KU_DropPropertyContext(this._ctx, this.state);
+        this.enterRule(localctx, 60, CypherParser.RULE_kU_DropProperty);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 847;
             this.match(CypherParser.DROP);
@@ -2675,8 +2705,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2684,13 +2715,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_RenameTable(): KU_RenameTableContext {
-        let localContext = new KU_RenameTableContext(this.context, this.state);
-        this.enterRule(localContext, 62, CypherParser.RULE_kU_RenameTable);
+        let localctx: KU_RenameTableContext = new KU_RenameTableContext(this._ctx, this.state);
+        this.enterRule(localctx, 62, CypherParser.RULE_kU_RenameTable);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 851;
             this.match(CypherParser.RENAME);
@@ -2706,8 +2737,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2715,13 +2747,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_RenameProperty(): KU_RenamePropertyContext {
-        let localContext = new KU_RenamePropertyContext(this.context, this.state);
-        this.enterRule(localContext, 64, CypherParser.RULE_kU_RenameProperty);
+        let localctx: KU_RenamePropertyContext = new KU_RenamePropertyContext(this._ctx, this.state);
+        this.enterRule(localctx, 64, CypherParser.RULE_kU_RenameProperty);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 857;
             this.match(CypherParser.RENAME);
@@ -2741,8 +2773,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2750,29 +2783,29 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_PropertyDefinitions(): KU_PropertyDefinitionsContext {
-        let localContext = new KU_PropertyDefinitionsContext(this.context, this.state);
-        this.enterRule(localContext, 66, CypherParser.RULE_kU_PropertyDefinitions);
+        let localctx: KU_PropertyDefinitionsContext = new KU_PropertyDefinitionsContext(this._ctx, this.state);
+        this.enterRule(localctx, 66, CypherParser.RULE_kU_PropertyDefinitions);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 865;
             this.kU_PropertyDefinition();
             this.state = 876;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 99, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 99, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 867;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 866;
                         this.match(CypherParser.SP);
@@ -2782,9 +2815,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 869;
                     this.match(CypherParser.T__2);
                     this.state = 871;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 870;
                         this.match(CypherParser.SP);
@@ -2797,15 +2830,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 878;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 99, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 99, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2813,13 +2847,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_PropertyDefinition(): KU_PropertyDefinitionContext {
-        let localContext = new KU_PropertyDefinitionContext(this.context, this.state);
-        this.enterRule(localContext, 68, CypherParser.RULE_kU_PropertyDefinition);
+        let localctx: KU_PropertyDefinitionContext = new KU_PropertyDefinitionContext(this._ctx, this.state);
+        this.enterRule(localctx, 68, CypherParser.RULE_kU_PropertyDefinition);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 879;
             this.oC_PropertyKeyName();
@@ -2831,8 +2865,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2840,14 +2875,14 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_CreateNodeConstraint(): KU_CreateNodeConstraintContext {
-        let localContext = new KU_CreateNodeConstraintContext(this.context, this.state);
-        this.enterRule(localContext, 70, CypherParser.RULE_kU_CreateNodeConstraint);
+        let localctx: KU_CreateNodeConstraintContext = new KU_CreateNodeConstraintContext(this._ctx, this.state);
+        this.enterRule(localctx, 70, CypherParser.RULE_kU_CreateNodeConstraint);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 883;
             this.match(CypherParser.PRIMARY);
@@ -2856,9 +2891,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 885;
             this.match(CypherParser.KEY);
             this.state = 887;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 886;
                 this.match(CypherParser.SP);
@@ -2868,9 +2903,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 889;
             this.match(CypherParser.T__1);
             this.state = 891;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 890;
                 this.match(CypherParser.SP);
@@ -2880,9 +2915,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 893;
             this.oC_PropertyKeyName();
             this.state = 895;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 894;
                 this.match(CypherParser.SP);
@@ -2895,8 +2930,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -2904,7 +2940,7 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
 
     public kU_DataType(): KU_DataTypeContext;
@@ -2914,20 +2950,20 @@ export class CypherParser extends antlr.Parser {
             _p = 0;
         }
 
-        let parentContext = this.context;
-        let parentState = this.state;
-        let localContext = new KU_DataTypeContext(this.context, parentState);
-        let previousContext = localContext;
+        let _parentctx = this._ctx;
+        let _parentState = this.state;
+        let localctx = new KU_DataTypeContext(this._ctx, _parentState);
+        let _prevctx = localctx;
         let _startState = 72;
-        this.enterRecursionRule(localContext, 72, CypherParser.RULE_kU_DataType, _p);
+        this.enterRecursionRule(localctx, 72, CypherParser.RULE_kU_DataType, _p);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 951;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 114, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 114, this._ctx) ) {
             case 1:
                 {
                 this.state = 900;
@@ -2939,9 +2975,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 901;
                 this.match(CypherParser.UNION);
                 this.state = 903;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 902;
                     this.match(CypherParser.SP);
@@ -2951,9 +2987,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 905;
                 this.match(CypherParser.T__1);
                 this.state = 907;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 906;
                     this.match(CypherParser.SP);
@@ -2963,9 +2999,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 909;
                 this.kU_PropertyDefinitions();
                 this.state = 911;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 910;
                     this.match(CypherParser.SP);
@@ -2981,9 +3017,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 915;
                 this.oC_SymbolicName();
                 this.state = 917;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 916;
                     this.match(CypherParser.SP);
@@ -2993,9 +3029,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 919;
                 this.match(CypherParser.T__1);
                 this.state = 921;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 920;
                     this.match(CypherParser.SP);
@@ -3005,9 +3041,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 923;
                 this.kU_PropertyDefinitions();
                 this.state = 925;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 924;
                     this.match(CypherParser.SP);
@@ -3023,9 +3059,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 929;
                 this.oC_SymbolicName();
                 this.state = 931;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 930;
                     this.match(CypherParser.SP);
@@ -3035,9 +3071,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 933;
                 this.match(CypherParser.T__1);
                 this.state = 935;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 934;
                     this.match(CypherParser.SP);
@@ -3047,9 +3083,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 937;
                 this.kU_DataType(0);
                 this.state = 939;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 938;
                     this.match(CypherParser.SP);
@@ -3059,9 +3095,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 941;
                 this.match(CypherParser.T__2);
                 this.state = 943;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 942;
                     this.match(CypherParser.SP);
@@ -3071,9 +3107,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 945;
                 this.kU_DataType(0);
                 this.state = 947;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 946;
                     this.match(CypherParser.SP);
@@ -3085,23 +3121,23 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             }
-            this.context!.stop = this.tokenStream.LT(-1);
+            this._ctx.stop = this._input.LT(-1);
             this.state = 957;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 115, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
-                    if (this.parseListeners != null) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 115, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
+                    if (this._parseListeners != null) {
                         this.triggerExitRuleEvent();
                     }
-                    previousContext = localContext;
+                    _prevctx = localctx;
                     {
                     {
-                    localContext = new KU_DataTypeContext(parentContext, parentState);
-                    this.pushNewRecursionContext(localContext, _startState, CypherParser.RULE_kU_DataType);
+                    localctx = new KU_DataTypeContext(_parentctx, _parentState);
+                    this.pushNewRecursionContext(localctx, _startState, CypherParser.RULE_kU_DataType);
                     this.state = 953;
-                    if (!(this.precpred(this.context, 4))) {
-                        throw this.createFailedPredicateException("this.precpred(this.context, 4)");
+                    if (!(this.precpred(this._ctx, 4))) {
+                        throw this.createFailedPredicateException("this.precpred(this._ctx, 4)");
                     }
                     this.state = 954;
                     this.kU_ListIdentifiers();
@@ -3109,38 +3145,39 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 959;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 115, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 115, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
         }
         finally {
-            this.unrollRecursionContexts(parentContext);
+            this.unrollRecursionContexts(_parentctx);
         }
-        return localContext;
+        return localctx;
     }
     public kU_ListIdentifiers(): KU_ListIdentifiersContext {
-        let localContext = new KU_ListIdentifiersContext(this.context, this.state);
-        this.enterRule(localContext, 74, CypherParser.RULE_kU_ListIdentifiers);
+        let localctx: KU_ListIdentifiersContext = new KU_ListIdentifiersContext(this._ctx, this.state);
+        this.enterRule(localctx, 74, CypherParser.RULE_kU_ListIdentifiers);
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 960;
             this.kU_ListIdentifier();
             this.state = 964;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 116, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 116, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 961;
@@ -3149,15 +3186,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 966;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 116, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 116, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -3165,21 +3203,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_ListIdentifier(): KU_ListIdentifierContext {
-        let localContext = new KU_ListIdentifierContext(this.context, this.state);
-        this.enterRule(localContext, 76, CypherParser.RULE_kU_ListIdentifier);
+        let localctx: KU_ListIdentifierContext = new KU_ListIdentifierContext(this._ctx, this.state);
+        this.enterRule(localctx, 76, CypherParser.RULE_kU_ListIdentifier);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 967;
             this.match(CypherParser.T__6);
             this.state = 969;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 138) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===138) {
                 {
                 this.state = 968;
                 this.oC_IntegerLiteral();
@@ -3192,8 +3230,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -3201,24 +3240,24 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_AnyCypherOption(): OC_AnyCypherOptionContext {
-        let localContext = new OC_AnyCypherOptionContext(this.context, this.state);
-        this.enterRule(localContext, 78, CypherParser.RULE_oC_AnyCypherOption);
+        let localctx: OC_AnyCypherOptionContext = new OC_AnyCypherOptionContext(this._ctx, this.state);
+        this.enterRule(localctx, 78, CypherParser.RULE_oC_AnyCypherOption);
         try {
             this.state = 975;
-            this.errorHandler.sync(this);
-            switch (this.tokenStream.LA(1)) {
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
             case CypherParser.EXPLAIN:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 973;
                 this.oC_Explain();
                 }
                 break;
             case CypherParser.PROFILE:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 974;
                 this.oC_Profile();
@@ -3230,8 +3269,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -3239,13 +3279,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Explain(): OC_ExplainContext {
-        let localContext = new OC_ExplainContext(this.context, this.state);
-        this.enterRule(localContext, 80, CypherParser.RULE_oC_Explain);
+        let localctx: OC_ExplainContext = new OC_ExplainContext(this._ctx, this.state);
+        this.enterRule(localctx, 80, CypherParser.RULE_oC_Explain);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 977;
             this.match(CypherParser.EXPLAIN);
@@ -3253,8 +3293,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -3262,13 +3303,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Profile(): OC_ProfileContext {
-        let localContext = new OC_ProfileContext(this.context, this.state);
-        this.enterRule(localContext, 82, CypherParser.RULE_oC_Profile);
+        let localctx: OC_ProfileContext = new OC_ProfileContext(this._ctx, this.state);
+        this.enterRule(localctx, 82, CypherParser.RULE_oC_Profile);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 979;
             this.match(CypherParser.PROFILE);
@@ -3276,8 +3317,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -3285,17 +3327,17 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_Transaction(): KU_TransactionContext {
-        let localContext = new KU_TransactionContext(this.context, this.state);
-        this.enterRule(localContext, 84, CypherParser.RULE_kU_Transaction);
+        let localctx: KU_TransactionContext = new KU_TransactionContext(this._ctx, this.state);
+        this.enterRule(localctx, 84, CypherParser.RULE_kU_Transaction);
         try {
             this.state = 995;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 119, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 119, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 981;
                 this.match(CypherParser.BEGIN);
@@ -3306,7 +3348,7 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 984;
                 this.match(CypherParser.BEGIN);
@@ -3325,28 +3367,28 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case 3:
-                this.enterOuterAlt(localContext, 3);
+                this.enterOuterAlt(localctx, 3);
                 {
                 this.state = 991;
                 this.match(CypherParser.COMMIT);
                 }
                 break;
             case 4:
-                this.enterOuterAlt(localContext, 4);
+                this.enterOuterAlt(localctx, 4);
                 {
                 this.state = 992;
                 this.match(CypherParser.COMMIT_SKIP_CHECKPOINT);
                 }
                 break;
             case 5:
-                this.enterOuterAlt(localContext, 5);
+                this.enterOuterAlt(localctx, 5);
                 {
                 this.state = 993;
                 this.match(CypherParser.ROLLBACK);
                 }
                 break;
             case 6:
-                this.enterOuterAlt(localContext, 6);
+                this.enterOuterAlt(localctx, 6);
                 {
                 this.state = 994;
                 this.match(CypherParser.ROLLBACK_SKIP_CHECKPOINT);
@@ -3356,8 +3398,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -3365,24 +3408,24 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_Extension(): KU_ExtensionContext {
-        let localContext = new KU_ExtensionContext(this.context, this.state);
-        this.enterRule(localContext, 86, CypherParser.RULE_kU_Extension);
+        let localctx: KU_ExtensionContext = new KU_ExtensionContext(this._ctx, this.state);
+        this.enterRule(localctx, 86, CypherParser.RULE_kU_Extension);
         try {
             this.state = 999;
-            this.errorHandler.sync(this);
-            switch (this.tokenStream.LA(1)) {
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
             case CypherParser.LOAD:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 997;
                 this.kU_LoadExtension();
                 }
                 break;
             case CypherParser.INSTALL:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 998;
                 this.kU_InstallExtension();
@@ -3394,8 +3437,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -3403,13 +3447,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_LoadExtension(): KU_LoadExtensionContext {
-        let localContext = new KU_LoadExtensionContext(this.context, this.state);
-        this.enterRule(localContext, 88, CypherParser.RULE_kU_LoadExtension);
+        let localctx: KU_LoadExtensionContext = new KU_LoadExtensionContext(this._ctx, this.state);
+        this.enterRule(localctx, 88, CypherParser.RULE_kU_LoadExtension);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1001;
             this.match(CypherParser.LOAD);
@@ -3420,8 +3464,8 @@ export class CypherParser extends antlr.Parser {
             this.state = 1004;
             this.match(CypherParser.SP);
             this.state = 1007;
-            this.errorHandler.sync(this);
-            switch (this.tokenStream.LA(1)) {
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
             case CypherParser.StringLiteral:
                 {
                 this.state = 1005;
@@ -3454,8 +3498,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -3463,13 +3508,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_InstallExtension(): KU_InstallExtensionContext {
-        let localContext = new KU_InstallExtensionContext(this.context, this.state);
-        this.enterRule(localContext, 90, CypherParser.RULE_kU_InstallExtension);
+        let localctx: KU_InstallExtensionContext = new KU_InstallExtensionContext(this._ctx, this.state);
+        this.enterRule(localctx, 90, CypherParser.RULE_kU_InstallExtension);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1009;
             this.match(CypherParser.INSTALL);
@@ -3481,8 +3526,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -3490,13 +3536,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Query(): OC_QueryContext {
-        let localContext = new OC_QueryContext(this.context, this.state);
-        this.enterRule(localContext, 92, CypherParser.RULE_oC_Query);
+        let localctx: OC_QueryContext = new OC_QueryContext(this._ctx, this.state);
+        this.enterRule(localctx, 92, CypherParser.RULE_oC_Query);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1013;
             this.oC_RegularQuery();
@@ -3504,8 +3550,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -3513,33 +3560,33 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_RegularQuery(): OC_RegularQueryContext {
-        let localContext = new OC_RegularQueryContext(this.context, this.state);
-        this.enterRule(localContext, 94, CypherParser.RULE_oC_RegularQuery);
+        let localctx: OC_RegularQueryContext = new OC_RegularQueryContext(this._ctx, this.state);
+        this.enterRule(localctx, 94, CypherParser.RULE_oC_RegularQuery);
         let _la: number;
         try {
-            let alternative: number;
+            let _alt: number;
             this.state = 1036;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 126, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 126, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 1015;
                 this.oC_SingleQuery();
                 this.state = 1022;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 123, this.context);
-                while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                    if (alternative === 1) {
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 123, this._ctx);
+                while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                    if (_alt === 1) {
                         {
                         {
                         this.state = 1017;
-                        this.errorHandler.sync(this);
-                        _la = this.tokenStream.LA(1);
-                        if (_la === 150) {
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        if (_la===150) {
                             {
                             this.state = 1016;
                             this.match(CypherParser.SP);
@@ -3552,28 +3599,28 @@ export class CypherParser extends antlr.Parser {
                         }
                     }
                     this.state = 1024;
-                    this.errorHandler.sync(this);
-                    alternative = this.interpreter.adaptivePredict(this.tokenStream, 123, this.context);
+                    this._errHandler.sync(this);
+                    _alt = this._interp.adaptivePredict(this._input, 123, this._ctx);
                 }
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 1029;
-                this.errorHandler.sync(this);
-                alternative = 1;
+                this._errHandler.sync(this);
+                _alt = 1;
                 do {
-                    switch (alternative) {
+                    switch (_alt) {
                     case 1:
                         {
                         {
                         this.state = 1025;
                         this.oC_Return();
                         this.state = 1027;
-                        this.errorHandler.sync(this);
-                        _la = this.tokenStream.LA(1);
-                        if (_la === 150) {
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        if (_la===150) {
                             {
                             this.state = 1026;
                             this.match(CypherParser.SP);
@@ -3587,9 +3634,9 @@ export class CypherParser extends antlr.Parser {
                         throw new antlr.NoViableAltException(this);
                     }
                     this.state = 1031;
-                    this.errorHandler.sync(this);
-                    alternative = this.interpreter.adaptivePredict(this.tokenStream, 125, this.context);
-                } while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER);
+                    this._errHandler.sync(this);
+                    _alt = this._interp.adaptivePredict(this._input, 125, this._ctx);
+                } while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER);
                 this.state = 1033;
                 this.oC_SingleQuery();
                 }
@@ -3598,8 +3645,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -3607,18 +3655,18 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Union(): OC_UnionContext {
-        let localContext = new OC_UnionContext(this.context, this.state);
-        this.enterRule(localContext, 96, CypherParser.RULE_oC_Union);
+        let localctx: OC_UnionContext = new OC_UnionContext(this._ctx, this.state);
+        this.enterRule(localctx, 96, CypherParser.RULE_oC_Union);
         let _la: number;
         try {
             this.state = 1050;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 129, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 129, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 {
                 this.state = 1038;
@@ -3628,9 +3676,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1040;
                 this.match(CypherParser.ALL);
                 this.state = 1042;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1041;
                     this.match(CypherParser.SP);
@@ -3643,15 +3691,15 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 {
                 this.state = 1045;
                 this.match(CypherParser.UNION);
                 this.state = 1047;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1046;
                     this.match(CypherParser.SP);
@@ -3667,8 +3715,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -3676,24 +3725,24 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_SingleQuery(): OC_SingleQueryContext {
-        let localContext = new OC_SingleQueryContext(this.context, this.state);
-        this.enterRule(localContext, 98, CypherParser.RULE_oC_SingleQuery);
+        let localctx: OC_SingleQueryContext = new OC_SingleQueryContext(this._ctx, this.state);
+        this.enterRule(localctx, 98, CypherParser.RULE_oC_SingleQuery);
         try {
             this.state = 1054;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 130, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 130, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 1052;
                 this.oC_SinglePartQuery();
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 1053;
                 this.oC_MultiPartQuery();
@@ -3703,8 +3752,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -3712,32 +3762,32 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_SinglePartQuery(): OC_SinglePartQueryContext {
-        let localContext = new OC_SinglePartQueryContext(this.context, this.state);
-        this.enterRule(localContext, 100, CypherParser.RULE_oC_SinglePartQuery);
+        let localctx: OC_SinglePartQueryContext = new OC_SinglePartQueryContext(this._ctx, this.state);
+        this.enterRule(localctx, 100, CypherParser.RULE_oC_SinglePartQuery);
         let _la: number;
         try {
-            let alternative: number;
+            let _alt: number;
             this.state = 1101;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 141, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 141, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 1062;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                while (_la === 49 || ((((_la - 87)) & ~0x1F) === 0 && ((1 << (_la - 87)) & 29) !== 0)) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                while (_la===49 || ((((_la - 87)) & ~0x1F) === 0 && ((1 << (_la - 87)) & 29) !== 0)) {
                     {
                     {
                     this.state = 1056;
                     this.oC_ReadingClause();
                     this.state = 1058;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1057;
                         this.match(CypherParser.SP);
@@ -3747,29 +3797,29 @@ export class CypherParser extends antlr.Parser {
                     }
                     }
                     this.state = 1064;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
                 }
                 this.state = 1065;
                 this.oC_Return();
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 {
                 this.state = 1072;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                while (_la === 49 || ((((_la - 87)) & ~0x1F) === 0 && ((1 << (_la - 87)) & 29) !== 0)) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                while (_la===49 || ((((_la - 87)) & ~0x1F) === 0 && ((1 << (_la - 87)) & 29) !== 0)) {
                     {
                     {
                     this.state = 1066;
                     this.oC_ReadingClause();
                     this.state = 1068;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1067;
                         this.match(CypherParser.SP);
@@ -3779,22 +3829,22 @@ export class CypherParser extends antlr.Parser {
                     }
                     }
                     this.state = 1074;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
                 }
                 this.state = 1075;
                 this.oC_UpdatingClause();
                 this.state = 1082;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 136, this.context);
-                while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                    if (alternative === 1) {
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 136, this._ctx);
+                while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                    if (_alt === 1) {
                         {
                         {
                         this.state = 1077;
-                        this.errorHandler.sync(this);
-                        _la = this.tokenStream.LA(1);
-                        if (_la === 150) {
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        if (_la===150) {
                             {
                             this.state = 1076;
                             this.match(CypherParser.SP);
@@ -3807,18 +3857,18 @@ export class CypherParser extends antlr.Parser {
                         }
                     }
                     this.state = 1084;
-                    this.errorHandler.sync(this);
-                    alternative = this.interpreter.adaptivePredict(this.tokenStream, 136, this.context);
+                    this._errHandler.sync(this);
+                    _alt = this._interp.adaptivePredict(this._input, 136, this._ctx);
                 }
                 this.state = 1089;
-                this.errorHandler.sync(this);
-                switch (this.interpreter.adaptivePredict(this.tokenStream, 138, this.context) ) {
+                this._errHandler.sync(this);
+                switch ( this._interp.adaptivePredict(this._input, 138, this._ctx) ) {
                 case 1:
                     {
                     this.state = 1086;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1085;
                         this.match(CypherParser.SP);
@@ -3834,19 +3884,19 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case 3:
-                this.enterOuterAlt(localContext, 3);
+                this.enterOuterAlt(localctx, 3);
                 {
                 this.state = 1095;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
                 do {
                     {
                     {
                     this.state = 1091;
                     this.oC_ReadingClause();
                     this.state = 1093;
-                    this.errorHandler.sync(this);
-                    switch (this.interpreter.adaptivePredict(this.tokenStream, 139, this.context) ) {
+                    this._errHandler.sync(this);
+                    switch ( this._interp.adaptivePredict(this._input, 139, this._ctx) ) {
                     case 1:
                         {
                         this.state = 1092;
@@ -3857,17 +3907,18 @@ export class CypherParser extends antlr.Parser {
                     }
                     }
                     this.state = 1097;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                } while (_la === 49 || ((((_la - 87)) & ~0x1F) === 0 && ((1 << (_la - 87)) & 29) !== 0));
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                } while (_la===49 || ((((_la - 87)) & ~0x1F) === 0 && ((1 << (_la - 87)) & 29) !== 0));
                 }
                 break;
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -3875,30 +3926,30 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_MultiPartQuery(): OC_MultiPartQueryContext {
-        let localContext = new OC_MultiPartQueryContext(this.context, this.state);
-        this.enterRule(localContext, 102, CypherParser.RULE_oC_MultiPartQuery);
+        let localctx: OC_MultiPartQueryContext = new OC_MultiPartQueryContext(this._ctx, this.state);
+        this.enterRule(localctx, 102, CypherParser.RULE_oC_MultiPartQuery);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1107;
-            this.errorHandler.sync(this);
-            alternative = 1;
+            this._errHandler.sync(this);
+            _alt = 1;
             do {
-                switch (alternative) {
+                switch (_alt) {
                 case 1:
                     {
                     {
                     this.state = 1103;
                     this.kU_QueryPart();
                     this.state = 1105;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1104;
                         this.match(CypherParser.SP);
@@ -3912,17 +3963,18 @@ export class CypherParser extends antlr.Parser {
                     throw new antlr.NoViableAltException(this);
                 }
                 this.state = 1109;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 143, this.context);
-            } while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 143, this._ctx);
+            } while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER);
             this.state = 1111;
             this.oC_SinglePartQuery();
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -3930,27 +3982,27 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_QueryPart(): KU_QueryPartContext {
-        let localContext = new KU_QueryPartContext(this.context, this.state);
-        this.enterRule(localContext, 104, CypherParser.RULE_kU_QueryPart);
+        let localctx: KU_QueryPartContext = new KU_QueryPartContext(this._ctx, this.state);
+        this.enterRule(localctx, 104, CypherParser.RULE_kU_QueryPart);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1119;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            while (_la === 49 || ((((_la - 87)) & ~0x1F) === 0 && ((1 << (_la - 87)) & 29) !== 0)) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            while (_la===49 || ((((_la - 87)) & ~0x1F) === 0 && ((1 << (_la - 87)) & 29) !== 0)) {
                 {
                 {
                 this.state = 1113;
                 this.oC_ReadingClause();
                 this.state = 1115;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1114;
                     this.match(CypherParser.SP);
@@ -3960,21 +4012,21 @@ export class CypherParser extends antlr.Parser {
                 }
                 }
                 this.state = 1121;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
             }
             this.state = 1128;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
             while (((((_la - 92)) & ~0x1F) === 0 && ((1 << (_la - 92)) & 59) !== 0)) {
                 {
                 {
                 this.state = 1122;
                 this.oC_UpdatingClause();
                 this.state = 1124;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1123;
                     this.match(CypherParser.SP);
@@ -3984,8 +4036,8 @@ export class CypherParser extends antlr.Parser {
                 }
                 }
                 this.state = 1130;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
             }
             this.state = 1131;
             this.oC_With();
@@ -3993,8 +4045,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4002,31 +4055,31 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_UpdatingClause(): OC_UpdatingClauseContext {
-        let localContext = new OC_UpdatingClauseContext(this.context, this.state);
-        this.enterRule(localContext, 106, CypherParser.RULE_oC_UpdatingClause);
+        let localctx: OC_UpdatingClauseContext = new OC_UpdatingClauseContext(this._ctx, this.state);
+        this.enterRule(localctx, 106, CypherParser.RULE_oC_UpdatingClause);
         try {
             this.state = 1137;
-            this.errorHandler.sync(this);
-            switch (this.tokenStream.LA(1)) {
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
             case CypherParser.CREATE:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 1133;
                 this.oC_Create();
                 }
                 break;
             case CypherParser.MERGE:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 1134;
                 this.oC_Merge();
                 }
                 break;
             case CypherParser.SET:
-                this.enterOuterAlt(localContext, 3);
+                this.enterOuterAlt(localctx, 3);
                 {
                 this.state = 1135;
                 this.oC_Set();
@@ -4034,7 +4087,7 @@ export class CypherParser extends antlr.Parser {
                 break;
             case CypherParser.DETACH:
             case CypherParser.DELETE:
-                this.enterOuterAlt(localContext, 4);
+                this.enterOuterAlt(localctx, 4);
                 {
                 this.state = 1136;
                 this.oC_Delete();
@@ -4046,8 +4099,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4055,39 +4109,39 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_ReadingClause(): OC_ReadingClauseContext {
-        let localContext = new OC_ReadingClauseContext(this.context, this.state);
-        this.enterRule(localContext, 108, CypherParser.RULE_oC_ReadingClause);
+        let localctx: OC_ReadingClauseContext = new OC_ReadingClauseContext(this._ctx, this.state);
+        this.enterRule(localctx, 108, CypherParser.RULE_oC_ReadingClause);
         try {
             this.state = 1143;
-            this.errorHandler.sync(this);
-            switch (this.tokenStream.LA(1)) {
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
             case CypherParser.OPTIONAL:
             case CypherParser.MATCH:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 1139;
                 this.oC_Match();
                 }
                 break;
             case CypherParser.UNWIND:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 1140;
                 this.oC_Unwind();
                 }
                 break;
             case CypherParser.CALL:
-                this.enterOuterAlt(localContext, 3);
+                this.enterOuterAlt(localctx, 3);
                 {
                 this.state = 1141;
                 this.kU_InQueryCall();
                 }
                 break;
             case CypherParser.LOAD:
-                this.enterOuterAlt(localContext, 4);
+                this.enterOuterAlt(localctx, 4);
                 {
                 this.state = 1142;
                 this.kU_LoadFrom();
@@ -4099,8 +4153,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4108,20 +4163,20 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_LoadFrom(): KU_LoadFromContext {
-        let localContext = new KU_LoadFromContext(this.context, this.state);
-        this.enterRule(localContext, 110, CypherParser.RULE_kU_LoadFrom);
+        let localctx: KU_LoadFromContext = new KU_LoadFromContext(this._ctx, this.state);
+        this.enterRule(localctx, 110, CypherParser.RULE_kU_LoadFrom);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1145;
             this.match(CypherParser.LOAD);
             this.state = 1163;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 153, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 153, this._ctx) ) {
             case 1:
                 {
                 this.state = 1146;
@@ -4133,9 +4188,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1149;
                 this.match(CypherParser.HEADERS);
                 this.state = 1151;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1150;
                     this.match(CypherParser.SP);
@@ -4145,9 +4200,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1153;
                 this.match(CypherParser.T__1);
                 this.state = 1155;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1154;
                     this.match(CypherParser.SP);
@@ -4157,9 +4212,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1157;
                 this.kU_PropertyDefinitions();
                 this.state = 1159;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1158;
                     this.match(CypherParser.SP);
@@ -4180,14 +4235,14 @@ export class CypherParser extends antlr.Parser {
             this.state = 1168;
             this.kU_ScanSource();
             this.state = 1173;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 155, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 155, this._ctx) ) {
             case 1:
                 {
                 this.state = 1170;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1169;
                     this.match(CypherParser.SP);
@@ -4200,14 +4255,14 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 1179;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 157, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 157, this._ctx) ) {
             case 1:
                 {
                 this.state = 1176;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1175;
                     this.match(CypherParser.SP);
@@ -4223,8 +4278,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4232,14 +4288,14 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_InQueryCall(): KU_InQueryCallContext {
-        let localContext = new KU_InQueryCallContext(this.context, this.state);
-        this.enterRule(localContext, 112, CypherParser.RULE_kU_InQueryCall);
+        let localctx: KU_InQueryCallContext = new KU_InQueryCallContext(this._ctx, this.state);
+        this.enterRule(localctx, 112, CypherParser.RULE_kU_InQueryCall);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1181;
             this.match(CypherParser.CALL);
@@ -4248,14 +4304,14 @@ export class CypherParser extends antlr.Parser {
             this.state = 1183;
             this.oC_FunctionInvocation();
             this.state = 1188;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 159, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 159, this._ctx) ) {
             case 1:
                 {
                 this.state = 1185;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1184;
                     this.match(CypherParser.SP);
@@ -4271,8 +4327,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4280,19 +4337,19 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Match(): OC_MatchContext {
-        let localContext = new OC_MatchContext(this.context, this.state);
-        this.enterRule(localContext, 114, CypherParser.RULE_oC_Match);
+        let localctx: OC_MatchContext = new OC_MatchContext(this._ctx, this.state);
+        this.enterRule(localctx, 114, CypherParser.RULE_oC_Match);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1192;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 89) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===89) {
                 {
                 this.state = 1190;
                 this.match(CypherParser.OPTIONAL);
@@ -4304,9 +4361,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 1194;
             this.match(CypherParser.MATCH);
             this.state = 1196;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1195;
                 this.match(CypherParser.SP);
@@ -4316,14 +4373,14 @@ export class CypherParser extends antlr.Parser {
             this.state = 1198;
             this.oC_Pattern();
             this.state = 1203;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 163, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 163, this._ctx) ) {
             case 1:
                 {
                 this.state = 1200;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1199;
                     this.match(CypherParser.SP);
@@ -4339,8 +4396,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4348,21 +4406,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Unwind(): OC_UnwindContext {
-        let localContext = new OC_UnwindContext(this.context, this.state);
-        this.enterRule(localContext, 116, CypherParser.RULE_oC_Unwind);
+        let localctx: OC_UnwindContext = new OC_UnwindContext(this._ctx, this.state);
+        this.enterRule(localctx, 116, CypherParser.RULE_oC_Unwind);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1205;
             this.match(CypherParser.UNWIND);
             this.state = 1207;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1206;
                 this.match(CypherParser.SP);
@@ -4383,8 +4441,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4392,21 +4451,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Create(): OC_CreateContext {
-        let localContext = new OC_CreateContext(this.context, this.state);
-        this.enterRule(localContext, 118, CypherParser.RULE_oC_Create);
+        let localctx: OC_CreateContext = new OC_CreateContext(this._ctx, this.state);
+        this.enterRule(localctx, 118, CypherParser.RULE_oC_Create);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1215;
             this.match(CypherParser.CREATE);
             this.state = 1217;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1216;
                 this.match(CypherParser.SP);
@@ -4419,8 +4478,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4428,22 +4488,22 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Merge(): OC_MergeContext {
-        let localContext = new OC_MergeContext(this.context, this.state);
-        this.enterRule(localContext, 120, CypherParser.RULE_oC_Merge);
+        let localctx: OC_MergeContext = new OC_MergeContext(this._ctx, this.state);
+        this.enterRule(localctx, 120, CypherParser.RULE_oC_Merge);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1221;
             this.match(CypherParser.MERGE);
             this.state = 1223;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1222;
                 this.match(CypherParser.SP);
@@ -4453,10 +4513,10 @@ export class CypherParser extends antlr.Parser {
             this.state = 1225;
             this.oC_Pattern();
             this.state = 1230;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 167, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 167, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 1226;
@@ -4467,15 +4527,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 1232;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 167, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 167, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4483,17 +4544,17 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_MergeAction(): OC_MergeActionContext {
-        let localContext = new OC_MergeActionContext(this.context, this.state);
-        this.enterRule(localContext, 122, CypherParser.RULE_oC_MergeAction);
+        let localctx: OC_MergeActionContext = new OC_MergeActionContext(this._ctx, this.state);
+        this.enterRule(localctx, 122, CypherParser.RULE_oC_MergeAction);
         try {
             this.state = 1243;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 168, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 168, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 {
                 this.state = 1233;
@@ -4510,7 +4571,7 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 {
                 this.state = 1238;
@@ -4530,8 +4591,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4539,22 +4601,22 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Set(): OC_SetContext {
-        let localContext = new OC_SetContext(this.context, this.state);
-        this.enterRule(localContext, 124, CypherParser.RULE_oC_Set);
+        let localctx: OC_SetContext = new OC_SetContext(this._ctx, this.state);
+        this.enterRule(localctx, 124, CypherParser.RULE_oC_Set);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1245;
             this.match(CypherParser.SET);
             this.state = 1247;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1246;
                 this.match(CypherParser.SP);
@@ -4564,16 +4626,16 @@ export class CypherParser extends antlr.Parser {
             this.state = 1249;
             this.oC_SetItem();
             this.state = 1260;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 172, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 172, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 1251;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1250;
                         this.match(CypherParser.SP);
@@ -4583,9 +4645,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 1253;
                     this.match(CypherParser.T__2);
                     this.state = 1255;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1254;
                         this.match(CypherParser.SP);
@@ -4598,15 +4660,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 1262;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 172, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 172, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4614,22 +4677,22 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_SetItem(): OC_SetItemContext {
-        let localContext = new OC_SetItemContext(this.context, this.state);
-        this.enterRule(localContext, 126, CypherParser.RULE_oC_SetItem);
+        let localctx: OC_SetItemContext = new OC_SetItemContext(this._ctx, this.state);
+        this.enterRule(localctx, 126, CypherParser.RULE_oC_SetItem);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             {
             this.state = 1263;
             this.oC_PropertyExpression();
             this.state = 1265;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1264;
                 this.match(CypherParser.SP);
@@ -4639,9 +4702,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 1267;
             this.match(CypherParser.T__5);
             this.state = 1269;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1268;
                 this.match(CypherParser.SP);
@@ -4655,8 +4718,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4664,20 +4728,20 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Delete(): OC_DeleteContext {
-        let localContext = new OC_DeleteContext(this.context, this.state);
-        this.enterRule(localContext, 128, CypherParser.RULE_oC_Delete);
+        let localctx: OC_DeleteContext = new OC_DeleteContext(this._ctx, this.state);
+        this.enterRule(localctx, 128, CypherParser.RULE_oC_Delete);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1275;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 96) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===96) {
                 {
                 this.state = 1273;
                 this.match(CypherParser.DETACH);
@@ -4689,9 +4753,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 1277;
             this.match(CypherParser.DELETE);
             this.state = 1279;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1278;
                 this.match(CypherParser.SP);
@@ -4701,16 +4765,16 @@ export class CypherParser extends antlr.Parser {
             this.state = 1281;
             this.oC_Expression();
             this.state = 1292;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 179, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 179, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 1283;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1282;
                         this.match(CypherParser.SP);
@@ -4720,9 +4784,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 1285;
                     this.match(CypherParser.T__2);
                     this.state = 1287;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1286;
                         this.match(CypherParser.SP);
@@ -4735,15 +4799,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 1294;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 179, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 179, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4751,28 +4816,28 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_With(): OC_WithContext {
-        let localContext = new OC_WithContext(this.context, this.state);
-        this.enterRule(localContext, 130, CypherParser.RULE_oC_With);
+        let localctx: OC_WithContext = new OC_WithContext(this._ctx, this.state);
+        this.enterRule(localctx, 130, CypherParser.RULE_oC_With);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1295;
             this.match(CypherParser.WITH);
             this.state = 1296;
             this.oC_ProjectionBody();
             this.state = 1301;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 181, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 181, this._ctx) ) {
             case 1:
                 {
                 this.state = 1298;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1297;
                     this.match(CypherParser.SP);
@@ -4788,8 +4853,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4797,13 +4863,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Return(): OC_ReturnContext {
-        let localContext = new OC_ReturnContext(this.context, this.state);
-        this.enterRule(localContext, 132, CypherParser.RULE_oC_Return);
+        let localctx: OC_ReturnContext = new OC_ReturnContext(this._ctx, this.state);
+        this.enterRule(localctx, 132, CypherParser.RULE_oC_Return);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1303;
             this.match(CypherParser.RETURN);
@@ -4813,8 +4879,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4822,24 +4889,24 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_ProjectionBody(): OC_ProjectionBodyContext {
-        let localContext = new OC_ProjectionBodyContext(this.context, this.state);
-        this.enterRule(localContext, 134, CypherParser.RULE_oC_ProjectionBody);
+        let localctx: OC_ProjectionBodyContext = new OC_ProjectionBodyContext(this._ctx, this.state);
+        this.enterRule(localctx, 134, CypherParser.RULE_oC_ProjectionBody);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1310;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 183, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 183, this._ctx) ) {
             case 1:
                 {
                 this.state = 1307;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1306;
                     this.match(CypherParser.SP);
@@ -4856,8 +4923,8 @@ export class CypherParser extends antlr.Parser {
             this.state = 1313;
             this.oC_ProjectionItems();
             this.state = 1316;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 184, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 184, this._ctx) ) {
             case 1:
                 {
                 this.state = 1314;
@@ -4868,8 +4935,8 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 1320;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 185, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 185, this._ctx) ) {
             case 1:
                 {
                 this.state = 1318;
@@ -4880,8 +4947,8 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 1324;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 186, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 186, this._ctx) ) {
             case 1:
                 {
                 this.state = 1322;
@@ -4895,8 +4962,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -4904,34 +4972,34 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_ProjectionItems(): OC_ProjectionItemsContext {
-        let localContext = new OC_ProjectionItemsContext(this.context, this.state);
-        this.enterRule(localContext, 136, CypherParser.RULE_oC_ProjectionItems);
+        let localctx: OC_ProjectionItemsContext = new OC_ProjectionItemsContext(this._ctx, this.state);
+        this.enterRule(localctx, 136, CypherParser.RULE_oC_ProjectionItems);
         let _la: number;
         try {
-            let alternative: number;
+            let _alt: number;
             this.state = 1354;
-            this.errorHandler.sync(this);
-            switch (this.tokenStream.LA(1)) {
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
             case CypherParser.STAR:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 {
                 this.state = 1326;
                 this.match(CypherParser.STAR);
                 this.state = 1337;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 189, this.context);
-                while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                    if (alternative === 1) {
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 189, this._ctx);
+                while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                    if (_alt === 1) {
                         {
                         {
                         this.state = 1328;
-                        this.errorHandler.sync(this);
-                        _la = this.tokenStream.LA(1);
-                        if (_la === 150) {
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        if (_la===150) {
                             {
                             this.state = 1327;
                             this.match(CypherParser.SP);
@@ -4941,9 +5009,9 @@ export class CypherParser extends antlr.Parser {
                         this.state = 1330;
                         this.match(CypherParser.T__2);
                         this.state = 1332;
-                        this.errorHandler.sync(this);
-                        _la = this.tokenStream.LA(1);
-                        if (_la === 150) {
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        if (_la===150) {
                             {
                             this.state = 1331;
                             this.match(CypherParser.SP);
@@ -4956,8 +5024,8 @@ export class CypherParser extends antlr.Parser {
                         }
                     }
                     this.state = 1339;
-                    this.errorHandler.sync(this);
-                    alternative = this.interpreter.adaptivePredict(this.tokenStream, 189, this.context);
+                    this._errHandler.sync(this);
+                    _alt = this._interp.adaptivePredict(this._input, 189, this._ctx);
                 }
                 }
                 }
@@ -4990,22 +5058,22 @@ export class CypherParser extends antlr.Parser {
             case CypherParser.RegularDecimalReal:
             case CypherParser.UnescapedSymbolicName:
             case CypherParser.EscapedSymbolicName:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 {
                 this.state = 1340;
                 this.oC_ProjectionItem();
                 this.state = 1351;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 192, this.context);
-                while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                    if (alternative === 1) {
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 192, this._ctx);
+                while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                    if (_alt === 1) {
                         {
                         {
                         this.state = 1342;
-                        this.errorHandler.sync(this);
-                        _la = this.tokenStream.LA(1);
-                        if (_la === 150) {
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        if (_la===150) {
                             {
                             this.state = 1341;
                             this.match(CypherParser.SP);
@@ -5015,9 +5083,9 @@ export class CypherParser extends antlr.Parser {
                         this.state = 1344;
                         this.match(CypherParser.T__2);
                         this.state = 1346;
-                        this.errorHandler.sync(this);
-                        _la = this.tokenStream.LA(1);
-                        if (_la === 150) {
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        if (_la===150) {
                             {
                             this.state = 1345;
                             this.match(CypherParser.SP);
@@ -5030,8 +5098,8 @@ export class CypherParser extends antlr.Parser {
                         }
                     }
                     this.state = 1353;
-                    this.errorHandler.sync(this);
-                    alternative = this.interpreter.adaptivePredict(this.tokenStream, 192, this.context);
+                    this._errHandler.sync(this);
+                    _alt = this._interp.adaptivePredict(this._input, 192, this._ctx);
                 }
                 }
                 }
@@ -5042,8 +5110,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -5051,17 +5120,17 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_ProjectionItem(): OC_ProjectionItemContext {
-        let localContext = new OC_ProjectionItemContext(this.context, this.state);
-        this.enterRule(localContext, 138, CypherParser.RULE_oC_ProjectionItem);
+        let localctx: OC_ProjectionItemContext = new OC_ProjectionItemContext(this._ctx, this.state);
+        this.enterRule(localctx, 138, CypherParser.RULE_oC_ProjectionItem);
         try {
             this.state = 1363;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 194, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 194, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 {
                 this.state = 1356;
@@ -5078,7 +5147,7 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 1362;
                 this.oC_Expression();
@@ -5088,8 +5157,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -5097,14 +5167,14 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Order(): OC_OrderContext {
-        let localContext = new OC_OrderContext(this.context, this.state);
-        this.enterRule(localContext, 140, CypherParser.RULE_oC_Order);
+        let localctx: OC_OrderContext = new OC_OrderContext(this._ctx, this.state);
+        this.enterRule(localctx, 140, CypherParser.RULE_oC_Order);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1365;
             this.match(CypherParser.ORDER);
@@ -5117,17 +5187,17 @@ export class CypherParser extends antlr.Parser {
             this.state = 1369;
             this.oC_SortItem();
             this.state = 1377;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            while (_la === 3) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            while (_la===3) {
                 {
                 {
                 this.state = 1370;
                 this.match(CypherParser.T__2);
                 this.state = 1372;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1371;
                     this.match(CypherParser.SP);
@@ -5139,15 +5209,16 @@ export class CypherParser extends antlr.Parser {
                 }
                 }
                 this.state = 1379;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -5155,13 +5226,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Skip(): OC_SkipContext {
-        let localContext = new OC_SkipContext(this.context, this.state);
-        this.enterRule(localContext, 142, CypherParser.RULE_oC_Skip);
+        let localctx: OC_SkipContext = new OC_SkipContext(this._ctx, this.state);
+        this.enterRule(localctx, 142, CypherParser.RULE_oC_Skip);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1380;
             this.match(CypherParser.L_SKIP);
@@ -5173,8 +5244,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -5182,13 +5254,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Limit(): OC_LimitContext {
-        let localContext = new OC_LimitContext(this.context, this.state);
-        this.enterRule(localContext, 144, CypherParser.RULE_oC_Limit);
+        let localctx: OC_LimitContext = new OC_LimitContext(this._ctx, this.state);
+        this.enterRule(localctx, 144, CypherParser.RULE_oC_Limit);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1384;
             this.match(CypherParser.LIMIT);
@@ -5200,8 +5272,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -5209,26 +5282,26 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_SortItem(): OC_SortItemContext {
-        let localContext = new OC_SortItemContext(this.context, this.state);
-        this.enterRule(localContext, 146, CypherParser.RULE_oC_SortItem);
+        let localctx: OC_SortItemContext = new OC_SortItemContext(this._ctx, this.state);
+        this.enterRule(localctx, 146, CypherParser.RULE_oC_SortItem);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1388;
             this.oC_Expression();
             this.state = 1393;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 198, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 198, this._ctx) ) {
             case 1:
                 {
                 this.state = 1390;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1389;
                     this.match(CypherParser.SP);
@@ -5236,12 +5309,12 @@ export class CypherParser extends antlr.Parser {
                 }
 
                 this.state = 1392;
-                _la = this.tokenStream.LA(1);
+                _la = this._input.LA(1);
                 if(!(((((_la - 107)) & ~0x1F) === 0 && ((1 << (_la - 107)) & 15) !== 0))) {
-                this.errorHandler.recoverInline(this);
+                this._errHandler.recoverInline(this);
                 }
                 else {
-                    this.errorHandler.reportMatch(this);
+                    this._errHandler.reportMatch(this);
                     this.consume();
                 }
                 }
@@ -5251,8 +5324,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -5260,13 +5334,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Where(): OC_WhereContext {
-        let localContext = new OC_WhereContext(this.context, this.state);
-        this.enterRule(localContext, 148, CypherParser.RULE_oC_Where);
+        let localctx: OC_WhereContext = new OC_WhereContext(this._ctx, this.state);
+        this.enterRule(localctx, 148, CypherParser.RULE_oC_Where);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1395;
             this.match(CypherParser.WHERE);
@@ -5278,8 +5352,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -5287,29 +5362,29 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Pattern(): OC_PatternContext {
-        let localContext = new OC_PatternContext(this.context, this.state);
-        this.enterRule(localContext, 150, CypherParser.RULE_oC_Pattern);
+        let localctx: OC_PatternContext = new OC_PatternContext(this._ctx, this.state);
+        this.enterRule(localctx, 150, CypherParser.RULE_oC_Pattern);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1399;
             this.oC_PatternPart();
             this.state = 1410;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 201, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 201, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 1401;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1400;
                         this.match(CypherParser.SP);
@@ -5319,9 +5394,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 1403;
                     this.match(CypherParser.T__2);
                     this.state = 1405;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1404;
                         this.match(CypherParser.SP);
@@ -5334,15 +5409,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 1412;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 201, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 201, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -5350,16 +5426,16 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_PatternPart(): OC_PatternPartContext {
-        let localContext = new OC_PatternPartContext(this.context, this.state);
-        this.enterRule(localContext, 152, CypherParser.RULE_oC_PatternPart);
+        let localctx: OC_PatternPartContext = new OC_PatternPartContext(this._ctx, this.state);
+        this.enterRule(localctx, 152, CypherParser.RULE_oC_PatternPart);
         let _la: number;
         try {
             this.state = 1424;
-            this.errorHandler.sync(this);
-            switch (this.tokenStream.LA(1)) {
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
             case CypherParser.USE:
             case CypherParser.COMMENT_:
             case CypherParser.EXPORT:
@@ -5374,15 +5450,15 @@ export class CypherParser extends antlr.Parser {
             case CypherParser.HexLetter:
             case CypherParser.UnescapedSymbolicName:
             case CypherParser.EscapedSymbolicName:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 {
                 this.state = 1413;
                 this.oC_Variable();
                 this.state = 1415;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1414;
                     this.match(CypherParser.SP);
@@ -5392,9 +5468,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1417;
                 this.match(CypherParser.T__5);
                 this.state = 1419;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1418;
                     this.match(CypherParser.SP);
@@ -5407,7 +5483,7 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case CypherParser.T__1:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 1423;
                 this.oC_AnonymousPatternPart();
@@ -5419,8 +5495,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -5428,13 +5505,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_AnonymousPatternPart(): OC_AnonymousPatternPartContext {
-        let localContext = new OC_AnonymousPatternPartContext(this.context, this.state);
-        this.enterRule(localContext, 154, CypherParser.RULE_oC_AnonymousPatternPart);
+        let localctx: OC_AnonymousPatternPartContext = new OC_AnonymousPatternPartContext(this._ctx, this.state);
+        this.enterRule(localctx, 154, CypherParser.RULE_oC_AnonymousPatternPart);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1426;
             this.oC_PatternElement();
@@ -5442,8 +5519,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -5451,34 +5529,34 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_PatternElement(): OC_PatternElementContext {
-        let localContext = new OC_PatternElementContext(this.context, this.state);
-        this.enterRule(localContext, 156, CypherParser.RULE_oC_PatternElement);
+        let localctx: OC_PatternElementContext = new OC_PatternElementContext(this._ctx, this.state);
+        this.enterRule(localctx, 156, CypherParser.RULE_oC_PatternElement);
         let _la: number;
         try {
-            let alternative: number;
+            let _alt: number;
             this.state = 1442;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 207, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 207, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 {
                 this.state = 1428;
                 this.oC_NodePattern();
                 this.state = 1435;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 206, this.context);
-                while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                    if (alternative === 1) {
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 206, this._ctx);
+                while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                    if (_alt === 1) {
                         {
                         {
                         this.state = 1430;
-                        this.errorHandler.sync(this);
-                        _la = this.tokenStream.LA(1);
-                        if (_la === 150) {
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        if (_la===150) {
                             {
                             this.state = 1429;
                             this.match(CypherParser.SP);
@@ -5491,14 +5569,14 @@ export class CypherParser extends antlr.Parser {
                         }
                     }
                     this.state = 1437;
-                    this.errorHandler.sync(this);
-                    alternative = this.interpreter.adaptivePredict(this.tokenStream, 206, this.context);
+                    this._errHandler.sync(this);
+                    _alt = this._interp.adaptivePredict(this._input, 206, this._ctx);
                 }
                 }
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 {
                 this.state = 1438;
@@ -5514,8 +5592,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -5523,21 +5602,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_NodePattern(): OC_NodePatternContext {
-        let localContext = new OC_NodePatternContext(this.context, this.state);
-        this.enterRule(localContext, 158, CypherParser.RULE_oC_NodePattern);
+        let localctx: OC_NodePatternContext = new OC_NodePatternContext(this._ctx, this.state);
+        this.enterRule(localctx, 158, CypherParser.RULE_oC_NodePattern);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1444;
             this.match(CypherParser.T__1);
             this.state = 1446;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1445;
                 this.match(CypherParser.SP);
@@ -5545,16 +5624,16 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 1452;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
             if (((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 121)) & ~0x1F) === 0 && ((1 << (_la - 121)) & 302256385) !== 0)) {
                 {
                 this.state = 1448;
                 this.oC_Variable();
                 this.state = 1450;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1449;
                     this.match(CypherParser.SP);
@@ -5565,16 +5644,16 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 1458;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 120) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===120) {
                 {
                 this.state = 1454;
                 this.oC_NodeLabels();
                 this.state = 1456;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1455;
                     this.match(CypherParser.SP);
@@ -5585,16 +5664,16 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 1464;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 9) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===9) {
                 {
                 this.state = 1460;
                 this.kU_Properties();
                 this.state = 1462;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1461;
                     this.match(CypherParser.SP);
@@ -5610,8 +5689,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -5619,21 +5699,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_PatternElementChain(): OC_PatternElementChainContext {
-        let localContext = new OC_PatternElementChainContext(this.context, this.state);
-        this.enterRule(localContext, 160, CypherParser.RULE_oC_PatternElementChain);
+        let localctx: OC_PatternElementChainContext = new OC_PatternElementChainContext(this._ctx, this.state);
+        this.enterRule(localctx, 160, CypherParser.RULE_oC_PatternElementChain);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1468;
             this.oC_RelationshipPattern();
             this.state = 1470;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1469;
                 this.match(CypherParser.SP);
@@ -5646,8 +5726,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -5655,26 +5736,26 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_RelationshipPattern(): OC_RelationshipPatternContext {
-        let localContext = new OC_RelationshipPatternContext(this.context, this.state);
-        this.enterRule(localContext, 162, CypherParser.RULE_oC_RelationshipPattern);
+        let localctx: OC_RelationshipPatternContext = new OC_RelationshipPatternContext(this._ctx, this.state);
+        this.enterRule(localctx, 162, CypherParser.RULE_oC_RelationshipPattern);
         let _la: number;
         try {
             this.state = 1518;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 227, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 227, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 {
                 this.state = 1474;
                 this.oC_LeftArrowHead();
                 this.state = 1476;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1475;
                     this.match(CypherParser.SP);
@@ -5684,8 +5765,8 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1478;
                 this.oC_Dash();
                 this.state = 1480;
-                this.errorHandler.sync(this);
-                switch (this.interpreter.adaptivePredict(this.tokenStream, 217, this.context) ) {
+                this._errHandler.sync(this);
+                switch ( this._interp.adaptivePredict(this._input, 217, this._ctx) ) {
                 case 1:
                     {
                     this.state = 1479;
@@ -5694,9 +5775,9 @@ export class CypherParser extends antlr.Parser {
                     break;
                 }
                 this.state = 1483;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 7) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===7) {
                     {
                     this.state = 1482;
                     this.oC_RelationshipDetail();
@@ -5704,9 +5785,9 @@ export class CypherParser extends antlr.Parser {
                 }
 
                 this.state = 1486;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1485;
                     this.match(CypherParser.SP);
@@ -5719,14 +5800,14 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 {
                 this.state = 1490;
                 this.oC_Dash();
                 this.state = 1492;
-                this.errorHandler.sync(this);
-                switch (this.interpreter.adaptivePredict(this.tokenStream, 220, this.context) ) {
+                this._errHandler.sync(this);
+                switch ( this._interp.adaptivePredict(this._input, 220, this._ctx) ) {
                 case 1:
                     {
                     this.state = 1491;
@@ -5735,9 +5816,9 @@ export class CypherParser extends antlr.Parser {
                     break;
                 }
                 this.state = 1495;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 7) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===7) {
                     {
                     this.state = 1494;
                     this.oC_RelationshipDetail();
@@ -5745,9 +5826,9 @@ export class CypherParser extends antlr.Parser {
                 }
 
                 this.state = 1498;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1497;
                     this.match(CypherParser.SP);
@@ -5757,9 +5838,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1500;
                 this.oC_Dash();
                 this.state = 1502;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1501;
                     this.match(CypherParser.SP);
@@ -5772,14 +5853,14 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case 3:
-                this.enterOuterAlt(localContext, 3);
+                this.enterOuterAlt(localctx, 3);
                 {
                 {
                 this.state = 1506;
                 this.oC_Dash();
                 this.state = 1508;
-                this.errorHandler.sync(this);
-                switch (this.interpreter.adaptivePredict(this.tokenStream, 224, this.context) ) {
+                this._errHandler.sync(this);
+                switch ( this._interp.adaptivePredict(this._input, 224, this._ctx) ) {
                 case 1:
                     {
                     this.state = 1507;
@@ -5788,9 +5869,9 @@ export class CypherParser extends antlr.Parser {
                     break;
                 }
                 this.state = 1511;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 7) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===7) {
                     {
                     this.state = 1510;
                     this.oC_RelationshipDetail();
@@ -5798,9 +5879,9 @@ export class CypherParser extends antlr.Parser {
                 }
 
                 this.state = 1514;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1513;
                     this.match(CypherParser.SP);
@@ -5816,8 +5897,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -5825,21 +5907,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_RelationshipDetail(): OC_RelationshipDetailContext {
-        let localContext = new OC_RelationshipDetailContext(this.context, this.state);
-        this.enterRule(localContext, 164, CypherParser.RULE_oC_RelationshipDetail);
+        let localctx: OC_RelationshipDetailContext = new OC_RelationshipDetailContext(this._ctx, this.state);
+        this.enterRule(localctx, 164, CypherParser.RULE_oC_RelationshipDetail);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1520;
             this.match(CypherParser.T__6);
             this.state = 1522;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1521;
                 this.match(CypherParser.SP);
@@ -5847,16 +5929,16 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 1528;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
             if (((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 121)) & ~0x1F) === 0 && ((1 << (_la - 121)) & 302256385) !== 0)) {
                 {
                 this.state = 1524;
                 this.oC_Variable();
                 this.state = 1526;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1525;
                     this.match(CypherParser.SP);
@@ -5867,16 +5949,16 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 1534;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 120) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===120) {
                 {
                 this.state = 1530;
                 this.oC_RelationshipTypes();
                 this.state = 1532;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1531;
                     this.match(CypherParser.SP);
@@ -5887,16 +5969,16 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 1540;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 101) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===101) {
                 {
                 this.state = 1536;
                 this.oC_RangeLiteral();
                 this.state = 1538;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1537;
                     this.match(CypherParser.SP);
@@ -5907,16 +5989,16 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 1546;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 9) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===9) {
                 {
                 this.state = 1542;
                 this.kU_Properties();
                 this.state = 1544;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1543;
                     this.match(CypherParser.SP);
@@ -5932,8 +6014,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -5941,21 +6024,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_Properties(): KU_PropertiesContext {
-        let localContext = new KU_PropertiesContext(this.context, this.state);
-        this.enterRule(localContext, 166, CypherParser.RULE_kU_Properties);
+        let localctx: KU_PropertiesContext = new KU_PropertiesContext(this._ctx, this.state);
+        this.enterRule(localctx, 166, CypherParser.RULE_kU_Properties);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1550;
             this.match(CypherParser.T__8);
             this.state = 1552;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1551;
                 this.match(CypherParser.SP);
@@ -5963,16 +6046,16 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 1587;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
             if (((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 121)) & ~0x1F) === 0 && ((1 << (_la - 121)) & 302256385) !== 0)) {
                 {
                 this.state = 1554;
                 this.oC_PropertyKeyName();
                 this.state = 1556;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1555;
                     this.match(CypherParser.SP);
@@ -5982,9 +6065,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1558;
                 this.match(CypherParser.COLON);
                 this.state = 1560;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1559;
                     this.match(CypherParser.SP);
@@ -5994,9 +6077,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1562;
                 this.oC_Expression();
                 this.state = 1564;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1563;
                     this.match(CypherParser.SP);
@@ -6004,17 +6087,17 @@ export class CypherParser extends antlr.Parser {
                 }
 
                 this.state = 1584;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                while (_la === 3) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                while (_la===3) {
                     {
                     {
                     this.state = 1566;
                     this.match(CypherParser.T__2);
                     this.state = 1568;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1567;
                         this.match(CypherParser.SP);
@@ -6024,9 +6107,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 1570;
                     this.oC_PropertyKeyName();
                     this.state = 1572;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1571;
                         this.match(CypherParser.SP);
@@ -6036,9 +6119,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 1574;
                     this.match(CypherParser.COLON);
                     this.state = 1576;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1575;
                         this.match(CypherParser.SP);
@@ -6048,9 +6131,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 1578;
                     this.oC_Expression();
                     this.state = 1580;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1579;
                         this.match(CypherParser.SP);
@@ -6060,8 +6143,8 @@ export class CypherParser extends antlr.Parser {
                     }
                     }
                     this.state = 1586;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
                 }
                 }
             }
@@ -6072,8 +6155,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6081,22 +6165,22 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_RelationshipTypes(): OC_RelationshipTypesContext {
-        let localContext = new OC_RelationshipTypesContext(this.context, this.state);
-        this.enterRule(localContext, 168, CypherParser.RULE_oC_RelationshipTypes);
+        let localctx: OC_RelationshipTypesContext = new OC_RelationshipTypesContext(this._ctx, this.state);
+        this.enterRule(localctx, 168, CypherParser.RULE_oC_RelationshipTypes);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1591;
             this.match(CypherParser.COLON);
             this.state = 1593;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1592;
                 this.match(CypherParser.SP);
@@ -6106,16 +6190,16 @@ export class CypherParser extends antlr.Parser {
             this.state = 1595;
             this.oC_RelTypeName();
             this.state = 1609;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 251, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 251, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 1597;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1596;
                         this.match(CypherParser.SP);
@@ -6125,9 +6209,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 1599;
                     this.match(CypherParser.T__10);
                     this.state = 1601;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 120) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===120) {
                         {
                         this.state = 1600;
                         this.match(CypherParser.COLON);
@@ -6135,9 +6219,9 @@ export class CypherParser extends antlr.Parser {
                     }
 
                     this.state = 1604;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1603;
                         this.match(CypherParser.SP);
@@ -6150,15 +6234,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 1611;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 251, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 251, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6166,29 +6251,29 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_NodeLabels(): OC_NodeLabelsContext {
-        let localContext = new OC_NodeLabelsContext(this.context, this.state);
-        this.enterRule(localContext, 170, CypherParser.RULE_oC_NodeLabels);
+        let localctx: OC_NodeLabelsContext = new OC_NodeLabelsContext(this._ctx, this.state);
+        this.enterRule(localctx, 170, CypherParser.RULE_oC_NodeLabels);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1612;
             this.oC_NodeLabel();
             this.state = 1619;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 253, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 253, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 1614;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1613;
                         this.match(CypherParser.SP);
@@ -6201,15 +6286,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 1621;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 253, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 253, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6217,21 +6303,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_NodeLabel(): OC_NodeLabelContext {
-        let localContext = new OC_NodeLabelContext(this.context, this.state);
-        this.enterRule(localContext, 172, CypherParser.RULE_oC_NodeLabel);
+        let localctx: OC_NodeLabelContext = new OC_NodeLabelContext(this._ctx, this.state);
+        this.enterRule(localctx, 172, CypherParser.RULE_oC_NodeLabel);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1622;
             this.match(CypherParser.COLON);
             this.state = 1624;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1623;
                 this.match(CypherParser.SP);
@@ -6244,8 +6330,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6253,20 +6340,20 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_RangeLiteral(): OC_RangeLiteralContext {
-        let localContext = new OC_RangeLiteralContext(this.context, this.state);
-        this.enterRule(localContext, 174, CypherParser.RULE_oC_RangeLiteral);
+        let localctx: OC_RangeLiteralContext = new OC_RangeLiteralContext(this._ctx, this.state);
+        this.enterRule(localctx, 174, CypherParser.RULE_oC_RangeLiteral);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1628;
             this.match(CypherParser.STAR);
             this.state = 1630;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 255, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 255, this._ctx) ) {
             case 1:
                 {
                 this.state = 1629;
@@ -6275,8 +6362,8 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 1636;
-            this.errorHandler.sync(this);
-            switch (this.tokenStream.LA(1)) {
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
             case CypherParser.SHORTEST:
                 {
                 this.state = 1632;
@@ -6304,8 +6391,8 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 1639;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 257, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 257, this._ctx) ) {
             case 1:
                 {
                 this.state = 1638;
@@ -6314,14 +6401,14 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 1655;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 262, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 262, this._ctx) ) {
             case 1:
                 {
                 this.state = 1642;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 138) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===138) {
                     {
                     this.state = 1641;
                     this.oC_LowerBound();
@@ -6329,9 +6416,9 @@ export class CypherParser extends antlr.Parser {
                 }
 
                 this.state = 1645;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1644;
                     this.match(CypherParser.SP);
@@ -6341,8 +6428,8 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1647;
                 this.match(CypherParser.T__11);
                 this.state = 1649;
-                this.errorHandler.sync(this);
-                switch (this.interpreter.adaptivePredict(this.tokenStream, 260, this.context) ) {
+                this._errHandler.sync(this);
+                switch ( this._interp.adaptivePredict(this._input, 260, this._ctx) ) {
                 case 1:
                     {
                     this.state = 1648;
@@ -6351,9 +6438,9 @@ export class CypherParser extends antlr.Parser {
                     break;
                 }
                 this.state = 1652;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 138) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===138) {
                     {
                     this.state = 1651;
                     this.oC_UpperBound();
@@ -6370,14 +6457,14 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 1661;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 264, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 264, this._ctx) ) {
             case 1:
                 {
                 this.state = 1658;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1657;
                     this.match(CypherParser.SP);
@@ -6393,8 +6480,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6402,21 +6490,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_RecursiveRelationshipComprehension(): KU_RecursiveRelationshipComprehensionContext {
-        let localContext = new KU_RecursiveRelationshipComprehensionContext(this.context, this.state);
-        this.enterRule(localContext, 176, CypherParser.RULE_kU_RecursiveRelationshipComprehension);
+        let localctx: KU_RecursiveRelationshipComprehensionContext = new KU_RecursiveRelationshipComprehensionContext(this._ctx, this.state);
+        this.enterRule(localctx, 176, CypherParser.RULE_kU_RecursiveRelationshipComprehension);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1663;
             this.match(CypherParser.T__1);
             this.state = 1665;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1664;
                 this.match(CypherParser.SP);
@@ -6426,9 +6514,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 1667;
             this.oC_Variable();
             this.state = 1669;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1668;
                 this.match(CypherParser.SP);
@@ -6438,9 +6526,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 1671;
             this.match(CypherParser.T__2);
             this.state = 1673;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1672;
                 this.match(CypherParser.SP);
@@ -6450,14 +6538,14 @@ export class CypherParser extends antlr.Parser {
             this.state = 1675;
             this.oC_Variable();
             this.state = 1684;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 270, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 270, this._ctx) ) {
             case 1:
                 {
                 this.state = 1677;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1676;
                     this.match(CypherParser.SP);
@@ -6467,9 +6555,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1679;
                 this.match(CypherParser.T__10);
                 this.state = 1681;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1680;
                     this.match(CypherParser.SP);
@@ -6482,14 +6570,14 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 1705;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 11 || _la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===11 || _la===150) {
                 {
                 this.state = 1687;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1686;
                     this.match(CypherParser.SP);
@@ -6499,9 +6587,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1689;
                 this.match(CypherParser.T__10);
                 this.state = 1691;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1690;
                     this.match(CypherParser.SP);
@@ -6511,9 +6599,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1693;
                 this.kU_IntermediateRelProjectionItems();
                 this.state = 1695;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1694;
                     this.match(CypherParser.SP);
@@ -6523,9 +6611,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1697;
                 this.match(CypherParser.T__2);
                 this.state = 1699;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1698;
                     this.match(CypherParser.SP);
@@ -6535,9 +6623,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1701;
                 this.kU_IntermediateNodeProjectionItems();
                 this.state = 1703;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1702;
                     this.match(CypherParser.SP);
@@ -6553,8 +6641,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6562,20 +6651,20 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_IntermediateNodeProjectionItems(): KU_IntermediateNodeProjectionItemsContext {
-        let localContext = new KU_IntermediateNodeProjectionItemsContext(this.context, this.state);
-        this.enterRule(localContext, 178, CypherParser.RULE_kU_IntermediateNodeProjectionItems);
+        let localctx: KU_IntermediateNodeProjectionItemsContext = new KU_IntermediateNodeProjectionItemsContext(this._ctx, this.state);
+        this.enterRule(localctx, 178, CypherParser.RULE_kU_IntermediateNodeProjectionItems);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1709;
             this.match(CypherParser.T__8);
             this.state = 1711;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 277, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 277, this._ctx) ) {
             case 1:
                 {
                 this.state = 1710;
@@ -6584,8 +6673,8 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 1714;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
             if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 101)) & ~0x1F) === 0 && ((1 << (_la - 101)) & 2115141633) !== 0) || ((((_la - 133)) & ~0x1F) === 0 && ((1 << (_la - 133)) & 77929) !== 0)) {
                 {
                 this.state = 1713;
@@ -6594,9 +6683,9 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 1717;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1716;
                 this.match(CypherParser.SP);
@@ -6609,8 +6698,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6618,20 +6708,20 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_IntermediateRelProjectionItems(): KU_IntermediateRelProjectionItemsContext {
-        let localContext = new KU_IntermediateRelProjectionItemsContext(this.context, this.state);
-        this.enterRule(localContext, 180, CypherParser.RULE_kU_IntermediateRelProjectionItems);
+        let localctx: KU_IntermediateRelProjectionItemsContext = new KU_IntermediateRelProjectionItemsContext(this._ctx, this.state);
+        this.enterRule(localctx, 180, CypherParser.RULE_kU_IntermediateRelProjectionItems);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1721;
             this.match(CypherParser.T__8);
             this.state = 1723;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 280, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 280, this._ctx) ) {
             case 1:
                 {
                 this.state = 1722;
@@ -6640,8 +6730,8 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 1726;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
             if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 101)) & ~0x1F) === 0 && ((1 << (_la - 101)) & 2115141633) !== 0) || ((((_la - 133)) & ~0x1F) === 0 && ((1 << (_la - 133)) & 77929) !== 0)) {
                 {
                 this.state = 1725;
@@ -6650,9 +6740,9 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 1729;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1728;
                 this.match(CypherParser.SP);
@@ -6665,8 +6755,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6674,13 +6765,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_LowerBound(): OC_LowerBoundContext {
-        let localContext = new OC_LowerBoundContext(this.context, this.state);
-        this.enterRule(localContext, 182, CypherParser.RULE_oC_LowerBound);
+        let localctx: OC_LowerBoundContext = new OC_LowerBoundContext(this._ctx, this.state);
+        this.enterRule(localctx, 182, CypherParser.RULE_oC_LowerBound);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1733;
             this.match(CypherParser.DecimalInteger);
@@ -6688,8 +6779,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6697,13 +6789,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_UpperBound(): OC_UpperBoundContext {
-        let localContext = new OC_UpperBoundContext(this.context, this.state);
-        this.enterRule(localContext, 184, CypherParser.RULE_oC_UpperBound);
+        let localctx: OC_UpperBoundContext = new OC_UpperBoundContext(this._ctx, this.state);
+        this.enterRule(localctx, 184, CypherParser.RULE_oC_UpperBound);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1735;
             this.match(CypherParser.DecimalInteger);
@@ -6711,8 +6803,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6720,13 +6813,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_LabelName(): OC_LabelNameContext {
-        let localContext = new OC_LabelNameContext(this.context, this.state);
-        this.enterRule(localContext, 186, CypherParser.RULE_oC_LabelName);
+        let localctx: OC_LabelNameContext = new OC_LabelNameContext(this._ctx, this.state);
+        this.enterRule(localctx, 186, CypherParser.RULE_oC_LabelName);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1737;
             this.oC_SchemaName();
@@ -6734,8 +6827,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6743,13 +6837,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_RelTypeName(): OC_RelTypeNameContext {
-        let localContext = new OC_RelTypeNameContext(this.context, this.state);
-        this.enterRule(localContext, 188, CypherParser.RULE_oC_RelTypeName);
+        let localctx: OC_RelTypeNameContext = new OC_RelTypeNameContext(this._ctx, this.state);
+        this.enterRule(localctx, 188, CypherParser.RULE_oC_RelTypeName);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1739;
             this.oC_SchemaName();
@@ -6757,8 +6851,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6766,13 +6861,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Expression(): OC_ExpressionContext {
-        let localContext = new OC_ExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 190, CypherParser.RULE_oC_Expression);
+        let localctx: OC_ExpressionContext = new OC_ExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 190, CypherParser.RULE_oC_Expression);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1741;
             this.oC_OrExpression();
@@ -6780,8 +6875,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6789,22 +6885,22 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_OrExpression(): OC_OrExpressionContext {
-        let localContext = new OC_OrExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 192, CypherParser.RULE_oC_OrExpression);
+        let localctx: OC_OrExpressionContext = new OC_OrExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 192, CypherParser.RULE_oC_OrExpression);
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1743;
             this.oC_XorExpression();
             this.state = 1750;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 283, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 283, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 1744;
@@ -6819,15 +6915,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 1752;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 283, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 283, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6835,22 +6932,22 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_XorExpression(): OC_XorExpressionContext {
-        let localContext = new OC_XorExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 194, CypherParser.RULE_oC_XorExpression);
+        let localctx: OC_XorExpressionContext = new OC_XorExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 194, CypherParser.RULE_oC_XorExpression);
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1753;
             this.oC_AndExpression();
             this.state = 1760;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 284, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 284, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 1754;
@@ -6865,15 +6962,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 1762;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 284, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 284, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6881,22 +6979,22 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_AndExpression(): OC_AndExpressionContext {
-        let localContext = new OC_AndExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 196, CypherParser.RULE_oC_AndExpression);
+        let localctx: OC_AndExpressionContext = new OC_AndExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 196, CypherParser.RULE_oC_AndExpression);
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1763;
             this.oC_NotExpression();
             this.state = 1770;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 285, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 285, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 1764;
@@ -6911,15 +7009,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 1772;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 285, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 285, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6927,27 +7026,27 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_NotExpression(): OC_NotExpressionContext {
-        let localContext = new OC_NotExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 198, CypherParser.RULE_oC_NotExpression);
+        let localctx: OC_NotExpressionContext = new OC_NotExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 198, CypherParser.RULE_oC_NotExpression);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1779;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            while (_la === 116) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            while (_la===116) {
                 {
                 {
                 this.state = 1773;
                 this.match(CypherParser.NOT);
                 this.state = 1775;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1774;
                     this.match(CypherParser.SP);
@@ -6957,8 +7056,8 @@ export class CypherParser extends antlr.Parser {
                 }
                 }
                 this.state = 1781;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
             }
             this.state = 1782;
             this.oC_ComparisonExpression();
@@ -6966,8 +7065,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -6975,31 +7075,31 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_ComparisonExpression(): OC_ComparisonExpressionContext {
-        let localContext = new OC_ComparisonExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 200, CypherParser.RULE_oC_ComparisonExpression);
+        let localctx: OC_ComparisonExpressionContext = new OC_ComparisonExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 200, CypherParser.RULE_oC_ComparisonExpression);
         let _la: number;
         try {
-            let alternative: number;
+            let _alt: number;
             this.state = 1832;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 298, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 298, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 1784;
                 this.kU_BitwiseOrOperatorExpression();
                 this.state = 1794;
-                this.errorHandler.sync(this);
-                switch (this.interpreter.adaptivePredict(this.tokenStream, 290, this.context) ) {
+                this._errHandler.sync(this);
+                switch ( this._interp.adaptivePredict(this._input, 290, this._ctx) ) {
                 case 1:
                     {
                     this.state = 1786;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1785;
                         this.match(CypherParser.SP);
@@ -7009,9 +7109,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 1788;
                     this.kU_ComparisonOperator();
                     this.state = 1790;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1789;
                         this.match(CypherParser.SP);
@@ -7026,15 +7126,15 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 1796;
                 this.kU_BitwiseOrOperatorExpression();
                 {
                 this.state = 1798;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1797;
                     this.match(CypherParser.SP);
@@ -7042,11 +7142,11 @@ export class CypherParser extends antlr.Parser {
                 }
 
                 this.state = 1800;
-                localContext._INVALID_NOT_EQUAL = this.match(CypherParser.INVALID_NOT_EQUAL);
+                localctx._INVALID_NOT_EQUAL = this.match(CypherParser.INVALID_NOT_EQUAL);
                 this.state = 1802;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1801;
                     this.match(CypherParser.SP);
@@ -7059,14 +7159,14 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case 3:
-                this.enterOuterAlt(localContext, 3);
+                this.enterOuterAlt(localctx, 3);
                 {
                 this.state = 1808;
                 this.kU_BitwiseOrOperatorExpression();
                 this.state = 1810;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1809;
                     this.match(CypherParser.SP);
@@ -7076,9 +7176,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1812;
                 this.kU_ComparisonOperator();
                 this.state = 1814;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1813;
                     this.match(CypherParser.SP);
@@ -7088,17 +7188,17 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1816;
                 this.kU_BitwiseOrOperatorExpression();
                 this.state = 1826;
-                this.errorHandler.sync(this);
-                alternative = 1;
+                this._errHandler.sync(this);
+                _alt = 1;
                 do {
-                    switch (alternative) {
+                    switch (_alt) {
                     case 1:
                         {
                         {
                         this.state = 1818;
-                        this.errorHandler.sync(this);
-                        _la = this.tokenStream.LA(1);
-                        if (_la === 150) {
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        if (_la===150) {
                             {
                             this.state = 1817;
                             this.match(CypherParser.SP);
@@ -7108,9 +7208,9 @@ export class CypherParser extends antlr.Parser {
                         this.state = 1820;
                         this.kU_ComparisonOperator();
                         this.state = 1822;
-                        this.errorHandler.sync(this);
-                        _la = this.tokenStream.LA(1);
-                        if (_la === 150) {
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        if (_la===150) {
                             {
                             this.state = 1821;
                             this.match(CypherParser.SP);
@@ -7126,17 +7226,18 @@ export class CypherParser extends antlr.Parser {
                         throw new antlr.NoViableAltException(this);
                     }
                     this.state = 1828;
-                    this.errorHandler.sync(this);
-                    alternative = this.interpreter.adaptivePredict(this.tokenStream, 297, this.context);
-                } while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER);
+                    this._errHandler.sync(this);
+                    _alt = this._interp.adaptivePredict(this._input, 297, this._ctx);
+                } while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER);
                 }
                 break;
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7144,30 +7245,31 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_ComparisonOperator(): KU_ComparisonOperatorContext {
-        let localContext = new KU_ComparisonOperatorContext(this.context, this.state);
-        this.enterRule(localContext, 202, CypherParser.RULE_kU_ComparisonOperator);
+        let localctx: KU_ComparisonOperatorContext = new KU_ComparisonOperatorContext(this._ctx, this.state);
+        this.enterRule(localctx, 202, CypherParser.RULE_kU_ComparisonOperator);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1834;
-            _la = this.tokenStream.LA(1);
+            _la = this._input.LA(1);
             if(!((((_la) & ~0x1F) === 0 && ((1 << _la) & 254016) !== 0))) {
-            this.errorHandler.recoverInline(this);
+            this._errHandler.recoverInline(this);
             }
             else {
-                this.errorHandler.reportMatch(this);
+                this._errHandler.reportMatch(this);
                 this.consume();
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7175,29 +7277,29 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_BitwiseOrOperatorExpression(): KU_BitwiseOrOperatorExpressionContext {
-        let localContext = new KU_BitwiseOrOperatorExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 204, CypherParser.RULE_kU_BitwiseOrOperatorExpression);
+        let localctx: KU_BitwiseOrOperatorExpressionContext = new KU_BitwiseOrOperatorExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 204, CypherParser.RULE_kU_BitwiseOrOperatorExpression);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1836;
             this.kU_BitwiseAndOperatorExpression();
             this.state = 1847;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 301, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 301, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 1838;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1837;
                         this.match(CypherParser.SP);
@@ -7207,9 +7309,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 1840;
                     this.match(CypherParser.T__10);
                     this.state = 1842;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1841;
                         this.match(CypherParser.SP);
@@ -7222,15 +7324,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 1849;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 301, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 301, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7238,29 +7341,29 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_BitwiseAndOperatorExpression(): KU_BitwiseAndOperatorExpressionContext {
-        let localContext = new KU_BitwiseAndOperatorExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 206, CypherParser.RULE_kU_BitwiseAndOperatorExpression);
+        let localctx: KU_BitwiseAndOperatorExpressionContext = new KU_BitwiseAndOperatorExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 206, CypherParser.RULE_kU_BitwiseAndOperatorExpression);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1850;
             this.kU_BitShiftOperatorExpression();
             this.state = 1861;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 304, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 304, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 1852;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1851;
                         this.match(CypherParser.SP);
@@ -7270,9 +7373,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 1854;
                     this.match(CypherParser.T__17);
                     this.state = 1856;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1855;
                         this.match(CypherParser.SP);
@@ -7285,15 +7388,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 1863;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 304, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 304, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7301,29 +7405,29 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_BitShiftOperatorExpression(): KU_BitShiftOperatorExpressionContext {
-        let localContext = new KU_BitShiftOperatorExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 208, CypherParser.RULE_kU_BitShiftOperatorExpression);
+        let localctx: KU_BitShiftOperatorExpressionContext = new KU_BitShiftOperatorExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 208, CypherParser.RULE_kU_BitShiftOperatorExpression);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1864;
             this.oC_AddOrSubtractExpression();
             this.state = 1876;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 307, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 307, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 1866;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1865;
                         this.match(CypherParser.SP);
@@ -7333,9 +7437,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 1868;
                     this.kU_BitShiftOperator();
                     this.state = 1870;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1869;
                         this.match(CypherParser.SP);
@@ -7348,15 +7452,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 1878;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 307, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 307, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7364,30 +7469,31 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_BitShiftOperator(): KU_BitShiftOperatorContext {
-        let localContext = new KU_BitShiftOperatorContext(this.context, this.state);
-        this.enterRule(localContext, 210, CypherParser.RULE_kU_BitShiftOperator);
+        let localctx: KU_BitShiftOperatorContext = new KU_BitShiftOperatorContext(this._ctx, this.state);
+        this.enterRule(localctx, 210, CypherParser.RULE_kU_BitShiftOperator);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1879;
-            _la = this.tokenStream.LA(1);
-            if(!(_la === 19 || _la === 20)) {
-            this.errorHandler.recoverInline(this);
+            _la = this._input.LA(1);
+            if(!(_la===19 || _la===20)) {
+            this._errHandler.recoverInline(this);
             }
             else {
-                this.errorHandler.reportMatch(this);
+                this._errHandler.reportMatch(this);
                 this.consume();
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7395,29 +7501,29 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_AddOrSubtractExpression(): OC_AddOrSubtractExpressionContext {
-        let localContext = new OC_AddOrSubtractExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 212, CypherParser.RULE_oC_AddOrSubtractExpression);
+        let localctx: OC_AddOrSubtractExpressionContext = new OC_AddOrSubtractExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 212, CypherParser.RULE_oC_AddOrSubtractExpression);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1881;
             this.oC_MultiplyDivideModuloExpression();
             this.state = 1893;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 310, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 310, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 1883;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1882;
                         this.match(CypherParser.SP);
@@ -7427,9 +7533,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 1885;
                     this.kU_AddOrSubtractOperator();
                     this.state = 1887;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1886;
                         this.match(CypherParser.SP);
@@ -7442,15 +7548,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 1895;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 310, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 310, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7458,30 +7565,31 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_AddOrSubtractOperator(): KU_AddOrSubtractOperatorContext {
-        let localContext = new KU_AddOrSubtractOperatorContext(this.context, this.state);
-        this.enterRule(localContext, 214, CypherParser.RULE_kU_AddOrSubtractOperator);
+        let localctx: KU_AddOrSubtractOperatorContext = new KU_AddOrSubtractOperatorContext(this._ctx, this.state);
+        this.enterRule(localctx, 214, CypherParser.RULE_kU_AddOrSubtractOperator);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1896;
-            _la = this.tokenStream.LA(1);
-            if(!(_la === 21 || _la === 118)) {
-            this.errorHandler.recoverInline(this);
+            _la = this._input.LA(1);
+            if(!(_la===21 || _la===118)) {
+            this._errHandler.recoverInline(this);
             }
             else {
-                this.errorHandler.reportMatch(this);
+                this._errHandler.reportMatch(this);
                 this.consume();
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7489,29 +7597,29 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_MultiplyDivideModuloExpression(): OC_MultiplyDivideModuloExpressionContext {
-        let localContext = new OC_MultiplyDivideModuloExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 216, CypherParser.RULE_oC_MultiplyDivideModuloExpression);
+        let localctx: OC_MultiplyDivideModuloExpressionContext = new OC_MultiplyDivideModuloExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 216, CypherParser.RULE_oC_MultiplyDivideModuloExpression);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1898;
             this.oC_PowerOfExpression();
             this.state = 1910;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 313, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 313, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 1900;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1899;
                         this.match(CypherParser.SP);
@@ -7521,9 +7629,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 1902;
                     this.kU_MultiplyDivideModuloOperator();
                     this.state = 1904;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1903;
                         this.match(CypherParser.SP);
@@ -7536,15 +7644,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 1912;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 313, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 313, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7552,30 +7661,31 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_MultiplyDivideModuloOperator(): KU_MultiplyDivideModuloOperatorContext {
-        let localContext = new KU_MultiplyDivideModuloOperatorContext(this.context, this.state);
-        this.enterRule(localContext, 218, CypherParser.RULE_kU_MultiplyDivideModuloOperator);
+        let localctx: KU_MultiplyDivideModuloOperatorContext = new KU_MultiplyDivideModuloOperatorContext(this._ctx, this.state);
+        this.enterRule(localctx, 218, CypherParser.RULE_kU_MultiplyDivideModuloOperator);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1913;
-            _la = this.tokenStream.LA(1);
-            if(!(_la === 22 || _la === 23 || _la === 101)) {
-            this.errorHandler.recoverInline(this);
+            _la = this._input.LA(1);
+            if(!(_la===22 || _la===23 || _la===101)) {
+            this._errHandler.recoverInline(this);
             }
             else {
-                this.errorHandler.reportMatch(this);
+                this._errHandler.reportMatch(this);
                 this.consume();
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7583,29 +7693,29 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_PowerOfExpression(): OC_PowerOfExpressionContext {
-        let localContext = new OC_PowerOfExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 220, CypherParser.RULE_oC_PowerOfExpression);
+        let localctx: OC_PowerOfExpressionContext = new OC_PowerOfExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 220, CypherParser.RULE_oC_PowerOfExpression);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1915;
             this.oC_UnaryAddSubtractOrFactorialExpression();
             this.state = 1926;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 316, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 316, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 1917;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1916;
                         this.match(CypherParser.SP);
@@ -7615,9 +7725,9 @@ export class CypherParser extends antlr.Parser {
                     this.state = 1919;
                     this.match(CypherParser.T__23);
                     this.state = 1921;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 1920;
                         this.match(CypherParser.SP);
@@ -7630,15 +7740,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 1928;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 316, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 316, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7646,27 +7757,27 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_UnaryAddSubtractOrFactorialExpression(): OC_UnaryAddSubtractOrFactorialExpressionContext {
-        let localContext = new OC_UnaryAddSubtractOrFactorialExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 222, CypherParser.RULE_oC_UnaryAddSubtractOrFactorialExpression);
+        let localctx: OC_UnaryAddSubtractOrFactorialExpressionContext = new OC_UnaryAddSubtractOrFactorialExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 222, CypherParser.RULE_oC_UnaryAddSubtractOrFactorialExpression);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1935;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            while (_la === 118) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            while (_la===118) {
                 {
                 {
                 this.state = 1929;
                 this.match(CypherParser.MINUS);
                 this.state = 1931;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1930;
                     this.match(CypherParser.SP);
@@ -7676,20 +7787,20 @@ export class CypherParser extends antlr.Parser {
                 }
                 }
                 this.state = 1937;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
             }
             this.state = 1938;
             this.oC_StringListNullOperatorExpression();
             this.state = 1943;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 320, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 320, this._ctx) ) {
             case 1:
                 {
                 this.state = 1940;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1939;
                     this.match(CypherParser.SP);
@@ -7705,8 +7816,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7714,20 +7826,20 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_StringListNullOperatorExpression(): OC_StringListNullOperatorExpressionContext {
-        let localContext = new OC_StringListNullOperatorExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 224, CypherParser.RULE_oC_StringListNullOperatorExpression);
+        let localctx: OC_StringListNullOperatorExpressionContext = new OC_StringListNullOperatorExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 224, CypherParser.RULE_oC_StringListNullOperatorExpression);
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1945;
             this.oC_PropertyOrLabelsExpression();
             this.state = 1953;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 322, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 322, this._ctx) ) {
             case 1:
                 {
                 this.state = 1946;
@@ -7737,10 +7849,10 @@ export class CypherParser extends antlr.Parser {
             case 2:
                 {
                 this.state = 1948;
-                this.errorHandler.sync(this);
-                alternative = 1;
+                this._errHandler.sync(this);
+                _alt = 1;
                 do {
-                    switch (alternative) {
+                    switch (_alt) {
                     case 1:
                         {
                         {
@@ -7753,9 +7865,9 @@ export class CypherParser extends antlr.Parser {
                         throw new antlr.NoViableAltException(this);
                     }
                     this.state = 1950;
-                    this.errorHandler.sync(this);
-                    alternative = this.interpreter.adaptivePredict(this.tokenStream, 321, this.context);
-                } while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER);
+                    this._errHandler.sync(this);
+                    _alt = this._interp.adaptivePredict(this._input, 321, this._ctx);
+                } while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER);
                 }
                 break;
             case 3:
@@ -7769,8 +7881,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7778,18 +7891,18 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_ListOperatorExpression(): OC_ListOperatorExpressionContext {
-        let localContext = new OC_ListOperatorExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 226, CypherParser.RULE_oC_ListOperatorExpression);
+        let localctx: OC_ListOperatorExpressionContext = new OC_ListOperatorExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 226, CypherParser.RULE_oC_ListOperatorExpression);
         let _la: number;
         try {
             this.state = 1974;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 326, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 326, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 {
                 this.state = 1955;
@@ -7797,9 +7910,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1956;
                 this.match(CypherParser.IN);
                 this.state = 1958;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 1957;
                     this.match(CypherParser.SP);
@@ -7812,7 +7925,7 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 {
                 this.state = 1961;
@@ -7825,15 +7938,15 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case 3:
-                this.enterOuterAlt(localContext, 3);
+                this.enterOuterAlt(localctx, 3);
                 {
                 {
                 this.state = 1965;
                 this.match(CypherParser.T__6);
                 this.state = 1967;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 116)) & ~0x1F) === 0 && ((1 << (_la - 116)) & 1624439845) !== 0) || _la === 149) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 116)) & ~0x1F) === 0 && ((1 << (_la - 116)) & 1624439845) !== 0) || _la===149) {
                     {
                     this.state = 1966;
                     this.oC_Expression();
@@ -7843,9 +7956,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 1969;
                 this.match(CypherParser.COLON);
                 this.state = 1971;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 116)) & ~0x1F) === 0 && ((1 << (_la - 116)) & 1624439845) !== 0) || _la === 149) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 116)) & ~0x1F) === 0 && ((1 << (_la - 116)) & 1624439845) !== 0) || _la===149) {
                     {
                     this.state = 1970;
                     this.oC_Expression();
@@ -7861,8 +7974,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7870,18 +7984,18 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_StringOperatorExpression(): OC_StringOperatorExpressionContext {
-        let localContext = new OC_StringOperatorExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 228, CypherParser.RULE_oC_StringOperatorExpression);
+        let localctx: OC_StringOperatorExpressionContext = new OC_StringOperatorExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 228, CypherParser.RULE_oC_StringOperatorExpression);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1987;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 327, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 327, this._ctx) ) {
             case 1:
                 {
                 this.state = 1976;
@@ -7928,9 +8042,9 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 1990;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1989;
                 this.match(CypherParser.SP);
@@ -7943,8 +8057,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7952,19 +8067,19 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_RegularExpression(): OC_RegularExpressionContext {
-        let localContext = new OC_RegularExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 230, CypherParser.RULE_oC_RegularExpression);
+        let localctx: OC_RegularExpressionContext = new OC_RegularExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 230, CypherParser.RULE_oC_RegularExpression);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 1995;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 1994;
                 this.match(CypherParser.SP);
@@ -7977,8 +8092,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -7986,17 +8102,17 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_NullOperatorExpression(): OC_NullOperatorExpressionContext {
-        let localContext = new OC_NullOperatorExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 232, CypherParser.RULE_oC_NullOperatorExpression);
+        let localctx: OC_NullOperatorExpressionContext = new OC_NullOperatorExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 232, CypherParser.RULE_oC_NullOperatorExpression);
         try {
             this.state = 2009;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 330, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 330, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 {
                 this.state = 1999;
@@ -8011,7 +8127,7 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 {
                 this.state = 2003;
@@ -8033,8 +8149,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -8042,29 +8159,29 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_PropertyOrLabelsExpression(): OC_PropertyOrLabelsExpressionContext {
-        let localContext = new OC_PropertyOrLabelsExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 234, CypherParser.RULE_oC_PropertyOrLabelsExpression);
+        let localctx: OC_PropertyOrLabelsExpressionContext = new OC_PropertyOrLabelsExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 234, CypherParser.RULE_oC_PropertyOrLabelsExpression);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2011;
             this.oC_Atom();
             this.state = 2018;
-            this.errorHandler.sync(this);
-            alternative = this.interpreter.adaptivePredict(this.tokenStream, 332, this.context);
-            while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER) {
-                if (alternative === 1) {
+            this._errHandler.sync(this);
+            _alt = this._interp.adaptivePredict(this._input, 332, this._ctx);
+            while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER) {
+                if (_alt === 1) {
                     {
                     {
                     this.state = 2013;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 2012;
                         this.match(CypherParser.SP);
@@ -8077,15 +8194,16 @@ export class CypherParser extends antlr.Parser {
                     }
                 }
                 this.state = 2020;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 332, this.context);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 332, this._ctx);
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -8093,73 +8211,73 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Atom(): OC_AtomContext {
-        let localContext = new OC_AtomContext(this.context, this.state);
-        this.enterRule(localContext, 236, CypherParser.RULE_oC_Atom);
+        let localctx: OC_AtomContext = new OC_AtomContext(this._ctx, this.state);
+        this.enterRule(localctx, 236, CypherParser.RULE_oC_Atom);
         try {
             this.state = 2030;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 333, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 333, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 2021;
                 this.oC_Literal();
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 2022;
                 this.oC_Parameter();
                 }
                 break;
             case 3:
-                this.enterOuterAlt(localContext, 3);
+                this.enterOuterAlt(localctx, 3);
                 {
                 this.state = 2023;
                 this.oC_CaseExpression();
                 }
                 break;
             case 4:
-                this.enterOuterAlt(localContext, 4);
+                this.enterOuterAlt(localctx, 4);
                 {
                 this.state = 2024;
                 this.oC_ParenthesizedExpression();
                 }
                 break;
             case 5:
-                this.enterOuterAlt(localContext, 5);
+                this.enterOuterAlt(localctx, 5);
                 {
                 this.state = 2025;
                 this.oC_FunctionInvocation();
                 }
                 break;
             case 6:
-                this.enterOuterAlt(localContext, 6);
+                this.enterOuterAlt(localctx, 6);
                 {
                 this.state = 2026;
                 this.oC_PathPatterns();
                 }
                 break;
             case 7:
-                this.enterOuterAlt(localContext, 7);
+                this.enterOuterAlt(localctx, 7);
                 {
                 this.state = 2027;
                 this.oC_ExistSubquery();
                 }
                 break;
             case 8:
-                this.enterOuterAlt(localContext, 8);
+                this.enterOuterAlt(localctx, 8);
                 {
                 this.state = 2028;
                 this.kU_CountSubquery();
                 }
                 break;
             case 9:
-                this.enterOuterAlt(localContext, 9);
+                this.enterOuterAlt(localctx, 9);
                 {
                 this.state = 2029;
                 this.oC_Variable();
@@ -8169,8 +8287,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -8178,25 +8297,25 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Literal(): OC_LiteralContext {
-        let localContext = new OC_LiteralContext(this.context, this.state);
-        this.enterRule(localContext, 238, CypherParser.RULE_oC_Literal);
+        let localctx: OC_LiteralContext = new OC_LiteralContext(this._ctx, this.state);
+        this.enterRule(localctx, 238, CypherParser.RULE_oC_Literal);
         try {
             this.state = 2038;
-            this.errorHandler.sync(this);
-            switch (this.tokenStream.LA(1)) {
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
             case CypherParser.DecimalInteger:
             case CypherParser.RegularDecimalReal:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 2032;
                 this.oC_NumberLiteral();
                 }
                 break;
             case CypherParser.StringLiteral:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 2033;
                 this.match(CypherParser.StringLiteral);
@@ -8204,28 +8323,28 @@ export class CypherParser extends antlr.Parser {
                 break;
             case CypherParser.TRUE:
             case CypherParser.FALSE:
-                this.enterOuterAlt(localContext, 3);
+                this.enterOuterAlt(localctx, 3);
                 {
                 this.state = 2034;
                 this.oC_BooleanLiteral();
                 }
                 break;
             case CypherParser.NULL_:
-                this.enterOuterAlt(localContext, 4);
+                this.enterOuterAlt(localctx, 4);
                 {
                 this.state = 2035;
                 this.match(CypherParser.NULL_);
                 }
                 break;
             case CypherParser.T__6:
-                this.enterOuterAlt(localContext, 5);
+                this.enterOuterAlt(localctx, 5);
                 {
                 this.state = 2036;
                 this.oC_ListLiteral();
                 }
                 break;
             case CypherParser.T__8:
-                this.enterOuterAlt(localContext, 6);
+                this.enterOuterAlt(localctx, 6);
                 {
                 this.state = 2037;
                 this.kU_StructLiteral();
@@ -8237,8 +8356,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -8246,30 +8366,31 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_BooleanLiteral(): OC_BooleanLiteralContext {
-        let localContext = new OC_BooleanLiteralContext(this.context, this.state);
-        this.enterRule(localContext, 240, CypherParser.RULE_oC_BooleanLiteral);
+        let localctx: OC_BooleanLiteralContext = new OC_BooleanLiteralContext(this._ctx, this.state);
+        this.enterRule(localctx, 240, CypherParser.RULE_oC_BooleanLiteral);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2040;
-            _la = this.tokenStream.LA(1);
-            if(!(_la === 127 || _la === 128)) {
-            this.errorHandler.recoverInline(this);
+            _la = this._input.LA(1);
+            if(!(_la===127 || _la===128)) {
+            this._errHandler.recoverInline(this);
             }
             else {
-                this.errorHandler.reportMatch(this);
+                this._errHandler.reportMatch(this);
                 this.consume();
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -8277,21 +8398,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_ListLiteral(): OC_ListLiteralContext {
-        let localContext = new OC_ListLiteralContext(this.context, this.state);
-        this.enterRule(localContext, 242, CypherParser.RULE_oC_ListLiteral);
+        let localctx: OC_ListLiteralContext = new OC_ListLiteralContext(this._ctx, this.state);
+        this.enterRule(localctx, 242, CypherParser.RULE_oC_ListLiteral);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2042;
             this.match(CypherParser.T__6);
             this.state = 2044;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2043;
                 this.match(CypherParser.SP);
@@ -8299,16 +8420,16 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 2059;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 116)) & ~0x1F) === 0 && ((1 << (_la - 116)) & 1624439845) !== 0) || _la === 149) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 116)) & ~0x1F) === 0 && ((1 << (_la - 116)) & 1624439845) !== 0) || _la===149) {
                 {
                 this.state = 2046;
                 this.oC_Expression();
                 this.state = 2048;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 2047;
                     this.match(CypherParser.SP);
@@ -8316,17 +8437,17 @@ export class CypherParser extends antlr.Parser {
                 }
 
                 this.state = 2056;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                while (_la === 3) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                while (_la===3) {
                     {
                     {
                     this.state = 2050;
                     this.kU_ListEntry();
                     this.state = 2052;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 2051;
                         this.match(CypherParser.SP);
@@ -8336,8 +8457,8 @@ export class CypherParser extends antlr.Parser {
                     }
                     }
                     this.state = 2058;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
                 }
                 }
             }
@@ -8348,8 +8469,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -8357,20 +8479,20 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_ListEntry(): KU_ListEntryContext {
-        let localContext = new KU_ListEntryContext(this.context, this.state);
-        this.enterRule(localContext, 244, CypherParser.RULE_kU_ListEntry);
+        let localctx: KU_ListEntryContext = new KU_ListEntryContext(this._ctx, this.state);
+        this.enterRule(localctx, 244, CypherParser.RULE_kU_ListEntry);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2063;
             this.match(CypherParser.T__2);
             this.state = 2065;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 340, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 340, this._ctx) ) {
             case 1:
                 {
                 this.state = 2064;
@@ -8379,9 +8501,9 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 2068;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 116)) & ~0x1F) === 0 && ((1 << (_la - 116)) & 1624439845) !== 0) || _la === 149) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 116)) & ~0x1F) === 0 && ((1 << (_la - 116)) & 1624439845) !== 0) || _la===149) {
                 {
                 this.state = 2067;
                 this.oC_Expression();
@@ -8392,8 +8514,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -8401,21 +8524,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_StructLiteral(): KU_StructLiteralContext {
-        let localContext = new KU_StructLiteralContext(this.context, this.state);
-        this.enterRule(localContext, 246, CypherParser.RULE_kU_StructLiteral);
+        let localctx: KU_StructLiteralContext = new KU_StructLiteralContext(this._ctx, this.state);
+        this.enterRule(localctx, 246, CypherParser.RULE_kU_StructLiteral);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2070;
             this.match(CypherParser.T__8);
             this.state = 2072;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2071;
                 this.match(CypherParser.SP);
@@ -8425,9 +8548,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 2074;
             this.kU_StructField();
             this.state = 2076;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2075;
                 this.match(CypherParser.SP);
@@ -8435,17 +8558,17 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 2088;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            while (_la === 3) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            while (_la===3) {
                 {
                 {
                 this.state = 2078;
                 this.match(CypherParser.T__2);
                 this.state = 2080;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 2079;
                     this.match(CypherParser.SP);
@@ -8455,9 +8578,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 2082;
                 this.kU_StructField();
                 this.state = 2084;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 2083;
                     this.match(CypherParser.SP);
@@ -8467,8 +8590,8 @@ export class CypherParser extends antlr.Parser {
                 }
                 }
                 this.state = 2090;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
             }
             this.state = 2091;
             this.match(CypherParser.T__9);
@@ -8476,8 +8599,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -8485,18 +8609,18 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_StructField(): KU_StructFieldContext {
-        let localContext = new KU_StructFieldContext(this.context, this.state);
-        this.enterRule(localContext, 248, CypherParser.RULE_kU_StructField);
+        let localctx: KU_StructFieldContext = new KU_StructFieldContext(this._ctx, this.state);
+        this.enterRule(localctx, 248, CypherParser.RULE_kU_StructField);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2095;
-            this.errorHandler.sync(this);
-            switch (this.tokenStream.LA(1)) {
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
             case CypherParser.USE:
             case CypherParser.COMMENT_:
             case CypherParser.EXPORT:
@@ -8526,9 +8650,9 @@ export class CypherParser extends antlr.Parser {
                 throw new antlr.NoViableAltException(this);
             }
             this.state = 2098;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2097;
                 this.match(CypherParser.SP);
@@ -8538,9 +8662,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 2100;
             this.match(CypherParser.COLON);
             this.state = 2102;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2101;
                 this.match(CypherParser.SP);
@@ -8553,8 +8677,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -8562,21 +8687,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_ParenthesizedExpression(): OC_ParenthesizedExpressionContext {
-        let localContext = new OC_ParenthesizedExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 250, CypherParser.RULE_oC_ParenthesizedExpression);
+        let localctx: OC_ParenthesizedExpressionContext = new OC_ParenthesizedExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 250, CypherParser.RULE_oC_ParenthesizedExpression);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2106;
             this.match(CypherParser.T__1);
             this.state = 2108;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2107;
                 this.match(CypherParser.SP);
@@ -8586,9 +8711,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 2110;
             this.oC_Expression();
             this.state = 2112;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2111;
                 this.match(CypherParser.SP);
@@ -8601,8 +8726,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -8610,25 +8736,25 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_FunctionInvocation(): OC_FunctionInvocationContext {
-        let localContext = new OC_FunctionInvocationContext(this.context, this.state);
-        this.enterRule(localContext, 252, CypherParser.RULE_oC_FunctionInvocation);
+        let localctx: OC_FunctionInvocationContext = new OC_FunctionInvocationContext(this._ctx, this.state);
+        this.enterRule(localctx, 252, CypherParser.RULE_oC_FunctionInvocation);
         let _la: number;
         try {
             this.state = 2164;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 364, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 364, this._ctx) ) {
             case 1:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 2116;
                 this.match(CypherParser.COUNT);
                 this.state = 2118;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 2117;
                     this.match(CypherParser.SP);
@@ -8638,9 +8764,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 2120;
                 this.match(CypherParser.T__1);
                 this.state = 2122;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 2121;
                     this.match(CypherParser.SP);
@@ -8650,9 +8776,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 2124;
                 this.match(CypherParser.STAR);
                 this.state = 2126;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 2125;
                     this.match(CypherParser.SP);
@@ -8664,14 +8790,14 @@ export class CypherParser extends antlr.Parser {
                 }
                 break;
             case 2:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 2129;
                 this.oC_FunctionName();
                 this.state = 2131;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 2130;
                     this.match(CypherParser.SP);
@@ -8681,9 +8807,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 2133;
                 this.match(CypherParser.T__1);
                 this.state = 2135;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 2134;
                     this.match(CypherParser.SP);
@@ -8691,16 +8817,16 @@ export class CypherParser extends antlr.Parser {
                 }
 
                 this.state = 2141;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 100) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===100) {
                     {
                     this.state = 2137;
                     this.match(CypherParser.DISTINCT);
                     this.state = 2139;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 2138;
                         this.match(CypherParser.SP);
@@ -8711,16 +8837,16 @@ export class CypherParser extends antlr.Parser {
                 }
 
                 this.state = 2160;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 116)) & ~0x1F) === 0 && ((1 << (_la - 116)) & 1624439845) !== 0) || _la === 149) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 116)) & ~0x1F) === 0 && ((1 << (_la - 116)) & 1624439845) !== 0) || _la===149) {
                     {
                     this.state = 2143;
                     this.kU_FunctionParameter();
                     this.state = 2145;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 2144;
                         this.match(CypherParser.SP);
@@ -8728,17 +8854,17 @@ export class CypherParser extends antlr.Parser {
                     }
 
                     this.state = 2157;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    while (_la === 3) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    while (_la===3) {
                         {
                         {
                         this.state = 2147;
                         this.match(CypherParser.T__2);
                         this.state = 2149;
-                        this.errorHandler.sync(this);
-                        _la = this.tokenStream.LA(1);
-                        if (_la === 150) {
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        if (_la===150) {
                             {
                             this.state = 2148;
                             this.match(CypherParser.SP);
@@ -8748,9 +8874,9 @@ export class CypherParser extends antlr.Parser {
                         this.state = 2151;
                         this.kU_FunctionParameter();
                         this.state = 2153;
-                        this.errorHandler.sync(this);
-                        _la = this.tokenStream.LA(1);
-                        if (_la === 150) {
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        if (_la===150) {
                             {
                             this.state = 2152;
                             this.match(CypherParser.SP);
@@ -8760,8 +8886,8 @@ export class CypherParser extends antlr.Parser {
                         }
                         }
                         this.state = 2159;
-                        this.errorHandler.sync(this);
-                        _la = this.tokenStream.LA(1);
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
                     }
                     }
                 }
@@ -8774,8 +8900,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -8783,13 +8910,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_FunctionName(): OC_FunctionNameContext {
-        let localContext = new OC_FunctionNameContext(this.context, this.state);
-        this.enterRule(localContext, 254, CypherParser.RULE_oC_FunctionName);
+        let localctx: OC_FunctionNameContext = new OC_FunctionNameContext(this._ctx, this.state);
+        this.enterRule(localctx, 254, CypherParser.RULE_oC_FunctionName);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2166;
             this.oC_SymbolicName();
@@ -8797,8 +8924,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -8806,26 +8934,26 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_FunctionParameter(): KU_FunctionParameterContext {
-        let localContext = new KU_FunctionParameterContext(this.context, this.state);
-        this.enterRule(localContext, 256, CypherParser.RULE_kU_FunctionParameter);
+        let localctx: KU_FunctionParameterContext = new KU_FunctionParameterContext(this._ctx, this.state);
+        this.enterRule(localctx, 256, CypherParser.RULE_kU_FunctionParameter);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2177;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 367, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 367, this._ctx) ) {
             case 1:
                 {
                 this.state = 2168;
                 this.oC_SymbolicName();
                 this.state = 2170;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 2169;
                     this.match(CypherParser.SP);
@@ -8837,9 +8965,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 2173;
                 this.match(CypherParser.T__5);
                 this.state = 2175;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 2174;
                     this.match(CypherParser.SP);
@@ -8855,8 +8983,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -8864,30 +8993,30 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_PathPatterns(): OC_PathPatternsContext {
-        let localContext = new OC_PathPatternsContext(this.context, this.state);
-        this.enterRule(localContext, 258, CypherParser.RULE_oC_PathPatterns);
+        let localctx: OC_PathPatternsContext = new OC_PathPatternsContext(this._ctx, this.state);
+        this.enterRule(localctx, 258, CypherParser.RULE_oC_PathPatterns);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2181;
             this.oC_NodePattern();
             this.state = 2186;
-            this.errorHandler.sync(this);
-            alternative = 1;
+            this._errHandler.sync(this);
+            _alt = 1;
             do {
-                switch (alternative) {
+                switch (_alt) {
                 case 1:
                     {
                     {
                     this.state = 2183;
-                    this.errorHandler.sync(this);
-                    _la = this.tokenStream.LA(1);
-                    if (_la === 150) {
+                    this._errHandler.sync(this);
+                    _la = this._input.LA(1);
+                    if (_la===150) {
                         {
                         this.state = 2182;
                         this.match(CypherParser.SP);
@@ -8903,15 +9032,16 @@ export class CypherParser extends antlr.Parser {
                     throw new antlr.NoViableAltException(this);
                 }
                 this.state = 2188;
-                this.errorHandler.sync(this);
-                alternative = this.interpreter.adaptivePredict(this.tokenStream, 369, this.context);
-            } while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER);
+                this._errHandler.sync(this);
+                _alt = this._interp.adaptivePredict(this._input, 369, this._ctx);
+            } while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER);
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -8919,21 +9049,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_ExistSubquery(): OC_ExistSubqueryContext {
-        let localContext = new OC_ExistSubqueryContext(this.context, this.state);
-        this.enterRule(localContext, 260, CypherParser.RULE_oC_ExistSubquery);
+        let localctx: OC_ExistSubqueryContext = new OC_ExistSubqueryContext(this._ctx, this.state);
+        this.enterRule(localctx, 260, CypherParser.RULE_oC_ExistSubquery);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2190;
             this.match(CypherParser.EXISTS);
             this.state = 2192;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2191;
                 this.match(CypherParser.SP);
@@ -8943,9 +9073,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 2194;
             this.match(CypherParser.T__8);
             this.state = 2196;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2195;
                 this.match(CypherParser.SP);
@@ -8955,9 +9085,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 2198;
             this.match(CypherParser.MATCH);
             this.state = 2200;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2199;
                 this.match(CypherParser.SP);
@@ -8967,14 +9097,14 @@ export class CypherParser extends antlr.Parser {
             this.state = 2202;
             this.oC_Pattern();
             this.state = 2207;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 374, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 374, this._ctx) ) {
             case 1:
                 {
                 this.state = 2204;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 2203;
                     this.match(CypherParser.SP);
@@ -8987,9 +9117,9 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 2210;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2209;
                 this.match(CypherParser.SP);
@@ -9002,8 +9132,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9011,21 +9142,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_CountSubquery(): KU_CountSubqueryContext {
-        let localContext = new KU_CountSubqueryContext(this.context, this.state);
-        this.enterRule(localContext, 262, CypherParser.RULE_kU_CountSubquery);
+        let localctx: KU_CountSubqueryContext = new KU_CountSubqueryContext(this._ctx, this.state);
+        this.enterRule(localctx, 262, CypherParser.RULE_kU_CountSubquery);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2214;
             this.match(CypherParser.COUNT);
             this.state = 2216;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2215;
                 this.match(CypherParser.SP);
@@ -9035,9 +9166,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 2218;
             this.match(CypherParser.T__8);
             this.state = 2220;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2219;
                 this.match(CypherParser.SP);
@@ -9047,9 +9178,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 2222;
             this.match(CypherParser.MATCH);
             this.state = 2224;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2223;
                 this.match(CypherParser.SP);
@@ -9059,14 +9190,14 @@ export class CypherParser extends antlr.Parser {
             this.state = 2226;
             this.oC_Pattern();
             this.state = 2231;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 380, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 380, this._ctx) ) {
             case 1:
                 {
                 this.state = 2228;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 2227;
                     this.match(CypherParser.SP);
@@ -9079,9 +9210,9 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 2234;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2233;
                 this.match(CypherParser.SP);
@@ -9094,8 +9225,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9103,21 +9235,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_PropertyLookup(): OC_PropertyLookupContext {
-        let localContext = new OC_PropertyLookupContext(this.context, this.state);
-        this.enterRule(localContext, 264, CypherParser.RULE_oC_PropertyLookup);
+        let localctx: OC_PropertyLookupContext = new OC_PropertyLookupContext(this._ctx, this.state);
+        this.enterRule(localctx, 264, CypherParser.RULE_oC_PropertyLookup);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2238;
             this.match(CypherParser.T__4);
             this.state = 2240;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2239;
                 this.match(CypherParser.SP);
@@ -9125,8 +9257,8 @@ export class CypherParser extends antlr.Parser {
             }
 
             this.state = 2244;
-            this.errorHandler.sync(this);
-            switch (this.tokenStream.LA(1)) {
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
             case CypherParser.USE:
             case CypherParser.COMMENT_:
             case CypherParser.EXPORT:
@@ -9159,8 +9291,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9168,36 +9301,36 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_CaseExpression(): OC_CaseExpressionContext {
-        let localContext = new OC_CaseExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 266, CypherParser.RULE_oC_CaseExpression);
+        let localctx: OC_CaseExpressionContext = new OC_CaseExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 266, CypherParser.RULE_oC_CaseExpression);
         let _la: number;
         try {
-            let alternative: number;
-            this.enterOuterAlt(localContext, 1);
+            let _alt: number;
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2268;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 389, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 389, this._ctx) ) {
             case 1:
                 {
                 {
                 this.state = 2246;
                 this.match(CypherParser.CASE);
                 this.state = 2251;
-                this.errorHandler.sync(this);
-                alternative = 1;
+                this._errHandler.sync(this);
+                _alt = 1;
                 do {
-                    switch (alternative) {
+                    switch (_alt) {
                     case 1:
                         {
                         {
                         this.state = 2248;
-                        this.errorHandler.sync(this);
-                        _la = this.tokenStream.LA(1);
-                        if (_la === 150) {
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        if (_la===150) {
                             {
                             this.state = 2247;
                             this.match(CypherParser.SP);
@@ -9213,9 +9346,9 @@ export class CypherParser extends antlr.Parser {
                         throw new antlr.NoViableAltException(this);
                     }
                     this.state = 2253;
-                    this.errorHandler.sync(this);
-                    alternative = this.interpreter.adaptivePredict(this.tokenStream, 385, this.context);
-                } while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER);
+                    this._errHandler.sync(this);
+                    _alt = this._interp.adaptivePredict(this._input, 385, this._ctx);
+                } while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER);
                 }
                 }
                 break;
@@ -9225,9 +9358,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 2255;
                 this.match(CypherParser.CASE);
                 this.state = 2257;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 2256;
                     this.match(CypherParser.SP);
@@ -9237,17 +9370,17 @@ export class CypherParser extends antlr.Parser {
                 this.state = 2259;
                 this.oC_Expression();
                 this.state = 2264;
-                this.errorHandler.sync(this);
-                alternative = 1;
+                this._errHandler.sync(this);
+                _alt = 1;
                 do {
-                    switch (alternative) {
+                    switch (_alt) {
                     case 1:
                         {
                         {
                         this.state = 2261;
-                        this.errorHandler.sync(this);
-                        _la = this.tokenStream.LA(1);
-                        if (_la === 150) {
+                        this._errHandler.sync(this);
+                        _la = this._input.LA(1);
+                        if (_la===150) {
                             {
                             this.state = 2260;
                             this.match(CypherParser.SP);
@@ -9263,22 +9396,22 @@ export class CypherParser extends antlr.Parser {
                         throw new antlr.NoViableAltException(this);
                     }
                     this.state = 2266;
-                    this.errorHandler.sync(this);
-                    alternative = this.interpreter.adaptivePredict(this.tokenStream, 388, this.context);
-                } while (alternative !== 2 && alternative !== antlr.ATN.INVALID_ALT_NUMBER);
+                    this._errHandler.sync(this);
+                    _alt = this._interp.adaptivePredict(this._input, 388, this._ctx);
+                } while (_alt !== 2 && _alt !== antlr.ATN.INVALID_ALT_NUMBER);
                 }
                 }
                 break;
             }
             this.state = 2278;
-            this.errorHandler.sync(this);
-            switch (this.interpreter.adaptivePredict(this.tokenStream, 392, this.context) ) {
+            this._errHandler.sync(this);
+            switch ( this._interp.adaptivePredict(this._input, 392, this._ctx) ) {
             case 1:
                 {
                 this.state = 2271;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 2270;
                     this.match(CypherParser.SP);
@@ -9288,9 +9421,9 @@ export class CypherParser extends antlr.Parser {
                 this.state = 2273;
                 this.match(CypherParser.ELSE);
                 this.state = 2275;
-                this.errorHandler.sync(this);
-                _la = this.tokenStream.LA(1);
-                if (_la === 150) {
+                this._errHandler.sync(this);
+                _la = this._input.LA(1);
+                if (_la===150) {
                     {
                     this.state = 2274;
                     this.match(CypherParser.SP);
@@ -9303,9 +9436,9 @@ export class CypherParser extends antlr.Parser {
                 break;
             }
             this.state = 2281;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2280;
                 this.match(CypherParser.SP);
@@ -9318,8 +9451,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9327,21 +9461,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_CaseAlternative(): OC_CaseAlternativeContext {
-        let localContext = new OC_CaseAlternativeContext(this.context, this.state);
-        this.enterRule(localContext, 268, CypherParser.RULE_oC_CaseAlternative);
+        let localctx: OC_CaseAlternativeContext = new OC_CaseAlternativeContext(this._ctx, this.state);
+        this.enterRule(localctx, 268, CypherParser.RULE_oC_CaseAlternative);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2285;
             this.match(CypherParser.WHEN);
             this.state = 2287;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2286;
                 this.match(CypherParser.SP);
@@ -9351,9 +9485,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 2289;
             this.oC_Expression();
             this.state = 2291;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2290;
                 this.match(CypherParser.SP);
@@ -9363,9 +9497,9 @@ export class CypherParser extends antlr.Parser {
             this.state = 2293;
             this.match(CypherParser.THEN);
             this.state = 2295;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2294;
                 this.match(CypherParser.SP);
@@ -9378,8 +9512,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9387,13 +9522,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Variable(): OC_VariableContext {
-        let localContext = new OC_VariableContext(this.context, this.state);
-        this.enterRule(localContext, 270, CypherParser.RULE_oC_Variable);
+        let localctx: OC_VariableContext = new OC_VariableContext(this._ctx, this.state);
+        this.enterRule(localctx, 270, CypherParser.RULE_oC_Variable);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2299;
             this.oC_SymbolicName();
@@ -9401,8 +9536,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9410,24 +9546,24 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_NumberLiteral(): OC_NumberLiteralContext {
-        let localContext = new OC_NumberLiteralContext(this.context, this.state);
-        this.enterRule(localContext, 272, CypherParser.RULE_oC_NumberLiteral);
+        let localctx: OC_NumberLiteralContext = new OC_NumberLiteralContext(this._ctx, this.state);
+        this.enterRule(localctx, 272, CypherParser.RULE_oC_NumberLiteral);
         try {
             this.state = 2303;
-            this.errorHandler.sync(this);
-            switch (this.tokenStream.LA(1)) {
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
             case CypherParser.RegularDecimalReal:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 2301;
                 this.oC_DoubleLiteral();
                 }
                 break;
             case CypherParser.DecimalInteger:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 2302;
                 this.oC_IntegerLiteral();
@@ -9439,8 +9575,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9448,19 +9585,19 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Parameter(): OC_ParameterContext {
-        let localContext = new OC_ParameterContext(this.context, this.state);
-        this.enterRule(localContext, 274, CypherParser.RULE_oC_Parameter);
+        let localctx: OC_ParameterContext = new OC_ParameterContext(this._ctx, this.state);
+        this.enterRule(localctx, 274, CypherParser.RULE_oC_Parameter);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2305;
             this.match(CypherParser.T__25);
             this.state = 2308;
-            this.errorHandler.sync(this);
-            switch (this.tokenStream.LA(1)) {
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
             case CypherParser.USE:
             case CypherParser.COMMENT_:
             case CypherParser.EXPORT:
@@ -9493,8 +9630,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9502,21 +9640,21 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_PropertyExpression(): OC_PropertyExpressionContext {
-        let localContext = new OC_PropertyExpressionContext(this.context, this.state);
-        this.enterRule(localContext, 276, CypherParser.RULE_oC_PropertyExpression);
+        let localctx: OC_PropertyExpressionContext = new OC_PropertyExpressionContext(this._ctx, this.state);
+        this.enterRule(localctx, 276, CypherParser.RULE_oC_PropertyExpression);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2310;
             this.oC_Atom();
             this.state = 2312;
-            this.errorHandler.sync(this);
-            _la = this.tokenStream.LA(1);
-            if (_la === 150) {
+            this._errHandler.sync(this);
+            _la = this._input.LA(1);
+            if (_la===150) {
                 {
                 this.state = 2311;
                 this.match(CypherParser.SP);
@@ -9529,8 +9667,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9538,13 +9677,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_PropertyKeyName(): OC_PropertyKeyNameContext {
-        let localContext = new OC_PropertyKeyNameContext(this.context, this.state);
-        this.enterRule(localContext, 278, CypherParser.RULE_oC_PropertyKeyName);
+        let localctx: OC_PropertyKeyNameContext = new OC_PropertyKeyNameContext(this._ctx, this.state);
+        this.enterRule(localctx, 278, CypherParser.RULE_oC_PropertyKeyName);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2316;
             this.oC_SchemaName();
@@ -9552,8 +9691,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9561,13 +9701,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_IntegerLiteral(): OC_IntegerLiteralContext {
-        let localContext = new OC_IntegerLiteralContext(this.context, this.state);
-        this.enterRule(localContext, 280, CypherParser.RULE_oC_IntegerLiteral);
+        let localctx: OC_IntegerLiteralContext = new OC_IntegerLiteralContext(this._ctx, this.state);
+        this.enterRule(localctx, 280, CypherParser.RULE_oC_IntegerLiteral);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2318;
             this.match(CypherParser.DecimalInteger);
@@ -9575,8 +9715,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9584,13 +9725,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_DoubleLiteral(): OC_DoubleLiteralContext {
-        let localContext = new OC_DoubleLiteralContext(this.context, this.state);
-        this.enterRule(localContext, 282, CypherParser.RULE_oC_DoubleLiteral);
+        let localctx: OC_DoubleLiteralContext = new OC_DoubleLiteralContext(this._ctx, this.state);
+        this.enterRule(localctx, 282, CypherParser.RULE_oC_DoubleLiteral);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2320;
             this.match(CypherParser.RegularDecimalReal);
@@ -9598,8 +9739,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9607,13 +9749,13 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        let localContext = new OC_SchemaNameContext(this.context, this.state);
-        this.enterRule(localContext, 284, CypherParser.RULE_oC_SchemaName);
+        let localctx: OC_SchemaNameContext = new OC_SchemaNameContext(this._ctx, this.state);
+        this.enterRule(localctx, 284, CypherParser.RULE_oC_SchemaName);
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2322;
             this.oC_SymbolicName();
@@ -9621,8 +9763,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9630,31 +9773,31 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_SymbolicName(): OC_SymbolicNameContext {
-        let localContext = new OC_SymbolicNameContext(this.context, this.state);
-        this.enterRule(localContext, 286, CypherParser.RULE_oC_SymbolicName);
+        let localctx: OC_SymbolicNameContext = new OC_SymbolicNameContext(this._ctx, this.state);
+        this.enterRule(localctx, 286, CypherParser.RULE_oC_SymbolicName);
         try {
             this.state = 2329;
-            this.errorHandler.sync(this);
-            switch (this.tokenStream.LA(1)) {
+            this._errHandler.sync(this);
+            switch (this._input.LA(1)) {
             case CypherParser.UnescapedSymbolicName:
-                this.enterOuterAlt(localContext, 1);
+                this.enterOuterAlt(localctx, 1);
                 {
                 this.state = 2324;
                 this.match(CypherParser.UnescapedSymbolicName);
                 }
                 break;
             case CypherParser.EscapedSymbolicName:
-                this.enterOuterAlt(localContext, 2);
+                this.enterOuterAlt(localctx, 2);
                 {
                 this.state = 2325;
-                localContext._EscapedSymbolicName = this.match(CypherParser.EscapedSymbolicName);
+                localctx._EscapedSymbolicName = this.match(CypherParser.EscapedSymbolicName);
                 }
                 break;
             case CypherParser.HexLetter:
-                this.enterOuterAlt(localContext, 3);
+                this.enterOuterAlt(localctx, 3);
                 {
                 this.state = 2327;
                 this.match(CypherParser.HexLetter);
@@ -9671,7 +9814,7 @@ export class CypherParser extends antlr.Parser {
             case CypherParser.IN:
             case CypherParser.COUNT:
             case CypherParser.END:
-                this.enterOuterAlt(localContext, 4);
+                this.enterOuterAlt(localctx, 4);
                 {
                 this.state = 2328;
                 this.kU_NonReservedKeywords();
@@ -9683,8 +9826,9 @@ export class CypherParser extends antlr.Parser {
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9692,30 +9836,31 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public kU_NonReservedKeywords(): KU_NonReservedKeywordsContext {
-        let localContext = new KU_NonReservedKeywordsContext(this.context, this.state);
-        this.enterRule(localContext, 288, CypherParser.RULE_kU_NonReservedKeywords);
+        let localctx: KU_NonReservedKeywordsContext = new KU_NonReservedKeywordsContext(this._ctx, this.state);
+        this.enterRule(localctx, 288, CypherParser.RULE_kU_NonReservedKeywords);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2331;
-            _la = this.tokenStream.LA(1);
+            _la = this._input.LA(1);
             if(!(((((_la - 48)) & ~0x1F) === 0 && ((1 << (_la - 48)) & 71307013) !== 0) || ((((_la - 121)) & ~0x1F) === 0 && ((1 << (_la - 121)) & 4353) !== 0))) {
-            this.errorHandler.recoverInline(this);
+            this._errHandler.recoverInline(this);
             }
             else {
-                this.errorHandler.reportMatch(this);
+                this._errHandler.reportMatch(this);
                 this.consume();
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9723,30 +9868,31 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_LeftArrowHead(): OC_LeftArrowHeadContext {
-        let localContext = new OC_LeftArrowHeadContext(this.context, this.state);
-        this.enterRule(localContext, 290, CypherParser.RULE_oC_LeftArrowHead);
+        let localctx: OC_LeftArrowHeadContext = new OC_LeftArrowHeadContext(this._ctx, this.state);
+        this.enterRule(localctx, 290, CypherParser.RULE_oC_LeftArrowHead);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2333;
-            _la = this.tokenStream.LA(1);
+            _la = this._input.LA(1);
             if(!((((_la) & ~0x1F) === 0 && ((1 << _la) & 2013282304) !== 0))) {
-            this.errorHandler.recoverInline(this);
+            this._errHandler.recoverInline(this);
             }
             else {
-                this.errorHandler.reportMatch(this);
+                this._errHandler.reportMatch(this);
                 this.consume();
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9754,30 +9900,31 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_RightArrowHead(): OC_RightArrowHeadContext {
-        let localContext = new OC_RightArrowHeadContext(this.context, this.state);
-        this.enterRule(localContext, 292, CypherParser.RULE_oC_RightArrowHead);
+        let localctx: OC_RightArrowHeadContext = new OC_RightArrowHeadContext(this._ctx, this.state);
+        this.enterRule(localctx, 292, CypherParser.RULE_oC_RightArrowHead);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2335;
-            _la = this.tokenStream.LA(1);
+            _la = this._input.LA(1);
             if(!(((((_la - 16)) & ~0x1F) === 0 && ((1 << (_la - 16)) & 491521) !== 0))) {
-            this.errorHandler.recoverInline(this);
+            this._errHandler.recoverInline(this);
             }
             else {
-                this.errorHandler.reportMatch(this);
+                this._errHandler.reportMatch(this);
                 this.consume();
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9785,30 +9932,31 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
     public oC_Dash(): OC_DashContext {
-        let localContext = new OC_DashContext(this.context, this.state);
-        this.enterRule(localContext, 294, CypherParser.RULE_oC_Dash);
+        let localctx: OC_DashContext = new OC_DashContext(this._ctx, this.state);
+        this.enterRule(localctx, 294, CypherParser.RULE_oC_Dash);
         let _la: number;
         try {
-            this.enterOuterAlt(localContext, 1);
+            this.enterOuterAlt(localctx, 1);
             {
             this.state = 2337;
-            _la = this.tokenStream.LA(1);
-            if(!(((((_la - 35)) & ~0x1F) === 0 && ((1 << (_la - 35)) & 2047) !== 0) || _la === 118)) {
-            this.errorHandler.recoverInline(this);
+            _la = this._input.LA(1);
+            if(!(((((_la - 35)) & ~0x1F) === 0 && ((1 << (_la - 35)) & 2047) !== 0) || _la===118)) {
+            this._errHandler.recoverInline(this);
             }
             else {
-                this.errorHandler.reportMatch(this);
+                this._errHandler.reportMatch(this);
                 this.consume();
             }
             }
         }
         catch (re) {
             if (re instanceof antlr.RecognitionException) {
-                this.errorHandler.reportError(this, re);
-                this.errorHandler.recover(this, re);
+                localctx.exception = re;
+                this._errHandler.reportError(this, re);
+                this._errHandler.recover(this, re);
             } else {
                 throw re;
             }
@@ -9816,20 +9964,20 @@ export class CypherParser extends antlr.Parser {
         finally {
             this.exitRule();
         }
-        return localContext;
+        return localctx;
     }
 
-    public override sempred(localContext: antlr.ParserRuleContext | null, ruleIndex: number, predIndex: number): boolean {
+    public override sempred(localctx: antlr.RuleContext, ruleIndex: number, predIndex: number): boolean {
         switch (ruleIndex) {
         case 36:
-            return this.kU_DataType_sempred(localContext as KU_DataTypeContext, predIndex);
+            return this.kU_DataType_sempred(localctx as KU_DataTypeContext, predIndex);
         }
         return true;
     }
-    private kU_DataType_sempred(localContext: KU_DataTypeContext | null, predIndex: number): boolean {
+    private kU_DataType_sempred(localctx: KU_DataTypeContext, predIndex: number): boolean {
         switch (predIndex) {
         case 0:
-            return this.precpred(this.context, 4);
+            return this.precpred(this._ctx, 4);
         }
         return true;
     }
@@ -10840,7 +10988,7 @@ export class CypherParser extends antlr.Parser {
 
     private static readonly vocabulary = new antlr.Vocabulary(CypherParser.literalNames, CypherParser.symbolicNames, []);
 
-    public override get vocabulary(): antlr.Vocabulary {
+    public override getVocabulary(): antlr.Vocabulary {
         return CypherParser.vocabulary;
     }
 
@@ -10851,26 +10999,20 @@ export class Ku_StatementsContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_Cypher(): OC_CypherContext[];
-    public oC_Cypher(i: number): OC_CypherContext | null;
-    public oC_Cypher(i?: number): OC_CypherContext[] | OC_CypherContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_CypherContext);
-        }
-
-        return this.getRuleContext(i, OC_CypherContext);
+    public oC_Cypher__list(): OC_CypherContext[] {
+        return this.getTypedRuleContexts(OC_CypherContext);
+    }
+    public oC_Cypher(i: number): OC_CypherContext {
+        return this.getTypedRuleContext(OC_CypherContext, i);
     }
     public EOF(): antlr.TerminalNode {
-        return this.getToken(CypherParser.EOF, 0)!;
+        return this.getToken(CypherParser.EOF, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_ku_Statements;
@@ -10882,20 +11024,17 @@ export class OC_CypherContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_Statement(): OC_StatementContext | null {
-        return this.getRuleContext(0, OC_StatementContext);
+    public oC_Statement(): OC_StatementContext {
+        return this.getTypedRuleContext(OC_StatementContext, 0);
     }
-    public oC_AnyCypherOption(): OC_AnyCypherOptionContext | null {
-        return this.getRuleContext(0, OC_AnyCypherOptionContext);
+    public oC_AnyCypherOption(): OC_AnyCypherOptionContext {
+        return this.getTypedRuleContext(OC_AnyCypherOptionContext, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Cypher;
@@ -10907,65 +11046,65 @@ export class OC_StatementContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_Query(): OC_QueryContext | null {
-        return this.getRuleContext(0, OC_QueryContext);
+    public oC_Query(): OC_QueryContext {
+        return this.getTypedRuleContext(OC_QueryContext, 0);
     }
-    public kU_CreateNodeTable(): KU_CreateNodeTableContext | null {
-        return this.getRuleContext(0, KU_CreateNodeTableContext);
+    public kU_CreateNodeTable(): KU_CreateNodeTableContext {
+        return this.getTypedRuleContext(KU_CreateNodeTableContext, 0);
     }
-    public kU_CreateRelTable(): KU_CreateRelTableContext | null {
-        return this.getRuleContext(0, KU_CreateRelTableContext);
+    public kU_CreateRelTable(): KU_CreateRelTableContext {
+        return this.getTypedRuleContext(KU_CreateRelTableContext, 0);
     }
-    public kU_CreateRelTableGroup(): KU_CreateRelTableGroupContext | null {
-        return this.getRuleContext(0, KU_CreateRelTableGroupContext);
+    public kU_CreateRelTableGroup(): KU_CreateRelTableGroupContext {
+        return this.getTypedRuleContext(KU_CreateRelTableGroupContext, 0);
     }
-    public kU_CreateRdfGraph(): KU_CreateRdfGraphContext | null {
-        return this.getRuleContext(0, KU_CreateRdfGraphContext);
+    public kU_CreateRdfGraph(): KU_CreateRdfGraphContext {
+        return this.getTypedRuleContext(KU_CreateRdfGraphContext, 0);
     }
-    public kU_DropTable(): KU_DropTableContext | null {
-        return this.getRuleContext(0, KU_DropTableContext);
+    public kU_DropTable(): KU_DropTableContext {
+        return this.getTypedRuleContext(KU_DropTableContext, 0);
     }
-    public kU_AlterTable(): KU_AlterTableContext | null {
-        return this.getRuleContext(0, KU_AlterTableContext);
+    public kU_AlterTable(): KU_AlterTableContext {
+        return this.getTypedRuleContext(KU_AlterTableContext, 0);
     }
-    public kU_CopyFrom(): KU_CopyFromContext | null {
-        return this.getRuleContext(0, KU_CopyFromContext);
+    public kU_CopyFrom(): KU_CopyFromContext {
+        return this.getTypedRuleContext(KU_CopyFromContext, 0);
     }
-    public kU_CopyFromByColumn(): KU_CopyFromByColumnContext | null {
-        return this.getRuleContext(0, KU_CopyFromByColumnContext);
+    public kU_CopyFromByColumn(): KU_CopyFromByColumnContext {
+        return this.getTypedRuleContext(KU_CopyFromByColumnContext, 0);
     }
-    public kU_CopyTO(): KU_CopyTOContext | null {
-        return this.getRuleContext(0, KU_CopyTOContext);
+    public kU_CopyTO(): KU_CopyTOContext {
+        return this.getTypedRuleContext(KU_CopyTOContext, 0);
     }
-    public kU_StandaloneCall(): KU_StandaloneCallContext | null {
-        return this.getRuleContext(0, KU_StandaloneCallContext);
+    public kU_StandaloneCall(): KU_StandaloneCallContext {
+        return this.getTypedRuleContext(KU_StandaloneCallContext, 0);
     }
-    public kU_CreateMacro(): KU_CreateMacroContext | null {
-        return this.getRuleContext(0, KU_CreateMacroContext);
+    public kU_CreateMacro(): KU_CreateMacroContext {
+        return this.getTypedRuleContext(KU_CreateMacroContext, 0);
     }
-    public kU_CommentOn(): KU_CommentOnContext | null {
-        return this.getRuleContext(0, KU_CommentOnContext);
+    public kU_CommentOn(): KU_CommentOnContext {
+        return this.getTypedRuleContext(KU_CommentOnContext, 0);
     }
-    public kU_Transaction(): KU_TransactionContext | null {
-        return this.getRuleContext(0, KU_TransactionContext);
+    public kU_Transaction(): KU_TransactionContext {
+        return this.getTypedRuleContext(KU_TransactionContext, 0);
     }
-    public kU_Extension(): KU_ExtensionContext | null {
-        return this.getRuleContext(0, KU_ExtensionContext);
+    public kU_Extension(): KU_ExtensionContext {
+        return this.getTypedRuleContext(KU_ExtensionContext, 0);
     }
-    public kU_ExportDatabase(): KU_ExportDatabaseContext | null {
-        return this.getRuleContext(0, KU_ExportDatabaseContext);
+    public kU_ExportDatabase(): KU_ExportDatabaseContext {
+        return this.getTypedRuleContext(KU_ExportDatabaseContext, 0);
     }
-    public kU_ImportDatabase(): KU_ImportDatabaseContext | null {
-        return this.getRuleContext(0, KU_ImportDatabaseContext);
+    public kU_ImportDatabase(): KU_ImportDatabaseContext {
+        return this.getTypedRuleContext(KU_ImportDatabaseContext, 0);
     }
-    public kU_AttachDatabase(): KU_AttachDatabaseContext | null {
-        return this.getRuleContext(0, KU_AttachDatabaseContext);
+    public kU_AttachDatabase(): KU_AttachDatabaseContext {
+        return this.getTypedRuleContext(KU_AttachDatabaseContext, 0);
     }
-    public kU_DetachDatabase(): KU_DetachDatabaseContext | null {
-        return this.getRuleContext(0, KU_DetachDatabaseContext);
+    public kU_DetachDatabase(): KU_DetachDatabaseContext {
+        return this.getTypedRuleContext(KU_DetachDatabaseContext, 0);
     }
-    public kU_UseDatabase(): KU_UseDatabaseContext | null {
-        return this.getRuleContext(0, KU_UseDatabaseContext);
+    public kU_UseDatabase(): KU_UseDatabaseContext {
+        return this.getTypedRuleContext(KU_UseDatabaseContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Statement;
@@ -10978,31 +11117,28 @@ export class KU_CopyFromContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public COPY(): antlr.TerminalNode {
-        return this.getToken(CypherParser.COPY, 0)!;
+        return this.getToken(CypherParser.COPY, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        return this.getRuleContext(0, OC_SchemaNameContext)!;
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
     public FROM(): antlr.TerminalNode {
-        return this.getToken(CypherParser.FROM, 0)!;
+        return this.getToken(CypherParser.FROM, 0);
     }
     public kU_ScanSource(): KU_ScanSourceContext {
-        return this.getRuleContext(0, KU_ScanSourceContext)!;
+        return this.getTypedRuleContext(KU_ScanSourceContext, 0);
     }
-    public kU_ParsingOptions(): KU_ParsingOptionsContext | null {
-        return this.getRuleContext(0, KU_ParsingOptionsContext);
+    public kU_ParsingOptions(): KU_ParsingOptionsContext {
+        return this.getTypedRuleContext(KU_ParsingOptionsContext, 0);
     }
-    public kU_ColumnNames(): KU_ColumnNamesContext | null {
-        return this.getRuleContext(0, KU_ColumnNamesContext);
+    public kU_ColumnNames(): KU_ColumnNamesContext {
+        return this.getTypedRuleContext(KU_ColumnNamesContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_CopyFrom;
@@ -11014,23 +11150,17 @@ export class KU_ColumnNamesContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_SchemaName(): OC_SchemaNameContext[];
-    public oC_SchemaName(i: number): OC_SchemaNameContext | null;
-    public oC_SchemaName(i?: number): OC_SchemaNameContext[] | OC_SchemaNameContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_SchemaNameContext);
-        }
-
-        return this.getRuleContext(i, OC_SchemaNameContext);
+    public oC_SchemaName__list(): OC_SchemaNameContext[] {
+        return this.getTypedRuleContexts(OC_SchemaNameContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_SchemaName(i: number): OC_SchemaNameContext {
+        return this.getTypedRuleContext(OC_SchemaNameContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_ColumnNames;
@@ -11042,26 +11172,23 @@ export class KU_ScanSourceContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public kU_FilePaths(): KU_FilePathsContext | null {
-        return this.getRuleContext(0, KU_FilePathsContext);
+    public kU_FilePaths(): KU_FilePathsContext {
+        return this.getTypedRuleContext(KU_FilePathsContext, 0);
     }
-    public oC_Query(): OC_QueryContext | null {
-        return this.getRuleContext(0, OC_QueryContext);
+    public oC_Query(): OC_QueryContext {
+        return this.getTypedRuleContext(OC_QueryContext, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public oC_Variable(): OC_VariableContext | null {
-        return this.getRuleContext(0, OC_VariableContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
-    public oC_SchemaName(): OC_SchemaNameContext | null {
-        return this.getRuleContext(0, OC_SchemaNameContext);
+    public oC_Variable(): OC_VariableContext {
+        return this.getTypedRuleContext(OC_VariableContext, 0);
+    }
+    public oC_SchemaName(): OC_SchemaNameContext {
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_ScanSource;
@@ -11074,37 +11201,31 @@ export class KU_CopyFromByColumnContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public COPY(): antlr.TerminalNode {
-        return this.getToken(CypherParser.COPY, 0)!;
+        return this.getToken(CypherParser.COPY, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        return this.getRuleContext(0, OC_SchemaNameContext)!;
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
     public FROM(): antlr.TerminalNode {
-        return this.getToken(CypherParser.FROM, 0)!;
+        return this.getToken(CypherParser.FROM, 0);
     }
-    public StringLiteral(): antlr.TerminalNode[];
-    public StringLiteral(i: number): antlr.TerminalNode | null;
-    public StringLiteral(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.StringLiteral);
-    	} else {
-    		return this.getToken(CypherParser.StringLiteral, i);
-    	}
+    public StringLiteral__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.StringLiteral);
+    }
+    public StringLiteral(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.StringLiteral, i);
     }
     public BY(): antlr.TerminalNode {
-        return this.getToken(CypherParser.BY, 0)!;
+        return this.getToken(CypherParser.BY, 0);
     }
     public COLUMN(): antlr.TerminalNode {
-        return this.getToken(CypherParser.COLUMN, 0)!;
+        return this.getToken(CypherParser.COLUMN, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_CopyFromByColumn;
@@ -11117,28 +11238,25 @@ export class KU_CopyTOContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public COPY(): antlr.TerminalNode {
-        return this.getToken(CypherParser.COPY, 0)!;
+        return this.getToken(CypherParser.COPY, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public oC_Query(): OC_QueryContext {
-        return this.getRuleContext(0, OC_QueryContext)!;
+        return this.getTypedRuleContext(OC_QueryContext, 0);
     }
     public TO(): antlr.TerminalNode {
-        return this.getToken(CypherParser.TO, 0)!;
+        return this.getToken(CypherParser.TO, 0);
     }
     public StringLiteral(): antlr.TerminalNode {
-        return this.getToken(CypherParser.StringLiteral, 0)!;
+        return this.getToken(CypherParser.StringLiteral, 0);
     }
-    public kU_ParsingOptions(): KU_ParsingOptionsContext | null {
-        return this.getRuleContext(0, KU_ParsingOptionsContext);
+    public kU_ParsingOptions(): KU_ParsingOptionsContext {
+        return this.getTypedRuleContext(KU_ParsingOptionsContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_CopyTO;
@@ -11151,25 +11269,22 @@ export class KU_ExportDatabaseContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public EXPORT(): antlr.TerminalNode {
-        return this.getToken(CypherParser.EXPORT, 0)!;
+        return this.getToken(CypherParser.EXPORT, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public DATABASE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.DATABASE, 0)!;
+        return this.getToken(CypherParser.DATABASE, 0);
     }
     public StringLiteral(): antlr.TerminalNode {
-        return this.getToken(CypherParser.StringLiteral, 0)!;
+        return this.getToken(CypherParser.StringLiteral, 0);
     }
-    public kU_ParsingOptions(): KU_ParsingOptionsContext | null {
-        return this.getRuleContext(0, KU_ParsingOptionsContext);
+    public kU_ParsingOptions(): KU_ParsingOptionsContext {
+        return this.getTypedRuleContext(KU_ParsingOptionsContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_ExportDatabase;
@@ -11182,22 +11297,19 @@ export class KU_ImportDatabaseContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public IMPORT(): antlr.TerminalNode {
-        return this.getToken(CypherParser.IMPORT, 0)!;
+        return this.getToken(CypherParser.IMPORT, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public DATABASE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.DATABASE, 0)!;
+        return this.getToken(CypherParser.DATABASE, 0);
     }
     public StringLiteral(): antlr.TerminalNode {
-        return this.getToken(CypherParser.StringLiteral, 0)!;
+        return this.getToken(CypherParser.StringLiteral, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_ImportDatabase;
@@ -11210,33 +11322,27 @@ export class KU_AttachDatabaseContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public ATTACH(): antlr.TerminalNode {
-        return this.getToken(CypherParser.ATTACH, 0)!;
+        return this.getToken(CypherParser.ATTACH, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public StringLiteral(): antlr.TerminalNode[];
-    public StringLiteral(i: number): antlr.TerminalNode | null;
-    public StringLiteral(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.StringLiteral);
-    	} else {
-    		return this.getToken(CypherParser.StringLiteral, i);
-    	}
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
-    public AS(): antlr.TerminalNode | null {
+    public StringLiteral__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.StringLiteral);
+    }
+    public StringLiteral(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.StringLiteral, i);
+    }
+    public AS(): antlr.TerminalNode {
         return this.getToken(CypherParser.AS, 0);
     }
-    public oC_SchemaName(): OC_SchemaNameContext | null {
-        return this.getRuleContext(0, OC_SchemaNameContext);
+    public oC_SchemaName(): OC_SchemaNameContext {
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
-    public DBTYPE(): antlr.TerminalNode | null {
+    public DBTYPE(): antlr.TerminalNode {
         return this.getToken(CypherParser.DBTYPE, 0);
     }
     public override get ruleIndex(): number {
@@ -11250,13 +11356,13 @@ export class KU_DetachDatabaseContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public DETACH(): antlr.TerminalNode {
-        return this.getToken(CypherParser.DETACH, 0)!;
+        return this.getToken(CypherParser.DETACH, 0);
     }
     public SP(): antlr.TerminalNode {
-        return this.getToken(CypherParser.SP, 0)!;
+        return this.getToken(CypherParser.SP, 0);
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        return this.getRuleContext(0, OC_SchemaNameContext)!;
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_DetachDatabase;
@@ -11269,13 +11375,13 @@ export class KU_UseDatabaseContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public USE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.USE, 0)!;
+        return this.getToken(CypherParser.USE, 0);
     }
     public SP(): antlr.TerminalNode {
-        return this.getToken(CypherParser.SP, 0)!;
+        return this.getToken(CypherParser.SP, 0);
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        return this.getRuleContext(0, OC_SchemaNameContext)!;
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_UseDatabase;
@@ -11288,22 +11394,19 @@ export class KU_StandaloneCallContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public CALL(): antlr.TerminalNode {
-        return this.getToken(CypherParser.CALL, 0)!;
+        return this.getToken(CypherParser.CALL, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public oC_SymbolicName(): OC_SymbolicNameContext {
-        return this.getRuleContext(0, OC_SymbolicNameContext)!;
+        return this.getTypedRuleContext(OC_SymbolicNameContext, 0);
     }
     public oC_Expression(): OC_ExpressionContext {
-        return this.getRuleContext(0, OC_ExpressionContext)!;
+        return this.getTypedRuleContext(OC_ExpressionContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_StandaloneCall;
@@ -11316,31 +11419,28 @@ export class KU_CommentOnContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public COMMENT_(): antlr.TerminalNode {
-        return this.getToken(CypherParser.COMMENT_, 0)!;
+        return this.getToken(CypherParser.COMMENT_, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public ON(): antlr.TerminalNode {
-        return this.getToken(CypherParser.ON, 0)!;
+        return this.getToken(CypherParser.ON, 0);
     }
     public TABLE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.TABLE, 0)!;
+        return this.getToken(CypherParser.TABLE, 0);
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        return this.getRuleContext(0, OC_SchemaNameContext)!;
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
     public IS(): antlr.TerminalNode {
-        return this.getToken(CypherParser.IS, 0)!;
+        return this.getToken(CypherParser.IS, 0);
     }
     public StringLiteral(): antlr.TerminalNode {
-        return this.getToken(CypherParser.StringLiteral, 0)!;
+        return this.getToken(CypherParser.StringLiteral, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_CommentOn;
@@ -11353,40 +11453,34 @@ export class KU_CreateMacroContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public CREATE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.CREATE, 0)!;
+        return this.getToken(CypherParser.CREATE, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public MACRO(): antlr.TerminalNode {
-        return this.getToken(CypherParser.MACRO, 0)!;
+        return this.getToken(CypherParser.MACRO, 0);
     }
     public oC_FunctionName(): OC_FunctionNameContext {
-        return this.getRuleContext(0, OC_FunctionNameContext)!;
+        return this.getTypedRuleContext(OC_FunctionNameContext, 0);
     }
     public AS(): antlr.TerminalNode {
-        return this.getToken(CypherParser.AS, 0)!;
+        return this.getToken(CypherParser.AS, 0);
     }
     public oC_Expression(): OC_ExpressionContext {
-        return this.getRuleContext(0, OC_ExpressionContext)!;
+        return this.getTypedRuleContext(OC_ExpressionContext, 0);
     }
-    public kU_PositionalArgs(): KU_PositionalArgsContext | null {
-        return this.getRuleContext(0, KU_PositionalArgsContext);
+    public kU_PositionalArgs(): KU_PositionalArgsContext {
+        return this.getTypedRuleContext(KU_PositionalArgsContext, 0);
     }
-    public kU_DefaultArg(): KU_DefaultArgContext[];
-    public kU_DefaultArg(i: number): KU_DefaultArgContext | null;
-    public kU_DefaultArg(i?: number): KU_DefaultArgContext[] | KU_DefaultArgContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_DefaultArgContext);
-        }
-
-        return this.getRuleContext(i, KU_DefaultArgContext);
+    public kU_DefaultArg__list(): KU_DefaultArgContext[] {
+        return this.getTypedRuleContexts(KU_DefaultArgContext);
+    }
+    public kU_DefaultArg(i: number): KU_DefaultArgContext {
+        return this.getTypedRuleContext(KU_DefaultArgContext, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_CreateMacro;
@@ -11398,23 +11492,17 @@ export class KU_PositionalArgsContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_SymbolicName(): OC_SymbolicNameContext[];
-    public oC_SymbolicName(i: number): OC_SymbolicNameContext | null;
-    public oC_SymbolicName(i?: number): OC_SymbolicNameContext[] | OC_SymbolicNameContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_SymbolicNameContext);
-        }
-
-        return this.getRuleContext(i, OC_SymbolicNameContext);
+    public oC_SymbolicName__list(): OC_SymbolicNameContext[] {
+        return this.getTypedRuleContexts(OC_SymbolicNameContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_SymbolicName(i: number): OC_SymbolicNameContext {
+        return this.getTypedRuleContext(OC_SymbolicNameContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_PositionalArgs;
@@ -11427,22 +11515,19 @@ export class KU_DefaultArgContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_SymbolicName(): OC_SymbolicNameContext {
-        return this.getRuleContext(0, OC_SymbolicNameContext)!;
+        return this.getTypedRuleContext(OC_SymbolicNameContext, 0);
     }
     public COLON(): antlr.TerminalNode {
-        return this.getToken(CypherParser.COLON, 0)!;
+        return this.getToken(CypherParser.COLON, 0);
     }
     public oC_Literal(): OC_LiteralContext {
-        return this.getRuleContext(0, OC_LiteralContext)!;
+        return this.getTypedRuleContext(OC_LiteralContext, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_DefaultArg;
@@ -11454,25 +11539,19 @@ export class KU_FilePathsContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public StringLiteral(): antlr.TerminalNode[];
-    public StringLiteral(i: number): antlr.TerminalNode | null;
-    public StringLiteral(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.StringLiteral);
-    	} else {
-    		return this.getToken(CypherParser.StringLiteral, i);
-    	}
+    public StringLiteral__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.StringLiteral);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public StringLiteral(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.StringLiteral, i);
     }
-    public GLOB(): antlr.TerminalNode | null {
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public GLOB(): antlr.TerminalNode {
         return this.getToken(CypherParser.GLOB, 0);
     }
     public override get ruleIndex(): number {
@@ -11485,23 +11564,17 @@ export class KU_ParsingOptionsContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public kU_ParsingOption(): KU_ParsingOptionContext[];
-    public kU_ParsingOption(i: number): KU_ParsingOptionContext | null;
-    public kU_ParsingOption(i?: number): KU_ParsingOptionContext[] | KU_ParsingOptionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_ParsingOptionContext);
-        }
-
-        return this.getRuleContext(i, KU_ParsingOptionContext);
+    public kU_ParsingOption__list(): KU_ParsingOptionContext[] {
+        return this.getTypedRuleContexts(KU_ParsingOptionContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public kU_ParsingOption(i: number): KU_ParsingOptionContext {
+        return this.getTypedRuleContext(KU_ParsingOptionContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_ParsingOptions;
@@ -11514,19 +11587,16 @@ export class KU_ParsingOptionContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_SymbolicName(): OC_SymbolicNameContext {
-        return this.getRuleContext(0, OC_SymbolicNameContext)!;
+        return this.getTypedRuleContext(OC_SymbolicNameContext, 0);
     }
     public oC_Literal(): OC_LiteralContext {
-        return this.getRuleContext(0, OC_LiteralContext)!;
+        return this.getTypedRuleContext(OC_LiteralContext, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_ParsingOption;
@@ -11539,31 +11609,28 @@ export class KU_CreateNodeTableContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public CREATE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.CREATE, 0)!;
+        return this.getToken(CypherParser.CREATE, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public NODE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.NODE, 0)!;
+        return this.getToken(CypherParser.NODE, 0);
     }
     public TABLE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.TABLE, 0)!;
+        return this.getToken(CypherParser.TABLE, 0);
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        return this.getRuleContext(0, OC_SchemaNameContext)!;
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
     public kU_PropertyDefinitions(): KU_PropertyDefinitionsContext {
-        return this.getRuleContext(0, KU_PropertyDefinitionsContext)!;
+        return this.getTypedRuleContext(KU_PropertyDefinitionsContext, 0);
     }
-    public kU_CreateNodeConstraint(): KU_CreateNodeConstraintContext | null {
-        return this.getRuleContext(0, KU_CreateNodeConstraintContext);
+    public kU_CreateNodeConstraint(): KU_CreateNodeConstraintContext {
+        return this.getTypedRuleContext(KU_CreateNodeConstraintContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_CreateNodeTable;
@@ -11576,34 +11643,31 @@ export class KU_CreateRelTableContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public CREATE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.CREATE, 0)!;
+        return this.getToken(CypherParser.CREATE, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public REL(): antlr.TerminalNode {
-        return this.getToken(CypherParser.REL, 0)!;
+        return this.getToken(CypherParser.REL, 0);
     }
     public TABLE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.TABLE, 0)!;
+        return this.getToken(CypherParser.TABLE, 0);
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        return this.getRuleContext(0, OC_SchemaNameContext)!;
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
     public kU_RelTableConnection(): KU_RelTableConnectionContext {
-        return this.getRuleContext(0, KU_RelTableConnectionContext)!;
+        return this.getTypedRuleContext(KU_RelTableConnectionContext, 0);
     }
-    public kU_PropertyDefinitions(): KU_PropertyDefinitionsContext | null {
-        return this.getRuleContext(0, KU_PropertyDefinitionsContext);
+    public kU_PropertyDefinitions(): KU_PropertyDefinitionsContext {
+        return this.getTypedRuleContext(KU_PropertyDefinitionsContext, 0);
     }
-    public oC_SymbolicName(): OC_SymbolicNameContext | null {
-        return this.getRuleContext(0, OC_SymbolicNameContext);
+    public oC_SymbolicName(): OC_SymbolicNameContext {
+        return this.getTypedRuleContext(OC_SymbolicNameContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_CreateRelTable;
@@ -11616,43 +11680,37 @@ export class KU_CreateRelTableGroupContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public CREATE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.CREATE, 0)!;
+        return this.getToken(CypherParser.CREATE, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public REL(): antlr.TerminalNode {
-        return this.getToken(CypherParser.REL, 0)!;
+        return this.getToken(CypherParser.REL, 0);
     }
     public TABLE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.TABLE, 0)!;
+        return this.getToken(CypherParser.TABLE, 0);
     }
     public GROUP(): antlr.TerminalNode {
-        return this.getToken(CypherParser.GROUP, 0)!;
+        return this.getToken(CypherParser.GROUP, 0);
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        return this.getRuleContext(0, OC_SchemaNameContext)!;
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
-    public kU_RelTableConnection(): KU_RelTableConnectionContext[];
-    public kU_RelTableConnection(i: number): KU_RelTableConnectionContext | null;
-    public kU_RelTableConnection(i?: number): KU_RelTableConnectionContext[] | KU_RelTableConnectionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_RelTableConnectionContext);
-        }
-
-        return this.getRuleContext(i, KU_RelTableConnectionContext);
+    public kU_RelTableConnection__list(): KU_RelTableConnectionContext[] {
+        return this.getTypedRuleContexts(KU_RelTableConnectionContext);
     }
-    public kU_PropertyDefinitions(): KU_PropertyDefinitionsContext | null {
-        return this.getRuleContext(0, KU_PropertyDefinitionsContext);
+    public kU_RelTableConnection(i: number): KU_RelTableConnectionContext {
+        return this.getTypedRuleContext(KU_RelTableConnectionContext, i);
     }
-    public oC_SymbolicName(): OC_SymbolicNameContext | null {
-        return this.getRuleContext(0, OC_SymbolicNameContext);
+    public kU_PropertyDefinitions(): KU_PropertyDefinitionsContext {
+        return this.getTypedRuleContext(KU_PropertyDefinitionsContext, 0);
+    }
+    public oC_SymbolicName(): OC_SymbolicNameContext {
+        return this.getTypedRuleContext(OC_SymbolicNameContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_CreateRelTableGroup;
@@ -11665,28 +11723,22 @@ export class KU_RelTableConnectionContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public FROM(): antlr.TerminalNode {
-        return this.getToken(CypherParser.FROM, 0)!;
+        return this.getToken(CypherParser.FROM, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public oC_SchemaName(): OC_SchemaNameContext[];
-    public oC_SchemaName(i: number): OC_SchemaNameContext | null;
-    public oC_SchemaName(i?: number): OC_SchemaNameContext[] | OC_SchemaNameContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_SchemaNameContext);
-        }
-
-        return this.getRuleContext(i, OC_SchemaNameContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public oC_SchemaName__list(): OC_SchemaNameContext[] {
+        return this.getTypedRuleContexts(OC_SchemaNameContext);
+    }
+    public oC_SchemaName(i: number): OC_SchemaNameContext {
+        return this.getTypedRuleContext(OC_SchemaNameContext, i);
     }
     public TO(): antlr.TerminalNode {
-        return this.getToken(CypherParser.TO, 0)!;
+        return this.getToken(CypherParser.TO, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_RelTableConnection;
@@ -11699,22 +11751,19 @@ export class KU_CreateRdfGraphContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public CREATE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.CREATE, 0)!;
+        return this.getToken(CypherParser.CREATE, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public RDFGRAPH(): antlr.TerminalNode {
-        return this.getToken(CypherParser.RDFGRAPH, 0)!;
+        return this.getToken(CypherParser.RDFGRAPH, 0);
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        return this.getRuleContext(0, OC_SchemaNameContext)!;
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_CreateRdfGraph;
@@ -11727,24 +11776,21 @@ export class KU_DropTableContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public DROP(): antlr.TerminalNode {
-        return this.getToken(CypherParser.DROP, 0)!;
+        return this.getToken(CypherParser.DROP, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        return this.getRuleContext(0, OC_SchemaNameContext)!;
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
-    public TABLE(): antlr.TerminalNode | null {
+    public TABLE(): antlr.TerminalNode {
         return this.getToken(CypherParser.TABLE, 0);
     }
-    public RDFGRAPH(): antlr.TerminalNode | null {
+    public RDFGRAPH(): antlr.TerminalNode {
         return this.getToken(CypherParser.RDFGRAPH, 0);
     }
     public override get ruleIndex(): number {
@@ -11758,25 +11804,22 @@ export class KU_AlterTableContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public ALTER(): antlr.TerminalNode {
-        return this.getToken(CypherParser.ALTER, 0)!;
+        return this.getToken(CypherParser.ALTER, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public TABLE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.TABLE, 0)!;
+        return this.getToken(CypherParser.TABLE, 0);
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        return this.getRuleContext(0, OC_SchemaNameContext)!;
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
     public kU_AlterOptions(): KU_AlterOptionsContext {
-        return this.getRuleContext(0, KU_AlterOptionsContext)!;
+        return this.getTypedRuleContext(KU_AlterOptionsContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_AlterTable;
@@ -11788,17 +11831,17 @@ export class KU_AlterOptionsContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public kU_AddProperty(): KU_AddPropertyContext | null {
-        return this.getRuleContext(0, KU_AddPropertyContext);
+    public kU_AddProperty(): KU_AddPropertyContext {
+        return this.getTypedRuleContext(KU_AddPropertyContext, 0);
     }
-    public kU_DropProperty(): KU_DropPropertyContext | null {
-        return this.getRuleContext(0, KU_DropPropertyContext);
+    public kU_DropProperty(): KU_DropPropertyContext {
+        return this.getTypedRuleContext(KU_DropPropertyContext, 0);
     }
-    public kU_RenameTable(): KU_RenameTableContext | null {
-        return this.getRuleContext(0, KU_RenameTableContext);
+    public kU_RenameTable(): KU_RenameTableContext {
+        return this.getTypedRuleContext(KU_RenameTableContext, 0);
     }
-    public kU_RenameProperty(): KU_RenamePropertyContext | null {
-        return this.getRuleContext(0, KU_RenamePropertyContext);
+    public kU_RenameProperty(): KU_RenamePropertyContext {
+        return this.getTypedRuleContext(KU_RenamePropertyContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_AlterOptions;
@@ -11811,28 +11854,25 @@ export class KU_AddPropertyContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public ADD(): antlr.TerminalNode {
-        return this.getToken(CypherParser.ADD, 0)!;
+        return this.getToken(CypherParser.ADD, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public oC_PropertyKeyName(): OC_PropertyKeyNameContext {
-        return this.getRuleContext(0, OC_PropertyKeyNameContext)!;
+        return this.getTypedRuleContext(OC_PropertyKeyNameContext, 0);
     }
     public kU_DataType(): KU_DataTypeContext {
-        return this.getRuleContext(0, KU_DataTypeContext)!;
+        return this.getTypedRuleContext(KU_DataTypeContext, 0);
     }
-    public DEFAULT(): antlr.TerminalNode | null {
+    public DEFAULT(): antlr.TerminalNode {
         return this.getToken(CypherParser.DEFAULT, 0);
     }
-    public oC_Expression(): OC_ExpressionContext | null {
-        return this.getRuleContext(0, OC_ExpressionContext);
+    public oC_Expression(): OC_ExpressionContext {
+        return this.getTypedRuleContext(OC_ExpressionContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_AddProperty;
@@ -11845,13 +11885,13 @@ export class KU_DropPropertyContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public DROP(): antlr.TerminalNode {
-        return this.getToken(CypherParser.DROP, 0)!;
+        return this.getToken(CypherParser.DROP, 0);
     }
     public SP(): antlr.TerminalNode {
-        return this.getToken(CypherParser.SP, 0)!;
+        return this.getToken(CypherParser.SP, 0);
     }
     public oC_PropertyKeyName(): OC_PropertyKeyNameContext {
-        return this.getRuleContext(0, OC_PropertyKeyNameContext)!;
+        return this.getTypedRuleContext(OC_PropertyKeyNameContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_DropProperty;
@@ -11864,22 +11904,19 @@ export class KU_RenameTableContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public RENAME(): antlr.TerminalNode {
-        return this.getToken(CypherParser.RENAME, 0)!;
+        return this.getToken(CypherParser.RENAME, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public TO(): antlr.TerminalNode {
-        return this.getToken(CypherParser.TO, 0)!;
+        return this.getToken(CypherParser.TO, 0);
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        return this.getRuleContext(0, OC_SchemaNameContext)!;
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_RenameTable;
@@ -11892,28 +11929,22 @@ export class KU_RenamePropertyContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public RENAME(): antlr.TerminalNode {
-        return this.getToken(CypherParser.RENAME, 0)!;
+        return this.getToken(CypherParser.RENAME, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public oC_PropertyKeyName(): OC_PropertyKeyNameContext[];
-    public oC_PropertyKeyName(i: number): OC_PropertyKeyNameContext | null;
-    public oC_PropertyKeyName(i?: number): OC_PropertyKeyNameContext[] | OC_PropertyKeyNameContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_PropertyKeyNameContext);
-        }
-
-        return this.getRuleContext(i, OC_PropertyKeyNameContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public oC_PropertyKeyName__list(): OC_PropertyKeyNameContext[] {
+        return this.getTypedRuleContexts(OC_PropertyKeyNameContext);
+    }
+    public oC_PropertyKeyName(i: number): OC_PropertyKeyNameContext {
+        return this.getTypedRuleContext(OC_PropertyKeyNameContext, i);
     }
     public TO(): antlr.TerminalNode {
-        return this.getToken(CypherParser.TO, 0)!;
+        return this.getToken(CypherParser.TO, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_RenameProperty;
@@ -11925,23 +11956,17 @@ export class KU_PropertyDefinitionsContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public kU_PropertyDefinition(): KU_PropertyDefinitionContext[];
-    public kU_PropertyDefinition(i: number): KU_PropertyDefinitionContext | null;
-    public kU_PropertyDefinition(i?: number): KU_PropertyDefinitionContext[] | KU_PropertyDefinitionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_PropertyDefinitionContext);
-        }
-
-        return this.getRuleContext(i, KU_PropertyDefinitionContext);
+    public kU_PropertyDefinition__list(): KU_PropertyDefinitionContext[] {
+        return this.getTypedRuleContexts(KU_PropertyDefinitionContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public kU_PropertyDefinition(i: number): KU_PropertyDefinitionContext {
+        return this.getTypedRuleContext(KU_PropertyDefinitionContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_PropertyDefinitions;
@@ -11954,13 +11979,13 @@ export class KU_PropertyDefinitionContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_PropertyKeyName(): OC_PropertyKeyNameContext {
-        return this.getRuleContext(0, OC_PropertyKeyNameContext)!;
+        return this.getTypedRuleContext(OC_PropertyKeyNameContext, 0);
     }
     public SP(): antlr.TerminalNode {
-        return this.getToken(CypherParser.SP, 0)!;
+        return this.getToken(CypherParser.SP, 0);
     }
     public kU_DataType(): KU_DataTypeContext {
-        return this.getRuleContext(0, KU_DataTypeContext)!;
+        return this.getTypedRuleContext(KU_DataTypeContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_PropertyDefinition;
@@ -11973,22 +11998,19 @@ export class KU_CreateNodeConstraintContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public PRIMARY(): antlr.TerminalNode {
-        return this.getToken(CypherParser.PRIMARY, 0)!;
+        return this.getToken(CypherParser.PRIMARY, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public KEY(): antlr.TerminalNode {
-        return this.getToken(CypherParser.KEY, 0)!;
+        return this.getToken(CypherParser.KEY, 0);
     }
     public oC_PropertyKeyName(): OC_PropertyKeyNameContext {
-        return this.getRuleContext(0, OC_PropertyKeyNameContext)!;
+        return this.getTypedRuleContext(OC_PropertyKeyNameContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_CreateNodeConstraint;
@@ -12000,35 +12022,29 @@ export class KU_DataTypeContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_SymbolicName(): OC_SymbolicNameContext | null {
-        return this.getRuleContext(0, OC_SymbolicNameContext);
+    public oC_SymbolicName(): OC_SymbolicNameContext {
+        return this.getTypedRuleContext(OC_SymbolicNameContext, 0);
     }
-    public UNION(): antlr.TerminalNode | null {
+    public UNION(): antlr.TerminalNode {
         return this.getToken(CypherParser.UNION, 0);
     }
-    public kU_PropertyDefinitions(): KU_PropertyDefinitionsContext | null {
-        return this.getRuleContext(0, KU_PropertyDefinitionsContext);
+    public kU_PropertyDefinitions(): KU_PropertyDefinitionsContext {
+        return this.getTypedRuleContext(KU_PropertyDefinitionsContext, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public kU_DataType(): KU_DataTypeContext[];
-    public kU_DataType(i: number): KU_DataTypeContext | null;
-    public kU_DataType(i?: number): KU_DataTypeContext[] | KU_DataTypeContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_DataTypeContext);
-        }
-
-        return this.getRuleContext(i, KU_DataTypeContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
-    public kU_ListIdentifiers(): KU_ListIdentifiersContext | null {
-        return this.getRuleContext(0, KU_ListIdentifiersContext);
+    public kU_DataType__list(): KU_DataTypeContext[] {
+        return this.getTypedRuleContexts(KU_DataTypeContext);
+    }
+    public kU_DataType(i: number): KU_DataTypeContext {
+        return this.getTypedRuleContext(KU_DataTypeContext, i);
+    }
+    public kU_ListIdentifiers(): KU_ListIdentifiersContext {
+        return this.getTypedRuleContext(KU_ListIdentifiersContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_DataType;
@@ -12040,14 +12056,11 @@ export class KU_ListIdentifiersContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public kU_ListIdentifier(): KU_ListIdentifierContext[];
-    public kU_ListIdentifier(i: number): KU_ListIdentifierContext | null;
-    public kU_ListIdentifier(i?: number): KU_ListIdentifierContext[] | KU_ListIdentifierContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_ListIdentifierContext);
-        }
-
-        return this.getRuleContext(i, KU_ListIdentifierContext);
+    public kU_ListIdentifier__list(): KU_ListIdentifierContext[] {
+        return this.getTypedRuleContexts(KU_ListIdentifierContext);
+    }
+    public kU_ListIdentifier(i: number): KU_ListIdentifierContext {
+        return this.getTypedRuleContext(KU_ListIdentifierContext, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_ListIdentifiers;
@@ -12059,8 +12072,8 @@ export class KU_ListIdentifierContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_IntegerLiteral(): OC_IntegerLiteralContext | null {
-        return this.getRuleContext(0, OC_IntegerLiteralContext);
+    public oC_IntegerLiteral(): OC_IntegerLiteralContext {
+        return this.getTypedRuleContext(OC_IntegerLiteralContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_ListIdentifier;
@@ -12072,11 +12085,11 @@ export class OC_AnyCypherOptionContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_Explain(): OC_ExplainContext | null {
-        return this.getRuleContext(0, OC_ExplainContext);
+    public oC_Explain(): OC_ExplainContext {
+        return this.getTypedRuleContext(OC_ExplainContext, 0);
     }
-    public oC_Profile(): OC_ProfileContext | null {
-        return this.getRuleContext(0, OC_ProfileContext);
+    public oC_Profile(): OC_ProfileContext {
+        return this.getTypedRuleContext(OC_ProfileContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_AnyCypherOption;
@@ -12089,7 +12102,7 @@ export class OC_ExplainContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public EXPLAIN(): antlr.TerminalNode {
-        return this.getToken(CypherParser.EXPLAIN, 0)!;
+        return this.getToken(CypherParser.EXPLAIN, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Explain;
@@ -12102,7 +12115,7 @@ export class OC_ProfileContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public PROFILE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.PROFILE, 0)!;
+        return this.getToken(CypherParser.PROFILE, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Profile;
@@ -12114,37 +12127,34 @@ export class KU_TransactionContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public BEGIN(): antlr.TerminalNode | null {
+    public BEGIN(): antlr.TerminalNode {
         return this.getToken(CypherParser.BEGIN, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public TRANSACTION(): antlr.TerminalNode | null {
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public TRANSACTION(): antlr.TerminalNode {
         return this.getToken(CypherParser.TRANSACTION, 0);
     }
-    public READ(): antlr.TerminalNode | null {
+    public READ(): antlr.TerminalNode {
         return this.getToken(CypherParser.READ, 0);
     }
-    public ONLY(): antlr.TerminalNode | null {
+    public ONLY(): antlr.TerminalNode {
         return this.getToken(CypherParser.ONLY, 0);
     }
-    public COMMIT(): antlr.TerminalNode | null {
+    public COMMIT(): antlr.TerminalNode {
         return this.getToken(CypherParser.COMMIT, 0);
     }
-    public COMMIT_SKIP_CHECKPOINT(): antlr.TerminalNode | null {
+    public COMMIT_SKIP_CHECKPOINT(): antlr.TerminalNode {
         return this.getToken(CypherParser.COMMIT_SKIP_CHECKPOINT, 0);
     }
-    public ROLLBACK(): antlr.TerminalNode | null {
+    public ROLLBACK(): antlr.TerminalNode {
         return this.getToken(CypherParser.ROLLBACK, 0);
     }
-    public ROLLBACK_SKIP_CHECKPOINT(): antlr.TerminalNode | null {
+    public ROLLBACK_SKIP_CHECKPOINT(): antlr.TerminalNode {
         return this.getToken(CypherParser.ROLLBACK_SKIP_CHECKPOINT, 0);
     }
     public override get ruleIndex(): number {
@@ -12157,11 +12167,11 @@ export class KU_ExtensionContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public kU_LoadExtension(): KU_LoadExtensionContext | null {
-        return this.getRuleContext(0, KU_LoadExtensionContext);
+    public kU_LoadExtension(): KU_LoadExtensionContext {
+        return this.getTypedRuleContext(KU_LoadExtensionContext, 0);
     }
-    public kU_InstallExtension(): KU_InstallExtensionContext | null {
-        return this.getRuleContext(0, KU_InstallExtensionContext);
+    public kU_InstallExtension(): KU_InstallExtensionContext {
+        return this.getTypedRuleContext(KU_InstallExtensionContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_Extension;
@@ -12174,25 +12184,22 @@ export class KU_LoadExtensionContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public LOAD(): antlr.TerminalNode {
-        return this.getToken(CypherParser.LOAD, 0)!;
+        return this.getToken(CypherParser.LOAD, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public EXTENSION(): antlr.TerminalNode {
-        return this.getToken(CypherParser.EXTENSION, 0)!;
+        return this.getToken(CypherParser.EXTENSION, 0);
     }
-    public StringLiteral(): antlr.TerminalNode | null {
+    public StringLiteral(): antlr.TerminalNode {
         return this.getToken(CypherParser.StringLiteral, 0);
     }
-    public oC_Variable(): OC_VariableContext | null {
-        return this.getRuleContext(0, OC_VariableContext);
+    public oC_Variable(): OC_VariableContext {
+        return this.getTypedRuleContext(OC_VariableContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_LoadExtension;
@@ -12205,13 +12212,13 @@ export class KU_InstallExtensionContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public INSTALL(): antlr.TerminalNode {
-        return this.getToken(CypherParser.INSTALL, 0)!;
+        return this.getToken(CypherParser.INSTALL, 0);
     }
     public SP(): antlr.TerminalNode {
-        return this.getToken(CypherParser.SP, 0)!;
+        return this.getToken(CypherParser.SP, 0);
     }
     public oC_Variable(): OC_VariableContext {
-        return this.getRuleContext(0, OC_VariableContext)!;
+        return this.getTypedRuleContext(OC_VariableContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_InstallExtension;
@@ -12224,7 +12231,7 @@ export class OC_QueryContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_RegularQuery(): OC_RegularQueryContext {
-        return this.getRuleContext(0, OC_RegularQueryContext)!;
+        return this.getTypedRuleContext(OC_RegularQueryContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Query;
@@ -12237,34 +12244,25 @@ export class OC_RegularQueryContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_SingleQuery(): OC_SingleQueryContext {
-        return this.getRuleContext(0, OC_SingleQueryContext)!;
+        return this.getTypedRuleContext(OC_SingleQueryContext, 0);
     }
-    public oC_Union(): OC_UnionContext[];
-    public oC_Union(i: number): OC_UnionContext | null;
-    public oC_Union(i?: number): OC_UnionContext[] | OC_UnionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_UnionContext);
-        }
-
-        return this.getRuleContext(i, OC_UnionContext);
+    public oC_Union__list(): OC_UnionContext[] {
+        return this.getTypedRuleContexts(OC_UnionContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_Union(i: number): OC_UnionContext {
+        return this.getTypedRuleContext(OC_UnionContext, i);
     }
-    public oC_Return(): OC_ReturnContext[];
-    public oC_Return(i: number): OC_ReturnContext | null;
-    public oC_Return(i?: number): OC_ReturnContext[] | OC_ReturnContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_ReturnContext);
-        }
-
-        return this.getRuleContext(i, OC_ReturnContext);
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public oC_Return__list(): OC_ReturnContext[] {
+        return this.getTypedRuleContexts(OC_ReturnContext);
+    }
+    public oC_Return(i: number): OC_ReturnContext {
+        return this.getTypedRuleContext(OC_ReturnContext, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_RegularQuery;
@@ -12276,23 +12274,20 @@ export class OC_UnionContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public UNION(): antlr.TerminalNode | null {
+    public UNION(): antlr.TerminalNode {
         return this.getToken(CypherParser.UNION, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public ALL(): antlr.TerminalNode | null {
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public ALL(): antlr.TerminalNode {
         return this.getToken(CypherParser.ALL, 0);
     }
-    public oC_SingleQuery(): OC_SingleQueryContext | null {
-        return this.getRuleContext(0, OC_SingleQueryContext);
+    public oC_SingleQuery(): OC_SingleQueryContext {
+        return this.getTypedRuleContext(OC_SingleQueryContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Union;
@@ -12304,11 +12299,11 @@ export class OC_SingleQueryContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_SinglePartQuery(): OC_SinglePartQueryContext | null {
-        return this.getRuleContext(0, OC_SinglePartQueryContext);
+    public oC_SinglePartQuery(): OC_SinglePartQueryContext {
+        return this.getTypedRuleContext(OC_SinglePartQueryContext, 0);
     }
-    public oC_MultiPartQuery(): OC_MultiPartQueryContext | null {
-        return this.getRuleContext(0, OC_MultiPartQueryContext);
+    public oC_MultiPartQuery(): OC_MultiPartQueryContext {
+        return this.getTypedRuleContext(OC_MultiPartQueryContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_SingleQuery;
@@ -12320,35 +12315,26 @@ export class OC_SinglePartQueryContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_Return(): OC_ReturnContext | null {
-        return this.getRuleContext(0, OC_ReturnContext);
+    public oC_Return(): OC_ReturnContext {
+        return this.getTypedRuleContext(OC_ReturnContext, 0);
     }
-    public oC_ReadingClause(): OC_ReadingClauseContext[];
-    public oC_ReadingClause(i: number): OC_ReadingClauseContext | null;
-    public oC_ReadingClause(i?: number): OC_ReadingClauseContext[] | OC_ReadingClauseContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_ReadingClauseContext);
-        }
-
-        return this.getRuleContext(i, OC_ReadingClauseContext);
+    public oC_ReadingClause__list(): OC_ReadingClauseContext[] {
+        return this.getTypedRuleContexts(OC_ReadingClauseContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_ReadingClause(i: number): OC_ReadingClauseContext {
+        return this.getTypedRuleContext(OC_ReadingClauseContext, i);
     }
-    public oC_UpdatingClause(): OC_UpdatingClauseContext[];
-    public oC_UpdatingClause(i: number): OC_UpdatingClauseContext | null;
-    public oC_UpdatingClause(i?: number): OC_UpdatingClauseContext[] | OC_UpdatingClauseContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_UpdatingClauseContext);
-        }
-
-        return this.getRuleContext(i, OC_UpdatingClauseContext);
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public oC_UpdatingClause__list(): OC_UpdatingClauseContext[] {
+        return this.getTypedRuleContexts(OC_UpdatingClauseContext);
+    }
+    public oC_UpdatingClause(i: number): OC_UpdatingClauseContext {
+        return this.getTypedRuleContext(OC_UpdatingClauseContext, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_SinglePartQuery;
@@ -12361,25 +12347,19 @@ export class OC_MultiPartQueryContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_SinglePartQuery(): OC_SinglePartQueryContext {
-        return this.getRuleContext(0, OC_SinglePartQueryContext)!;
+        return this.getTypedRuleContext(OC_SinglePartQueryContext, 0);
     }
-    public kU_QueryPart(): KU_QueryPartContext[];
-    public kU_QueryPart(i: number): KU_QueryPartContext | null;
-    public kU_QueryPart(i?: number): KU_QueryPartContext[] | KU_QueryPartContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_QueryPartContext);
-        }
-
-        return this.getRuleContext(i, KU_QueryPartContext);
+    public kU_QueryPart__list(): KU_QueryPartContext[] {
+        return this.getTypedRuleContexts(KU_QueryPartContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public kU_QueryPart(i: number): KU_QueryPartContext {
+        return this.getTypedRuleContext(KU_QueryPartContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_MultiPartQuery;
@@ -12392,34 +12372,25 @@ export class KU_QueryPartContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_With(): OC_WithContext {
-        return this.getRuleContext(0, OC_WithContext)!;
+        return this.getTypedRuleContext(OC_WithContext, 0);
     }
-    public oC_ReadingClause(): OC_ReadingClauseContext[];
-    public oC_ReadingClause(i: number): OC_ReadingClauseContext | null;
-    public oC_ReadingClause(i?: number): OC_ReadingClauseContext[] | OC_ReadingClauseContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_ReadingClauseContext);
-        }
-
-        return this.getRuleContext(i, OC_ReadingClauseContext);
+    public oC_ReadingClause__list(): OC_ReadingClauseContext[] {
+        return this.getTypedRuleContexts(OC_ReadingClauseContext);
     }
-    public oC_UpdatingClause(): OC_UpdatingClauseContext[];
-    public oC_UpdatingClause(i: number): OC_UpdatingClauseContext | null;
-    public oC_UpdatingClause(i?: number): OC_UpdatingClauseContext[] | OC_UpdatingClauseContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_UpdatingClauseContext);
-        }
-
-        return this.getRuleContext(i, OC_UpdatingClauseContext);
+    public oC_ReadingClause(i: number): OC_ReadingClauseContext {
+        return this.getTypedRuleContext(OC_ReadingClauseContext, i);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_UpdatingClause__list(): OC_UpdatingClauseContext[] {
+        return this.getTypedRuleContexts(OC_UpdatingClauseContext);
+    }
+    public oC_UpdatingClause(i: number): OC_UpdatingClauseContext {
+        return this.getTypedRuleContext(OC_UpdatingClauseContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_QueryPart;
@@ -12431,17 +12402,17 @@ export class OC_UpdatingClauseContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_Create(): OC_CreateContext | null {
-        return this.getRuleContext(0, OC_CreateContext);
+    public oC_Create(): OC_CreateContext {
+        return this.getTypedRuleContext(OC_CreateContext, 0);
     }
-    public oC_Merge(): OC_MergeContext | null {
-        return this.getRuleContext(0, OC_MergeContext);
+    public oC_Merge(): OC_MergeContext {
+        return this.getTypedRuleContext(OC_MergeContext, 0);
     }
-    public oC_Set(): OC_SetContext | null {
-        return this.getRuleContext(0, OC_SetContext);
+    public oC_Set(): OC_SetContext {
+        return this.getTypedRuleContext(OC_SetContext, 0);
     }
-    public oC_Delete(): OC_DeleteContext | null {
-        return this.getRuleContext(0, OC_DeleteContext);
+    public oC_Delete(): OC_DeleteContext {
+        return this.getTypedRuleContext(OC_DeleteContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_UpdatingClause;
@@ -12453,17 +12424,17 @@ export class OC_ReadingClauseContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_Match(): OC_MatchContext | null {
-        return this.getRuleContext(0, OC_MatchContext);
+    public oC_Match(): OC_MatchContext {
+        return this.getTypedRuleContext(OC_MatchContext, 0);
     }
-    public oC_Unwind(): OC_UnwindContext | null {
-        return this.getRuleContext(0, OC_UnwindContext);
+    public oC_Unwind(): OC_UnwindContext {
+        return this.getTypedRuleContext(OC_UnwindContext, 0);
     }
-    public kU_InQueryCall(): KU_InQueryCallContext | null {
-        return this.getRuleContext(0, KU_InQueryCallContext);
+    public kU_InQueryCall(): KU_InQueryCallContext {
+        return this.getTypedRuleContext(KU_InQueryCallContext, 0);
     }
-    public kU_LoadFrom(): KU_LoadFromContext | null {
-        return this.getRuleContext(0, KU_LoadFromContext);
+    public kU_LoadFrom(): KU_LoadFromContext {
+        return this.getTypedRuleContext(KU_LoadFromContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_ReadingClause;
@@ -12476,37 +12447,34 @@ export class KU_LoadFromContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public LOAD(): antlr.TerminalNode {
-        return this.getToken(CypherParser.LOAD, 0)!;
+        return this.getToken(CypherParser.LOAD, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public FROM(): antlr.TerminalNode {
-        return this.getToken(CypherParser.FROM, 0)!;
+        return this.getToken(CypherParser.FROM, 0);
     }
     public kU_ScanSource(): KU_ScanSourceContext {
-        return this.getRuleContext(0, KU_ScanSourceContext)!;
+        return this.getTypedRuleContext(KU_ScanSourceContext, 0);
     }
-    public WITH(): antlr.TerminalNode | null {
+    public WITH(): antlr.TerminalNode {
         return this.getToken(CypherParser.WITH, 0);
     }
-    public HEADERS(): antlr.TerminalNode | null {
+    public HEADERS(): antlr.TerminalNode {
         return this.getToken(CypherParser.HEADERS, 0);
     }
-    public kU_PropertyDefinitions(): KU_PropertyDefinitionsContext | null {
-        return this.getRuleContext(0, KU_PropertyDefinitionsContext);
+    public kU_PropertyDefinitions(): KU_PropertyDefinitionsContext {
+        return this.getTypedRuleContext(KU_PropertyDefinitionsContext, 0);
     }
-    public kU_ParsingOptions(): KU_ParsingOptionsContext | null {
-        return this.getRuleContext(0, KU_ParsingOptionsContext);
+    public kU_ParsingOptions(): KU_ParsingOptionsContext {
+        return this.getTypedRuleContext(KU_ParsingOptionsContext, 0);
     }
-    public oC_Where(): OC_WhereContext | null {
-        return this.getRuleContext(0, OC_WhereContext);
+    public oC_Where(): OC_WhereContext {
+        return this.getTypedRuleContext(OC_WhereContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_LoadFrom;
@@ -12519,22 +12487,19 @@ export class KU_InQueryCallContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public CALL(): antlr.TerminalNode {
-        return this.getToken(CypherParser.CALL, 0)!;
+        return this.getToken(CypherParser.CALL, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public oC_FunctionInvocation(): OC_FunctionInvocationContext {
-        return this.getRuleContext(0, OC_FunctionInvocationContext)!;
+        return this.getTypedRuleContext(OC_FunctionInvocationContext, 0);
     }
-    public oC_Where(): OC_WhereContext | null {
-        return this.getRuleContext(0, OC_WhereContext);
+    public oC_Where(): OC_WhereContext {
+        return this.getTypedRuleContext(OC_WhereContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_InQueryCall;
@@ -12547,25 +12512,22 @@ export class OC_MatchContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public MATCH(): antlr.TerminalNode {
-        return this.getToken(CypherParser.MATCH, 0)!;
+        return this.getToken(CypherParser.MATCH, 0);
     }
     public oC_Pattern(): OC_PatternContext {
-        return this.getRuleContext(0, OC_PatternContext)!;
+        return this.getTypedRuleContext(OC_PatternContext, 0);
     }
-    public OPTIONAL(): antlr.TerminalNode | null {
+    public OPTIONAL(): antlr.TerminalNode {
         return this.getToken(CypherParser.OPTIONAL, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public oC_Where(): OC_WhereContext | null {
-        return this.getRuleContext(0, OC_WhereContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public oC_Where(): OC_WhereContext {
+        return this.getTypedRuleContext(OC_WhereContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Match;
@@ -12578,25 +12540,22 @@ export class OC_UnwindContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public UNWIND(): antlr.TerminalNode {
-        return this.getToken(CypherParser.UNWIND, 0)!;
+        return this.getToken(CypherParser.UNWIND, 0);
     }
     public oC_Expression(): OC_ExpressionContext {
-        return this.getRuleContext(0, OC_ExpressionContext)!;
+        return this.getTypedRuleContext(OC_ExpressionContext, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public AS(): antlr.TerminalNode {
-        return this.getToken(CypherParser.AS, 0)!;
+        return this.getToken(CypherParser.AS, 0);
     }
     public oC_Variable(): OC_VariableContext {
-        return this.getRuleContext(0, OC_VariableContext)!;
+        return this.getTypedRuleContext(OC_VariableContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Unwind;
@@ -12609,12 +12568,12 @@ export class OC_CreateContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public CREATE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.CREATE, 0)!;
+        return this.getToken(CypherParser.CREATE, 0);
     }
     public oC_Pattern(): OC_PatternContext {
-        return this.getRuleContext(0, OC_PatternContext)!;
+        return this.getTypedRuleContext(OC_PatternContext, 0);
     }
-    public SP(): antlr.TerminalNode | null {
+    public SP(): antlr.TerminalNode {
         return this.getToken(CypherParser.SP, 0);
     }
     public override get ruleIndex(): number {
@@ -12628,28 +12587,22 @@ export class OC_MergeContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public MERGE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.MERGE, 0)!;
+        return this.getToken(CypherParser.MERGE, 0);
     }
     public oC_Pattern(): OC_PatternContext {
-        return this.getRuleContext(0, OC_PatternContext)!;
+        return this.getTypedRuleContext(OC_PatternContext, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public oC_MergeAction(): OC_MergeActionContext[];
-    public oC_MergeAction(i: number): OC_MergeActionContext | null;
-    public oC_MergeAction(i?: number): OC_MergeActionContext[] | OC_MergeActionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_MergeActionContext);
-        }
-
-        return this.getRuleContext(i, OC_MergeActionContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public oC_MergeAction__list(): OC_MergeActionContext[] {
+        return this.getTypedRuleContexts(OC_MergeActionContext);
+    }
+    public oC_MergeAction(i: number): OC_MergeActionContext {
+        return this.getTypedRuleContext(OC_MergeActionContext, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Merge;
@@ -12661,25 +12614,22 @@ export class OC_MergeActionContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public ON(): antlr.TerminalNode | null {
+    public ON(): antlr.TerminalNode {
         return this.getToken(CypherParser.ON, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public MATCH(): antlr.TerminalNode | null {
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public MATCH(): antlr.TerminalNode {
         return this.getToken(CypherParser.MATCH, 0);
     }
-    public oC_Set(): OC_SetContext | null {
-        return this.getRuleContext(0, OC_SetContext);
+    public oC_Set(): OC_SetContext {
+        return this.getTypedRuleContext(OC_SetContext, 0);
     }
-    public CREATE(): antlr.TerminalNode | null {
+    public CREATE(): antlr.TerminalNode {
         return this.getToken(CypherParser.CREATE, 0);
     }
     public override get ruleIndex(): number {
@@ -12693,25 +12643,19 @@ export class OC_SetContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public SET(): antlr.TerminalNode {
-        return this.getToken(CypherParser.SET, 0)!;
+        return this.getToken(CypherParser.SET, 0);
     }
-    public oC_SetItem(): OC_SetItemContext[];
-    public oC_SetItem(i: number): OC_SetItemContext | null;
-    public oC_SetItem(i?: number): OC_SetItemContext[] | OC_SetItemContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_SetItemContext);
-        }
-
-        return this.getRuleContext(i, OC_SetItemContext);
+    public oC_SetItem__list(): OC_SetItemContext[] {
+        return this.getTypedRuleContexts(OC_SetItemContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_SetItem(i: number): OC_SetItemContext {
+        return this.getTypedRuleContext(OC_SetItemContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Set;
@@ -12723,20 +12667,17 @@ export class OC_SetItemContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_PropertyExpression(): OC_PropertyExpressionContext | null {
-        return this.getRuleContext(0, OC_PropertyExpressionContext);
+    public oC_PropertyExpression(): OC_PropertyExpressionContext {
+        return this.getTypedRuleContext(OC_PropertyExpressionContext, 0);
     }
-    public oC_Expression(): OC_ExpressionContext | null {
-        return this.getRuleContext(0, OC_ExpressionContext);
+    public oC_Expression(): OC_ExpressionContext {
+        return this.getTypedRuleContext(OC_ExpressionContext, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_SetItem;
@@ -12749,28 +12690,22 @@ export class OC_DeleteContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public DELETE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.DELETE, 0)!;
+        return this.getToken(CypherParser.DELETE, 0);
     }
-    public oC_Expression(): OC_ExpressionContext[];
-    public oC_Expression(i: number): OC_ExpressionContext | null;
-    public oC_Expression(i?: number): OC_ExpressionContext[] | OC_ExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_ExpressionContext);
-        }
-
-        return this.getRuleContext(i, OC_ExpressionContext);
+    public oC_Expression__list(): OC_ExpressionContext[] {
+        return this.getTypedRuleContexts(OC_ExpressionContext);
     }
-    public DETACH(): antlr.TerminalNode | null {
+    public oC_Expression(i: number): OC_ExpressionContext {
+        return this.getTypedRuleContext(OC_ExpressionContext, i);
+    }
+    public DETACH(): antlr.TerminalNode {
         return this.getToken(CypherParser.DETACH, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Delete;
@@ -12783,15 +12718,15 @@ export class OC_WithContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public WITH(): antlr.TerminalNode {
-        return this.getToken(CypherParser.WITH, 0)!;
+        return this.getToken(CypherParser.WITH, 0);
     }
     public oC_ProjectionBody(): OC_ProjectionBodyContext {
-        return this.getRuleContext(0, OC_ProjectionBodyContext)!;
+        return this.getTypedRuleContext(OC_ProjectionBodyContext, 0);
     }
-    public oC_Where(): OC_WhereContext | null {
-        return this.getRuleContext(0, OC_WhereContext);
+    public oC_Where(): OC_WhereContext {
+        return this.getTypedRuleContext(OC_WhereContext, 0);
     }
-    public SP(): antlr.TerminalNode | null {
+    public SP(): antlr.TerminalNode {
         return this.getToken(CypherParser.SP, 0);
     }
     public override get ruleIndex(): number {
@@ -12805,10 +12740,10 @@ export class OC_ReturnContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public RETURN(): antlr.TerminalNode {
-        return this.getToken(CypherParser.RETURN, 0)!;
+        return this.getToken(CypherParser.RETURN, 0);
     }
     public oC_ProjectionBody(): OC_ProjectionBodyContext {
-        return this.getRuleContext(0, OC_ProjectionBodyContext)!;
+        return this.getTypedRuleContext(OC_ProjectionBodyContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Return;
@@ -12820,29 +12755,26 @@ export class OC_ProjectionBodyContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public oC_ProjectionItems(): OC_ProjectionItemsContext {
-        return this.getRuleContext(0, OC_ProjectionItemsContext)!;
+        return this.getTypedRuleContext(OC_ProjectionItemsContext, 0);
     }
-    public DISTINCT(): antlr.TerminalNode | null {
+    public DISTINCT(): antlr.TerminalNode {
         return this.getToken(CypherParser.DISTINCT, 0);
     }
-    public oC_Order(): OC_OrderContext | null {
-        return this.getRuleContext(0, OC_OrderContext);
+    public oC_Order(): OC_OrderContext {
+        return this.getTypedRuleContext(OC_OrderContext, 0);
     }
-    public oC_Skip(): OC_SkipContext | null {
-        return this.getRuleContext(0, OC_SkipContext);
+    public oC_Skip(): OC_SkipContext {
+        return this.getTypedRuleContext(OC_SkipContext, 0);
     }
-    public oC_Limit(): OC_LimitContext | null {
-        return this.getRuleContext(0, OC_LimitContext);
+    public oC_Limit(): OC_LimitContext {
+        return this.getTypedRuleContext(OC_LimitContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_ProjectionBody;
@@ -12854,26 +12786,20 @@ export class OC_ProjectionItemsContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public STAR(): antlr.TerminalNode | null {
+    public STAR(): antlr.TerminalNode {
         return this.getToken(CypherParser.STAR, 0);
     }
-    public oC_ProjectionItem(): OC_ProjectionItemContext[];
-    public oC_ProjectionItem(i: number): OC_ProjectionItemContext | null;
-    public oC_ProjectionItem(i?: number): OC_ProjectionItemContext[] | OC_ProjectionItemContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_ProjectionItemContext);
-        }
-
-        return this.getRuleContext(i, OC_ProjectionItemContext);
+    public oC_ProjectionItem__list(): OC_ProjectionItemContext[] {
+        return this.getTypedRuleContexts(OC_ProjectionItemContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_ProjectionItem(i: number): OC_ProjectionItemContext {
+        return this.getTypedRuleContext(OC_ProjectionItemContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_ProjectionItems;
@@ -12885,23 +12811,20 @@ export class OC_ProjectionItemContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_Expression(): OC_ExpressionContext | null {
-        return this.getRuleContext(0, OC_ExpressionContext);
+    public oC_Expression(): OC_ExpressionContext {
+        return this.getTypedRuleContext(OC_ExpressionContext, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public AS(): antlr.TerminalNode | null {
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public AS(): antlr.TerminalNode {
         return this.getToken(CypherParser.AS, 0);
     }
-    public oC_Variable(): OC_VariableContext | null {
-        return this.getRuleContext(0, OC_VariableContext);
+    public oC_Variable(): OC_VariableContext {
+        return this.getTypedRuleContext(OC_VariableContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_ProjectionItem;
@@ -12914,28 +12837,22 @@ export class OC_OrderContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public ORDER(): antlr.TerminalNode {
-        return this.getToken(CypherParser.ORDER, 0)!;
+        return this.getToken(CypherParser.ORDER, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public BY(): antlr.TerminalNode {
-        return this.getToken(CypherParser.BY, 0)!;
+        return this.getToken(CypherParser.BY, 0);
     }
-    public oC_SortItem(): OC_SortItemContext[];
-    public oC_SortItem(i: number): OC_SortItemContext | null;
-    public oC_SortItem(i?: number): OC_SortItemContext[] | OC_SortItemContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_SortItemContext);
-        }
-
-        return this.getRuleContext(i, OC_SortItemContext);
+    public oC_SortItem__list(): OC_SortItemContext[] {
+        return this.getTypedRuleContexts(OC_SortItemContext);
+    }
+    public oC_SortItem(i: number): OC_SortItemContext {
+        return this.getTypedRuleContext(OC_SortItemContext, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Order;
@@ -12948,13 +12865,13 @@ export class OC_SkipContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public L_SKIP(): antlr.TerminalNode {
-        return this.getToken(CypherParser.L_SKIP, 0)!;
+        return this.getToken(CypherParser.L_SKIP, 0);
     }
     public SP(): antlr.TerminalNode {
-        return this.getToken(CypherParser.SP, 0)!;
+        return this.getToken(CypherParser.SP, 0);
     }
     public oC_Expression(): OC_ExpressionContext {
-        return this.getRuleContext(0, OC_ExpressionContext)!;
+        return this.getTypedRuleContext(OC_ExpressionContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Skip;
@@ -12967,13 +12884,13 @@ export class OC_LimitContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public LIMIT(): antlr.TerminalNode {
-        return this.getToken(CypherParser.LIMIT, 0)!;
+        return this.getToken(CypherParser.LIMIT, 0);
     }
     public SP(): antlr.TerminalNode {
-        return this.getToken(CypherParser.SP, 0)!;
+        return this.getToken(CypherParser.SP, 0);
     }
     public oC_Expression(): OC_ExpressionContext {
-        return this.getRuleContext(0, OC_ExpressionContext)!;
+        return this.getTypedRuleContext(OC_ExpressionContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Limit;
@@ -12986,21 +12903,21 @@ export class OC_SortItemContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_Expression(): OC_ExpressionContext {
-        return this.getRuleContext(0, OC_ExpressionContext)!;
+        return this.getTypedRuleContext(OC_ExpressionContext, 0);
     }
-    public ASCENDING(): antlr.TerminalNode | null {
+    public ASCENDING(): antlr.TerminalNode {
         return this.getToken(CypherParser.ASCENDING, 0);
     }
-    public ASC(): antlr.TerminalNode | null {
+    public ASC(): antlr.TerminalNode {
         return this.getToken(CypherParser.ASC, 0);
     }
-    public DESCENDING(): antlr.TerminalNode | null {
+    public DESCENDING(): antlr.TerminalNode {
         return this.getToken(CypherParser.DESCENDING, 0);
     }
-    public DESC(): antlr.TerminalNode | null {
+    public DESC(): antlr.TerminalNode {
         return this.getToken(CypherParser.DESC, 0);
     }
-    public SP(): antlr.TerminalNode | null {
+    public SP(): antlr.TerminalNode {
         return this.getToken(CypherParser.SP, 0);
     }
     public override get ruleIndex(): number {
@@ -13014,13 +12931,13 @@ export class OC_WhereContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public WHERE(): antlr.TerminalNode {
-        return this.getToken(CypherParser.WHERE, 0)!;
+        return this.getToken(CypherParser.WHERE, 0);
     }
     public SP(): antlr.TerminalNode {
-        return this.getToken(CypherParser.SP, 0)!;
+        return this.getToken(CypherParser.SP, 0);
     }
     public oC_Expression(): OC_ExpressionContext {
-        return this.getRuleContext(0, OC_ExpressionContext)!;
+        return this.getTypedRuleContext(OC_ExpressionContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Where;
@@ -13032,23 +12949,17 @@ export class OC_PatternContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_PatternPart(): OC_PatternPartContext[];
-    public oC_PatternPart(i: number): OC_PatternPartContext | null;
-    public oC_PatternPart(i?: number): OC_PatternPartContext[] | OC_PatternPartContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_PatternPartContext);
-        }
-
-        return this.getRuleContext(i, OC_PatternPartContext);
+    public oC_PatternPart__list(): OC_PatternPartContext[] {
+        return this.getTypedRuleContexts(OC_PatternPartContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_PatternPart(i: number): OC_PatternPartContext {
+        return this.getTypedRuleContext(OC_PatternPartContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Pattern;
@@ -13060,20 +12971,17 @@ export class OC_PatternPartContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_Variable(): OC_VariableContext | null {
-        return this.getRuleContext(0, OC_VariableContext);
+    public oC_Variable(): OC_VariableContext {
+        return this.getTypedRuleContext(OC_VariableContext, 0);
     }
-    public oC_AnonymousPatternPart(): OC_AnonymousPatternPartContext | null {
-        return this.getRuleContext(0, OC_AnonymousPatternPartContext);
+    public oC_AnonymousPatternPart(): OC_AnonymousPatternPartContext {
+        return this.getTypedRuleContext(OC_AnonymousPatternPartContext, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_PatternPart;
@@ -13086,7 +12994,7 @@ export class OC_AnonymousPatternPartContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_PatternElement(): OC_PatternElementContext {
-        return this.getRuleContext(0, OC_PatternElementContext)!;
+        return this.getTypedRuleContext(OC_PatternElementContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_AnonymousPatternPart;
@@ -13098,29 +13006,23 @@ export class OC_PatternElementContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_NodePattern(): OC_NodePatternContext | null {
-        return this.getRuleContext(0, OC_NodePatternContext);
+    public oC_NodePattern(): OC_NodePatternContext {
+        return this.getTypedRuleContext(OC_NodePatternContext, 0);
     }
-    public oC_PatternElementChain(): OC_PatternElementChainContext[];
-    public oC_PatternElementChain(i: number): OC_PatternElementChainContext | null;
-    public oC_PatternElementChain(i?: number): OC_PatternElementChainContext[] | OC_PatternElementChainContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_PatternElementChainContext);
-        }
-
-        return this.getRuleContext(i, OC_PatternElementChainContext);
+    public oC_PatternElementChain__list(): OC_PatternElementChainContext[] {
+        return this.getTypedRuleContexts(OC_PatternElementChainContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_PatternElementChain(i: number): OC_PatternElementChainContext {
+        return this.getTypedRuleContext(OC_PatternElementChainContext, i);
     }
-    public oC_PatternElement(): OC_PatternElementContext | null {
-        return this.getRuleContext(0, OC_PatternElementContext);
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public oC_PatternElement(): OC_PatternElementContext {
+        return this.getTypedRuleContext(OC_PatternElementContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_PatternElement;
@@ -13132,23 +13034,20 @@ export class OC_NodePatternContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public oC_Variable(): OC_VariableContext | null {
-        return this.getRuleContext(0, OC_VariableContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
-    public oC_NodeLabels(): OC_NodeLabelsContext | null {
-        return this.getRuleContext(0, OC_NodeLabelsContext);
+    public oC_Variable(): OC_VariableContext {
+        return this.getTypedRuleContext(OC_VariableContext, 0);
     }
-    public kU_Properties(): KU_PropertiesContext | null {
-        return this.getRuleContext(0, KU_PropertiesContext);
+    public oC_NodeLabels(): OC_NodeLabelsContext {
+        return this.getTypedRuleContext(OC_NodeLabelsContext, 0);
+    }
+    public kU_Properties(): KU_PropertiesContext {
+        return this.getTypedRuleContext(KU_PropertiesContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_NodePattern;
@@ -13161,12 +13060,12 @@ export class OC_PatternElementChainContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_RelationshipPattern(): OC_RelationshipPatternContext {
-        return this.getRuleContext(0, OC_RelationshipPatternContext)!;
+        return this.getTypedRuleContext(OC_RelationshipPatternContext, 0);
     }
     public oC_NodePattern(): OC_NodePatternContext {
-        return this.getRuleContext(0, OC_NodePatternContext)!;
+        return this.getTypedRuleContext(OC_NodePatternContext, 0);
     }
-    public SP(): antlr.TerminalNode | null {
+    public SP(): antlr.TerminalNode {
         return this.getToken(CypherParser.SP, 0);
     }
     public override get ruleIndex(): number {
@@ -13179,32 +13078,26 @@ export class OC_RelationshipPatternContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_LeftArrowHead(): OC_LeftArrowHeadContext | null {
-        return this.getRuleContext(0, OC_LeftArrowHeadContext);
+    public oC_LeftArrowHead(): OC_LeftArrowHeadContext {
+        return this.getTypedRuleContext(OC_LeftArrowHeadContext, 0);
     }
-    public oC_Dash(): OC_DashContext[];
-    public oC_Dash(i: number): OC_DashContext | null;
-    public oC_Dash(i?: number): OC_DashContext[] | OC_DashContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_DashContext);
-        }
-
-        return this.getRuleContext(i, OC_DashContext);
+    public oC_Dash__list(): OC_DashContext[] {
+        return this.getTypedRuleContexts(OC_DashContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_Dash(i: number): OC_DashContext {
+        return this.getTypedRuleContext(OC_DashContext, i);
     }
-    public oC_RelationshipDetail(): OC_RelationshipDetailContext | null {
-        return this.getRuleContext(0, OC_RelationshipDetailContext);
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public oC_RightArrowHead(): OC_RightArrowHeadContext | null {
-        return this.getRuleContext(0, OC_RightArrowHeadContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public oC_RelationshipDetail(): OC_RelationshipDetailContext {
+        return this.getTypedRuleContext(OC_RelationshipDetailContext, 0);
+    }
+    public oC_RightArrowHead(): OC_RightArrowHeadContext {
+        return this.getTypedRuleContext(OC_RightArrowHeadContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_RelationshipPattern;
@@ -13216,26 +13109,23 @@ export class OC_RelationshipDetailContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public oC_Variable(): OC_VariableContext | null {
-        return this.getRuleContext(0, OC_VariableContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
-    public oC_RelationshipTypes(): OC_RelationshipTypesContext | null {
-        return this.getRuleContext(0, OC_RelationshipTypesContext);
+    public oC_Variable(): OC_VariableContext {
+        return this.getTypedRuleContext(OC_VariableContext, 0);
     }
-    public oC_RangeLiteral(): OC_RangeLiteralContext | null {
-        return this.getRuleContext(0, OC_RangeLiteralContext);
+    public oC_RelationshipTypes(): OC_RelationshipTypesContext {
+        return this.getTypedRuleContext(OC_RelationshipTypesContext, 0);
     }
-    public kU_Properties(): KU_PropertiesContext | null {
-        return this.getRuleContext(0, KU_PropertiesContext);
+    public oC_RangeLiteral(): OC_RangeLiteralContext {
+        return this.getTypedRuleContext(OC_RangeLiteralContext, 0);
+    }
+    public kU_Properties(): KU_PropertiesContext {
+        return this.getTypedRuleContext(KU_PropertiesContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_RelationshipDetail;
@@ -13247,41 +13137,29 @@ export class KU_PropertiesContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public oC_PropertyKeyName(): OC_PropertyKeyNameContext[];
-    public oC_PropertyKeyName(i: number): OC_PropertyKeyNameContext | null;
-    public oC_PropertyKeyName(i?: number): OC_PropertyKeyNameContext[] | OC_PropertyKeyNameContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_PropertyKeyNameContext);
-        }
-
-        return this.getRuleContext(i, OC_PropertyKeyNameContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
-    public COLON(): antlr.TerminalNode[];
-    public COLON(i: number): antlr.TerminalNode | null;
-    public COLON(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.COLON);
-    	} else {
-    		return this.getToken(CypherParser.COLON, i);
-    	}
+    public oC_PropertyKeyName__list(): OC_PropertyKeyNameContext[] {
+        return this.getTypedRuleContexts(OC_PropertyKeyNameContext);
     }
-    public oC_Expression(): OC_ExpressionContext[];
-    public oC_Expression(i: number): OC_ExpressionContext | null;
-    public oC_Expression(i?: number): OC_ExpressionContext[] | OC_ExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_ExpressionContext);
-        }
-
-        return this.getRuleContext(i, OC_ExpressionContext);
+    public oC_PropertyKeyName(i: number): OC_PropertyKeyNameContext {
+        return this.getTypedRuleContext(OC_PropertyKeyNameContext, i);
+    }
+    public COLON__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.COLON);
+    }
+    public COLON(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.COLON, i);
+    }
+    public oC_Expression__list(): OC_ExpressionContext[] {
+        return this.getTypedRuleContexts(OC_ExpressionContext);
+    }
+    public oC_Expression(i: number): OC_ExpressionContext {
+        return this.getTypedRuleContext(OC_ExpressionContext, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_Properties;
@@ -13293,32 +13171,23 @@ export class OC_RelationshipTypesContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public COLON(): antlr.TerminalNode[];
-    public COLON(i: number): antlr.TerminalNode | null;
-    public COLON(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.COLON);
-    	} else {
-    		return this.getToken(CypherParser.COLON, i);
-    	}
+    public COLON__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.COLON);
     }
-    public oC_RelTypeName(): OC_RelTypeNameContext[];
-    public oC_RelTypeName(i: number): OC_RelTypeNameContext | null;
-    public oC_RelTypeName(i?: number): OC_RelTypeNameContext[] | OC_RelTypeNameContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_RelTypeNameContext);
-        }
-
-        return this.getRuleContext(i, OC_RelTypeNameContext);
+    public COLON(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.COLON, i);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_RelTypeName__list(): OC_RelTypeNameContext[] {
+        return this.getTypedRuleContexts(OC_RelTypeNameContext);
+    }
+    public oC_RelTypeName(i: number): OC_RelTypeNameContext {
+        return this.getTypedRuleContext(OC_RelTypeNameContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_RelationshipTypes;
@@ -13330,23 +13199,17 @@ export class OC_NodeLabelsContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_NodeLabel(): OC_NodeLabelContext[];
-    public oC_NodeLabel(i: number): OC_NodeLabelContext | null;
-    public oC_NodeLabel(i?: number): OC_NodeLabelContext[] | OC_NodeLabelContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_NodeLabelContext);
-        }
-
-        return this.getRuleContext(i, OC_NodeLabelContext);
+    public oC_NodeLabel__list(): OC_NodeLabelContext[] {
+        return this.getTypedRuleContexts(OC_NodeLabelContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_NodeLabel(i: number): OC_NodeLabelContext {
+        return this.getTypedRuleContext(OC_NodeLabelContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_NodeLabels;
@@ -13359,12 +13222,12 @@ export class OC_NodeLabelContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public COLON(): antlr.TerminalNode {
-        return this.getToken(CypherParser.COLON, 0)!;
+        return this.getToken(CypherParser.COLON, 0);
     }
     public oC_LabelName(): OC_LabelNameContext {
-        return this.getRuleContext(0, OC_LabelNameContext)!;
+        return this.getTypedRuleContext(OC_LabelNameContext, 0);
     }
-    public SP(): antlr.TerminalNode | null {
+    public SP(): antlr.TerminalNode {
         return this.getToken(CypherParser.SP, 0);
     }
     public override get ruleIndex(): number {
@@ -13378,34 +13241,31 @@ export class OC_RangeLiteralContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public STAR(): antlr.TerminalNode {
-        return this.getToken(CypherParser.STAR, 0)!;
+        return this.getToken(CypherParser.STAR, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public SHORTEST(): antlr.TerminalNode | null {
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public SHORTEST(): antlr.TerminalNode {
         return this.getToken(CypherParser.SHORTEST, 0);
     }
-    public ALL(): antlr.TerminalNode | null {
+    public ALL(): antlr.TerminalNode {
         return this.getToken(CypherParser.ALL, 0);
     }
-    public oC_IntegerLiteral(): OC_IntegerLiteralContext | null {
-        return this.getRuleContext(0, OC_IntegerLiteralContext);
+    public oC_IntegerLiteral(): OC_IntegerLiteralContext {
+        return this.getTypedRuleContext(OC_IntegerLiteralContext, 0);
     }
-    public kU_RecursiveRelationshipComprehension(): KU_RecursiveRelationshipComprehensionContext | null {
-        return this.getRuleContext(0, KU_RecursiveRelationshipComprehensionContext);
+    public kU_RecursiveRelationshipComprehension(): KU_RecursiveRelationshipComprehensionContext {
+        return this.getTypedRuleContext(KU_RecursiveRelationshipComprehensionContext, 0);
     }
-    public oC_LowerBound(): OC_LowerBoundContext | null {
-        return this.getRuleContext(0, OC_LowerBoundContext);
+    public oC_LowerBound(): OC_LowerBoundContext {
+        return this.getTypedRuleContext(OC_LowerBoundContext, 0);
     }
-    public oC_UpperBound(): OC_UpperBoundContext | null {
-        return this.getRuleContext(0, OC_UpperBoundContext);
+    public oC_UpperBound(): OC_UpperBoundContext {
+        return this.getTypedRuleContext(OC_UpperBoundContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_RangeLiteral;
@@ -13417,32 +13277,26 @@ export class KU_RecursiveRelationshipComprehensionContext extends antlr.ParserRu
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_Variable(): OC_VariableContext[];
-    public oC_Variable(i: number): OC_VariableContext | null;
-    public oC_Variable(i?: number): OC_VariableContext[] | OC_VariableContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_VariableContext);
-        }
-
-        return this.getRuleContext(i, OC_VariableContext);
+    public oC_Variable__list(): OC_VariableContext[] {
+        return this.getTypedRuleContexts(OC_VariableContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_Variable(i: number): OC_VariableContext {
+        return this.getTypedRuleContext(OC_VariableContext, i);
     }
-    public oC_Where(): OC_WhereContext | null {
-        return this.getRuleContext(0, OC_WhereContext);
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public kU_IntermediateRelProjectionItems(): KU_IntermediateRelProjectionItemsContext | null {
-        return this.getRuleContext(0, KU_IntermediateRelProjectionItemsContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
-    public kU_IntermediateNodeProjectionItems(): KU_IntermediateNodeProjectionItemsContext | null {
-        return this.getRuleContext(0, KU_IntermediateNodeProjectionItemsContext);
+    public oC_Where(): OC_WhereContext {
+        return this.getTypedRuleContext(OC_WhereContext, 0);
+    }
+    public kU_IntermediateRelProjectionItems(): KU_IntermediateRelProjectionItemsContext {
+        return this.getTypedRuleContext(KU_IntermediateRelProjectionItemsContext, 0);
+    }
+    public kU_IntermediateNodeProjectionItems(): KU_IntermediateNodeProjectionItemsContext {
+        return this.getTypedRuleContext(KU_IntermediateNodeProjectionItemsContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_RecursiveRelationshipComprehension;
@@ -13454,17 +13308,14 @@ export class KU_IntermediateNodeProjectionItemsContext extends antlr.ParserRuleC
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public oC_ProjectionItems(): OC_ProjectionItemsContext | null {
-        return this.getRuleContext(0, OC_ProjectionItemsContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public oC_ProjectionItems(): OC_ProjectionItemsContext {
+        return this.getTypedRuleContext(OC_ProjectionItemsContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_IntermediateNodeProjectionItems;
@@ -13476,17 +13327,14 @@ export class KU_IntermediateRelProjectionItemsContext extends antlr.ParserRuleCo
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public oC_ProjectionItems(): OC_ProjectionItemsContext | null {
-        return this.getRuleContext(0, OC_ProjectionItemsContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public oC_ProjectionItems(): OC_ProjectionItemsContext {
+        return this.getTypedRuleContext(OC_ProjectionItemsContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_IntermediateRelProjectionItems;
@@ -13499,7 +13347,7 @@ export class OC_LowerBoundContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public DecimalInteger(): antlr.TerminalNode {
-        return this.getToken(CypherParser.DecimalInteger, 0)!;
+        return this.getToken(CypherParser.DecimalInteger, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_LowerBound;
@@ -13512,7 +13360,7 @@ export class OC_UpperBoundContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public DecimalInteger(): antlr.TerminalNode {
-        return this.getToken(CypherParser.DecimalInteger, 0)!;
+        return this.getToken(CypherParser.DecimalInteger, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_UpperBound;
@@ -13525,7 +13373,7 @@ export class OC_LabelNameContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        return this.getRuleContext(0, OC_SchemaNameContext)!;
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_LabelName;
@@ -13538,7 +13386,7 @@ export class OC_RelTypeNameContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        return this.getRuleContext(0, OC_SchemaNameContext)!;
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_RelTypeName;
@@ -13551,7 +13399,7 @@ export class OC_ExpressionContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_OrExpression(): OC_OrExpressionContext {
-        return this.getRuleContext(0, OC_OrExpressionContext)!;
+        return this.getTypedRuleContext(OC_OrExpressionContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Expression;
@@ -13563,32 +13411,23 @@ export class OC_OrExpressionContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_XorExpression(): OC_XorExpressionContext[];
-    public oC_XorExpression(i: number): OC_XorExpressionContext | null;
-    public oC_XorExpression(i?: number): OC_XorExpressionContext[] | OC_XorExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_XorExpressionContext);
-        }
-
-        return this.getRuleContext(i, OC_XorExpressionContext);
+    public oC_XorExpression__list(): OC_XorExpressionContext[] {
+        return this.getTypedRuleContexts(OC_XorExpressionContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_XorExpression(i: number): OC_XorExpressionContext {
+        return this.getTypedRuleContext(OC_XorExpressionContext, i);
     }
-    public OR(): antlr.TerminalNode[];
-    public OR(i: number): antlr.TerminalNode | null;
-    public OR(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.OR);
-    	} else {
-    		return this.getToken(CypherParser.OR, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public OR__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.OR);
+    }
+    public OR(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.OR, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_OrExpression;
@@ -13600,32 +13439,23 @@ export class OC_XorExpressionContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_AndExpression(): OC_AndExpressionContext[];
-    public oC_AndExpression(i: number): OC_AndExpressionContext | null;
-    public oC_AndExpression(i?: number): OC_AndExpressionContext[] | OC_AndExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_AndExpressionContext);
-        }
-
-        return this.getRuleContext(i, OC_AndExpressionContext);
+    public oC_AndExpression__list(): OC_AndExpressionContext[] {
+        return this.getTypedRuleContexts(OC_AndExpressionContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_AndExpression(i: number): OC_AndExpressionContext {
+        return this.getTypedRuleContext(OC_AndExpressionContext, i);
     }
-    public XOR(): antlr.TerminalNode[];
-    public XOR(i: number): antlr.TerminalNode | null;
-    public XOR(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.XOR);
-    	} else {
-    		return this.getToken(CypherParser.XOR, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public XOR__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.XOR);
+    }
+    public XOR(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.XOR, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_XorExpression;
@@ -13637,32 +13467,23 @@ export class OC_AndExpressionContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_NotExpression(): OC_NotExpressionContext[];
-    public oC_NotExpression(i: number): OC_NotExpressionContext | null;
-    public oC_NotExpression(i?: number): OC_NotExpressionContext[] | OC_NotExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_NotExpressionContext);
-        }
-
-        return this.getRuleContext(i, OC_NotExpressionContext);
+    public oC_NotExpression__list(): OC_NotExpressionContext[] {
+        return this.getTypedRuleContexts(OC_NotExpressionContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_NotExpression(i: number): OC_NotExpressionContext {
+        return this.getTypedRuleContext(OC_NotExpressionContext, i);
     }
-    public AND(): antlr.TerminalNode[];
-    public AND(i: number): antlr.TerminalNode | null;
-    public AND(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.AND);
-    	} else {
-    		return this.getToken(CypherParser.AND, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public AND__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.AND);
+    }
+    public AND(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.AND, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_AndExpression;
@@ -13675,25 +13496,19 @@ export class OC_NotExpressionContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_ComparisonExpression(): OC_ComparisonExpressionContext {
-        return this.getRuleContext(0, OC_ComparisonExpressionContext)!;
+        return this.getTypedRuleContext(OC_ComparisonExpressionContext, 0);
     }
-    public NOT(): antlr.TerminalNode[];
-    public NOT(i: number): antlr.TerminalNode | null;
-    public NOT(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.NOT);
-    	} else {
-    		return this.getToken(CypherParser.NOT, i);
-    	}
+    public NOT__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.NOT);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public NOT(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.NOT, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_NotExpression;
@@ -13702,38 +13517,29 @@ export class OC_NotExpressionContext extends antlr.ParserRuleContext {
 
 
 export class OC_ComparisonExpressionContext extends antlr.ParserRuleContext {
-    public _INVALID_NOT_EQUAL?: Token | null;
+    public _INVALID_NOT_EQUAL!: Token;
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public kU_BitwiseOrOperatorExpression(): KU_BitwiseOrOperatorExpressionContext[];
-    public kU_BitwiseOrOperatorExpression(i: number): KU_BitwiseOrOperatorExpressionContext | null;
-    public kU_BitwiseOrOperatorExpression(i?: number): KU_BitwiseOrOperatorExpressionContext[] | KU_BitwiseOrOperatorExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_BitwiseOrOperatorExpressionContext);
-        }
-
-        return this.getRuleContext(i, KU_BitwiseOrOperatorExpressionContext);
+    public kU_BitwiseOrOperatorExpression__list(): KU_BitwiseOrOperatorExpressionContext[] {
+        return this.getTypedRuleContexts(KU_BitwiseOrOperatorExpressionContext);
     }
-    public kU_ComparisonOperator(): KU_ComparisonOperatorContext[];
-    public kU_ComparisonOperator(i: number): KU_ComparisonOperatorContext | null;
-    public kU_ComparisonOperator(i?: number): KU_ComparisonOperatorContext[] | KU_ComparisonOperatorContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_ComparisonOperatorContext);
-        }
-
-        return this.getRuleContext(i, KU_ComparisonOperatorContext);
+    public kU_BitwiseOrOperatorExpression(i: number): KU_BitwiseOrOperatorExpressionContext {
+        return this.getTypedRuleContext(KU_BitwiseOrOperatorExpressionContext, i);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public kU_ComparisonOperator__list(): KU_ComparisonOperatorContext[] {
+        return this.getTypedRuleContexts(KU_ComparisonOperatorContext);
     }
-    public INVALID_NOT_EQUAL(): antlr.TerminalNode | null {
+    public kU_ComparisonOperator(i: number): KU_ComparisonOperatorContext {
+        return this.getTypedRuleContext(KU_ComparisonOperatorContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public INVALID_NOT_EQUAL(): antlr.TerminalNode {
         return this.getToken(CypherParser.INVALID_NOT_EQUAL, 0);
     }
     public override get ruleIndex(): number {
@@ -13756,23 +13562,17 @@ export class KU_BitwiseOrOperatorExpressionContext extends antlr.ParserRuleConte
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public kU_BitwiseAndOperatorExpression(): KU_BitwiseAndOperatorExpressionContext[];
-    public kU_BitwiseAndOperatorExpression(i: number): KU_BitwiseAndOperatorExpressionContext | null;
-    public kU_BitwiseAndOperatorExpression(i?: number): KU_BitwiseAndOperatorExpressionContext[] | KU_BitwiseAndOperatorExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_BitwiseAndOperatorExpressionContext);
-        }
-
-        return this.getRuleContext(i, KU_BitwiseAndOperatorExpressionContext);
+    public kU_BitwiseAndOperatorExpression__list(): KU_BitwiseAndOperatorExpressionContext[] {
+        return this.getTypedRuleContexts(KU_BitwiseAndOperatorExpressionContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public kU_BitwiseAndOperatorExpression(i: number): KU_BitwiseAndOperatorExpressionContext {
+        return this.getTypedRuleContext(KU_BitwiseAndOperatorExpressionContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_BitwiseOrOperatorExpression;
@@ -13784,23 +13584,17 @@ export class KU_BitwiseAndOperatorExpressionContext extends antlr.ParserRuleCont
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public kU_BitShiftOperatorExpression(): KU_BitShiftOperatorExpressionContext[];
-    public kU_BitShiftOperatorExpression(i: number): KU_BitShiftOperatorExpressionContext | null;
-    public kU_BitShiftOperatorExpression(i?: number): KU_BitShiftOperatorExpressionContext[] | KU_BitShiftOperatorExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_BitShiftOperatorExpressionContext);
-        }
-
-        return this.getRuleContext(i, KU_BitShiftOperatorExpressionContext);
+    public kU_BitShiftOperatorExpression__list(): KU_BitShiftOperatorExpressionContext[] {
+        return this.getTypedRuleContexts(KU_BitShiftOperatorExpressionContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public kU_BitShiftOperatorExpression(i: number): KU_BitShiftOperatorExpressionContext {
+        return this.getTypedRuleContext(KU_BitShiftOperatorExpressionContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_BitwiseAndOperatorExpression;
@@ -13812,32 +13606,23 @@ export class KU_BitShiftOperatorExpressionContext extends antlr.ParserRuleContex
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_AddOrSubtractExpression(): OC_AddOrSubtractExpressionContext[];
-    public oC_AddOrSubtractExpression(i: number): OC_AddOrSubtractExpressionContext | null;
-    public oC_AddOrSubtractExpression(i?: number): OC_AddOrSubtractExpressionContext[] | OC_AddOrSubtractExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_AddOrSubtractExpressionContext);
-        }
-
-        return this.getRuleContext(i, OC_AddOrSubtractExpressionContext);
+    public oC_AddOrSubtractExpression__list(): OC_AddOrSubtractExpressionContext[] {
+        return this.getTypedRuleContexts(OC_AddOrSubtractExpressionContext);
     }
-    public kU_BitShiftOperator(): KU_BitShiftOperatorContext[];
-    public kU_BitShiftOperator(i: number): KU_BitShiftOperatorContext | null;
-    public kU_BitShiftOperator(i?: number): KU_BitShiftOperatorContext[] | KU_BitShiftOperatorContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_BitShiftOperatorContext);
-        }
-
-        return this.getRuleContext(i, KU_BitShiftOperatorContext);
+    public oC_AddOrSubtractExpression(i: number): OC_AddOrSubtractExpressionContext {
+        return this.getTypedRuleContext(OC_AddOrSubtractExpressionContext, i);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public kU_BitShiftOperator__list(): KU_BitShiftOperatorContext[] {
+        return this.getTypedRuleContexts(KU_BitShiftOperatorContext);
+    }
+    public kU_BitShiftOperator(i: number): KU_BitShiftOperatorContext {
+        return this.getTypedRuleContext(KU_BitShiftOperatorContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_BitShiftOperatorExpression;
@@ -13859,32 +13644,23 @@ export class OC_AddOrSubtractExpressionContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_MultiplyDivideModuloExpression(): OC_MultiplyDivideModuloExpressionContext[];
-    public oC_MultiplyDivideModuloExpression(i: number): OC_MultiplyDivideModuloExpressionContext | null;
-    public oC_MultiplyDivideModuloExpression(i?: number): OC_MultiplyDivideModuloExpressionContext[] | OC_MultiplyDivideModuloExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_MultiplyDivideModuloExpressionContext);
-        }
-
-        return this.getRuleContext(i, OC_MultiplyDivideModuloExpressionContext);
+    public oC_MultiplyDivideModuloExpression__list(): OC_MultiplyDivideModuloExpressionContext[] {
+        return this.getTypedRuleContexts(OC_MultiplyDivideModuloExpressionContext);
     }
-    public kU_AddOrSubtractOperator(): KU_AddOrSubtractOperatorContext[];
-    public kU_AddOrSubtractOperator(i: number): KU_AddOrSubtractOperatorContext | null;
-    public kU_AddOrSubtractOperator(i?: number): KU_AddOrSubtractOperatorContext[] | KU_AddOrSubtractOperatorContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_AddOrSubtractOperatorContext);
-        }
-
-        return this.getRuleContext(i, KU_AddOrSubtractOperatorContext);
+    public oC_MultiplyDivideModuloExpression(i: number): OC_MultiplyDivideModuloExpressionContext {
+        return this.getTypedRuleContext(OC_MultiplyDivideModuloExpressionContext, i);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public kU_AddOrSubtractOperator__list(): KU_AddOrSubtractOperatorContext[] {
+        return this.getTypedRuleContexts(KU_AddOrSubtractOperatorContext);
+    }
+    public kU_AddOrSubtractOperator(i: number): KU_AddOrSubtractOperatorContext {
+        return this.getTypedRuleContext(KU_AddOrSubtractOperatorContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_AddOrSubtractExpression;
@@ -13897,7 +13673,7 @@ export class KU_AddOrSubtractOperatorContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public MINUS(): antlr.TerminalNode {
-        return this.getToken(CypherParser.MINUS, 0)!;
+        return this.getToken(CypherParser.MINUS, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_AddOrSubtractOperator;
@@ -13909,32 +13685,23 @@ export class OC_MultiplyDivideModuloExpressionContext extends antlr.ParserRuleCo
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_PowerOfExpression(): OC_PowerOfExpressionContext[];
-    public oC_PowerOfExpression(i: number): OC_PowerOfExpressionContext | null;
-    public oC_PowerOfExpression(i?: number): OC_PowerOfExpressionContext[] | OC_PowerOfExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_PowerOfExpressionContext);
-        }
-
-        return this.getRuleContext(i, OC_PowerOfExpressionContext);
+    public oC_PowerOfExpression__list(): OC_PowerOfExpressionContext[] {
+        return this.getTypedRuleContexts(OC_PowerOfExpressionContext);
     }
-    public kU_MultiplyDivideModuloOperator(): KU_MultiplyDivideModuloOperatorContext[];
-    public kU_MultiplyDivideModuloOperator(i: number): KU_MultiplyDivideModuloOperatorContext | null;
-    public kU_MultiplyDivideModuloOperator(i?: number): KU_MultiplyDivideModuloOperatorContext[] | KU_MultiplyDivideModuloOperatorContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_MultiplyDivideModuloOperatorContext);
-        }
-
-        return this.getRuleContext(i, KU_MultiplyDivideModuloOperatorContext);
+    public oC_PowerOfExpression(i: number): OC_PowerOfExpressionContext {
+        return this.getTypedRuleContext(OC_PowerOfExpressionContext, i);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public kU_MultiplyDivideModuloOperator__list(): KU_MultiplyDivideModuloOperatorContext[] {
+        return this.getTypedRuleContexts(KU_MultiplyDivideModuloOperatorContext);
+    }
+    public kU_MultiplyDivideModuloOperator(i: number): KU_MultiplyDivideModuloOperatorContext {
+        return this.getTypedRuleContext(KU_MultiplyDivideModuloOperatorContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_MultiplyDivideModuloExpression;
@@ -13947,7 +13714,7 @@ export class KU_MultiplyDivideModuloOperatorContext extends antlr.ParserRuleCont
         super(parent, invokingState);
     }
     public STAR(): antlr.TerminalNode {
-        return this.getToken(CypherParser.STAR, 0)!;
+        return this.getToken(CypherParser.STAR, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_MultiplyDivideModuloOperator;
@@ -13959,23 +13726,17 @@ export class OC_PowerOfExpressionContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_UnaryAddSubtractOrFactorialExpression(): OC_UnaryAddSubtractOrFactorialExpressionContext[];
-    public oC_UnaryAddSubtractOrFactorialExpression(i: number): OC_UnaryAddSubtractOrFactorialExpressionContext | null;
-    public oC_UnaryAddSubtractOrFactorialExpression(i?: number): OC_UnaryAddSubtractOrFactorialExpressionContext[] | OC_UnaryAddSubtractOrFactorialExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_UnaryAddSubtractOrFactorialExpressionContext);
-        }
-
-        return this.getRuleContext(i, OC_UnaryAddSubtractOrFactorialExpressionContext);
+    public oC_UnaryAddSubtractOrFactorialExpression__list(): OC_UnaryAddSubtractOrFactorialExpressionContext[] {
+        return this.getTypedRuleContexts(OC_UnaryAddSubtractOrFactorialExpressionContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_UnaryAddSubtractOrFactorialExpression(i: number): OC_UnaryAddSubtractOrFactorialExpressionContext {
+        return this.getTypedRuleContext(OC_UnaryAddSubtractOrFactorialExpressionContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_PowerOfExpression;
@@ -13988,28 +13749,22 @@ export class OC_UnaryAddSubtractOrFactorialExpressionContext extends antlr.Parse
         super(parent, invokingState);
     }
     public oC_StringListNullOperatorExpression(): OC_StringListNullOperatorExpressionContext {
-        return this.getRuleContext(0, OC_StringListNullOperatorExpressionContext)!;
+        return this.getTypedRuleContext(OC_StringListNullOperatorExpressionContext, 0);
     }
-    public MINUS(): antlr.TerminalNode[];
-    public MINUS(i: number): antlr.TerminalNode | null;
-    public MINUS(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.MINUS);
-    	} else {
-    		return this.getToken(CypherParser.MINUS, i);
-    	}
+    public MINUS__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.MINUS);
     }
-    public FACTORIAL(): antlr.TerminalNode | null {
+    public MINUS(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.MINUS, i);
+    }
+    public FACTORIAL(): antlr.TerminalNode {
         return this.getToken(CypherParser.FACTORIAL, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_UnaryAddSubtractOrFactorialExpression;
@@ -14022,22 +13777,19 @@ export class OC_StringListNullOperatorExpressionContext extends antlr.ParserRule
         super(parent, invokingState);
     }
     public oC_PropertyOrLabelsExpression(): OC_PropertyOrLabelsExpressionContext {
-        return this.getRuleContext(0, OC_PropertyOrLabelsExpressionContext)!;
+        return this.getTypedRuleContext(OC_PropertyOrLabelsExpressionContext, 0);
     }
-    public oC_StringOperatorExpression(): OC_StringOperatorExpressionContext | null {
-        return this.getRuleContext(0, OC_StringOperatorExpressionContext);
+    public oC_StringOperatorExpression(): OC_StringOperatorExpressionContext {
+        return this.getTypedRuleContext(OC_StringOperatorExpressionContext, 0);
     }
-    public oC_NullOperatorExpression(): OC_NullOperatorExpressionContext | null {
-        return this.getRuleContext(0, OC_NullOperatorExpressionContext);
+    public oC_NullOperatorExpression(): OC_NullOperatorExpressionContext {
+        return this.getTypedRuleContext(OC_NullOperatorExpressionContext, 0);
     }
-    public oC_ListOperatorExpression(): OC_ListOperatorExpressionContext[];
-    public oC_ListOperatorExpression(i: number): OC_ListOperatorExpressionContext | null;
-    public oC_ListOperatorExpression(i?: number): OC_ListOperatorExpressionContext[] | OC_ListOperatorExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_ListOperatorExpressionContext);
-        }
-
-        return this.getRuleContext(i, OC_ListOperatorExpressionContext);
+    public oC_ListOperatorExpression__list(): OC_ListOperatorExpressionContext[] {
+        return this.getTypedRuleContexts(OC_ListOperatorExpressionContext);
+    }
+    public oC_ListOperatorExpression(i: number): OC_ListOperatorExpressionContext {
+        return this.getTypedRuleContext(OC_ListOperatorExpressionContext, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_StringListNullOperatorExpression;
@@ -14049,31 +13801,25 @@ export class OC_ListOperatorExpressionContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public IN(): antlr.TerminalNode | null {
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public IN(): antlr.TerminalNode {
         return this.getToken(CypherParser.IN, 0);
     }
-    public oC_PropertyOrLabelsExpression(): OC_PropertyOrLabelsExpressionContext | null {
-        return this.getRuleContext(0, OC_PropertyOrLabelsExpressionContext);
+    public oC_PropertyOrLabelsExpression(): OC_PropertyOrLabelsExpressionContext {
+        return this.getTypedRuleContext(OC_PropertyOrLabelsExpressionContext, 0);
     }
-    public oC_Expression(): OC_ExpressionContext[];
-    public oC_Expression(i: number): OC_ExpressionContext | null;
-    public oC_Expression(i?: number): OC_ExpressionContext[] | OC_ExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_ExpressionContext);
-        }
-
-        return this.getRuleContext(i, OC_ExpressionContext);
+    public oC_Expression__list(): OC_ExpressionContext[] {
+        return this.getTypedRuleContexts(OC_ExpressionContext);
     }
-    public COLON(): antlr.TerminalNode | null {
+    public oC_Expression(i: number): OC_ExpressionContext {
+        return this.getTypedRuleContext(OC_ExpressionContext, i);
+    }
+    public COLON(): antlr.TerminalNode {
         return this.getToken(CypherParser.COLON, 0);
     }
     public override get ruleIndex(): number {
@@ -14087,30 +13833,27 @@ export class OC_StringOperatorExpressionContext extends antlr.ParserRuleContext 
         super(parent, invokingState);
     }
     public oC_PropertyOrLabelsExpression(): OC_PropertyOrLabelsExpressionContext {
-        return this.getRuleContext(0, OC_PropertyOrLabelsExpressionContext)!;
+        return this.getTypedRuleContext(OC_PropertyOrLabelsExpressionContext, 0);
     }
-    public oC_RegularExpression(): OC_RegularExpressionContext | null {
-        return this.getRuleContext(0, OC_RegularExpressionContext);
+    public oC_RegularExpression(): OC_RegularExpressionContext {
+        return this.getTypedRuleContext(OC_RegularExpressionContext, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public STARTS(): antlr.TerminalNode | null {
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public STARTS(): antlr.TerminalNode {
         return this.getToken(CypherParser.STARTS, 0);
     }
-    public WITH(): antlr.TerminalNode | null {
+    public WITH(): antlr.TerminalNode {
         return this.getToken(CypherParser.WITH, 0);
     }
-    public ENDS(): antlr.TerminalNode | null {
+    public ENDS(): antlr.TerminalNode {
         return this.getToken(CypherParser.ENDS, 0);
     }
-    public CONTAINS(): antlr.TerminalNode | null {
+    public CONTAINS(): antlr.TerminalNode {
         return this.getToken(CypherParser.CONTAINS, 0);
     }
     public override get ruleIndex(): number {
@@ -14123,7 +13866,7 @@ export class OC_RegularExpressionContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public SP(): antlr.TerminalNode | null {
+    public SP(): antlr.TerminalNode {
         return this.getToken(CypherParser.SP, 0);
     }
     public override get ruleIndex(): number {
@@ -14136,22 +13879,19 @@ export class OC_NullOperatorExpressionContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public IS(): antlr.TerminalNode | null {
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public IS(): antlr.TerminalNode {
         return this.getToken(CypherParser.IS, 0);
     }
-    public NULL_(): antlr.TerminalNode | null {
+    public NULL_(): antlr.TerminalNode {
         return this.getToken(CypherParser.NULL_, 0);
     }
-    public NOT(): antlr.TerminalNode | null {
+    public NOT(): antlr.TerminalNode {
         return this.getToken(CypherParser.NOT, 0);
     }
     public override get ruleIndex(): number {
@@ -14165,25 +13905,19 @@ export class OC_PropertyOrLabelsExpressionContext extends antlr.ParserRuleContex
         super(parent, invokingState);
     }
     public oC_Atom(): OC_AtomContext {
-        return this.getRuleContext(0, OC_AtomContext)!;
+        return this.getTypedRuleContext(OC_AtomContext, 0);
     }
-    public oC_PropertyLookup(): OC_PropertyLookupContext[];
-    public oC_PropertyLookup(i: number): OC_PropertyLookupContext | null;
-    public oC_PropertyLookup(i?: number): OC_PropertyLookupContext[] | OC_PropertyLookupContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_PropertyLookupContext);
-        }
-
-        return this.getRuleContext(i, OC_PropertyLookupContext);
+    public oC_PropertyLookup__list(): OC_PropertyLookupContext[] {
+        return this.getTypedRuleContexts(OC_PropertyLookupContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_PropertyLookup(i: number): OC_PropertyLookupContext {
+        return this.getTypedRuleContext(OC_PropertyLookupContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_PropertyOrLabelsExpression;
@@ -14195,32 +13929,32 @@ export class OC_AtomContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_Literal(): OC_LiteralContext | null {
-        return this.getRuleContext(0, OC_LiteralContext);
+    public oC_Literal(): OC_LiteralContext {
+        return this.getTypedRuleContext(OC_LiteralContext, 0);
     }
-    public oC_Parameter(): OC_ParameterContext | null {
-        return this.getRuleContext(0, OC_ParameterContext);
+    public oC_Parameter(): OC_ParameterContext {
+        return this.getTypedRuleContext(OC_ParameterContext, 0);
     }
-    public oC_CaseExpression(): OC_CaseExpressionContext | null {
-        return this.getRuleContext(0, OC_CaseExpressionContext);
+    public oC_CaseExpression(): OC_CaseExpressionContext {
+        return this.getTypedRuleContext(OC_CaseExpressionContext, 0);
     }
-    public oC_ParenthesizedExpression(): OC_ParenthesizedExpressionContext | null {
-        return this.getRuleContext(0, OC_ParenthesizedExpressionContext);
+    public oC_ParenthesizedExpression(): OC_ParenthesizedExpressionContext {
+        return this.getTypedRuleContext(OC_ParenthesizedExpressionContext, 0);
     }
-    public oC_FunctionInvocation(): OC_FunctionInvocationContext | null {
-        return this.getRuleContext(0, OC_FunctionInvocationContext);
+    public oC_FunctionInvocation(): OC_FunctionInvocationContext {
+        return this.getTypedRuleContext(OC_FunctionInvocationContext, 0);
     }
-    public oC_PathPatterns(): OC_PathPatternsContext | null {
-        return this.getRuleContext(0, OC_PathPatternsContext);
+    public oC_PathPatterns(): OC_PathPatternsContext {
+        return this.getTypedRuleContext(OC_PathPatternsContext, 0);
     }
-    public oC_ExistSubquery(): OC_ExistSubqueryContext | null {
-        return this.getRuleContext(0, OC_ExistSubqueryContext);
+    public oC_ExistSubquery(): OC_ExistSubqueryContext {
+        return this.getTypedRuleContext(OC_ExistSubqueryContext, 0);
     }
-    public kU_CountSubquery(): KU_CountSubqueryContext | null {
-        return this.getRuleContext(0, KU_CountSubqueryContext);
+    public kU_CountSubquery(): KU_CountSubqueryContext {
+        return this.getTypedRuleContext(KU_CountSubqueryContext, 0);
     }
-    public oC_Variable(): OC_VariableContext | null {
-        return this.getRuleContext(0, OC_VariableContext);
+    public oC_Variable(): OC_VariableContext {
+        return this.getTypedRuleContext(OC_VariableContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Atom;
@@ -14232,23 +13966,23 @@ export class OC_LiteralContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_NumberLiteral(): OC_NumberLiteralContext | null {
-        return this.getRuleContext(0, OC_NumberLiteralContext);
+    public oC_NumberLiteral(): OC_NumberLiteralContext {
+        return this.getTypedRuleContext(OC_NumberLiteralContext, 0);
     }
-    public StringLiteral(): antlr.TerminalNode | null {
+    public StringLiteral(): antlr.TerminalNode {
         return this.getToken(CypherParser.StringLiteral, 0);
     }
-    public oC_BooleanLiteral(): OC_BooleanLiteralContext | null {
-        return this.getRuleContext(0, OC_BooleanLiteralContext);
+    public oC_BooleanLiteral(): OC_BooleanLiteralContext {
+        return this.getTypedRuleContext(OC_BooleanLiteralContext, 0);
     }
-    public NULL_(): antlr.TerminalNode | null {
+    public NULL_(): antlr.TerminalNode {
         return this.getToken(CypherParser.NULL_, 0);
     }
-    public oC_ListLiteral(): OC_ListLiteralContext | null {
-        return this.getRuleContext(0, OC_ListLiteralContext);
+    public oC_ListLiteral(): OC_ListLiteralContext {
+        return this.getTypedRuleContext(OC_ListLiteralContext, 0);
     }
-    public kU_StructLiteral(): KU_StructLiteralContext | null {
-        return this.getRuleContext(0, KU_StructLiteralContext);
+    public kU_StructLiteral(): KU_StructLiteralContext {
+        return this.getTypedRuleContext(KU_StructLiteralContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Literal;
@@ -14260,10 +13994,10 @@ export class OC_BooleanLiteralContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public TRUE(): antlr.TerminalNode | null {
+    public TRUE(): antlr.TerminalNode {
         return this.getToken(CypherParser.TRUE, 0);
     }
-    public FALSE(): antlr.TerminalNode | null {
+    public FALSE(): antlr.TerminalNode {
         return this.getToken(CypherParser.FALSE, 0);
     }
     public override get ruleIndex(): number {
@@ -14276,26 +14010,20 @@ export class OC_ListLiteralContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public oC_Expression(): OC_ExpressionContext | null {
-        return this.getRuleContext(0, OC_ExpressionContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
-    public kU_ListEntry(): KU_ListEntryContext[];
-    public kU_ListEntry(i: number): KU_ListEntryContext | null;
-    public kU_ListEntry(i?: number): KU_ListEntryContext[] | KU_ListEntryContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_ListEntryContext);
-        }
-
-        return this.getRuleContext(i, KU_ListEntryContext);
+    public oC_Expression(): OC_ExpressionContext {
+        return this.getTypedRuleContext(OC_ExpressionContext, 0);
+    }
+    public kU_ListEntry__list(): KU_ListEntryContext[] {
+        return this.getTypedRuleContexts(KU_ListEntryContext);
+    }
+    public kU_ListEntry(i: number): KU_ListEntryContext {
+        return this.getTypedRuleContext(KU_ListEntryContext, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_ListLiteral;
@@ -14307,11 +14035,11 @@ export class KU_ListEntryContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public SP(): antlr.TerminalNode | null {
+    public SP(): antlr.TerminalNode {
         return this.getToken(CypherParser.SP, 0);
     }
-    public oC_Expression(): OC_ExpressionContext | null {
-        return this.getRuleContext(0, OC_ExpressionContext);
+    public oC_Expression(): OC_ExpressionContext {
+        return this.getTypedRuleContext(OC_ExpressionContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_ListEntry;
@@ -14323,23 +14051,17 @@ export class KU_StructLiteralContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public kU_StructField(): KU_StructFieldContext[];
-    public kU_StructField(i: number): KU_StructFieldContext | null;
-    public kU_StructField(i?: number): KU_StructFieldContext[] | KU_StructFieldContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_StructFieldContext);
-        }
-
-        return this.getRuleContext(i, KU_StructFieldContext);
+    public kU_StructField__list(): KU_StructFieldContext[] {
+        return this.getTypedRuleContexts(KU_StructFieldContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public kU_StructField(i: number): KU_StructFieldContext {
+        return this.getTypedRuleContext(KU_StructFieldContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_StructLiteral;
@@ -14352,25 +14074,22 @@ export class KU_StructFieldContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public COLON(): antlr.TerminalNode {
-        return this.getToken(CypherParser.COLON, 0)!;
+        return this.getToken(CypherParser.COLON, 0);
     }
     public oC_Expression(): OC_ExpressionContext {
-        return this.getRuleContext(0, OC_ExpressionContext)!;
+        return this.getTypedRuleContext(OC_ExpressionContext, 0);
     }
-    public oC_SymbolicName(): OC_SymbolicNameContext | null {
-        return this.getRuleContext(0, OC_SymbolicNameContext);
+    public oC_SymbolicName(): OC_SymbolicNameContext {
+        return this.getTypedRuleContext(OC_SymbolicNameContext, 0);
     }
-    public StringLiteral(): antlr.TerminalNode | null {
+    public StringLiteral(): antlr.TerminalNode {
         return this.getToken(CypherParser.StringLiteral, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_StructField;
@@ -14383,16 +14102,13 @@ export class OC_ParenthesizedExpressionContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_Expression(): OC_ExpressionContext {
-        return this.getRuleContext(0, OC_ExpressionContext)!;
+        return this.getTypedRuleContext(OC_ExpressionContext, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_ParenthesizedExpression;
@@ -14404,35 +14120,29 @@ export class OC_FunctionInvocationContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public COUNT(): antlr.TerminalNode | null {
+    public COUNT(): antlr.TerminalNode {
         return this.getToken(CypherParser.COUNT, 0);
     }
-    public STAR(): antlr.TerminalNode | null {
+    public STAR(): antlr.TerminalNode {
         return this.getToken(CypherParser.STAR, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public oC_FunctionName(): OC_FunctionNameContext | null {
-        return this.getRuleContext(0, OC_FunctionNameContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
-    public DISTINCT(): antlr.TerminalNode | null {
+    public oC_FunctionName(): OC_FunctionNameContext {
+        return this.getTypedRuleContext(OC_FunctionNameContext, 0);
+    }
+    public DISTINCT(): antlr.TerminalNode {
         return this.getToken(CypherParser.DISTINCT, 0);
     }
-    public kU_FunctionParameter(): KU_FunctionParameterContext[];
-    public kU_FunctionParameter(i: number): KU_FunctionParameterContext | null;
-    public kU_FunctionParameter(i?: number): KU_FunctionParameterContext[] | KU_FunctionParameterContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(KU_FunctionParameterContext);
-        }
-
-        return this.getRuleContext(i, KU_FunctionParameterContext);
+    public kU_FunctionParameter__list(): KU_FunctionParameterContext[] {
+        return this.getTypedRuleContexts(KU_FunctionParameterContext);
+    }
+    public kU_FunctionParameter(i: number): KU_FunctionParameterContext {
+        return this.getTypedRuleContext(KU_FunctionParameterContext, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_FunctionInvocation;
@@ -14445,7 +14155,7 @@ export class OC_FunctionNameContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_SymbolicName(): OC_SymbolicNameContext {
-        return this.getRuleContext(0, OC_SymbolicNameContext)!;
+        return this.getTypedRuleContext(OC_SymbolicNameContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_FunctionName;
@@ -14458,22 +14168,19 @@ export class KU_FunctionParameterContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_Expression(): OC_ExpressionContext {
-        return this.getRuleContext(0, OC_ExpressionContext)!;
+        return this.getTypedRuleContext(OC_ExpressionContext, 0);
     }
-    public oC_SymbolicName(): OC_SymbolicNameContext | null {
-        return this.getRuleContext(0, OC_SymbolicNameContext);
+    public oC_SymbolicName(): OC_SymbolicNameContext {
+        return this.getTypedRuleContext(OC_SymbolicNameContext, 0);
     }
-    public COLON(): antlr.TerminalNode | null {
+    public COLON(): antlr.TerminalNode {
         return this.getToken(CypherParser.COLON, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_FunctionParameter;
@@ -14486,25 +14193,19 @@ export class OC_PathPatternsContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_NodePattern(): OC_NodePatternContext {
-        return this.getRuleContext(0, OC_NodePatternContext)!;
+        return this.getTypedRuleContext(OC_NodePatternContext, 0);
     }
-    public oC_PatternElementChain(): OC_PatternElementChainContext[];
-    public oC_PatternElementChain(i: number): OC_PatternElementChainContext | null;
-    public oC_PatternElementChain(i?: number): OC_PatternElementChainContext[] | OC_PatternElementChainContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_PatternElementChainContext);
-        }
-
-        return this.getRuleContext(i, OC_PatternElementChainContext);
+    public oC_PatternElementChain__list(): OC_PatternElementChainContext[] {
+        return this.getTypedRuleContexts(OC_PatternElementChainContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_PatternElementChain(i: number): OC_PatternElementChainContext {
+        return this.getTypedRuleContext(OC_PatternElementChainContext, i);
+    }
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_PathPatterns;
@@ -14517,25 +14218,22 @@ export class OC_ExistSubqueryContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public EXISTS(): antlr.TerminalNode {
-        return this.getToken(CypherParser.EXISTS, 0)!;
+        return this.getToken(CypherParser.EXISTS, 0);
     }
     public MATCH(): antlr.TerminalNode {
-        return this.getToken(CypherParser.MATCH, 0)!;
+        return this.getToken(CypherParser.MATCH, 0);
     }
     public oC_Pattern(): OC_PatternContext {
-        return this.getRuleContext(0, OC_PatternContext)!;
+        return this.getTypedRuleContext(OC_PatternContext, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public oC_Where(): OC_WhereContext | null {
-        return this.getRuleContext(0, OC_WhereContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public oC_Where(): OC_WhereContext {
+        return this.getTypedRuleContext(OC_WhereContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_ExistSubquery;
@@ -14548,25 +14246,22 @@ export class KU_CountSubqueryContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public COUNT(): antlr.TerminalNode {
-        return this.getToken(CypherParser.COUNT, 0)!;
+        return this.getToken(CypherParser.COUNT, 0);
     }
     public MATCH(): antlr.TerminalNode {
-        return this.getToken(CypherParser.MATCH, 0)!;
+        return this.getToken(CypherParser.MATCH, 0);
     }
     public oC_Pattern(): OC_PatternContext {
-        return this.getRuleContext(0, OC_PatternContext)!;
+        return this.getTypedRuleContext(OC_PatternContext, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
     }
-    public oC_Where(): OC_WhereContext | null {
-        return this.getRuleContext(0, OC_WhereContext);
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public oC_Where(): OC_WhereContext {
+        return this.getTypedRuleContext(OC_WhereContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_kU_CountSubquery;
@@ -14578,13 +14273,13 @@ export class OC_PropertyLookupContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_PropertyKeyName(): OC_PropertyKeyNameContext | null {
-        return this.getRuleContext(0, OC_PropertyKeyNameContext);
+    public oC_PropertyKeyName(): OC_PropertyKeyNameContext {
+        return this.getTypedRuleContext(OC_PropertyKeyNameContext, 0);
     }
-    public STAR(): antlr.TerminalNode | null {
+    public STAR(): antlr.TerminalNode {
         return this.getToken(CypherParser.STAR, 0);
     }
-    public SP(): antlr.TerminalNode | null {
+    public SP(): antlr.TerminalNode {
         return this.getToken(CypherParser.SP, 0);
     }
     public override get ruleIndex(): number {
@@ -14598,40 +14293,31 @@ export class OC_CaseExpressionContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public END(): antlr.TerminalNode {
-        return this.getToken(CypherParser.END, 0)!;
+        return this.getToken(CypherParser.END, 0);
     }
-    public ELSE(): antlr.TerminalNode | null {
+    public ELSE(): antlr.TerminalNode {
         return this.getToken(CypherParser.ELSE, 0);
     }
-    public oC_Expression(): OC_ExpressionContext[];
-    public oC_Expression(i: number): OC_ExpressionContext | null;
-    public oC_Expression(i?: number): OC_ExpressionContext[] | OC_ExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_ExpressionContext);
-        }
-
-        return this.getRuleContext(i, OC_ExpressionContext);
+    public oC_Expression__list(): OC_ExpressionContext[] {
+        return this.getTypedRuleContexts(OC_ExpressionContext);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public oC_Expression(i: number): OC_ExpressionContext {
+        return this.getTypedRuleContext(OC_ExpressionContext, i);
     }
-    public CASE(): antlr.TerminalNode | null {
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
+    }
+    public CASE(): antlr.TerminalNode {
         return this.getToken(CypherParser.CASE, 0);
     }
-    public oC_CaseAlternative(): OC_CaseAlternativeContext[];
-    public oC_CaseAlternative(i: number): OC_CaseAlternativeContext | null;
-    public oC_CaseAlternative(i?: number): OC_CaseAlternativeContext[] | OC_CaseAlternativeContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_CaseAlternativeContext);
-        }
-
-        return this.getRuleContext(i, OC_CaseAlternativeContext);
+    public oC_CaseAlternative__list(): OC_CaseAlternativeContext[] {
+        return this.getTypedRuleContexts(OC_CaseAlternativeContext);
+    }
+    public oC_CaseAlternative(i: number): OC_CaseAlternativeContext {
+        return this.getTypedRuleContext(OC_CaseAlternativeContext, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_CaseExpression;
@@ -14644,28 +14330,22 @@ export class OC_CaseAlternativeContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public WHEN(): antlr.TerminalNode {
-        return this.getToken(CypherParser.WHEN, 0)!;
+        return this.getToken(CypherParser.WHEN, 0);
     }
-    public oC_Expression(): OC_ExpressionContext[];
-    public oC_Expression(i: number): OC_ExpressionContext | null;
-    public oC_Expression(i?: number): OC_ExpressionContext[] | OC_ExpressionContext | null {
-        if (i === undefined) {
-            return this.getRuleContexts(OC_ExpressionContext);
-        }
-
-        return this.getRuleContext(i, OC_ExpressionContext);
+    public oC_Expression__list(): OC_ExpressionContext[] {
+        return this.getTypedRuleContexts(OC_ExpressionContext);
+    }
+    public oC_Expression(i: number): OC_ExpressionContext {
+        return this.getTypedRuleContext(OC_ExpressionContext, i);
     }
     public THEN(): antlr.TerminalNode {
-        return this.getToken(CypherParser.THEN, 0)!;
+        return this.getToken(CypherParser.THEN, 0);
     }
-    public SP(): antlr.TerminalNode[];
-    public SP(i: number): antlr.TerminalNode | null;
-    public SP(i?: number): antlr.TerminalNode | null | antlr.TerminalNode[] {
-    	if (i === undefined) {
-    		return this.getTokens(CypherParser.SP);
-    	} else {
-    		return this.getToken(CypherParser.SP, i);
-    	}
+    public SP__list(): antlr.TerminalNode[] {
+            return this.getTokens(CypherParser.SP);
+    }
+    public SP(i: number): antlr.TerminalNode {
+        return this.getToken(CypherParser.SP, i);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_CaseAlternative;
@@ -14678,7 +14358,7 @@ export class OC_VariableContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_SymbolicName(): OC_SymbolicNameContext {
-        return this.getRuleContext(0, OC_SymbolicNameContext)!;
+        return this.getTypedRuleContext(OC_SymbolicNameContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Variable;
@@ -14690,11 +14370,11 @@ export class OC_NumberLiteralContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_DoubleLiteral(): OC_DoubleLiteralContext | null {
-        return this.getRuleContext(0, OC_DoubleLiteralContext);
+    public oC_DoubleLiteral(): OC_DoubleLiteralContext {
+        return this.getTypedRuleContext(OC_DoubleLiteralContext, 0);
     }
-    public oC_IntegerLiteral(): OC_IntegerLiteralContext | null {
-        return this.getRuleContext(0, OC_IntegerLiteralContext);
+    public oC_IntegerLiteral(): OC_IntegerLiteralContext {
+        return this.getTypedRuleContext(OC_IntegerLiteralContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_NumberLiteral;
@@ -14706,10 +14386,10 @@ export class OC_ParameterContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public oC_SymbolicName(): OC_SymbolicNameContext | null {
-        return this.getRuleContext(0, OC_SymbolicNameContext);
+    public oC_SymbolicName(): OC_SymbolicNameContext {
+        return this.getTypedRuleContext(OC_SymbolicNameContext, 0);
     }
-    public DecimalInteger(): antlr.TerminalNode | null {
+    public DecimalInteger(): antlr.TerminalNode {
         return this.getToken(CypherParser.DecimalInteger, 0);
     }
     public override get ruleIndex(): number {
@@ -14723,12 +14403,12 @@ export class OC_PropertyExpressionContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_Atom(): OC_AtomContext {
-        return this.getRuleContext(0, OC_AtomContext)!;
+        return this.getTypedRuleContext(OC_AtomContext, 0);
     }
     public oC_PropertyLookup(): OC_PropertyLookupContext {
-        return this.getRuleContext(0, OC_PropertyLookupContext)!;
+        return this.getTypedRuleContext(OC_PropertyLookupContext, 0);
     }
-    public SP(): antlr.TerminalNode | null {
+    public SP(): antlr.TerminalNode {
         return this.getToken(CypherParser.SP, 0);
     }
     public override get ruleIndex(): number {
@@ -14742,7 +14422,7 @@ export class OC_PropertyKeyNameContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_SchemaName(): OC_SchemaNameContext {
-        return this.getRuleContext(0, OC_SchemaNameContext)!;
+        return this.getTypedRuleContext(OC_SchemaNameContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_PropertyKeyName;
@@ -14755,7 +14435,7 @@ export class OC_IntegerLiteralContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public DecimalInteger(): antlr.TerminalNode {
-        return this.getToken(CypherParser.DecimalInteger, 0)!;
+        return this.getToken(CypherParser.DecimalInteger, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_IntegerLiteral;
@@ -14768,7 +14448,7 @@ export class OC_DoubleLiteralContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public RegularDecimalReal(): antlr.TerminalNode {
-        return this.getToken(CypherParser.RegularDecimalReal, 0)!;
+        return this.getToken(CypherParser.RegularDecimalReal, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_DoubleLiteral;
@@ -14781,7 +14461,7 @@ export class OC_SchemaNameContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public oC_SymbolicName(): OC_SymbolicNameContext {
-        return this.getRuleContext(0, OC_SymbolicNameContext)!;
+        return this.getTypedRuleContext(OC_SymbolicNameContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_SchemaName;
@@ -14790,21 +14470,21 @@ export class OC_SchemaNameContext extends antlr.ParserRuleContext {
 
 
 export class OC_SymbolicNameContext extends antlr.ParserRuleContext {
-    public _EscapedSymbolicName?: Token | null;
+    public _EscapedSymbolicName!: Token;
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public UnescapedSymbolicName(): antlr.TerminalNode | null {
+    public UnescapedSymbolicName(): antlr.TerminalNode {
         return this.getToken(CypherParser.UnescapedSymbolicName, 0);
     }
-    public EscapedSymbolicName(): antlr.TerminalNode | null {
+    public EscapedSymbolicName(): antlr.TerminalNode {
         return this.getToken(CypherParser.EscapedSymbolicName, 0);
     }
-    public HexLetter(): antlr.TerminalNode | null {
+    public HexLetter(): antlr.TerminalNode {
         return this.getToken(CypherParser.HexLetter, 0);
     }
-    public kU_NonReservedKeywords(): KU_NonReservedKeywordsContext | null {
-        return this.getRuleContext(0, KU_NonReservedKeywordsContext);
+    public kU_NonReservedKeywords(): KU_NonReservedKeywordsContext {
+        return this.getTypedRuleContext(KU_NonReservedKeywordsContext, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_SymbolicName;
@@ -14816,37 +14496,37 @@ export class KU_NonReservedKeywordsContext extends antlr.ParserRuleContext {
     public constructor(parent: antlr.ParserRuleContext | null, invokingState: number) {
         super(parent, invokingState);
     }
-    public COMMENT_(): antlr.TerminalNode | null {
+    public COMMENT_(): antlr.TerminalNode {
         return this.getToken(CypherParser.COMMENT_, 0);
     }
-    public COUNT(): antlr.TerminalNode | null {
+    public COUNT(): antlr.TerminalNode {
         return this.getToken(CypherParser.COUNT, 0);
     }
-    public NODE(): antlr.TerminalNode | null {
+    public NODE(): antlr.TerminalNode {
         return this.getToken(CypherParser.NODE, 0);
     }
-    public REL(): antlr.TerminalNode | null {
+    public REL(): antlr.TerminalNode {
         return this.getToken(CypherParser.REL, 0);
     }
-    public BEGIN(): antlr.TerminalNode | null {
+    public BEGIN(): antlr.TerminalNode {
         return this.getToken(CypherParser.BEGIN, 0);
     }
-    public END(): antlr.TerminalNode | null {
+    public END(): antlr.TerminalNode {
         return this.getToken(CypherParser.END, 0);
     }
-    public IN(): antlr.TerminalNode | null {
+    public IN(): antlr.TerminalNode {
         return this.getToken(CypherParser.IN, 0);
     }
-    public IMPORT(): antlr.TerminalNode | null {
+    public IMPORT(): antlr.TerminalNode {
         return this.getToken(CypherParser.IMPORT, 0);
     }
-    public EXPORT(): antlr.TerminalNode | null {
+    public EXPORT(): antlr.TerminalNode {
         return this.getToken(CypherParser.EXPORT, 0);
     }
-    public DATABASE(): antlr.TerminalNode | null {
+    public DATABASE(): antlr.TerminalNode {
         return this.getToken(CypherParser.DATABASE, 0);
     }
-    public USE(): antlr.TerminalNode | null {
+    public USE(): antlr.TerminalNode {
         return this.getToken(CypherParser.USE, 0);
     }
     public override get ruleIndex(): number {
@@ -14880,7 +14560,7 @@ export class OC_DashContext extends antlr.ParserRuleContext {
         super(parent, invokingState);
     }
     public MINUS(): antlr.TerminalNode {
-        return this.getToken(CypherParser.MINUS, 0)!;
+        return this.getToken(CypherParser.MINUS, 0);
     }
     public override get ruleIndex(): number {
         return CypherParser.RULE_oC_Dash;
