@@ -69,6 +69,7 @@
                 Schema
               </a>
             </li>
+
             <li
               v-if="!modeStore.isDemo"
               :class="['nav-item', { active: showLoader }]"
@@ -80,6 +81,20 @@
               >
                 <i class="fa-solid fa-database" />
                 Datasets
+              </a>
+            </li>
+
+            <li
+              v-if="!modeStore.isDemo"
+              :class="['nav-item', { active: showImporter }]"
+            >
+              <a
+                class="nav-link"
+                href="#"
+                @click="toggleImporter()"
+              >
+                <i class="fa-solid fa-upload" />
+                Import Data
               </a>
             </li>
 
@@ -143,6 +158,11 @@
         :navbar-height="navbarHeight"
         @reload-schema="reloadSchema"
       />
+      <ImporterMainView
+        v-show="showImporter"
+        :schema="schema"
+        :navbar-height="navbarHeight"
+      />
     </div>
 
     <div
@@ -201,6 +221,7 @@ import SchemaViewMain from "./SchemaView/SchemaViewMain.vue";
 import ShellMainView from "./ShellView/ShellMainView.vue";
 import SettingsMainView from "./SettingsView/SettingsMainView.vue"
 import DatasetMainView from "./DatasetView/DatasetMainView.vue"
+import ImporterMainView from "./ImporterView/ImporterMainView.vue";
 import Axios from "axios";
 import { useSettingsStore } from "../store/SettingsStore";
 import { useModeStore } from "../store/ModeStore";
@@ -213,11 +234,13 @@ export default {
     SchemaViewMain,
     ShellMainView,
     SettingsMainView,
-    DatasetMainView
+    DatasetMainView,
+    ImporterMainView,
   },
   data: () => ({
     accessModeModal: null,
     showSchema: false,
+    showImporter: false,
     showShell: true,
     showLoader: false,
     showSettings: false,
@@ -379,6 +402,10 @@ export default {
     toggleLoader() {
       this.hideAll();
       this.showLoader = true;
+    },
+    toggleImporter() {
+      this.hideAll();
+      this.showImporter = true;
     },
     showSettingsModal() {
       this.showSettings = true;
