@@ -256,7 +256,8 @@
                   <table class="table border">
                     <thead>
                       <tr>
-                        <th>Column Name</th>
+                        <th>Column Name (File)</th>
+                        <th>Column Name (Database)</th>
                         <th>Type</th>
                         <th>Primary Key?</th>
                       </tr>
@@ -268,8 +269,11 @@
                         :key="index"
                       >
                         <td>
+                          {{ column.name }}
+                        </td>
+                        <td>
                           <input
-                            v-model="column.name"
+                            v-model="column.userDefinedName"
                             type="text"
                             class="form-control"
                           >
@@ -302,16 +306,12 @@
                     </tbody>
                   </table>
 
-                  <button
-                    class="btn btn-secondary"
-                  >
+                  <button class="btn btn-secondary btn-sm">
                     <i class="fa-solid fa-arrow-right-long" />
                     Move as Relationship Table
                   </button>
                   &nbsp;
-                  <button
-                    class="btn btn-danger"
-                  >
+                  <button class="btn btn-danger btn-sm">
                     <i class="fa-solid fa-undo" />
                     Reset
                   </button>
@@ -430,7 +430,8 @@
                   <table class="table border">
                     <thead>
                       <tr>
-                        <th>Column Name</th>
+                        <th>Column Name (File)</th>
+                        <th>Column Name (Database)</th>
                         <th>Type</th>
                         <th>Primary Key?</th>
                       </tr>
@@ -441,6 +442,13 @@
                         v-for="(column, index) in file.format.Columns"
                         :key="index"
                       >
+                        <td>
+                          <input
+                            v-model="column.name"
+                            type="text"
+                            class="form-control"
+                          >
+                        </td>
                         <td>
                           <input
                             v-model="column.name"
@@ -603,6 +611,7 @@ export default {
           if (c.type === 'BIGINT') {
             c.type = DATA_TYPES.INT64
           }
+          c.userDefinedName = c.name;
           c.isPrimaryKey = false;
         })
       }
