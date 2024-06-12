@@ -5,7 +5,7 @@
     class="import-view__wrapper"
   >
     <div
-      v-if="filesLength === 0"
+      v-show="filesLength === 0"
       class="container p-5"
     >
       <div class="row">
@@ -45,19 +45,19 @@
       class="main-buttons-container"
     >
       <button
-        class="btn btn-primary"
-        @click="selectFiles"
-      >
-        <i class="fa-solid fa-plus" />
-        Add More Files
-      </button>
-
-      <button
         class="btn btn-success"
         @click="selectFiles"
       >
         <i class="fa-solid fa-upload" />
         Start Import
+      </button>
+
+      <button
+        class="btn btn-primary"
+        @click="selectFiles"
+      >
+        <i class="fa-solid fa-plus" />
+        Add More Files
       </button>
     </div>
 
@@ -66,6 +66,7 @@
       class="table-wrapper"
     >
       <div
+        v-if="shouldShowFilesTable"
         class="alert alert-info"
         role="alert"
       >
@@ -177,7 +178,7 @@
               <td>
                 {{ file.format.Columns.length }}
               </td>
-              <td> {{ getPrimaryKey(file) ? getPrimaryKey(file) : '(Not selected)' }}</td>
+              <td> {{ getPrimaryKey(file) ? getPrimaryKey(file) : 'None' }}</td>
               <td>
                 <i
                   v-if="getPrimaryKey(file)"
@@ -208,7 +209,9 @@
               <td />
               <td colspan="6">
                 <div>
-                  <h5>Tabel Name</h5>
+                  <h5>
+                    Table Name
+                  </h5>
                   <div class="input-group mb-3">
                     <input
                       v-model="file.tableName"
@@ -256,7 +259,9 @@
                   <table class="table border">
                     <thead>
                       <tr>
-                        <th>Column Name (File)</th>
+                        <th v-if="file.format.HasHeader">
+                          Column Name (File)
+                        </th>
                         <th>Column Name (Database)</th>
                         <th>Type</th>
                         <th>Primary Key?</th>
@@ -268,7 +273,7 @@
                         v-for="(column, index) in file.format.Columns"
                         :key="index"
                       >
-                        <td>
+                        <td v-if="file.format.HasHeader">
                           {{ column.name }}
                         </td>
                         <td>
@@ -344,8 +349,9 @@
           <tr>
             <th />
             <th>Table Name</th>
+            <th>File Name</th>
+            <th>From → To</th>
             <th>Number of Properties</th>
-            <th>Primary Key</th>
             <th>Status </th>
             <th>Actions</th>
           </tr>
@@ -365,11 +371,20 @@
                 </button>
               </td>
               <td>
+                {{ file.tableName }}
+              </td>
+              <td>
                 {{ file.file.name }}
               </td>
-              <td />
-              <td />
-              <td />
+              <td>
+                {{ file.from ? file.from : 'None' }} → {{ file.to ? file.to : 'None' }}
+              </td>
+              <td>
+                {{ getColumnsForRelTable(file).length }}
+              </td>
+              <td>
+                <i class="fa-solid fa-times text-danger" />
+              </td>
               <td class="actions">
                 <button
                   class="btn btn-danger btn-sm"
@@ -388,8 +403,52 @@
             </tr>
             <tr v-if="file.expanded">
               <td />
-              <td colspan="5">
+              <td colspan="6">
                 <div>
+                  <h5>
+                    Table
+                  </h5>
+                  <div class="input-group mb-3">
+                    <span class="input-group-text">Name</span>
+                    <input
+                      v-model="file.tableName"
+                      type="text"
+                      class="form-control"
+                    >
+                    <span class="input-group-text">From</span>
+                    <select
+                      v-model="file.from"
+                      class="form-select"
+                    >
+                      <option :value="null">
+                        None
+                      </option>
+                      <option
+                        v-for="node in nodeFiles"
+                        :key="node.tableName"
+                        :value="node.tableName"
+                      >
+                        {{ node.tableName }}
+                      </option>
+                    </select>
+
+                    <span class="input-group-text">To</span>
+                    <select
+                      v-model="file.to"
+                      class="form-select"
+                    >
+                      <option :value="null">
+                        None
+                      </option>
+                      <option
+                        v-for="node in nodeFiles"
+                        :key="node.tableName"
+                        :value="node.tableName"
+                      >
+                        {{ node.tableName }}
+                      </option>
+                    </select>
+                  </div>
                   <h5>Format</h5>
                   <div class="input-group mb-3">
                     <span class="input-group-text">Delimiter</span>
@@ -426,32 +485,34 @@
                     </select>
                   </div>
                   <div />
-                  <h5>Fields</h5>
-                  <table class="table border">
+                  <h5 v-if="getColumnsForRelTable(file).length> 0">
+                    Fields
+                  </h5>
+                  <table
+                    v-if="getColumnsForRelTable(file).length > 0"
+                    class="table border"
+                  >
                     <thead>
                       <tr>
-                        <th>Column Name (File)</th>
+                        <th v-if="file.format.HasHeader">
+                          Column Name (File)
+                        </th>
                         <th>Column Name (Database)</th>
                         <th>Type</th>
-                        <th>Primary Key?</th>
                       </tr>
                     </thead>
 
                     <tbody>
                       <tr
-                        v-for="(column, index) in file.format.Columns"
+                        v-for="(column, index) in getColumnsForRelTable(file)"
                         :key="index"
                       >
-                        <td>
-                          <input
-                            v-model="column.name"
-                            type="text"
-                            class="form-control"
-                          >
+                        <td v-if="file.format.HasHeader">
+                          {{ column.name }}
                         </td>
                         <td>
                           <input
-                            v-model="column.name"
+                            v-model="column.userDefinedName"
                             type="text"
                             class="form-control"
                           >
@@ -474,6 +535,27 @@
                       </tr>
                     </tbody>
                   </table>
+
+                  <div v-else>
+                    <div
+                      class="alert alert-info"
+                      role="alert"
+                    >
+                      <i class="fa-solid fa-info-circle" />
+                      &nbsp;
+                      No additional properties found in the relationship table.
+                    </div>
+                  </div>
+
+                  <button class="btn btn-secondary btn-sm">
+                    <i class="fa-solid fa-circle" />
+                    Move as Node Table
+                  </button>
+                  &nbsp;
+                  <button class="btn btn-danger btn-sm">
+                    <i class="fa-solid fa-undo" />
+                    Reset
+                  </button>
                 </div>
               </td>
             </tr>
@@ -487,9 +569,7 @@
         >
           <i class="fa-solid fa-info-circle" />
           &nbsp;
-          No relationship tables have been assigned yet. If you have relationship tables, please assign them from the
-          selected
-          files.
+          No relationship tables have been assigned yet. If you have relationship tables, please assign them from the selected files.
         </div>
       </div>
     </div>
@@ -602,7 +682,7 @@ export default {
         currentFile.detectedFormat = detectedFormat;
         const tableNameSplit = currentFile.file.name.split('.');
         tableNameSplit.pop();
-        currentFile.tableName = tableNameSplit.join('_'); 
+        currentFile.tableName = tableNameSplit.join('_');
         currentFile.format = JSON.parse(JSON.stringify(detectedFormat));
         currentFile.format.Columns.forEach(c => {
           if (c.type === 'VARCHAR') {
@@ -627,8 +707,8 @@ export default {
         c.isPrimaryKey = false;
       });
       if (fileType === 'rel') {
-        c.from = null;
-        c.to = null;
+        file.from = null;
+        file.to = null;
       }
     },
 
@@ -663,6 +743,10 @@ export default {
       }
     },
 
+    getColumnsForRelTable(file) {
+      return file.format.Columns.slice(2);
+    },
+
     getPrimaryKey(file) {
       const primaryKey = file.format.Columns.find(c => c.isPrimaryKey);
       return primaryKey ? primaryKey.name : null;
@@ -672,18 +756,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.main-buttons-container{
+.main-buttons-container {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
-  .btn{
+
+  .btn-success {
     flex: 1;
-    &:first-child{
+
+    &:first-child {
       margin-right: 10px;
     }
   }
-
 }
+
 .dropzone {
   border: dashed 4px #ddd !important;
   background-color: #f2f6fc;
