@@ -227,6 +227,7 @@ import { useSettingsStore } from "../store/SettingsStore";
 import { useModeStore } from "../store/ModeStore";
 import { mapActions, mapStores } from 'pinia'
 import { Modal } from 'bootstrap';
+import DuckDB from '../utils/DuckDB';
 
 export default {
   name: "MainLayout",
@@ -254,6 +255,9 @@ export default {
     this.updateNavbarHeight();
     this.accessModeModal = new Modal(this.$refs.modal);
     window.addEventListener("resize", this.updateNavbarHeight);
+    window.setTimeout(() => {
+      DuckDB.init();
+    }, 1000);
   },
   beforeUnmount() {
     this.accessModeModal.dispose();
