@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - next
 
   schedule:
     # Schedule a nightly build two hours after publishing the daily build
@@ -31,14 +32,20 @@ jobs:
     name: Build and push Docker image
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout (default branch)
         uses: actions/checkout@v4
+        if: ${{ github.event_name != 'schedule'}}
+      - name: Checkout (next branch)
+        uses: actions/checkout@v4
+        with:
+          ref: next
+        if: ${{ github.event_name == 'schedule'}}
       - name: Prebuild - install node
         uses: actions/setup-node@v3
         with:
           node-version: "20"
       - name: Prebuild - update dev version
-        if: ${{ github.event_name == 'schedule' || github.event.inputs.isNightly == 'true' }}
+        if: ${{ github.event_name == 'schedule' || github.event.inputs.isNightly == 'true' || github.ref_name == 'next' }}
         working-directory: scripts
         run: node UpdateDevVersion
       - name: Prebuild - install dependencies
@@ -57,10 +64,10 @@ jobs:
           VERSION=$(node -e 'fs=require("fs");console.log(JSON.parse(fs.readFileSync("package.json")).dependencies.kuzu)')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Prebuild - set tag for nightly build
-        if: ${{ github.event_name == 'schedule' || github.event.inputs.isNightly == 'true' }}
+        if: ${{ github.event_name == 'schedule' || github.event.inputs.isNightly == 'true' || github.ref_name == 'next' }}
         run: echo "TAGS=kuzudb/explorer:dev" >> $GITHUB_ENV
       - name: Prebuild - set tag for release build
-        if: ${{ github.event_name != 'schedule' && github.event.inputs.isNightly != 'true' }}
+        if: ${{ github.event_name != 'schedule' && github.event.inputs.isNightly != 'true' && github.ref_name != 'next' }}
         run: echo "TAGS=kuzudb/explorer:latest,kuzudb/explorer:${{ env.VERSION }}" >> $GITHUB_ENV
       - name: Prebuild - show tags
         run: echo $TAGS
