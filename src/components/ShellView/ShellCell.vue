@@ -29,7 +29,7 @@
       v-if="isLoading"
       class="d-flex align-items-center"
     >
-      <strong class="text-secondary">{{
+      <strong class="text-secondary" style="white-space: pre-line;">{{
         loadingText ? loadingText : "Loading..."
       }}</strong>
       <div
@@ -112,12 +112,23 @@ export default {
       this.errorMessage = "";
       this.isLoading = true;
       this.loadingText = "Evaluating query...";
+      let intervalId = setInterval(() => {
+          Axios.get(`/api/cypher/result/${this.cellId}`).then((res) => {
+          if (res.data) {
+            this.loadingText = res.data.finished ? "Processing result..." : `Pipelines Finished: ${res.data.numPipelinesFinished}/${res.data.numPipelines}
+            Current Pipeline Progress: ${Math.round(res.data.pipelineProgress * 100)}%`;
+          } else if (this.loadingText !== "Evaluating query...") {
+              this.loadingText = "Processing results..."
+          }
+        });
+      }, 500);
       Axios.post("/api/cypher",
         {
           query,
           uuid: this.cellId,
           isQueryGenerationMode: this.$refs.editor.isQueryGenerationMode,
-          updateHistory: true
+          updateHistory: true,
+          progress: true
         })
         .then((res) => {
           this.queryResults = res.data.isMultiStatement ? res.data.results : [res.data];
@@ -165,6 +176,7 @@ export default {
             });
           }
         }).finally(() => {
+          clearInterval(intervalId);
           this.isLoading = false;
         });
       if (!this.isEvaluated) {
