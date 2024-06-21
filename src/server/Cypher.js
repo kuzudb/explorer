@@ -4,6 +4,7 @@ const logger = require("./utils/Logger");
 const MODES = require("./utils/Constants").MODES;
 const database = require("./utils/Database");
 let sessionDb;
+const queryMap = new Map();
 try {
   sessionDb = require("./utils/SessionDatabase");
 } catch (err) {}
@@ -71,10 +72,20 @@ router.post("/", async (req, res) => {
   if (params && !typeof params === "object") {
     return res.status(400).send({ error: "Params must be an object" });
   }
+    const progressCallback = (pipelineProgress, numPipelinesFinished, numPipelines) => {  
+        queryMap.set(req.body.uuid, {
+          pipelineProgress: pipelineProgress,
+          numPipelinesFinished: numPipelinesFinished,
+          numPipelines: numPipelines
+      });
+  }
   try {
     let result;
-    if (!params || Object.keys(params).length === 0) {
-      result = await conn.query(query);
+      if (!params || Object.keys(params).length === 0) {
+      result = req.body.progress ? await conn.query(query, progressCallback) : await conn.query(query);
+      if (req.body.progress) {
+        queryMap.delete(req.body.uuid);
+      }
     } else {
       const preparedStatement = await conn.prepare(query);
       result = await conn.execute(preparedStatement, params);
@@ -120,6 +131,10 @@ router.post("/", async (req, res) => {
   } finally {
     database.releaseConnection(conn);
   }
+});
+
+router.get("/result/:uuid", (req, res) => {
+    res.send(queryMap.get(req.params.uuid));
 });
 
 module.exports = router;
