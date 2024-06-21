@@ -29,7 +29,10 @@
       v-if="isLoading"
       class="d-flex align-items-center"
     >
-      <strong class="text-secondary" style="white-space: pre-line;">{{
+      <strong
+        class="text-secondary"
+        style="white-space: pre-line;"
+      >{{
         loadingText ? loadingText : "Loading..."
       }}</strong>
       <div
