@@ -70,6 +70,7 @@
             <td
               v-for="(cell, j) in row"
               :key="j"
+              :style="{ 'white-space': 'pre-wrap' }"
             >
               <ul
                 v-if="Array.isArray(cell)"
