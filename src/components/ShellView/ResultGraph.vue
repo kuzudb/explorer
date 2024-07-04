@@ -858,10 +858,6 @@ export default {
       if (!neighbors) {
         return;
       }
-      // Remove neighbors that are already in the graph
-      neighbors.rows = neighbors.rows.filter((n) => {
-        return !this.g6Graph.findById(this.encodeNodeId(n.dst._id));
-      });
       this.addDataWithQueryResult(neighbors);
       this.expansions.push({
         id: model.id, neighbors
