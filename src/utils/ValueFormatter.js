@@ -72,7 +72,17 @@ class ValueFormatter {
       moment.utc();
       return moment.format();
     } else if (type === DATA_TYPES.FLOAT || type === DATA_TYPES.DOUBLE) {
-      return Number.parseFloat(value).toExponential();
+      const number = Number.parseFloat(value);
+      if (isNaN(number)) {
+        return value;
+      }
+      if(!Number.isFinite(number)){
+        return value;
+      }
+      if (number > 1e8 || number < 1e-8) {
+        return Number.parseFloat(value).toExponential();
+      }
+      return number;
     } else {
       [DATA_TYPES.FIXED_LIST, DATA_TYPES.VAR_LIST].forEach((dataType) => {
         if (type.startsWith(dataType)) {
