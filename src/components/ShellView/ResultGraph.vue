@@ -1,79 +1,41 @@
 <template>
-  <div
-    ref="wrapper"
-    class="result-graph__wrapper"
-  >
-    <div
-      ref="graph"
-      class="result_container__graph"
-      :style="{ width: graphWidth + 'px' }"
-    />
-    <div
-      ref="toolsContainer"
-      class="result-container__tools_container"
-      :style="{ width: toolbarContainerWidth + 'px' }"
-    >
+  <div ref="wrapper" class="result-graph__wrapper">
+    <div ref="graph" class="result_container__graph" :style="{ width: graphWidth + 'px' }" />
+    <div ref="toolsContainer" class="result-container__tools_container"
+      :style="{ width: toolbarContainerWidth + 'px' }">
       <div class="result-container__button">
-        <i
-          :class="sidePanelButtonClass"
-          data-bs-toggle="tooltip"
-          data-bs-placement="right"
-          :data-bs-original-title="sidePanelButtonTitle"
-          @click="toggleSidePanel"
-        />
+        <i :class="sidePanelButtonClass" data-bs-toggle="tooltip" data-bs-placement="right"
+          :data-bs-original-title="sidePanelButtonTitle" @click="toggleSidePanel" />
       </div>
     </div>
-    <div
-      v-show="isSidePanelOpen"
-      ref="sidePanel"
-      class="result-container__side-panel"
-    >
+    <div v-show="isSidePanelOpen" ref="sidePanel" class="result-container__side-panel">
       <div v-if="isNodeSelectedOrHovered">
         <br>
 
         <h5>Actions</h5>
-        <button
-          class="btn btn-sm btn-outline-secondary"
-          @click="hideNode()"
-        >
+        <button class="btn btn-sm btn-outline-secondary" @click="hideNode()">
           <i class="fa-solid fa-eye-slash" /> Hide Node
         </button>
 
         &nbsp;
 
-        <button
-          v-if="!isHighlightedMode"
-          class="btn btn-sm btn-outline-secondary"
-          @click="enableHighlightMode()"
-        >
+        <button v-if="!isHighlightedMode" class="btn btn-sm btn-outline-secondary" @click="enableHighlightMode()">
           <i class="fa-solid fa-arrows-to-circle" /> Highlight Mode
         </button>
 
-        <button
-          v-else
-          class="btn btn-sm btn-outline-primary"
-          @click="disableHighlightMode()"
-        >
+        <button v-else class="btn btn-sm btn-outline-primary" @click="disableHighlightMode()">
           <i class="fa-solid fa-arrows-to-circle" />
           Disable Highlight Mode
         </button>
 
         &nbsp;
 
-        <button
-          v-if="!isCurrentNodeExpanded"
-          class="btn btn-sm btn-outline-secondary"
-          @click="expandSelectedNode()"
-        >
+        <button v-if="!isCurrentNodeExpanded" class="btn btn-sm btn-outline-secondary" @click="expandSelectedNode()">
           <i class="fa-solid fa-up-down-left-right" />
           Expand Neighbors
         </button>
 
-        <button
-          v-else
-          class="btn btn-sm btn-outline-primary"
-          @click="collapseSelectedNode()"
-        >
+        <button v-else class="btn btn-sm btn-outline-primary" @click="collapseSelectedNode()">
           <i class="fa-solid fa-up-down-left-right" />
           Collapse Neighbors
         </button>
@@ -84,27 +46,18 @@
         <div class="result-container__summary-section">
           <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
         </div>
-        <span
-          class="badge bg-primary"
-          :style="{
-            backgroundColor: `${getColor(displayLabel)} !important`,
-            color: `${getTextColor(displayLabel)} !important`,
-          }"
-        >
+        <span class="badge bg-primary" :style="{
+          backgroundColor: `${getColor(displayLabel)} !important`,
+          color: `${getTextColor(displayLabel)} !important`,
+        }">
           {{ displayLabel }}</span>
         <hr>
         <table class="table table-sm table-bordered result-container__result-table">
           <tbody>
-            <tr
-              v-for="property in displayProperties"
-              :key="property.name"
-            >
+            <tr v-for="property in displayProperties" :key="property.name">
               <th scope="row">
                 {{ property.name }}
-                <span
-                  v-if="property.isPrimaryKey"
-                  class="badge bg-primary"
-                >PK</span>
+                <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
               </th>
               <td>{{ property.value }}</td>
             </tr>
@@ -121,11 +74,7 @@
                 {{ counters.total.node - numHiddenNodes }}/</span>{{ counters.total.node }} nodes
               <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
             </p>
-            <button
-              v-if="numHiddenNodes > 0"
-              class="btn btn-sm btn-outline-secondary"
-              @click="showAllNodesRels()"
-            >
+            <button v-if="numHiddenNodes > 0" class="btn btn-sm btn-outline-secondary" @click="showAllNodesRels()">
               <i class="fa-solid fa-eye" />
               Show All
             </button>
@@ -133,15 +82,10 @@
           <hr>
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
-              <tr
-                v-for="label in Object.keys(counters.node)"
-                :key="label"
-              >
+              <tr v-for="label in Object.keys(counters.node)" :key="label">
                 <th scope="row">
-                  <span
-                    class="badge bg-primary"
-                    :style="{ backgroundColor: ` ${getColor(label)} !important` }"
-                  >{{ label }}</span>
+                  <span class="badge bg-primary" :style="{ backgroundColor: ` ${getColor(label)} !important` }">{{ label
+                    }}</span>
                 </th>
                 <td>{{ counters.node[label] }}</td>
               </tr>
@@ -160,18 +104,12 @@
           <hr>
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
-              <tr
-                v-for="label in Object.keys(counters.rel)"
-                :key="label"
-              >
+              <tr v-for="label in Object.keys(counters.rel)" :key="label">
                 <th scope="row">
-                  <span
-                    class="badge bg-primary"
-                    :style="{
-                      backgroundColor: ` ${getColor(label)} !important`,
-                      color: `black !important`,
-                    }"
-                  >
+                  <span class="badge bg-primary" :style="{
+                    backgroundColor: ` ${getColor(label)} !important`,
+                    color: `black !important`,
+                  }">
                     {{ label }}
                   </span>
                 </th>
@@ -195,7 +133,9 @@
 <script lang="js">
 import G6 from '@antv/g6';
 import G6Utils from "../../utils/G6Utils";
-import { DATA_TYPES, UI_SIZE } from "../../utils/Constants";
+import {
+  DATA_TYPES, UI_SIZE, LOOP_POSITIONS, ARC_CURVE_OFFSETS
+} from "../../utils/Constants";
 import NeighborsFetcher from "../../utils/NeighborsFetcher";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
@@ -547,8 +487,8 @@ export default {
       return `${id.table}_${id.offset}`;
     },
 
-    encodeRelId(src, dst) {
-      return `${src.table}_${src.offset}_${dst.table}_${dst.offset}`;
+    encodeRelId(src, dst, label) {
+      return `${src.table}_${src.offset}_${dst.table}_${dst.offset}_${label}`;
     },
 
     extractGraphFromQueryResult(queryResult, linkDistance = 200) {
@@ -556,7 +496,33 @@ export default {
       const dataTypes = queryResult.dataTypes;
       const nodes = {};
       const edges = {};
+      const numberOfRelsBetweenNodes = {};
       const nodeLabels = {};
+
+      const sortNodes = (src, dst) => {
+        const sortedLabels = [src.table, dst.table].sort();
+        const sortedSrcDst = [src.offset, dst.offset].sort();
+        return [sortedLabels[0], sortedSrcDst[0], sortedLabels[1], sortedSrcDst[1]];
+      }
+
+      const increaseRelCounter = (src, dst) => {
+        const sortedNodeInfo = sortNodes(src, dst);
+        if (!numberOfRelsBetweenNodes[sortedNodeInfo[0]]) {
+          numberOfRelsBetweenNodes[sortedNodeInfo[0]] = {};
+        }
+        if (!numberOfRelsBetweenNodes[sortedNodeInfo[0]][sortedNodeInfo[2]]) {
+          numberOfRelsBetweenNodes[sortedNodeInfo[0]][sortedNodeInfo[2]] = {};
+        }
+        if (!numberOfRelsBetweenNodes[sortedNodeInfo[0]][sortedNodeInfo[2]][sortedNodeInfo[1]]) {
+          numberOfRelsBetweenNodes[sortedNodeInfo[0]][sortedNodeInfo[2]][sortedNodeInfo[1]] = {};
+        }
+        const currentMap = numberOfRelsBetweenNodes[sortedNodeInfo[0]][sortedNodeInfo[2]][sortedNodeInfo[1]];
+        if (!currentMap[sortedNodeInfo[3]]) {
+          currentMap[sortedNodeInfo[3]] = 0;
+        }
+        currentMap[sortedNodeInfo[3]] += 1;
+        return currentMap[sortedNodeInfo[3]];
+      }
 
       const processNode = (rawNode) => {
         const nodeId = this.encodeNodeId(rawNode._id);
@@ -593,7 +559,8 @@ export default {
 
       const processRel = (rawRel) => {
         const relSettings = this.settingsStore.settingsForLabel(rawRel._label);
-        const relId = this.encodeRelId(rawRel._src, rawRel._dst);
+        const relId = this.encodeRelId(rawRel._src, rawRel._dst, rawRel._label);
+        const numberOfOverlappingRels = increaseRelCounter(rawRel._src, rawRel._dst);
         const g6Rel = {
           ...relSettings.g6Settings,
           id: relId,
@@ -605,8 +572,13 @@ export default {
           g6Rel.type = "loop";
           g6Rel.loopCfg = {
             dist: 50,
+            position: LOOP_POSITIONS[(numberOfOverlappingRels - 1) % LOOP_POSITIONS.length],
           };
+        } else if (numberOfOverlappingRels > 1) {
+          g6Rel.type = 'quadratic';
+          g6Rel.curveOffset = ARC_CURVE_OFFSETS[(numberOfOverlappingRels - 1) % ARC_CURVE_OFFSETS.length];
         }
+
         const expectedPropertiesType = {};
         const relTable = this.schema.relTables.find((table) => table.name === rawRel._label);
         const expectedProperties = this.schema.relTables.find((table) => table.name === rawRel._label).properties;
@@ -670,7 +642,7 @@ export default {
               });
               recursiveRel._rels.forEach((rel) => {
                 rel = { ...rel };
-                const relId = this.encodeRelId(rel._src, rel._dst);
+                const relId = this.encodeRelId(rel._src, rel._dst, rel._label);
                 if (edges[relId]) {
                   return;
                 }
@@ -1084,7 +1056,7 @@ export default {
     padding-top: 4px;
     padding-bottom: 4px;
 
-    > i {
+    >i {
       cursor: pointer;
 
       &:hover {
@@ -1096,8 +1068,8 @@ export default {
       }
     }
 
-    > i.fa-maximize,
-    > i.fa-minimize {
+    >i.fa-maximize,
+    >i.fa-minimize {
       color: $gray-500;
     }
   }
