@@ -75,3 +75,18 @@ export const PLACEHOLDER_NODE_TABLE = "__placeholder_node_table__";
 export const PLACEHOLDER_REL_TABLE = "__placeholder_rel_table__";
 
 export const IRI_PROPERTY_NAME = "iri";
+
+export const ARC_CURVE_OFFSETS = [
+  0, 60, -60, 80, -80, 100, -100, 120, -120, 140, -140, 160, -160, 180, -180, 200, -200,
+];
+
+export const LOOP_POSITIONS = [
+  "top",
+  "top-right",
+  "right",
+  "bottom-right",
+  "bottom",
+  "bottom-left",
+  "left",
+  "top-left",
+];

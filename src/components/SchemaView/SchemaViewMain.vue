@@ -125,7 +125,10 @@
 
 <script lang="js">
 import G6 from '@antv/g6';
-import { UI_SIZE, SHOW_REL_LABELS_OPTIONS, SCHEMA_ACTION_TYPES, PLACEHOLDER_NODE_TABLE, PLACEHOLDER_REL_TABLE } from "../../utils/Constants";
+import {
+  UI_SIZE, SHOW_REL_LABELS_OPTIONS, SCHEMA_ACTION_TYPES, PLACEHOLDER_NODE_TABLE,
+  PLACEHOLDER_REL_TABLE, LOOP_POSITIONS, ARC_CURVE_OFFSETS
+} from "../../utils/Constants";
 import G6Utils from "../../utils/G6Utils";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { useModeStore } from "../../store/ModeStore";
@@ -459,19 +462,6 @@ export default {
 
     extractGraphFromSchema(schema) {
       const overlapEdgeHash = {};
-      const ARC_CURVE_OFFSETS = [
-        0, 60, -60, 80, -80, 100, -100, 120, -120, 140, -140, 160, -160, 180, -180, 200, -200,
-      ]
-      const LOOP_POSITIONS = [
-        "top",
-        "top-right",
-        "right",
-        "bottom-right",
-        "bottom",
-        "bottom-left",
-        "left",
-        "top-left",
-      ];
       const nodes = schema.nodeTables.map(n => {
         const returnVal = {
           id: n.name,
@@ -977,7 +967,7 @@ export default {
     padding-bottom: 8px;
 
     .schema-view__button {
-      > i {
+      >i {
         color: $body-tertiary-color;
       }
     }

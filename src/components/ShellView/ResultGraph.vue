@@ -141,7 +141,8 @@
                   <span
                     class="badge bg-primary"
                     :style="{ backgroundColor: ` ${getColor(label)} !important` }"
-                  >{{ label }}</span>
+                  >{{ label
+                  }}</span>
                 </th>
                 <td>{{ counters.node[label] }}</td>
               </tr>
@@ -195,7 +196,9 @@
 <script lang="js">
 import G6 from '@antv/g6';
 import G6Utils from "../../utils/G6Utils";
-import { DATA_TYPES, UI_SIZE } from "../../utils/Constants";
+import {
+  DATA_TYPES, UI_SIZE, LOOP_POSITIONS, ARC_CURVE_OFFSETS
+} from "../../utils/Constants";
 import NeighborsFetcher from "../../utils/NeighborsFetcher";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from 'pinia'
@@ -547,8 +550,8 @@ export default {
       return `${id.table}_${id.offset}`;
     },
 
-    encodeRelId(src, dst) {
-      return `${src.table}_${src.offset}_${dst.table}_${dst.offset}`;
+    encodeRelId(src, dst, label) {
+      return `${src.table}_${src.offset}_${dst.table}_${dst.offset}_${label}`;
     },
 
     extractGraphFromQueryResult(queryResult, linkDistance = 200) {
@@ -556,7 +559,33 @@ export default {
       const dataTypes = queryResult.dataTypes;
       const nodes = {};
       const edges = {};
+      const numberOfRelsBetweenNodes = {};
       const nodeLabels = {};
+
+      const sortNodes = (src, dst) => {
+        const sortedLabels = [src.table, dst.table].sort();
+        const sortedSrcDst = [src.offset, dst.offset].sort();
+        return [sortedLabels[0], sortedSrcDst[0], sortedLabels[1], sortedSrcDst[1]];
+      }
+
+      const increaseRelCounter = (src, dst) => {
+        const sortedNodeInfo = sortNodes(src, dst);
+        if (!numberOfRelsBetweenNodes[sortedNodeInfo[0]]) {
+          numberOfRelsBetweenNodes[sortedNodeInfo[0]] = {};
+        }
+        if (!numberOfRelsBetweenNodes[sortedNodeInfo[0]][sortedNodeInfo[2]]) {
+          numberOfRelsBetweenNodes[sortedNodeInfo[0]][sortedNodeInfo[2]] = {};
+        }
+        if (!numberOfRelsBetweenNodes[sortedNodeInfo[0]][sortedNodeInfo[2]][sortedNodeInfo[1]]) {
+          numberOfRelsBetweenNodes[sortedNodeInfo[0]][sortedNodeInfo[2]][sortedNodeInfo[1]] = {};
+        }
+        const currentMap = numberOfRelsBetweenNodes[sortedNodeInfo[0]][sortedNodeInfo[2]][sortedNodeInfo[1]];
+        if (!currentMap[sortedNodeInfo[3]]) {
+          currentMap[sortedNodeInfo[3]] = 0;
+        }
+        currentMap[sortedNodeInfo[3]] += 1;
+        return currentMap[sortedNodeInfo[3]];
+      }
 
       const processNode = (rawNode) => {
         const nodeId = this.encodeNodeId(rawNode._id);
@@ -593,7 +622,8 @@ export default {
 
       const processRel = (rawRel) => {
         const relSettings = this.settingsStore.settingsForLabel(rawRel._label);
-        const relId = this.encodeRelId(rawRel._src, rawRel._dst);
+        const relId = this.encodeRelId(rawRel._src, rawRel._dst, rawRel._label);
+        const numberOfOverlappingRels = increaseRelCounter(rawRel._src, rawRel._dst);
         const g6Rel = {
           ...relSettings.g6Settings,
           id: relId,
@@ -605,8 +635,13 @@ export default {
           g6Rel.type = "loop";
           g6Rel.loopCfg = {
             dist: 50,
+            position: LOOP_POSITIONS[(numberOfOverlappingRels - 1) % LOOP_POSITIONS.length],
           };
+        } else if (numberOfOverlappingRels > 1) {
+          g6Rel.type = 'quadratic';
+          g6Rel.curveOffset = ARC_CURVE_OFFSETS[(numberOfOverlappingRels - 1) % ARC_CURVE_OFFSETS.length];
         }
+
         const expectedPropertiesType = {};
         const relTable = this.schema.relTables.find((table) => table.name === rawRel._label);
         const expectedProperties = this.schema.relTables.find((table) => table.name === rawRel._label).properties;
@@ -670,7 +705,7 @@ export default {
               });
               recursiveRel._rels.forEach((rel) => {
                 rel = { ...rel };
-                const relId = this.encodeRelId(rel._src, rel._dst);
+                const relId = this.encodeRelId(rel._src, rel._dst, rel._label);
                 if (edges[relId]) {
                   return;
                 }
@@ -1084,7 +1119,7 @@ export default {
     padding-top: 4px;
     padding-bottom: 4px;
 
-    > i {
+    >i {
       cursor: pointer;
 
       &:hover {
@@ -1096,8 +1131,8 @@ export default {
       }
     }
 
-    > i.fa-maximize,
-    > i.fa-minimize {
+    >i.fa-maximize,
+    >i.fa-minimize {
       color: $gray-500;
     }
   }
