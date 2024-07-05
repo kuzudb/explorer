@@ -365,9 +365,9 @@ export default {
         layout: {
           type: 'force',
           preventOverlap: true,
-          linkDistance: 200,
+          linkDistance: 150,
           nodeStrength: -50,
-          nodeSpacing: 60,
+          nodeSpacing: 80,
           alpha: 0.5,
           alphaDecay: 0.05,
           alphaMin: 0.05,
