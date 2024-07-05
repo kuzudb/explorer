@@ -1,41 +1,79 @@
 <template>
-  <div ref="wrapper" class="result-graph__wrapper">
-    <div ref="graph" class="result_container__graph" :style="{ width: graphWidth + 'px' }" />
-    <div ref="toolsContainer" class="result-container__tools_container"
-      :style="{ width: toolbarContainerWidth + 'px' }">
+  <div
+    ref="wrapper"
+    class="result-graph__wrapper"
+  >
+    <div
+      ref="graph"
+      class="result_container__graph"
+      :style="{ width: graphWidth + 'px' }"
+    />
+    <div
+      ref="toolsContainer"
+      class="result-container__tools_container"
+      :style="{ width: toolbarContainerWidth + 'px' }"
+    >
       <div class="result-container__button">
-        <i :class="sidePanelButtonClass" data-bs-toggle="tooltip" data-bs-placement="right"
-          :data-bs-original-title="sidePanelButtonTitle" @click="toggleSidePanel" />
+        <i
+          :class="sidePanelButtonClass"
+          data-bs-toggle="tooltip"
+          data-bs-placement="right"
+          :data-bs-original-title="sidePanelButtonTitle"
+          @click="toggleSidePanel"
+        />
       </div>
     </div>
-    <div v-show="isSidePanelOpen" ref="sidePanel" class="result-container__side-panel">
+    <div
+      v-show="isSidePanelOpen"
+      ref="sidePanel"
+      class="result-container__side-panel"
+    >
       <div v-if="isNodeSelectedOrHovered">
         <br>
 
         <h5>Actions</h5>
-        <button class="btn btn-sm btn-outline-secondary" @click="hideNode()">
+        <button
+          class="btn btn-sm btn-outline-secondary"
+          @click="hideNode()"
+        >
           <i class="fa-solid fa-eye-slash" /> Hide Node
         </button>
 
         &nbsp;
 
-        <button v-if="!isHighlightedMode" class="btn btn-sm btn-outline-secondary" @click="enableHighlightMode()">
+        <button
+          v-if="!isHighlightedMode"
+          class="btn btn-sm btn-outline-secondary"
+          @click="enableHighlightMode()"
+        >
           <i class="fa-solid fa-arrows-to-circle" /> Highlight Mode
         </button>
 
-        <button v-else class="btn btn-sm btn-outline-primary" @click="disableHighlightMode()">
+        <button
+          v-else
+          class="btn btn-sm btn-outline-primary"
+          @click="disableHighlightMode()"
+        >
           <i class="fa-solid fa-arrows-to-circle" />
           Disable Highlight Mode
         </button>
 
         &nbsp;
 
-        <button v-if="!isCurrentNodeExpanded" class="btn btn-sm btn-outline-secondary" @click="expandSelectedNode()">
+        <button
+          v-if="!isCurrentNodeExpanded"
+          class="btn btn-sm btn-outline-secondary"
+          @click="expandSelectedNode()"
+        >
           <i class="fa-solid fa-up-down-left-right" />
           Expand Neighbors
         </button>
 
-        <button v-else class="btn btn-sm btn-outline-primary" @click="collapseSelectedNode()">
+        <button
+          v-else
+          class="btn btn-sm btn-outline-primary"
+          @click="collapseSelectedNode()"
+        >
           <i class="fa-solid fa-up-down-left-right" />
           Collapse Neighbors
         </button>
@@ -46,18 +84,27 @@
         <div class="result-container__summary-section">
           <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
         </div>
-        <span class="badge bg-primary" :style="{
-          backgroundColor: `${getColor(displayLabel)} !important`,
-          color: `${getTextColor(displayLabel)} !important`,
-        }">
+        <span
+          class="badge bg-primary"
+          :style="{
+            backgroundColor: `${getColor(displayLabel)} !important`,
+            color: `${getTextColor(displayLabel)} !important`,
+          }"
+        >
           {{ displayLabel }}</span>
         <hr>
         <table class="table table-sm table-bordered result-container__result-table">
           <tbody>
-            <tr v-for="property in displayProperties" :key="property.name">
+            <tr
+              v-for="property in displayProperties"
+              :key="property.name"
+            >
               <th scope="row">
                 {{ property.name }}
-                <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
+                <span
+                  v-if="property.isPrimaryKey"
+                  class="badge bg-primary"
+                >PK</span>
               </th>
               <td>{{ property.value }}</td>
             </tr>
@@ -74,7 +121,11 @@
                 {{ counters.total.node - numHiddenNodes }}/</span>{{ counters.total.node }} nodes
               <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
             </p>
-            <button v-if="numHiddenNodes > 0" class="btn btn-sm btn-outline-secondary" @click="showAllNodesRels()">
+            <button
+              v-if="numHiddenNodes > 0"
+              class="btn btn-sm btn-outline-secondary"
+              @click="showAllNodesRels()"
+            >
               <i class="fa-solid fa-eye" />
               Show All
             </button>
@@ -82,10 +133,16 @@
           <hr>
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
-              <tr v-for="label in Object.keys(counters.node)" :key="label">
+              <tr
+                v-for="label in Object.keys(counters.node)"
+                :key="label"
+              >
                 <th scope="row">
-                  <span class="badge bg-primary" :style="{ backgroundColor: ` ${getColor(label)} !important` }">{{ label
-                    }}</span>
+                  <span
+                    class="badge bg-primary"
+                    :style="{ backgroundColor: ` ${getColor(label)} !important` }"
+                  >{{ label
+                  }}</span>
                 </th>
                 <td>{{ counters.node[label] }}</td>
               </tr>
@@ -104,12 +161,18 @@
           <hr>
           <table class="table table-sm table-bordered result-container__overview-table">
             <tbody>
-              <tr v-for="label in Object.keys(counters.rel)" :key="label">
+              <tr
+                v-for="label in Object.keys(counters.rel)"
+                :key="label"
+              >
                 <th scope="row">
-                  <span class="badge bg-primary" :style="{
-                    backgroundColor: ` ${getColor(label)} !important`,
-                    color: `black !important`,
-                  }">
+                  <span
+                    class="badge bg-primary"
+                    :style="{
+                      backgroundColor: ` ${getColor(label)} !important`,
+                      color: `black !important`,
+                    }"
+                  >
                     {{ label }}
                   </span>
                 </th>
