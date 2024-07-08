@@ -133,8 +133,13 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/result/:uuid", (req, res) => {
-    res.send(queryMap.get(req.params.uuid));
+router.get("/progress/:uuid", (req, res) => {
+    let progress = queryMap.get(req.params.uuid);
+    if (progress) {
+        return res.send(progress);
+    } else {
+        return res.status(404).end();
+    }
 });
 
 module.exports = router;
