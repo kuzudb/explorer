@@ -29,7 +29,9 @@
       v-if="isLoading"
       class="d-flex align-items-center"
     >
-      <strong class="text-secondary">{{
+      <strong
+        class="text-secondary"
+      >{{
         loadingText ? loadingText : "Loading..."
       }}</strong>
       <div
@@ -108,18 +110,34 @@ export default {
       return `resultContainer_${index}`;
     },
     evaluateCypher(query) {
+      const LoadingStatus = Object.freeze({
+        EVAL: "Evaluating query...",
+        PROCESS: "Processing results...",
+      });
       this.queryResults = [];
       this.errorMessage = "";
       this.isLoading = true;
-      this.loadingText = "Evaluating query...";
+      this.loadingText = LoadingStatus.EVAL;
+      let intervalId = setInterval(() => {
+          Axios.get(`/api/cypher/progress/${this.cellId}`).then((res) => {
+              this.loadingText = `Pipelines Finished: ${res.data.numPipelinesFinished}/${res.data.numPipelines}
+            Current Pipeline Progress: ${Math.round(res.data.pipelineProgress * 100)}%`;
+          }).catch((error) => {
+              if (error.response && error.response.status === 404 && this.loadingText !== LoadingStatus.EVAL) {
+                  this.loadingText = LoadingStatus.PROCESS;
+              }
+          });
+      }, 500);
       Axios.post("/api/cypher",
         {
           query,
           uuid: this.cellId,
           isQueryGenerationMode: this.$refs.editor.isQueryGenerationMode,
-          updateHistory: true
+          updateHistory: true,
+          progress: true
         })
         .then((res) => {
+          this.loadingText = LoadingStatus.PROCESS;
           this.queryResults = res.data.isMultiStatement ? res.data.results : [res.data];
           if (this.queryResults.length > 1) {
             this.minimize();
@@ -165,6 +183,7 @@ export default {
             });
           }
         }).finally(() => {
+          clearInterval(intervalId);
           this.isLoading = false;
         });
       if (!this.isEvaluated) {
@@ -289,5 +308,9 @@ div.d-flex.align-items-center {
   padding: 16px;
   border: 2px solid $gray-300;
   border-top: 0;
+}
+
+.text-secondary {
+  white-space: pre-line;
 }
 </style>
