@@ -100,6 +100,7 @@ router.post("/", async (req, res) => {
     let responseBody;
     if (!Array.isArray(result)) {
       responseBody = await processSingleResult(result);
+      result.close();
       responseBody.isSchemaChanged = isSchemaChanged;
       responseBody.isMultiStatement = false;
     } else {
@@ -112,6 +113,7 @@ router.post("/", async (req, res) => {
         const singleResultBody = await processSingleResult(singleResult);
         responseBody.results.push(singleResultBody);
       }
+      result.forEach((singleResult) => singleResult.close());
     }
     responseBody = JSON.stringify(responseBody, int128Replacer);
     return res.send(responseBody);

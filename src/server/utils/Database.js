@@ -56,13 +56,11 @@ class Database {
     coresPerConnection = coresPerConnection < 1 ? 1 : coresPerConnection;
     if (numberOfCores !== os.cpus().length) {
       logger.info(
-        `   ${coresPerConnection} ${
-          coresPerConnection === 1 ? "core" : "cores"
+        `   ${coresPerConnection} ${coresPerConnection === 1 ? "core" : "cores"
         } per connection`
       );
       logger.info(
-        `   ${numberConnections} ${
-          numberConnections === 1 ? "connection" : "connections"
+        `   ${numberConnections} ${numberConnections === 1 ? "connection" : "connections"
         }`
       );
     }
@@ -76,16 +74,26 @@ class Database {
     if (!isNaN(queryTimeout)) {
       logger.info(`Query timeout: ${queryTimeout} ms`);
     }
-    this.db = new kuzu.Database(dbPath, bufferPoolSize, true, isReadOnlyMode);
+    this.dbPath = dbPath;
+    this.bufferPoolSize = bufferPoolSize;
+    this.isReadOnlyMode = isReadOnlyMode;
+    this.numberConnections = numberConnections;
+    this.queryTimeout = queryTimeout;
+    this.coresPerConnection = coresPerConnection;
+    this.init();
+  }
+
+  init() {
+    this.db = new kuzu.Database(this.dbPath, this.bufferPoolSize, true, this.isReadOnlyMode);
     this.connectionPool = [];
-    for (let i = 0; i < numberConnections; ++i) {
+    for (let i = 0; i < this.numberConnections; ++i) {
       const conn = {
-        connection: new kuzu.Connection(this.db, coresPerConnection),
+        connection: new kuzu.Connection(this.db, this.coresPerConnection),
         useCount: 0,
         id: i,
       };
-      if (!isNaN(queryTimeout)) {
-        conn.connection.setQueryTimeout(queryTimeout);
+      if (!isNaN(this.queryTimeout)) {
+        conn.connection.setQueryTimeout(this.queryTimeout);
       }
       this.connectionPool.push(conn);
     }
@@ -131,6 +139,25 @@ class Database {
     return false;
   }
 
+  reset() {
+    const isAllConnectionsReleased = this.connectionPool.every(
+      (conn) => conn.useCount === 0
+    );
+    if (!isAllConnectionsReleased) {
+      throw new Error("Please make sure no queries are running before resetting Kùzu.");
+    }
+    const oldConnectionPool = this.connectionPool;
+    const oldDb = this.db;
+    this.connectionPool = [];
+    this.db = null;
+    return Promise.all(oldConnectionPool.map((conn) => conn.connection.close()))
+      .then(() => {
+        oldDb.close();
+      }).then(() => {
+        this.init();
+      });
+  }
+
   async getSchema() {
     const isBelongToGroup = (relTable, relGroupName) => {
       const src = relTable.src;
@@ -142,9 +169,9 @@ class Database {
 
     const conn = this.getConnection();
     try {
-      const tables = await conn
-        .query("CALL show_tables() RETURN *;")
-        .then((res) => res.getAll());
+      const result = await conn.query("CALL show_tables() RETURN *;");
+      const tables = await result.getAll();
+      result.close();
       const nodeTables = [];
       const relTables = [];
       const relGroups = [];
@@ -221,9 +248,11 @@ class Database {
 
   getDbVersionFromQuery() {
     const conn = this.getConnection();
+    let queryResult;
     return conn
       .query("CALL db_version() RETURN *;")
       .then((res) => {
+        queryResult = res;
         return res.getAll();
       })
       .then((res) => {
@@ -232,6 +261,9 @@ class Database {
         return version;
       })
       .finally(() => {
+        if (queryResult) {
+          queryResult.close();
+        }
         this.releaseConnection(conn);
       });
   }

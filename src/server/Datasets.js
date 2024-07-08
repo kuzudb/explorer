@@ -107,6 +107,7 @@ router.get("/:dataset/copy", async (req, res) => {
         continue;
       }
       const firstValue = Object.values(firstRow)[0];
+      result.close();
       if (firstValue) {
         res.write(`Result: ${firstValue}\n`);
       } else {
