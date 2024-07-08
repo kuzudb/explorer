@@ -230,7 +230,10 @@
         </div>
 
         <div class="modal-footer">
-          <span class="pull-left">
+          <span
+            v-show="!modeStore.isDemo"
+            class="pull-left"
+          >
             <button
               type="button"
               class="btn btn-danger"
@@ -241,7 +244,6 @@
             reloading the data."
               @click="resetDatabase()"
             >
-
               <i class=" fa fa-refresh" />
               Reset Kùzu Connection
             </button>
