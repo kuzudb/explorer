@@ -31,13 +31,16 @@ app.use("/api", api);
 const distPath = path.join(__dirname, "..", "..", "dist");
 app.use("/", express.static(distPath, { maxAge: "30d" }));
 
-database
-  .getDbVersion()
+database.getDbVersion()
   .then((res) => {
     const version = res.version;
     const storageVersion = res.storageVersion;
+    const isInitialDatabaseEmpty = database.isInitialDatabaseEmpty;
     logger.info("Version of Kùzu: " + version);
     logger.info("Storage version of Kùzu: " + storageVersion);
+    if (!isInitialDatabaseEmpty && version.includes("dev")) {
+      logger.warn("You are running a dev build of Kùzu Explorer. Please make sure that the database files opened are created by the same version of Kùzu");
+    }
     app.listen(PORT, () => {
       logger.info("Deployed server started on port: " + PORT);
     });

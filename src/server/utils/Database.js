@@ -67,6 +67,8 @@ class Database {
     if (!dbPath) {
       throw new Error("KUZU_PATH environment variable not set");
     }
+    this.dbPath = dbPath;
+    this.isInitialDatabaseEmpty = this.isDatabasePathEmpty();
     logger.info(
       `Access mode: ${isReadOnlyMode ? MODES.READ_ONLY : MODES.READ_WRITE}`
     );
@@ -74,13 +76,21 @@ class Database {
     if (!isNaN(queryTimeout)) {
       logger.info(`Query timeout: ${queryTimeout} ms`);
     }
-    this.dbPath = dbPath;
     this.bufferPoolSize = bufferPoolSize;
     this.isReadOnlyMode = isReadOnlyMode;
     this.numberConnections = numberConnections;
     this.queryTimeout = queryTimeout;
     this.coresPerConnection = coresPerConnection;
     this.init();
+  }
+
+  isDatabasePathEmpty() {
+    try {
+      const files = fs.readdirSync(this.dbPath);
+      return files.length === 0;
+    } catch (err) {
+      return true;
+    }
   }
 
   init() {
