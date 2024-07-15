@@ -2,7 +2,7 @@ import Axios from "axios";
 import DataDefinitionLanguage from "./DataDefinitionLanguage";
 
 class NeighborsFetcher {
-  constructor() {}
+  constructor() { }
 
   async fetchNeighbors(
     tableName,
@@ -13,9 +13,30 @@ class NeighborsFetcher {
     tableName = DataDefinitionLanguage._escapeName(tableName);
     primaryKey = DataDefinitionLanguage._escapeName(primaryKey);
 
-    const query = `MATCH (src:${tableName}) -[r]- (dst) WHERE src.${primaryKey} = $pk RETURN r, dst LIMIT ${sizeLimit}`;
+    const queries = [
+      `MATCH (dst) -[r] -> (src:${tableName}) WHERE src.${primaryKey} = $pk RETURN r, dst LIMIT ${sizeLimit};`,
+      `MATCH (src:${tableName}) -[r]-> (dst) WHERE src.${primaryKey} = $pk RETURN r, dst LIMIT ${sizeLimit};`
+    ];
     const params = { pk: primaryKeyValue };
-    const result = (await Axios.post("api/cypher", { query, params })).data;
+    let results = await Promise.all(
+      queries.map(
+        query => Axios
+          .post("api/cypher", { query, params })
+          .catch(err => {
+            return null
+          })
+      )
+    );
+    results = results.filter(result => !!result);
+    if (results.length === 0) {
+      return null;
+    }
+    const result = results[0].data;
+    if (results.length > 1) {
+      results[1].data.rows.forEach(row => {
+        result.rows.push(row);
+      });
+    }
     return result;
   }
 }
