@@ -13,8 +13,8 @@
           <th />
           <th>Node Table</th>
           <th>File Name</th>
-          <th>Properties</th>
           <th>Primary Key</th>
+          <th>Properties</th>
         </tr>
       </thead>
       <tbody>
@@ -33,7 +33,10 @@
             </td>
             <td class="table-name-input-wrapper">
               <div class="input-group mb-3">
-                <select class="form-select form-select-sm">
+                <select
+                  class="form-select form-select-sm"
+                  @change="setTableIsNew(key, $event)"
+                >
                   <option value="create-new">
                     Create new table
                   </option>
@@ -42,21 +45,37 @@
                   </option>
                 </select>
                 <input
-                  v-model="file.tableName"
+                  v-if="file.isNew"
+                  :value="file.tableName"
                   type="text"
                   class="form-control form-control-sm"
                 >
+                <select
+                  v-else
+                  class="form-select form-select-sm"
+                  :value="file.tableName"
+                  @change="setTableName(key, $event)"
+                >
+                  <option :value="null">
+                    Select table
+                  </option>
+                  <option
+                    v-for="(option, index) in schema.nodeTables"
+                    :key="index"
+                    :value="option.name"
+                  >
+                    {{ option.name }}
+                  </option>
+                </select>
               </div>
             </td>
             <td>
               {{ file.file.name }}
             </td>
             <td>
-              {{ file.format.Columns.length }}
-            </td>
-            <td>
               <select
                 class="form-select form-select-sm"
+                @change="setPrimaryKey(key, $event)"
               >
                 <option
                   v-for="(column, index) in file.format.Columns"
@@ -67,6 +86,9 @@
                   {{ column.name }}
                 </option>
               </select>
+            </td>
+            <td>
+              {{ file.format.Columns.length }}
             </td>
           </tr>
           <tr v-if="file.expanded">
@@ -89,9 +111,21 @@
                       <td
                         v-for="(column, index) in file.format.Columns"
                         :key="index"
-                        style="font-weight: 500"
+                        class="node-properties-table__key"
                       >
                         {{ column.name }}
+                      </td>
+                    </tr>
+                    <tr v-else>
+                      <th>
+                        Column Index
+                      </th>
+                      <td
+                        v-for="(_, index) in file.format.Columns"
+                        :key="index"
+                        class="node-properties-table__key"
+                      >
+                        {{ index + 1 }}
                       </td>
                     </tr>
                     <tr>
@@ -103,13 +137,31 @@
                         :key="index"
                       >
                         <input
-                          v-model="column.userDefinedName"
+                          v-if="file.isNew"
+                          :value="column.userDefinedName"
                           type="text"
                           class="form-control form-control-sm"
+                          @input="setColumnUserDefinedName(key, index, $event)"
                         >
+                        <select
+                          v-if="!file.isNew && !!file.tableName"
+                          class="form-select form-select-sm"
+                          :value="column.userDefinedName"
+                        >
+                          <option :value="null">
+                            Select property
+                          </option>
+                          <option
+                            v-for="option in getPropertyOptions(key, file.tableName)"
+                            :key="option.key"
+                            :value="option.key"
+                          >
+                            {{ option.text }}
+                          </option>
+                        </select>
                       </td>
                     </tr>
-                    <tr>
+                    <tr v-if="file.isNew">
                       <th>
                         Property Type
                       </th>
@@ -118,8 +170,9 @@
                         :key="index"
                       >
                         <select
-                          v-model="column.type"
+                          :value="column.type"
                           class="form-select form-select-sm"
+                          @change="setColumnType(key, index, $event)"
                         >
                           <option
                             v-for="type in dataTypes"
@@ -179,8 +232,17 @@ export default {
       required: true,
       default: () => ({}),
     },
+    schema: {
+      type: Object,
+      required: true,
+      default: () => ({}),
+    },
   },
-  emits: ["expand", "setCsvFormat"],
+  emits:
+    [
+      "expand", "setCsvFormat", "setPrimaryKey", "setTableIsNew", "setTableName",
+      "setColumnUserDefinedName", "setColumnType"
+    ],
   data() {
     return {
     };
@@ -197,8 +259,62 @@ export default {
     handleExpand(key) {
       this.$emit("expand", key);
     },
+
     setCsvFormat(file) {
       this.$emit("setCsvFormat", file);
+    },
+
+    setTableIsNew(key, event) {
+      this.$emit("setTableIsNew", key, event.target.value === "create-new");
+    },
+
+    setTableName(key, event) {
+      const file = this.files[key];
+
+      if (file.isNew) {
+        window.clearTimeout(this.debounceTimer);
+        this.debounceTimer = window.setTimeout(() => {
+          this.$emit("setTableName", key, event.target.value);
+        }, 200);
+      } else {
+        console.log(event.target.value);
+        this.$emit("setTableName", key, event.target.value);
+      }
+    },
+
+    setPrimaryKey(key, event) {
+      this.$emit("setPrimaryKey", key, event.target.value);
+    },
+
+    setColumnUserDefinedName(key, index, event) {
+      window.clearTimeout(this.debounceTimer);
+      this.debounceTimer = window.setTimeout(() => {
+        console.log(key, index, event.target.value);
+        this.$emit("setColumnUserDefinedName", key, index, event.target.value);
+      }, 200);
+    },
+
+    setColumnType(key, index, event) {
+      console.log(key, index, event.target.value);
+    },
+
+    getPropertyOptions(key, tableName) {
+      console.log(key, tableName);
+      const file = this.files[key];
+      console.log(file);
+      if (file.isNew) {
+        return [];
+      }
+      console.log(this.schema.nodeTables);
+      const nodeTable = this.schema.nodeTables.find((table) => table.name === file.tableName);
+      console.log(nodeTable);
+      if (!nodeTable) {
+        return [];
+      }
+      return nodeTable.properties.map((property) => ({
+        text: property.name,
+        key: property.name,
+      }));
     },
   },
 };
@@ -251,6 +367,10 @@ table {
     input,
     select {
       min-width: 200px;
+    }
+
+    .node-properties-table__key {
+      font-weight: 500;
     }
   }
 }

@@ -45,7 +45,7 @@
                   </option>
                 </select>
                 <input
-                  v-model="file.tableName"
+                  :value="file.tableName"
                   type="text"
                   class="form-control form-control-sm"
                 >
@@ -157,7 +157,7 @@
                         :key="index"
                       >
                         <input
-                          v-model="column.userDefinedName"
+                          :value="column.userDefinedName"
                           type="text"
                           class="form-control form-control-sm"
                         >
@@ -172,7 +172,7 @@
                         :key="index"
                       >
                         <select
-                          v-model="column.type"
+                          :value="column.type"
                           class="form-select form-select-sm"
                         >
                           <option

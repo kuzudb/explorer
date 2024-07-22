@@ -1,7 +1,7 @@
 <template>
   <div class="row">
-    <div class="col-md-3" />
-    <div class="col-md-6 mt-5">
+    <div class="col-md-2" />
+    <div class="col-md-8 mt-5">
       <div class="bg-white p-5 rounded shadow-sm border">
         <div class="dropzone d-block">
           <label

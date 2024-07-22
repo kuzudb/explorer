@@ -33,7 +33,11 @@
 
         <importer-view-node-tables
           :files="nodeFiles"
+          :schema="schema"
           @expand="handleExpand"
+          @set-primary-key="setPrimaryKey"
+          @set-table-is-new="setTableIsNew"
+          @set-table-name="setTableName"
         />
         <importer-view-rel-tables
           :files="relFiles"
@@ -196,6 +200,8 @@ export default {
     handleTableTypeChange(fileKey, fileType) {
       const file = this.files[fileKey];
       file.type = fileType;
+      file.isNew = true;
+      file.isSelectedForImport = true;
       delete file.from;
       delete file.to;
       file.format.Columns.forEach(c => {
@@ -219,16 +225,24 @@ export default {
       file.expanded = !file.expanded;
     },
 
-    handlePrimaryKeyChange(fileKey, columnKey) {
+    setTableName(fileKey, tableName) {
+      console.log('setTableName', fileKey, tableName);
+      this.files[fileKey].tableName = tableName;
+    },
+
+    setTableIsNew(fileKey, isNew) {
+      this.files[fileKey].isNew = isNew;
+    },
+
+    setPrimaryKey(fileKey, columnKey) {
       const file = this.files[fileKey];
-      const column = file.format.Columns[columnKey];
-      if (column.isPrimaryKey) {
-        file.format.Columns.forEach(c => {
-          if (c !== column) {
-            c.isPrimaryKey = false;
-          }
-        });
-      }
+      const column = file.format.Columns.find(c => c.name === columnKey);
+      column.isPrimaryKey = true;
+      file.format.Columns.forEach(c => {
+        if (c.name !== columnKey) {
+          delete c.isPrimaryKey;
+        }
+      });
     },
 
     getReadableSize(bytes) {
