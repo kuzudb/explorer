@@ -56,13 +56,13 @@
             </td>
             <td>
               <select
-                v-model="file.primaryKey"
                 class="form-select form-select-sm"
               >
                 <option
                   v-for="(column, index) in file.format.Columns"
                   :key="index"
                   :value="column.name"
+                  :selected="column.primaryKey"
                 >
                   {{ column.name }}
                 </option>

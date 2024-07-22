@@ -55,9 +55,7 @@
               {{ file.file.name }}
             </td>
             <td>
-              <select
-                class="form-select form-select-sm"
-              >
+              <select class="form-select form-select-sm">
                 <option
                   v-for="(option, index) in srcDstTableOptions"
                   :key="index"
@@ -69,9 +67,7 @@
               </select>
             </td>
             <td>
-              <select
-                class="form-select form-select-sm"
-              >
+              <select class="form-select form-select-sm">
                 <option
                   v-for="(option, index) in srcDstTableOptions"
                   :key="index"
@@ -112,21 +108,23 @@
                     <tr>
                       <td>
                         <select class="form-select form-select-sm">
-                          <option value="create-new">
-                            Create new key
-                          </option>
-                          <option value="existing-key">
-                            Use existing key
+                          <option
+                            v-for="column in file.format.Columns"
+                            :key="column.name"
+                            :selected="column.isFromKey"
+                          >
+                            {{ column.name }}
                           </option>
                         </select>
                       </td>
                       <td>
                         <select class="form-select form-select-sm">
-                          <option value="create-new">
-                            Create new key
-                          </option>
-                          <option value="existing-key">
-                            Use existing key
+                          <option
+                            v-for="column in file.format.Columns"
+                            :key="column.name"
+                            :selected="column.isToKey"
+                          >
+                            {{ column.name }}
                           </option>
                         </select>
                       </td>
