@@ -49,14 +49,15 @@
                   :value="file.tableName"
                   type="text"
                   class="form-control form-control-sm"
+                  @input="setTableName(key, $event)"
                 >
                 <select
                   v-else
                   class="form-select form-select-sm"
-                  :value="file.tableName"
+                  :value="getTableSelectedOption(file)"
                   @change="setTableName(key, $event)"
                 >
-                  <option :value="null">
+                  <option value="">
                     Select table
                   </option>
                   <option
@@ -74,18 +75,22 @@
             </td>
             <td>
               <select
+                v-if="file.isNew"
                 class="form-select form-select-sm"
                 @change="setPrimaryKey(key, $event)"
               >
                 <option
                   v-for="(column, index) in file.format.Columns"
                   :key="index"
-                  :value="column.name"
+                  :value="index"
                   :selected="column.primaryKey"
                 >
-                  {{ column.name }}
+                  {{ column.userDefinedName }}
                 </option>
               </select>
+              <span v-else>
+                {{ getPrimaryKeyFromSchema(file.tableName) }}
+              </span>
             </td>
             <td>
               {{ file.format.Columns.length }}
@@ -146,13 +151,17 @@
                         <select
                           v-if="!file.isNew && !!file.tableName"
                           class="form-select form-select-sm"
-                          :value="column.userDefinedName"
+                          :value="getPropertySelectedOption(key, column)"
+                          @change="setColumnUserDefinedName(key, index, $event)"
                         >
-                          <option :value="null">
+                          <option
+                            key=""
+                            value=""
+                          >
                             Select property
                           </option>
                           <option
-                            v-for="option in getPropertyOptions(key, file.tableName)"
+                            v-for="option in getPropertyOptions(key)"
                             :key="option.key"
                             :value="option.key"
                           >
@@ -240,8 +249,8 @@ export default {
   },
   emits:
     [
-      "expand", "setCsvFormat", "setPrimaryKey", "setTableIsNew", "setTableName",
-      "setColumnUserDefinedName", "setColumnType"
+      "expand", "setCsvFormat", "setPrimaryKey", "setTableIsNew",
+      "setTableName", "setColumnUserDefinedName", "setColumnType"
     ],
   data() {
     return {
@@ -270,15 +279,16 @@ export default {
 
     setTableName(key, event) {
       const file = this.files[key];
-
+      const emitValue = () => {
+        this.$emit("setTableName", key, event.target.value);
+      };
       if (file.isNew) {
         window.clearTimeout(this.debounceTimer);
         this.debounceTimer = window.setTimeout(() => {
-          this.$emit("setTableName", key, event.target.value);
+          emitValue();
         }, 200);
       } else {
-        console.log(event.target.value);
-        this.$emit("setTableName", key, event.target.value);
+        emitValue();
       }
     },
 
@@ -286,28 +296,32 @@ export default {
       this.$emit("setPrimaryKey", key, event.target.value);
     },
 
-    setColumnUserDefinedName(key, index, event) {
-      window.clearTimeout(this.debounceTimer);
-      this.debounceTimer = window.setTimeout(() => {
-        console.log(key, index, event.target.value);
-        this.$emit("setColumnUserDefinedName", key, index, event.target.value);
-      }, 200);
-    },
-
     setColumnType(key, index, event) {
-      console.log(key, index, event.target.value);
     },
 
-    getPropertyOptions(key, tableName) {
-      console.log(key, tableName);
+    setColumnUserDefinedName(key, index, event) {
       const file = this.files[key];
-      console.log(file);
+      const newColumnName = event.target.value;
+      const emitValue = () => {
+        this.$emit("setColumnUserDefinedName", key, index, newColumnName);
+      };
+      if (file.isNew) {
+        window.clearTimeout(this.debounceTimer);
+        this.debounceTimer = window.setTimeout(() => {
+          emitValue();
+        }, 200);
+
+      } else {
+        emitValue();
+      }
+    },
+
+    getPropertyOptions(key) {
+      const file = this.files[key];
       if (file.isNew) {
         return [];
       }
-      console.log(this.schema.nodeTables);
       const nodeTable = this.schema.nodeTables.find((table) => table.name === file.tableName);
-      console.log(nodeTable);
       if (!nodeTable) {
         return [];
       }
@@ -315,6 +329,46 @@ export default {
         text: property.name,
         key: property.name,
       }));
+    },
+
+    getPropertySelectedOption(key, column) {
+      const file = this.files[key];
+      const userDefinedName = column.userDefinedName;
+      if (!userDefinedName) {
+        return "";
+      }
+      const nodeTable = this.schema.nodeTables.find((table) => table.name === file.tableName);
+      if (!nodeTable) {
+        return "";
+      }
+      const property = nodeTable.properties.find((property) => property.name === userDefinedName);
+      if (!property) {
+        return "";
+      }
+      return property.name;
+    },
+
+    getTableSelectedOption(file) {
+      if (!file.tableName) {
+        return "";
+      }
+      const nodeTable = this.schema.nodeTables.find((table) => table.name === file.tableName);
+      if (!nodeTable) {
+        return "";
+      }
+      return file.tableName;
+    },
+
+    getPrimaryKeyFromSchema(tableName) {
+      const nodeTable = this.schema.nodeTables.find((table) => table.name === tableName);
+      if (!nodeTable) {
+        return "(None)";
+      }
+      const primaryKey = nodeTable.properties.find((property) => property.isPrimaryKey);
+      if (!primaryKey) {
+        return "(None)";
+      }
+      return primaryKey.name;
     },
   },
 };

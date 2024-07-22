@@ -35,9 +35,12 @@
           :files="nodeFiles"
           :schema="schema"
           @expand="handleExpand"
+          @set-csv-format="setCSVFormat"
           @set-primary-key="setPrimaryKey"
           @set-table-is-new="setTableIsNew"
           @set-table-name="setTableName"
+          @set-column-user-defined-name="setColumnUserDefinedName"
+          @set-column-type="setColumnType"
         />
         <importer-view-rel-tables
           :files="relFiles"
@@ -225,21 +228,34 @@ export default {
       file.expanded = !file.expanded;
     },
 
+    setCSVFormat() { },
+    
     setTableName(fileKey, tableName) {
-      console.log('setTableName', fileKey, tableName);
       this.files[fileKey].tableName = tableName;
+    },
+
+    setColumnUserDefinedName(fileKey, columnIndex, userDefinedName) {
+      const file = this.files[fileKey];
+      const column = file.format.Columns[columnIndex];
+      column.userDefinedName = userDefinedName;
+    },
+
+    setColumnType(fileKey, columnIndex, type) {
+      const file = this.files[fileKey];
+      const column = file.format.Columns[columnIndex];
+      column.type = type;
     },
 
     setTableIsNew(fileKey, isNew) {
       this.files[fileKey].isNew = isNew;
     },
 
-    setPrimaryKey(fileKey, columnKey) {
+    setPrimaryKey(fileKey, columnIndex) {
       const file = this.files[fileKey];
-      const column = file.format.Columns.find(c => c.name === columnKey);
+      const column = file.format.Columns[columnIndex];
       column.isPrimaryKey = true;
-      file.format.Columns.forEach(c => {
-        if (c.name !== columnKey) {
+      file.format.Columns.forEach((c, i) => {
+        if (i !== columnIndex) {
           delete c.isPrimaryKey;
         }
       });
