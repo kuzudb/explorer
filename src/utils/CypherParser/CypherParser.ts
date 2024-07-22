@@ -1750,7 +1750,7 @@ export class CypherParser extends antlr.Parser {
             this.state = 639;
             this._errHandler.sync(this);
             _la = this._input.LA(1);
-            if (((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382991765) !== 0) || ((((_la - 81)) & ~0x1F) === 0 && ((1 << (_la - 81)) & 233483335) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 170199933) !== 0) || ((((_la - 155)) & ~0x1F) === 0 && ((1 << (_la - 155)) & 1153) !== 0)) {
+            if (((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382991765) !== 0) || ((((_la - 81)) & ~0x1F) === 0 && ((1 << (_la - 81)) & 233483335) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 707070845) !== 0) || ((((_la - 155)) & ~0x1F) === 0 && ((1 << (_la - 155)) & 1153) !== 0)) {
                 {
                 this.state = 638;
                 this.kU_DefaultArg();
@@ -4369,6 +4369,7 @@ export class CypherParser extends antlr.Parser {
             case CypherParser.USE:
             case CypherParser.WRITE:
             case CypherParser.DECIMAL:
+            case CypherParser.L_SKIP:
             case CypherParser.HexLetter:
             case CypherParser.UnescapedSymbolicName:
             case CypherParser.EscapedSymbolicName:
@@ -5781,6 +5782,7 @@ export class CypherParser extends antlr.Parser {
             case CypherParser.USE:
             case CypherParser.WRITE:
             case CypherParser.DECIMAL:
+            case CypherParser.L_SKIP:
             case CypherParser.HexLetter:
             case CypherParser.UnescapedSymbolicName:
             case CypherParser.EscapedSymbolicName:
@@ -6563,6 +6565,7 @@ export class CypherParser extends antlr.Parser {
             case CypherParser.USE:
             case CypherParser.WRITE:
             case CypherParser.DECIMAL:
+            case CypherParser.L_SKIP:
             case CypherParser.MINUS:
             case CypherParser.StringLiteral:
             case CypherParser.DecimalInteger:
@@ -6995,6 +6998,7 @@ export class CypherParser extends antlr.Parser {
             case CypherParser.USE:
             case CypherParser.WRITE:
             case CypherParser.DECIMAL:
+            case CypherParser.L_SKIP:
             case CypherParser.HexLetter:
             case CypherParser.UnescapedSymbolicName:
             case CypherParser.EscapedSymbolicName:
@@ -7174,7 +7178,7 @@ export class CypherParser extends antlr.Parser {
             this.state = 1794;
             this._errHandler.sync(this);
             _la = this._input.LA(1);
-            if (((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382991765) !== 0) || ((((_la - 81)) & ~0x1F) === 0 && ((1 << (_la - 81)) & 233483335) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 170199933) !== 0) || ((((_la - 155)) & ~0x1F) === 0 && ((1 << (_la - 155)) & 1153) !== 0)) {
+            if (((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382991765) !== 0) || ((((_la - 81)) & ~0x1F) === 0 && ((1 << (_la - 81)) & 233483335) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 707070845) !== 0) || ((((_la - 155)) & ~0x1F) === 0 && ((1 << (_la - 155)) & 1153) !== 0)) {
                 {
                 this.state = 1790;
                 this.oC_Variable();
@@ -7479,7 +7483,7 @@ export class CypherParser extends antlr.Parser {
             this.state = 1870;
             this._errHandler.sync(this);
             _la = this._input.LA(1);
-            if (((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382991765) !== 0) || ((((_la - 81)) & ~0x1F) === 0 && ((1 << (_la - 81)) & 233483335) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 170199933) !== 0) || ((((_la - 155)) & ~0x1F) === 0 && ((1 << (_la - 155)) & 1153) !== 0)) {
+            if (((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382991765) !== 0) || ((((_la - 81)) & ~0x1F) === 0 && ((1 << (_la - 81)) & 233483335) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 707070845) !== 0) || ((((_la - 155)) & ~0x1F) === 0 && ((1 << (_la - 155)) & 1153) !== 0)) {
                 {
                 this.state = 1866;
                 this.oC_Variable();
@@ -7596,7 +7600,7 @@ export class CypherParser extends antlr.Parser {
             this.state = 1929;
             this._errHandler.sync(this);
             _la = this._input.LA(1);
-            if (((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382991765) !== 0) || ((((_la - 81)) & ~0x1F) === 0 && ((1 << (_la - 81)) & 233483335) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 170199933) !== 0) || ((((_la - 155)) & ~0x1F) === 0 && ((1 << (_la - 155)) & 1153) !== 0)) {
+            if (((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382991765) !== 0) || ((((_la - 81)) & ~0x1F) === 0 && ((1 << (_la - 81)) & 233483335) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 707070845) !== 0) || ((((_la - 155)) & ~0x1F) === 0 && ((1 << (_la - 155)) & 1153) !== 0)) {
                 {
                 this.state = 1896;
                 this.oC_PropertyKeyName();
@@ -8233,7 +8237,7 @@ export class CypherParser extends antlr.Parser {
             this.state = 2059;
             this._errHandler.sync(this);
             _la = this._input.LA(1);
-            if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382997909) !== 0) || ((((_la - 80)) & ~0x1F) === 0 && ((1 << (_la - 80)) & 2077579423) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 2586250109) !== 0) || ((((_la - 152)) & ~0x1F) === 0 && ((1 << (_la - 152)) & 9741) !== 0)) {
+            if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382997909) !== 0) || ((((_la - 80)) & ~0x1F) === 0 && ((1 << (_la - 80)) & 2077579423) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 3123121021) !== 0) || ((((_la - 152)) & ~0x1F) === 0 && ((1 << (_la - 152)) & 9741) !== 0)) {
                 {
                 this.state = 2058;
                 this.oC_ProjectionItems();
@@ -8290,7 +8294,7 @@ export class CypherParser extends antlr.Parser {
             this.state = 2071;
             this._errHandler.sync(this);
             _la = this._input.LA(1);
-            if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382997909) !== 0) || ((((_la - 80)) & ~0x1F) === 0 && ((1 << (_la - 80)) & 2077579423) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 2586250109) !== 0) || ((((_la - 152)) & ~0x1F) === 0 && ((1 << (_la - 152)) & 9741) !== 0)) {
+            if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382997909) !== 0) || ((((_la - 80)) & ~0x1F) === 0 && ((1 << (_la - 80)) & 2077579423) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 3123121021) !== 0) || ((((_la - 152)) & ~0x1F) === 0 && ((1 << (_la - 152)) & 9741) !== 0)) {
                 {
                 this.state = 2070;
                 this.oC_ProjectionItems();
@@ -9504,7 +9508,7 @@ export class CypherParser extends antlr.Parser {
                 this.state = 2312;
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
-                if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382997909) !== 0) || ((((_la - 80)) & ~0x1F) === 0 && ((1 << (_la - 80)) & 2077579423) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 2317814653) !== 0) || ((((_la - 152)) & ~0x1F) === 0 && ((1 << (_la - 152)) & 9741) !== 0)) {
+                if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382997909) !== 0) || ((((_la - 80)) & ~0x1F) === 0 && ((1 << (_la - 80)) & 2077579423) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 2854685565) !== 0) || ((((_la - 152)) & ~0x1F) === 0 && ((1 << (_la - 152)) & 9741) !== 0)) {
                     {
                     this.state = 2311;
                     this.oC_Expression();
@@ -9516,7 +9520,7 @@ export class CypherParser extends antlr.Parser {
                 this.state = 2316;
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
-                if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382997909) !== 0) || ((((_la - 80)) & ~0x1F) === 0 && ((1 << (_la - 80)) & 2077579423) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 2317814653) !== 0) || ((((_la - 152)) & ~0x1F) === 0 && ((1 << (_la - 152)) & 9741) !== 0)) {
+                if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382997909) !== 0) || ((((_la - 80)) & ~0x1F) === 0 && ((1 << (_la - 80)) & 2077579423) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 2854685565) !== 0) || ((((_la - 152)) & ~0x1F) === 0 && ((1 << (_la - 152)) & 9741) !== 0)) {
                     {
                     this.state = 2315;
                     this.oC_Expression();
@@ -9980,7 +9984,7 @@ export class CypherParser extends antlr.Parser {
             this.state = 2404;
             this._errHandler.sync(this);
             _la = this._input.LA(1);
-            if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382997909) !== 0) || ((((_la - 80)) & ~0x1F) === 0 && ((1 << (_la - 80)) & 2077579423) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 2317814653) !== 0) || ((((_la - 152)) & ~0x1F) === 0 && ((1 << (_la - 152)) & 9741) !== 0)) {
+            if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382997909) !== 0) || ((((_la - 80)) & ~0x1F) === 0 && ((1 << (_la - 80)) & 2077579423) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 2854685565) !== 0) || ((((_la - 152)) & ~0x1F) === 0 && ((1 << (_la - 152)) & 9741) !== 0)) {
                 {
                 this.state = 2391;
                 this.oC_Expression();
@@ -10061,7 +10065,7 @@ export class CypherParser extends antlr.Parser {
             this.state = 2413;
             this._errHandler.sync(this);
             _la = this._input.LA(1);
-            if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382997909) !== 0) || ((((_la - 80)) & ~0x1F) === 0 && ((1 << (_la - 80)) & 2077579423) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 2317814653) !== 0) || ((((_la - 152)) & ~0x1F) === 0 && ((1 << (_la - 152)) & 9741) !== 0)) {
+            if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382997909) !== 0) || ((((_la - 80)) & ~0x1F) === 0 && ((1 << (_la - 80)) & 2077579423) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 2854685565) !== 0) || ((((_la - 152)) & ~0x1F) === 0 && ((1 << (_la - 152)) & 9741) !== 0)) {
                 {
                 this.state = 2412;
                 this.oC_Expression();
@@ -10226,6 +10230,7 @@ export class CypherParser extends antlr.Parser {
             case CypherParser.USE:
             case CypherParser.WRITE:
             case CypherParser.DECIMAL:
+            case CypherParser.L_SKIP:
             case CypherParser.HexLetter:
             case CypherParser.UnescapedSymbolicName:
             case CypherParser.EscapedSymbolicName:
@@ -10532,7 +10537,7 @@ export class CypherParser extends antlr.Parser {
                 this.state = 2534;
                 this._errHandler.sync(this);
                 _la = this._input.LA(1);
-                if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382997909) !== 0) || ((((_la - 80)) & ~0x1F) === 0 && ((1 << (_la - 80)) & 2077579423) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 2317814653) !== 0) || ((((_la - 152)) & ~0x1F) === 0 && ((1 << (_la - 152)) & 9741) !== 0)) {
+                if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 67109508) !== 0) || ((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382997909) !== 0) || ((((_la - 80)) & ~0x1F) === 0 && ((1 << (_la - 80)) & 2077579423) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 2854685565) !== 0) || ((((_la - 152)) & ~0x1F) === 0 && ((1 << (_la - 152)) & 9741) !== 0)) {
                     {
                     this.state = 2517;
                     this.kU_FunctionParameter();
@@ -10817,6 +10822,7 @@ export class CypherParser extends antlr.Parser {
             case CypherParser.USE:
             case CypherParser.WRITE:
             case CypherParser.DECIMAL:
+            case CypherParser.L_SKIP:
             case CypherParser.HexLetter:
             case CypherParser.UnescapedSymbolicName:
             case CypherParser.EscapedSymbolicName:
@@ -11222,6 +11228,7 @@ export class CypherParser extends antlr.Parser {
             case CypherParser.USE:
             case CypherParser.WRITE:
             case CypherParser.DECIMAL:
+            case CypherParser.L_SKIP:
             case CypherParser.HexLetter:
             case CypherParser.UnescapedSymbolicName:
             case CypherParser.EscapedSymbolicName:
@@ -11597,6 +11604,7 @@ export class CypherParser extends antlr.Parser {
             case CypherParser.USE:
             case CypherParser.WRITE:
             case CypherParser.DECIMAL:
+            case CypherParser.L_SKIP:
             case CypherParser.HexLetter:
             case CypherParser.UnescapedSymbolicName:
             case CypherParser.EscapedSymbolicName:
@@ -11838,6 +11846,7 @@ export class CypherParser extends antlr.Parser {
             case CypherParser.USE:
             case CypherParser.WRITE:
             case CypherParser.DECIMAL:
+            case CypherParser.L_SKIP:
                 this.enterOuterAlt(localctx, 4);
                 {
                 this.state = 2743;
@@ -11871,7 +11880,7 @@ export class CypherParser extends antlr.Parser {
             {
             this.state = 2746;
             _la = this._input.LA(1);
-            if(!(((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382991765) !== 0) || ((((_la - 81)) & ~0x1F) === 0 && ((1 << (_la - 81)) & 233483335) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 170199933) !== 0))) {
+            if(!(((((_la - 46)) & ~0x1F) === 0 && ((1 << (_la - 46)) & 1382991765) !== 0) || ((((_la - 81)) & ~0x1F) === 0 && ((1 << (_la - 81)) & 233483335) !== 0) || ((((_la - 118)) & ~0x1F) === 0 && ((1 << (_la - 118)) & 707070845) !== 0))) {
             this._errHandler.recoverInline(this);
             }
             else {
@@ -12296,24 +12305,24 @@ export class CypherParser extends antlr.Parser {
         292,294,296,298,300,302,304,306,308,310,312,314,316,318,320,322,
         324,326,328,330,332,334,336,338,340,0,11,3,0,119,119,126,126,131,
         131,2,0,51,52,72,73,2,0,6,6,13,17,1,0,19,20,2,0,21,21,149,149,2,
-        0,22,23,146,146,2,0,84,84,135,135,28,0,46,46,48,48,50,50,53,56,60,
+        0,22,23,146,146,2,0,84,84,135,135,29,0,46,46,48,48,50,50,53,56,60,
         61,63,65,67,68,71,71,74,74,76,76,81,83,87,87,91,92,94,94,96,96,98,
         98,100,100,102,105,107,108,118,118,120,124,126,127,129,129,134,134,
-        136,136,139,139,143,143,145,145,2,0,14,14,27,30,2,0,16,16,31,34,
-        2,0,35,45,149,149,3118,0,342,1,0,0,0,2,362,1,0,0,0,4,396,1,0,0,0,
-        6,398,1,0,0,0,8,420,1,0,0,0,10,462,1,0,0,0,12,464,1,0,0,0,14,494,
-        1,0,0,0,16,515,1,0,0,0,18,526,1,0,0,0,20,532,1,0,0,0,22,564,1,0,
-        0,0,24,574,1,0,0,0,26,588,1,0,0,0,28,592,1,0,0,0,30,596,1,0,0,0,
-        32,608,1,0,0,0,34,620,1,0,0,0,36,663,1,0,0,0,38,677,1,0,0,0,40,721,
-        1,0,0,0,42,723,1,0,0,0,44,733,1,0,0,0,46,739,1,0,0,0,48,773,1,0,
-        0,0,50,818,1,0,0,0,52,877,1,0,0,0,54,885,1,0,0,0,56,896,1,0,0,0,
-        58,913,1,0,0,0,60,930,1,0,0,0,62,932,1,0,0,0,64,952,1,0,0,0,66,963,
-        1,0,0,0,68,965,1,0,0,0,70,978,1,0,0,0,72,982,1,0,0,0,74,986,1,0,
-        0,0,76,997,1,0,0,0,78,1009,1,0,0,0,80,1011,1,0,0,0,82,1020,1,0,0,
-        0,84,1024,1,0,0,0,86,1028,1,0,0,0,88,1034,1,0,0,0,90,1042,1,0,0,
-        0,92,1056,1,0,0,0,94,1060,1,0,0,0,96,1074,1,0,0,0,98,1081,1,0,0,
-        0,100,1171,1,0,0,0,102,1180,1,0,0,0,104,1187,1,0,0,0,106,1195,1,
-        0,0,0,108,1197,1,0,0,0,110,1199,1,0,0,0,112,1215,1,0,0,0,114,1219,
+        136,136,139,139,143,143,145,145,147,147,2,0,14,14,27,30,2,0,16,16,
+        31,34,2,0,35,45,149,149,3118,0,342,1,0,0,0,2,362,1,0,0,0,4,396,1,
+        0,0,0,6,398,1,0,0,0,8,420,1,0,0,0,10,462,1,0,0,0,12,464,1,0,0,0,
+        14,494,1,0,0,0,16,515,1,0,0,0,18,526,1,0,0,0,20,532,1,0,0,0,22,564,
+        1,0,0,0,24,574,1,0,0,0,26,588,1,0,0,0,28,592,1,0,0,0,30,596,1,0,
+        0,0,32,608,1,0,0,0,34,620,1,0,0,0,36,663,1,0,0,0,38,677,1,0,0,0,
+        40,721,1,0,0,0,42,723,1,0,0,0,44,733,1,0,0,0,46,739,1,0,0,0,48,773,
+        1,0,0,0,50,818,1,0,0,0,52,877,1,0,0,0,54,885,1,0,0,0,56,896,1,0,
+        0,0,58,913,1,0,0,0,60,930,1,0,0,0,62,932,1,0,0,0,64,952,1,0,0,0,
+        66,963,1,0,0,0,68,965,1,0,0,0,70,978,1,0,0,0,72,982,1,0,0,0,74,986,
+        1,0,0,0,76,997,1,0,0,0,78,1009,1,0,0,0,80,1011,1,0,0,0,82,1020,1,
+        0,0,0,84,1024,1,0,0,0,86,1028,1,0,0,0,88,1034,1,0,0,0,90,1042,1,
+        0,0,0,92,1056,1,0,0,0,94,1060,1,0,0,0,96,1074,1,0,0,0,98,1081,1,
+        0,0,0,100,1171,1,0,0,0,102,1180,1,0,0,0,104,1187,1,0,0,0,106,1195,
+        1,0,0,0,108,1197,1,0,0,0,110,1199,1,0,0,0,112,1215,1,0,0,0,114,1219,
         1,0,0,0,116,1221,1,0,0,0,118,1229,1,0,0,0,120,1237,1,0,0,0,122,1241,
         1,0,0,0,124,1259,1,0,0,0,126,1294,1,0,0,0,128,1308,1,0,0,0,130,1312,
         1,0,0,0,132,1359,1,0,0,0,134,1365,1,0,0,0,136,1377,1,0,0,0,138,1395,
@@ -17474,6 +17483,9 @@ export class KU_NonReservedKeywordsContext extends antlr.ParserRuleContext {
     }
     public START(): antlr.TerminalNode {
         return this.getToken(CypherParser.START, 0);
+    }
+    public L_SKIP(): antlr.TerminalNode {
+        return this.getToken(CypherParser.L_SKIP, 0);
     }
     public TRANSACTION(): antlr.TerminalNode {
         return this.getToken(CypherParser.TRANSACTION, 0);
