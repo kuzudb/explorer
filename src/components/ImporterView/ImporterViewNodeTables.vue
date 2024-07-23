@@ -3,39 +3,28 @@
     <h4>
       Import to Node Tables
     </h4>
-    <table
-      v-if="numberOfFiles > 0"
-      class="table border outer-table"
-    >
+    <table v-if="numberOfFiles > 0" class="table border outer-table">
       <thead>
         <tr>
-          <th />
-          <th>Node Table</th>
+          <th class="expand-btn-column" />
+          <th class="table-name-input-column">
+            Node Table</th>
           <th>File Name</th>
           <th>Primary Key</th>
-          <th>Properties</th>
+          <th class="number-properties-column">Properties</th>
         </tr>
       </thead>
       <tbody>
-        <template
-          v-for="(file, key) in files"
-          :key="key"
-        >
+        <template v-for="(file, key) in files" :key="key">
           <tr>
-            <td class="expand-btn-td">
-              <button
-                class="expand-btn"
-                @click="handleExpand(key)"
-              >
+            <td class="expand-btn-column">
+              <button class="expand-btn" @click="handleExpand(key)">
                 <i :class="file.expanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" />
               </button>
             </td>
-            <td class="table-name-input-wrapper">
+            <td class="table-name-input-column">
               <div class="input-group mb-3">
-                <select
-                  class="form-select form-select-sm"
-                  @change="setTableIsNew(key, $event)"
-                >
+                <select class="form-select form-select-sm" @change="setTableIsNew(key, $event)">
                   <option value="create-new">
                     Create new table
                   </option>
@@ -43,27 +32,14 @@
                     Use existing table
                   </option>
                 </select>
-                <input
-                  v-if="file.isNew"
-                  :value="file.tableName"
-                  type="text"
-                  class="form-control form-control-sm"
-                  @input="setTableName(key, $event)"
-                >
-                <select
-                  v-else
-                  class="form-select form-select-sm"
-                  :value="getTableSelectedOption(file)"
-                  @change="setTableName(key, $event)"
-                >
+                <input v-if="file.isNew" :value="file.tableName" type="text" class="form-control form-control-sm"
+                  @input="setTableName(key, $event)">
+                <select v-else class="form-select form-select-sm" :value="getTableSelectedOption(file)"
+                  @change="setTableName(key, $event)">
                   <option value="">
                     Select table
                   </option>
-                  <option
-                    v-for="(option, index) in schema.nodeTables"
-                    :key="index"
-                    :value="option.name"
-                  >
+                  <option v-for="(option, index) in schema.nodeTables" :key="index" :value="option.name">
                     {{ option.name }}
                   </option>
                 </select>
@@ -73,17 +49,9 @@
               {{ file.file.name }}
             </td>
             <td>
-              <select
-                v-if="file.isNew"
-                class="form-select form-select-sm"
-                @change="setPrimaryKey(key, $event)"
-              >
-                <option
-                  v-for="(column, index) in file.format.Columns"
-                  :key="index"
-                  :value="index"
-                  :selected="column.primaryKey"
-                >
+              <select v-if="file.isNew" class="form-select form-select-sm" @change="setPrimaryKey(key, $event)">
+                <option v-for="(column, index) in file.format.Columns" :key="index" :value="index"
+                  :selected="column.primaryKey">
                   {{ column.userDefinedName }}
                 </option>
               </select>
@@ -91,102 +59,63 @@
                 {{ getPrimaryKeyFromSchema(file.tableName) }}
               </span>
             </td>
-            <td>
+            <td class="number-properties-column">
               {{ file.format.Columns.length }}
             </td>
           </tr>
           <tr v-if="file.expanded">
             <td />
-            <td colspan="6">
-              <div>
-                <a
-                  href="#"
-                  class="btn btn-link"
-                  @click.prevent="setCsvFormat(file)"
-                ><i class="fa-solid fa-file-csv" />
+            <td colspan="4">
+              <div class="inner-table__wrapper">
+                <a href="#" class="btn btn-link" @click.prevent="setCsvFormat(file)"><i class="fa-solid fa-file-csv" />
                   Configure CSV
                   Format</a>
                 <table class="table border table-sm node-properties-table">
                   <tbody>
                     <tr v-if="file.format.HasHeader">
-                      <th>
+                      <th class="inner-table__header">
                         Column in File
                       </th>
-                      <td
-                        v-for="(column, index) in file.format.Columns"
-                        :key="index"
-                        class="node-properties-table__key"
-                      >
+                      <td v-for="(column, index) in file.format.Columns" :key="index"
+                        class="node-properties-table__key">
                         {{ column.name }}
                       </td>
                     </tr>
                     <tr v-else>
-                      <th>
+                      <th class="inner-table__header">
                         Column Index
                       </th>
-                      <td
-                        v-for="(_, index) in file.format.Columns"
-                        :key="index"
-                        class="node-properties-table__key"
-                      >
+                      <td v-for="(_, index) in file.format.Columns" :key="index" class="node-properties-table__key">
                         {{ index }}
                       </td>
                     </tr>
                     <tr>
-                      <th>
+                      <th class="inner-table__header">
                         Property Name
                       </th>
-                      <td
-                        v-for="(column, index) in file.format.Columns"
-                        :key="index"
-                      >
-                        <input
-                          v-if="file.isNew"
-                          :value="column.userDefinedName"
-                          type="text"
-                          class="form-control form-control-sm"
-                          @input="setColumnUserDefinedName(key, index, $event)"
-                        >
-                        <select
-                          v-if="!file.isNew && !!file.tableName"
-                          class="form-select form-select-sm"
+                      <td v-for="(column, index) in file.format.Columns" :key="index">
+                        <input v-if="file.isNew" :value="column.userDefinedName" type="text"
+                          class="form-control form-control-sm" @input="setColumnUserDefinedName(key, index, $event)">
+                        <select v-if="!file.isNew && !!file.tableName" class="form-select form-select-sm"
                           :value="getPropertySelectedOption(key, column)"
-                          @change="setColumnUserDefinedName(key, index, $event)"
-                        >
-                          <option
-                            key=""
-                            value=""
-                          >
+                          @change="setColumnUserDefinedName(key, index, $event)">
+                          <option key="" value="">
                             Select property
                           </option>
-                          <option
-                            v-for="option in getPropertyOptions(key)"
-                            :key="option.key"
-                            :value="option.key"
-                          >
+                          <option v-for="option in getPropertyOptions(key)" :key="option.key" :value="option.key">
                             {{ option.text }}
                           </option>
                         </select>
                       </td>
                     </tr>
                     <tr v-if="file.isNew">
-                      <th>
+                      <th class="inner-table__header">
                         Property Type
                       </th>
-                      <td
-                        v-for="(column, index) in file.format.Columns"
-                        :key="index"
-                      >
-                        <select
-                          :value="column.type"
-                          class="form-select form-select-sm"
-                          @change="setColumnType(key, index, $event)"
-                        >
-                          <option
-                            v-for="type in dataTypes"
-                            :key="type"
-                            :value="type"
-                          >
+                      <td v-for="(column, index) in file.format.Columns" :key="index">
+                        <select :value="column.type" class="form-select form-select-sm"
+                          @change="setColumnType(key, index, $event)">
+                          <option v-for="type in dataTypes" :key="type" :value="type">
                             {{ type }}
                           </option>
                         </select>
@@ -194,18 +123,11 @@
                     </tr>
 
                     <tr>
-                      <th>
+                      <th class="inner-table__header">
                         Import to Table?
                       </th>
-                      <td
-                        v-for="(column, index) in file.format.Columns"
-                        :key="index"
-                      >
-                        <input
-                          type="checkbox"
-                          class="form-check-input"
-                          checked
-                        >
+                      <td v-for="(column, index) in file.format.Columns" :key="index">
+                        <input type="checkbox" class="form-check-input" checked>
                       </td>
                     </tr>
                   </tbody>
@@ -217,10 +139,7 @@
       </tbody>
     </table>
     <div v-else>
-      <div
-        class="alert alert-info"
-        role="alert"
-      >
+      <div class="alert alert-info" role="alert">
         <i class="fa-solid fa-info-circle" />
         &nbsp;
         No node tables have been assigned yet. If you have node tables, please assign them from the
@@ -383,6 +302,15 @@ export default {
   max-width: 200px;
 }
 
+
+.expand-btn-column {
+  width: 40px;
+}
+
+.number-properties-column{
+  width: 110px;
+}
+
 table {
   .actions {
     text-align: center;
@@ -393,17 +321,13 @@ table {
     width: 100px;
   }
 
-  td.expand-btn-td {
-    width: 40px;
-  }
-
   .expand-btn {
     background-color: transparent;
     border: none;
     cursor: pointer;
   }
 
-  td.table-name-input-wrapper {
+  .table-name-input-column {
     width: 400px;
 
     .input-group.mb-3 {
@@ -436,5 +360,14 @@ table {
 .outer-table {
   width: 100%;
   overflow-x: hidden;
+  table-layout: fixed;
+}
+
+.inner-table__wrapper {
+  overflow-x: scroll;
+}
+
+.inner-table__header {
+  min-width: 180px;
 }
 </style>

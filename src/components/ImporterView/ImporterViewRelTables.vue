@@ -77,7 +77,10 @@
               {{ file.file.name }}
             </td>
             <td>
-              <select class="form-select form-select-sm">
+              <select
+                v-if="file.isNew"
+                class="form-select form-select-sm"
+              >
                 <option
                   v-for="(option, index) in srcDstTableOptions"
                   :key="index"
@@ -87,9 +90,15 @@
                   {{ option.text }}
                 </option>
               </select>
+              <span v-else>
+                {{ getFromTableFromSchema(file.tableName) }}
+              </span>
             </td>
             <td>
-              <select class="form-select form-select-sm">
+              <select
+                v-if="file.isNew"
+                class="form-select form-select-sm"
+              >
                 <option
                   v-for="(option, index) in srcDstTableOptions"
                   :key="index"
@@ -99,14 +108,15 @@
                   {{ option.text }}
                 </option>
               </select>
+              <span v-else>
+                {{ getToTableFromSchema(file.tableName) }}
+              </span>
             </td>
             <td>
               {{ file.format.Columns.length }}
             </td>
           </tr>
-          <tr
-            v-if="file.expanded"
-          >
+          <tr v-if="file.expanded">
             <td />
             <td colspan="6">
               <div>
@@ -323,7 +333,7 @@ export default {
       const unselectedTables = [
         {
           text: "(Unspecified)",
-          key: null,
+          key: "",
           isExistingTable: false,
         },
       ]
@@ -394,8 +404,8 @@ export default {
       if (!file.tableName) {
         return "";
       }
-      const nodeTable = this.schema.nodeTables.find((table) => table.name === file.tableName);
-      if (!nodeTable) {
+      const relTable = this.schema.relTables.find((table) => table.name === file.tableName);
+      if (!relTable) {
         return "";
       }
       return file.tableName;
@@ -423,15 +433,25 @@ export default {
       if (!userDefinedName) {
         return "";
       }
-      const nodeTable = this.schema.relTables.find((table) => table.name === file.tableName);
-      if (!nodeTable) {
+      const relTable = this.schema.relTables.find((table) => table.name === file.tableName);
+      if (!relTable) {
         return "";
       }
-      const property = nodeTable.properties.find((property) => property.name === userDefinedName);
+      const property = relTable.properties.find((property) => property.name === userDefinedName);
       if (!property) {
         return "";
       }
       return property.name;
+    },
+
+    getFromTableFromSchema(tableName) {
+      const relTable = this.schema.relTables.find((table) => table.name === tableName);
+      return relTable ? relTable.src : "(None)";
+    },
+
+    getToTableFromSchema(tableName) {
+      const relTable = this.schema.relTables.find((table) => table.name === tableName);
+      return relTable ? relTable.dst : "(None)";
     },
 
     setFromKey(key, index, event) {
