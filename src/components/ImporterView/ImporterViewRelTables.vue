@@ -172,14 +172,14 @@
                         :key="index"
                       >
                         <input
-                          v-if="file.isNew"
+                          v-if="file.isNew && !column.isFromKey && !column.isToKey"
                           :value="column.userDefinedName"
                           type="text"
                           class="form-control form-control-sm"
                           @input="setColumnUserDefinedName(key, index, $event)"
                         >
                         <select
-                          v-if="!file.isNew && !!file.tableName"
+                          v-if="!file.isNew && !!file.tableName && !column.isFromKey && !column.isToKey"
                           class="form-select form-select-sm"
                           :value="getPropertySelectedOption(key, column)"
                           @change="setColumnUserDefinedName(key, index, $event)"
@@ -198,6 +198,18 @@
                             {{ option.text }}
                           </option>
                         </select>
+                        <span
+                          v-if="column.isFromKey"
+                          class="rel-properties-table__key"
+                        >
+                          From
+                        </span>
+                        <span
+                          v-else-if="column.isToKey"
+                          class="rel-properties-table__key"
+                        >
+                          To
+                        </span>
                       </td>
                     </tr>
                     <tr v-if="file.isNew">
@@ -469,12 +481,12 @@ export default {
     },
 
     setFromTable(key, event) {
-      const selectedOption = srcDstTableOptions.find((option) => option.key === event.target.value);
+      const selectedOption = this.srcDstTableOptions.find((option) => option.key === event.target.value);
       this.$emit("setFromTable", key, selectedOption);
     },
 
     setToTable(key, event) {
-      const selectedOption = srcDstTableOptions.find((option) => option.key === event.target.value);
+      const selectedOption = this.srcDstTableOptions.find((option) => option.key === event.target.value);
       this.$emit("setToTable", key, selectedOption);
     },
   },

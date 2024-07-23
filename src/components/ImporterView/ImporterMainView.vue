@@ -251,11 +251,27 @@ export default {
     },
 
     setFromTable(fileKey, fromTable) {
-      console.log('setFromTable', fileKey, fromTable);
+      if (!fromTable.key) {
+        fromTable = null;
+      }
+      else {
+        fromTable = { ...fromTable };
+        delete fromTable.text;
+      }
+      const file = this.files[fileKey];
+      file.from = fromTable;
     },
 
     setToTable(fileKey, toTable) {
-      console.log('setToTable', fileKey, toTable);
+      if (!toTable.key) {
+        toTable = null;
+      }
+      else {
+        toTable = { ...toTable };
+        delete toTable.text;
+      }
+      const file = this.files[fileKey];
+      file.to = toTable;
     },
 
     setFromKey(fileKey, columnIndex, checked) {
@@ -267,6 +283,7 @@ export default {
       });
       if (checked) {
         file.format.Columns[columnIndex].isFromKey = true;
+        file.format.Columns[columnIndex].isToKey = false;
       }
     },
 
@@ -279,6 +296,7 @@ export default {
       });
       if (checked) {
         file.format.Columns[columnIndex].isToKey = true;
+        file.format.Columns[columnIndex].isFromKey = false;
       }
     },
 
