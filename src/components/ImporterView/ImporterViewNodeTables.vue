@@ -5,8 +5,7 @@
     </h4>
     <table
       v-if="numberOfFiles > 0"
-      class="table border"
-      style="width: 100%"
+      class="table border outer-table"
     >
       <thead>
         <tr>
@@ -130,7 +129,7 @@
                         :key="index"
                         class="node-properties-table__key"
                       >
-                        {{ index + 1 }}
+                        {{ index }}
                       </td>
                     </tr>
                     <tr>
@@ -297,6 +296,7 @@ export default {
     },
 
     setColumnType(key, index, event) {
+      this.$emit("setColumnType", key, index, event.target.value);
     },
 
     setColumnUserDefinedName(key, index, event) {
@@ -431,5 +431,10 @@ table {
 
 .btn.btn-link {
   text-decoration: none;
+}
+
+.outer-table {
+  width: 100%;
+  overflow-x: hidden;
 }
 </style>
