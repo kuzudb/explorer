@@ -5,19 +5,22 @@
     </h4>
     <table
       v-if="numberOfFiles > 0"
-      class="table border"
-      style="width: 100%"
+      class="table border outer-table"
     >
       <thead>
         <tr>
-          <th />
-          <th>Relationship Table</th>
+          <th class="expand-btn-column" />
+          <th class="table-name-input-column">
+            Relationship Table
+          </th>
           <th>File Name</th>
           <th>From Node Table</th>
           <th>
             To Node Table
           </th>
-          <th>Properties</th>
+          <th class="number-properties-column">
+            Properties
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -26,7 +29,7 @@
           :key="key"
         >
           <tr>
-            <td class="expand-btn-td">
+            <td class="expand-btn-column">
               <button
                 class="expand-btn"
                 @click="handleExpand(key)"
@@ -34,7 +37,7 @@
                 <i :class="file.expanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" />
               </button>
             </td>
-            <td class="table-name-input-wrapper">
+            <td class="table-name-input-column">
               <div class="input-group mb-3">
                 <select
                   class="form-select form-select-sm"
@@ -86,6 +89,7 @@
                   :key="index"
                   :value="option.key"
                   :selected="option.key === file.from"
+                  @change="setFromTable(key, $event)"
                 >
                   {{ option.text }}
                 </option>
@@ -104,6 +108,7 @@
                   :key="index"
                   :value="option.key"
                   :selected="option.key === file.to"
+                  @change="setToTable(key, $event)"
                 >
                   {{ option.text }}
                 </option>
@@ -112,21 +117,22 @@
                 {{ getToTableFromSchema(file.tableName) }}
               </span>
             </td>
-            <td>
+            <td class="number-properties-column">
               {{ file.format.Columns.length }}
             </td>
           </tr>
           <tr v-if="file.expanded">
-            <td />
-            <td colspan="6">
-              <div>
+            <td class="expand-btn-column" />
+            <td colspan="5">
+              <div class="inner-table__wrapper">
                 <a
                   href="#"
                   class="btn btn-link"
                   @click.prevent="setCsvFormat(file)"
-                ><i class="fa-solid fa-file-csv" />
-                  Configure CSV
-                  Format</a>
+                >
+                  <i class="fa-solid fa-file-csv" />
+                  Configure CSV Format
+                </a>
                 <br>
                 <table
                   v-if="file.format.Columns.length > 0"
@@ -134,7 +140,7 @@
                 >
                   <tbody>
                     <tr v-if="file.format.HasHeader">
-                      <th>
+                      <th class="inner-table__header">
                         Column in File
                       </th>
                       <td
@@ -146,7 +152,7 @@
                       </td>
                     </tr>
                     <tr v-else>
-                      <th>
+                      <th class="inner-table__header">
                         Column Index
                       </th>
                       <td
@@ -158,7 +164,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <th>
+                      <th class="inner-table__header">
                         Property Name
                       </th>
                       <td
@@ -195,7 +201,7 @@
                       </td>
                     </tr>
                     <tr v-if="file.isNew">
-                      <th>
+                      <th class="inner-table__header">
                         Property Type
                       </th>
                       <td
@@ -219,7 +225,7 @@
                     </tr>
 
                     <tr>
-                      <th>
+                      <th class="inner-table__header">
                         Import to Table?
                       </th>
                       <td
@@ -235,7 +241,7 @@
                     </tr>
 
                     <tr>
-                      <th>
+                      <th class="inner-table__header">
                         Use as From Key?
                       </th>
                       <td
@@ -251,7 +257,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <th>
+                      <th class="inner-table__header">
                         Use as To Key?
                       </th>
                       <td
@@ -461,6 +467,16 @@ export default {
     setToKey(key, index, event) {
       this.$emit("setToKey", key, index, event.target.checked);
     },
+
+    setFromTable(key, event) {
+      const selectedOption = srcDstTableOptions.find((option) => option.key === event.target.value);
+      this.$emit("setFromTable", key, selectedOption);
+    },
+
+    setToTable(key, event) {
+      const selectedOption = srcDstTableOptions.find((option) => option.key === event.target.value);
+      this.$emit("setToTable", key, selectedOption);
+    },
   },
 };
 </script>
@@ -494,8 +510,12 @@ table {
     cursor: pointer;
   }
 
-  td.table-name-input-wrapper {
+  .table-name-input-column {
     width: 400px;
+
+    .input-group.mb-3 {
+      margin-bottom: 0 !important;
+    }
   }
 
   .input-group.mb-3 {
@@ -523,5 +543,26 @@ table {
 
 .btn.btn-link {
   text-decoration: none;
+}
+
+.outer-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.inner-table__wrapper {
+  overflow-x: scroll;
+}
+
+.inner-table__header {
+  min-width: 180px;
+}
+
+.expand-btn-column {
+  width: 40px;
+}
+
+.number-properties-column {
+  width: 110px;
 }
 </style>

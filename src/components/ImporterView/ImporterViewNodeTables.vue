@@ -387,7 +387,6 @@ export default {
   max-width: 200px;
 }
 
-
 .expand-btn-column {
   width: 40px;
 }
