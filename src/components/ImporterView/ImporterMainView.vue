@@ -36,16 +36,26 @@
           :schema="schema"
           @expand="handleExpand"
           @set-csv-format="setCSVFormat"
-          @set-primary-key="setPrimaryKey"
           @set-table-is-new="setTableIsNew"
           @set-table-name="setTableName"
+          @set-primary-key="setPrimaryKey"
           @set-column-user-defined-name="setColumnUserDefinedName"
           @set-column-type="setColumnType"
         />
         <importer-view-rel-tables
           :files="relFiles"
-          :src-dst-table-options="srcDstTableOptions"
+          :schema="schema"
+          :node-files="nodeFiles"
           @expand="handleExpand"
+          @set-csv-format="setCSVFormat"
+          @set-table-is-new="setTableIsNew"
+          @set-table-name="setTableName"
+          @set-from-table="setFromTable"
+          @set-to-table="setToTable"
+          @set-from-key="setFromKey"
+          @set-to-key="setToKey"
+          @set-column-user-defined-name="setColumnUserDefinedName"
+          @set-column-type="setColumnType"
         />
       </div>
     </div>
@@ -84,27 +94,6 @@ export default {
   computed: {
     isSchemaEmpty() {
       return this.schema.nodeTables.length === 0 && this.schema.relTables.length === 0;
-    },
-
-    srcDstTableOptions() {
-      const unselectedTables = [
-        {
-          text: "(Unspecified)",
-          key: null,
-          isExistingTable: false,
-        },
-      ]
-      const schemaTables = this.schema.nodeTables.map((table) => ({
-        text: table.name,
-        key: table.name,
-        isExistingTable: true,
-      }));
-      const filesTables = Object.values(this.files).map((file) => ({
-        text: file.tableName,
-        key: file.id,
-        isExistingTable: false,
-      }));
-      return unselectedTables.concat(schemaTables).concat(filesTables);
     },
 
     filesLength() {
@@ -259,6 +248,36 @@ export default {
           delete c.isPrimaryKey;
         }
       });
+    },
+
+    setFromTable(fileKey, fromTable) {
+    },
+
+    setToTable(fileKey, toTable) {
+    },
+
+    setFromKey(fileKey, columnIndex, checked) {
+      const file = this.files[fileKey];
+      file.format.Columns.forEach((c, i) => {
+        if (i !== columnIndex) {
+          delete c.isFromKey;
+        }
+      });
+      if (checked) {
+        file.format.Columns[columnIndex].isFromKey = true;
+      }
+    },
+
+    setToKey(fileKey, columnIndex, checked) {
+      const file = this.files[fileKey];
+      file.format.Columns.forEach((c, i) => {
+        if (i !== columnIndex) {
+          delete c.isToKey;
+        }
+      });
+      if (checked) {
+        file.format.Columns[columnIndex].isToKey = true;
+      }
     },
 
     getReadableSize(bytes) {

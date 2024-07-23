@@ -13,9 +13,9 @@
           <th />
           <th>Relationship Table</th>
           <th>File Name</th>
-          <th>Source Node Table</th>
+          <th>From Node Table</th>
           <th>
-            Destination Node Table
+            To Node Table
           </th>
           <th>Properties</th>
         </tr>
@@ -25,7 +25,7 @@
           v-for="(file, key) in files"
           :key="key"
         >
-          <tr :set="propertyColumns = getPropertyColumns(file)">
+          <tr>
             <td class="expand-btn-td">
               <button
                 class="expand-btn"
@@ -36,7 +36,10 @@
             </td>
             <td class="table-name-input-wrapper">
               <div class="input-group mb-3">
-                <select class="form-select form-select-sm">
+                <select
+                  class="form-select form-select-sm"
+                  @change="setTableIsNew(key, $event)"
+                >
                   <option value="create-new">
                     Create new table
                   </option>
@@ -45,10 +48,29 @@
                   </option>
                 </select>
                 <input
+                  v-if="file.isNew"
                   :value="file.tableName"
                   type="text"
                   class="form-control form-control-sm"
+                  @input="setTableName(key, $event)"
                 >
+                <select
+                  v-else
+                  class="form-select form-select-sm"
+                  :value="getTableSelectedOption(file)"
+                  @change="setTableName(key, $event)"
+                >
+                  <option value="">
+                    Select table
+                  </option>
+                  <option
+                    v-for="(option, index) in schema.relTables"
+                    :key="index"
+                    :value="option.name"
+                  >
+                    {{ option.name }}
+                  </option>
+                </select>
               </div>
             </td>
             <td>
@@ -79,12 +101,11 @@
               </select>
             </td>
             <td>
-              {{ propertyColumns.length }}
+              {{ file.format.Columns.length }}
             </td>
           </tr>
           <tr
             v-if="file.expanded"
-            :set="propertyColumns = getPropertyColumns(file)"
           >
             <td />
             <td colspan="6">
@@ -97,42 +118,8 @@
                   Configure CSV
                   Format</a>
                 <br>
-                <table class="table border table-sm from-to-table">
-                  <thead>
-                    <tr>
-                      <th>Source Key</th>
-                      <th>Destination Key</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <select class="form-select form-select-sm">
-                          <option
-                            v-for="column in file.format.Columns"
-                            :key="column.name"
-                            :selected="column.isFromKey"
-                          >
-                            {{ column.name }}
-                          </option>
-                        </select>
-                      </td>
-                      <td>
-                        <select class="form-select form-select-sm">
-                          <option
-                            v-for="column in file.format.Columns"
-                            :key="column.name"
-                            :selected="column.isToKey"
-                          >
-                            {{ column.name }}
-                          </option>
-                        </select>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
                 <table
-                  v-if="propertyColumns.length > 0"
+                  v-if="file.format.Columns.length > 0"
                   class=" table border table-sm properties-table"
                 >
                   <tbody>
@@ -141,11 +128,23 @@
                         Column in File
                       </th>
                       <td
-                        v-for="(column, index) in propertyColumns"
+                        v-for="(column, index) in file.format.Columns"
                         :key="index"
-                        style="font-weight: 500"
+                        class="rel-properties-table__key"
                       >
                         {{ column.name }}
+                      </td>
+                    </tr>
+                    <tr v-else>
+                      <th>
+                        Column Index
+                      </th>
+                      <td
+                        v-for="(_, index) in file.format.Columns"
+                        :key="index"
+                        class="rel-properties-table__key"
+                      >
+                        {{ index }}
                       </td>
                     </tr>
                     <tr>
@@ -153,27 +152,50 @@
                         Property Name
                       </th>
                       <td
-                        v-for="(column, index) in propertyColumns"
+                        v-for="(column, index) in file.format.Columns"
                         :key="index"
                       >
                         <input
+                          v-if="file.isNew"
                           :value="column.userDefinedName"
                           type="text"
                           class="form-control form-control-sm"
+                          @input="setColumnUserDefinedName(key, index, $event)"
                         >
+                        <select
+                          v-if="!file.isNew && !!file.tableName"
+                          class="form-select form-select-sm"
+                          :value="getPropertySelectedOption(key, column)"
+                          @change="setColumnUserDefinedName(key, index, $event)"
+                        >
+                          <option
+                            key=""
+                            value=""
+                          >
+                            Select property
+                          </option>
+                          <option
+                            v-for="option in getPropertyOptions(key)"
+                            :key="option.key"
+                            :value="option.key"
+                          >
+                            {{ option.text }}
+                          </option>
+                        </select>
                       </td>
                     </tr>
-                    <tr>
+                    <tr v-if="file.isNew">
                       <th>
                         Property Type
                       </th>
                       <td
-                        v-for="(column, index) in propertyColumns"
+                        v-for="(column, index) in file.format.Columns"
                         :key="index"
                       >
                         <select
                           :value="column.type"
                           class="form-select form-select-sm"
+                          @change="setColumnType(key, index, $event)"
                         >
                           <option
                             v-for="type in dataTypes"
@@ -191,13 +213,46 @@
                         Import to Table?
                       </th>
                       <td
-                        v-for="(column, index) in propertyColumns"
+                        v-for="(column, index) in file.format.Columns"
                         :key="index"
                       >
                         <input
                           type="checkbox"
                           class="form-check-input"
                           checked
+                        >
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <th>
+                        Use as From Key?
+                      </th>
+                      <td
+                        v-for="(column, index) in file.format.Columns"
+                        :key="index"
+                      >
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          :checked="column.isFromKey"
+                          @change="setFromKey(key, index, $event)"
+                        >
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>
+                        Use as To Key?
+                      </th>
+                      <td
+                        v-for="(column, index) in file.format.Columns"
+                        :key="index"
+                      >
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          :checked="column.isToKey"
+                          @change="setToKey(key, index, $event)"
                         >
                       </td>
                     </tr>
@@ -233,13 +288,24 @@ export default {
       required: true,
       default: () => ({}),
     },
-    srcDstTableOptions: {
-      type: Array,
+
+    nodeFiles: {
+      type: Object,
       required: true,
-      default: () => [],
+      default: () => ({}),
+    },
+
+    schema: {
+      type: Object,
+      required: true,
+      default: () => ({}),
     },
   },
-  emits: ["expand", "setCsvFormat"],
+  emits: [
+    "expand", "setCsvFormat", "setTableIsNew", "setTableName",
+    "setColumnType", "setColumnUserDefinedName", "setFromTable",
+    "setToTable", "setFromKey", "setToKey",
+  ],
   data() {
     return {
     };
@@ -248,21 +314,132 @@ export default {
     numberOfFiles() {
       return Object.keys(this.files).length;
     },
+
     dataTypes() {
       return Object.keys(DATA_TYPES);
     },
+
+    srcDstTableOptions() {
+      const unselectedTables = [
+        {
+          text: "(Unspecified)",
+          key: null,
+          isExistingTable: false,
+        },
+      ]
+      const schemaTables = this.schema.nodeTables.map((table) => ({
+        text: table.name,
+        key: table.name,
+        isExistingTable: true,
+      }));
+      const filesTables = Object.values(this.nodeFiles).map((file) => ({
+        text: file.tableName,
+        key: file.id,
+        isExistingTable: false,
+      }));
+      return unselectedTables.concat(schemaTables).concat(filesTables);
+    },
   },
+
   methods: {
     handleExpand(key) {
       this.$emit("expand", key);
     },
+
     setCsvFormat(file) {
       this.$emit("setCsvFormat", file);
     },
-    getPropertyColumns(file) {
-      const propertyColumns = file.format.Columns.filter((column) => !column.isFromKey && !column.isToKey);
-      console.log(propertyColumns);
-      return propertyColumns;
+
+    setTableIsNew(key, event) {
+      this.$emit("setTableIsNew", key, event.target.value === "create-new");
+    },
+
+    setTableName(key, event) {
+      const file = this.files[key];
+      const emitValue = () => {
+        this.$emit("setTableName", key, event.target.value);
+      };
+      if (file.isNew) {
+        window.clearTimeout(this.debounceTimer);
+        this.debounceTimer = window.setTimeout(() => {
+          emitValue();
+        }, 200);
+      } else {
+        emitValue();
+      }
+    },
+
+    setColumnType(key, index, event) {
+      this.$emit("setColumnType", key, index, event.target.value);
+    },
+
+    setColumnUserDefinedName(key, index, event) {
+      const file = this.files[key];
+      const newColumnName = event.target.value;
+      const emitValue = () => {
+        this.$emit("setColumnUserDefinedName", key, index, newColumnName);
+      };
+      if (file.isNew) {
+        window.clearTimeout(this.debounceTimer);
+        this.debounceTimer = window.setTimeout(() => {
+          emitValue();
+        }, 200);
+
+      } else {
+        emitValue();
+      }
+    },
+
+    getTableSelectedOption(file) {
+      if (!file.tableName) {
+        return "";
+      }
+      const nodeTable = this.schema.nodeTables.find((table) => table.name === file.tableName);
+      if (!nodeTable) {
+        return "";
+      }
+      return file.tableName;
+    },
+
+    getPropertyOptions(key) {
+      const file = this.files[key];
+      if (file.isNew) {
+        return [];
+      }
+      const relTable = this.schema.relTables.find((table) => table.name === file.tableName);
+      if (!relTable) {
+        return [];
+      }
+      const results = relTable.properties.map((property) => ({
+        text: property.name,
+        key: property.name,
+      }));
+      return results;
+    },
+
+    getPropertySelectedOption(key, column) {
+      const file = this.files[key];
+      const userDefinedName = column.userDefinedName;
+      if (!userDefinedName) {
+        return "";
+      }
+      const nodeTable = this.schema.relTables.find((table) => table.name === file.tableName);
+      if (!nodeTable) {
+        return "";
+      }
+      const property = nodeTable.properties.find((property) => property.name === userDefinedName);
+      if (!property) {
+        return "";
+      }
+      return property.name;
+    },
+
+    setFromKey(key, index, event) {
+      this.$emit("setFromKey", key, index, event.target.checked);
+    },
+
+    setToKey(key, index, event) {
+      this.$emit("setToKey", key, index, event.target.checked);
     },
   },
 };
@@ -317,6 +494,10 @@ table {
     select {
       min-width: 200px;
     }
+  }
+
+  .rel-properties-table__key {
+    font-weight: 500;
   }
 }
 
