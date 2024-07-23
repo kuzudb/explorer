@@ -83,13 +83,13 @@
               <select
                 v-if="file.isNew"
                 class="form-select form-select-sm"
+                @change="setFromTable(key, $event)"
               >
                 <option
                   v-for="(option, index) in srcDstTableOptions"
                   :key="index"
                   :value="option.key"
                   :selected="option.key === file.from"
-                  @change="setFromTable(key, $event)"
                 >
                   {{ option.text }}
                 </option>
@@ -102,13 +102,13 @@
               <select
                 v-if="file.isNew"
                 class="form-select form-select-sm"
+                @change="setToTable(key, $event)"
               >
                 <option
                   v-for="(option, index) in srcDstTableOptions"
                   :key="index"
                   :value="option.key"
                   :selected="option.key === file.to"
-                  @change="setToTable(key, $event)"
                 >
                   {{ option.text }}
                 </option>

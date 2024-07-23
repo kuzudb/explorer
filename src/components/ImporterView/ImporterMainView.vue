@@ -251,9 +251,11 @@ export default {
     },
 
     setFromTable(fileKey, fromTable) {
+      console.log('setFromTable', fileKey, fromTable);
     },
 
     setToTable(fileKey, toTable) {
+      console.log('setToTable', fileKey, toTable);
     },
 
     setFromKey(fileKey, columnIndex, checked) {
