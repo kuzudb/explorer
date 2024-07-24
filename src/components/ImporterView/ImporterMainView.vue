@@ -1,70 +1,29 @@
 <template>
-  <div
-    v-if="schema"
-    ref="wrapper"
-    class="import-view__wrapper"
-  >
-    <div
-      v-show="filesLength === 0"
-      class="container p-5"
-    >
-      <importer-view-drop-zone
-        ref="dropzone"
-        @files-selected="handleFilesSelected"
-      />
+  <div v-if="schema" ref="wrapper" class="import-view__wrapper">
+    <div v-show="filesLength === 0" class="container p-5">
+      <importer-view-drop-zone ref="dropzone" @files-selected="handleFilesSelected" />
     </div>
-    <div
-      v-if="filesLength > 0"
-      class="main-wrapper"
-    >
-      <importer-view-sidebar
-        :files="files"
-        @table-type-change="handleTableTypeChange"
-        @add-files="addFiles"
-        @remove-file="removeFile"
-      />
+    <div v-if="filesLength > 0" class="main-wrapper">
+      <importer-view-sidebar :files="files" @table-type-change="handleTableTypeChange" @add-files="addFiles"
+        @remove-file="removeFile" />
       <div class=" table-wrapper">
-        <button
-          class="btn btn-success"
-          @click="selectFiles"
-        >
+        <button class="btn btn-success" @click="selectFiles">
           <i class="fa-solid fa-upload" />
           Start Import
         </button>
 
-        <importer-view-node-tables
-          :files="nodeFiles"
-          :schema="schema"
-          @expand="handleExpand"
-          @set-csv-format="setCSVFormat"
-          @set-table-is-new="setTableIsNew"
-          @set-table-name="setTableName"
-          @set-primary-key="setPrimaryKey"
-          @set-column-user-defined-name="setColumnUserDefinedName"
-          @set-column-type="setColumnType"
-        />
-        <importer-view-rel-tables
-          :files="relFiles"
-          :schema="schema"
-          :node-files="nodeFiles"
-          @expand="handleExpand"
-          @set-csv-format="setCSVFormat"
-          @set-table-is-new="setTableIsNew"
-          @set-table-name="setTableName"
-          @set-from-table="setFromTable"
-          @set-to-table="setToTable"
-          @set-from-key="setFromKey"
-          @set-to-key="setToKey"
-          @set-column-user-defined-name="setColumnUserDefinedName"
-          @set-column-type="setColumnType"
-        />
+        <importer-view-node-tables :files="nodeFiles" :schema="schema" @expand="handleExpand"
+          @set-csv-format="setCSVFormat" @set-table-is-new="setTableIsNew" @set-table-name="setTableName"
+          @set-primary-key="setPrimaryKey" @set-column-user-defined-name="setColumnUserDefinedName"
+          @set-column-type="setColumnType" />
+        <importer-view-rel-tables :files="relFiles" :schema="schema" :node-files="nodeFiles" @expand="handleExpand"
+          @set-csv-format="setCSVFormat" @set-table-is-new="setTableIsNew" @set-table-name="setTableName"
+          @set-from-table="setFromTable" @set-to-table="setToTable" @set-from-key="setFromKey" @set-to-key="setToKey"
+          @set-column-user-defined-name="setColumnUserDefinedName" @set-column-type="setColumnType" />
       </div>
     </div>
-    <importer-view-file-processing-modal
-      ref="fileProcessingModal"
-      :files="processingFiles"
-      @close="clearProcessingFiles"
-    />
+    <importer-view-file-processing-modal ref="fileProcessingModal" :files="processingFiles"
+      @close="clearProcessingFiles" />
   </div>
 </template>
 
@@ -199,14 +158,17 @@ export default {
           delete filesHash[key];
           continue;
         }
+        let detectedFormat;
         try {
-          await DuckDB.registerCSVFile(key, currentFile.file);
+          await DuckDB.registerFile(key, currentFile.file, extension);
+          detectedFormat = extension === 'parquet' ?
+            (await DuckDB.sniffParquetFile(key, currentFile.file)) :
+            (await DuckDB.sniffCSVFile(key, currentFile.file));
         } catch (error) {
           currentFile.status = 'error';
           currentFile.error = error.message;
           continue;
         }
-        const detectedFormat = await DuckDB.sniffCSVFile(key, currentFile.file);
         currentFile.detectedFormat = detectedFormat;
         const tableNameSplit = currentFile.file.name.split('.');
         tableNameSplit.pop();
@@ -260,7 +222,7 @@ export default {
     },
 
     setCSVFormat() { },
-    
+
     setTableName(fileKey, tableName) {
       this.files[fileKey].tableName = tableName;
     },

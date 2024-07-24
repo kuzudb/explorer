@@ -88,13 +88,13 @@ class DuckDB {
     return `${uuid}.${type}`;
   }
 
-  async registerCSVFile(uuid, file) {
+  async registerFile(uuid, file, extension) {
     const db = await this.getDb();
-    const fileName = this.getFileName(uuid, FILE_TYPE.CSV);
+    const fileName = this.getFileName(uuid, extension);
     await db.registerFileHandle(fileName, file, DuckDBDataProtocol.BROWSER_FILEREADER, true);
   }
 
-  async sniffCSVFile(uuid, file) {
+  async sniffCSVFile(uuid) {
     const db = await this.getDb();
     const conn = await db.connect();
     const fileName = this.getFileName(uuid, FILE_TYPE.CSV);
@@ -108,12 +108,33 @@ class DuckDB {
     return resultRow;
   }
 
-  async loadCSVFile(uuid, file, skipRows = 0, limitRows = 200) {
+  async sniffParquetFile(uuid) {
     const db = await this.getDb();
     const conn = await db.connect();
-    const fileName = this.getFileName(uuid, FILE_TYPE.CSV);
+    const fileName = this.getFileName(uuid, FILE_TYPE.PARQUET);
+    const query = `DESCRIBE TABLE '${fileName}'`;
+    let result = await conn.query(query);
+    await conn.close();
+    const resultArray = result.toArray();
+    const columns = resultArray.map((row) => {
+      const rowJSON = row.toJSON();
+      console.log(rowJSON);
+      return {
+        name: rowJSON.column_name,
+        type: rowJSON.column_type,
+      };
+    });
+    return {
+      Columns: columns,
+    }
+  }
+
+  async loadParquetFile(uuid, file) {
+    const db = await this.getDb();
+    const conn = await db.connect();
+    const fileName = this.getFileName(uuid, FILE_TYPE.PARQUET);
     await db.registerFileHandle(fileName, file, DuckDBDataProtocol.BROWSER_FILEREADER, true);
-    const query = `SELECT * FROM sniff_csv('${fileName}', sample_size=${limitRows})`;
+    const query = `SELECT * FROM sniff_parquet('${fileName}')`;
     console.debug(query);
     let result = await conn.query(query);
     const resultArray = result.toArray();
