@@ -104,6 +104,7 @@
             <td colspan="4">
               <div class="inner-table__wrapper">
                 <a
+                  v-if="file.type === 'csv'"
                   href="#"
                   class="btn btn-link"
                   @click.prevent="setCsvFormat(file)"

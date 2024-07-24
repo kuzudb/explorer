@@ -62,28 +62,6 @@ class DuckDB {
     return this.db;
   }
 
-  async unloadTable(uuid, conn = null) {
-    if (!this.loadedTables[uuid]) {
-      return;
-    }
-    const isConnProvided = !!conn;
-    if (!conn) {
-      const db = await this.getDb();
-      conn = await db.connect();
-    }
-    try {
-      const query = `DROP TABLE IF EXISTS "${uuid}" CASCADE`;
-      console.debug(query);
-      await conn.query(query);
-      delete this.loadedTables[uuid];
-    } catch (e) {
-      console.debug("Cannot unload table:", uuid);
-    }
-    if (!isConnProvided) {
-      await conn.close();
-    }
-  }
-
   getFileName(uuid, type) {
     return `${uuid}.${type}`;
   }
@@ -113,12 +91,12 @@ class DuckDB {
     const conn = await db.connect();
     const fileName = this.getFileName(uuid, FILE_TYPE.PARQUET);
     const query = `DESCRIBE TABLE '${fileName}'`;
+    console.debug(query);
     let result = await conn.query(query);
     await conn.close();
     const resultArray = result.toArray();
     const columns = resultArray.map((row) => {
       const rowJSON = row.toJSON();
-      console.log(rowJSON);
       return {
         name: rowJSON.column_name,
         type: rowJSON.column_type,
@@ -126,7 +104,8 @@ class DuckDB {
     });
     return {
       Columns: columns,
-    }
+      HasHeader: true,
+    };
   }
 
   async loadParquetFile(uuid, file) {
