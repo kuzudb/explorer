@@ -59,6 +59,11 @@
         />
       </div>
     </div>
+    <importer-view-file-processing-modal
+      ref="fileProcessingModal"
+      :files="processingFiles"
+      @close="clearProcessingFiles"
+    />
   </div>
 </template>
 
@@ -73,6 +78,7 @@ import ImporterViewDropZone from './ImporterViewDropZone.vue';
 import ImporterViewSidebar from './ImporterViewSidebar.vue';
 import ImporterViewNodeTables from './ImporterViewNodeTables.vue';
 import ImporterViewRelTables from './ImporterViewRelTables.vue';
+import ImporterViewFileProcessingModal from './ImporterViewFileProcessingModal.vue';
 export default {
   name: "ImporterMainView",
   components: {
@@ -80,16 +86,22 @@ export default {
     ImporterViewSidebar,
     ImporterViewNodeTables,
     ImporterViewRelTables,
+    ImporterViewFileProcessingModal,
   },
   props: {
     schema: {
       type: Object,
       default: null,
     },
+    navbarHeight: {
+      type: Number,
+      default: 0,
+    },
   },
   emits: ["reloadSchema"],
   data: () => ({
     files: {},
+    processingFiles: [],
   }),
   computed: {
     isSchemaEmpty() {
@@ -150,7 +162,9 @@ export default {
     },
 
     async handleFilesSelected(files) {
+      this.$refs.fileProcessingModal.showModal();
       const filesHash = {};
+      this.processingFiles = [];
       for (let i = 0; i < files.length; ++i) {
         const file = files[i];
         const id = uuidv4().toString();
@@ -161,14 +175,32 @@ export default {
           header: 0,
           expanded: false,
         }
+        this.processingFiles.push({
+          id,
+          status: 'processing',
+          fileName: file.name,
+        });
       }
       for (const key in filesHash) {
+        const processingFile = this.processingFiles.find(f => f.id === key);
         const currentFile = filesHash[key];
         const extension = currentFile.file.type === 'text/csv' ? 'csv' :
           currentFile.file.name.toLowerCase().endsWith('.parquet') ? 'parquet' :
             'unsupported';
         currentFile.extension = extension;
-        await DuckDB.registerCSVFile(key, currentFile.file);
+        if (extension === 'unsupported') {
+          processingFile.status = 'error';
+          processingFile.error = 'Unsupported file format';
+          delete filesHash[key];
+          continue;
+        }
+        try {
+          await DuckDB.registerCSVFile(key, currentFile.file);
+        } catch (error) {
+          currentFile.status = 'error';
+          currentFile.error = error.message;
+          continue;
+        }
         const detectedFormat = await DuckDB.sniffCSVFile(key, currentFile.file);
         currentFile.detectedFormat = detectedFormat;
         const tableNameSplit = currentFile.file.name.split('.');
@@ -185,8 +217,13 @@ export default {
           c.userDefinedName = c.name;
           c.isPrimaryKey = false;
         })
+        processingFile.status = 'success';
       }
       this.files = { ...this.files, ...filesHash };
+    },
+
+    clearProcessingFiles() {
+      this.processingFiles = [];
     },
 
     handleTableTypeChange(fileKey, fileType) {
