@@ -23,7 +23,7 @@
         @add-files="addFiles"
         @remove-file="removeFile"
       />
-      <div class=" table-wrapper">
+      <div class="outer-wrapper">
         <button
           class="btn btn-success"
           @click="selectFiles"
@@ -31,33 +31,34 @@
           <i class="fa-solid fa-upload" />
           Start Import
         </button>
-
-        <importer-view-node-tables
-          :files="nodeFiles"
-          :schema="schema"
-          @expand="handleExpand"
-          @set-csv-format="setCSVFormat"
-          @set-table-is-new="setTableIsNew"
-          @set-table-name="setTableName"
-          @set-primary-key="setPrimaryKey"
-          @set-column-user-defined-name="setColumnUserDefinedName"
-          @set-column-type="setColumnType"
-        />
-        <importer-view-rel-tables
-          :files="relFiles"
-          :schema="schema"
-          :node-files="nodeFiles"
-          @expand="handleExpand"
-          @set-csv-format="setCSVFormat"
-          @set-table-is-new="setTableIsNew"
-          @set-table-name="setTableName"
-          @set-from-table="setFromTable"
-          @set-to-table="setToTable"
-          @set-from-key="setFromKey"
-          @set-to-key="setToKey"
-          @set-column-user-defined-name="setColumnUserDefinedName"
-          @set-column-type="setColumnType"
-        />
+        <div class=" table-wrapper">
+          <importer-view-node-tables
+            :files="nodeFiles"
+            :schema="schema"
+            @expand="handleExpand"
+            @set-csv-format="setCSVFormat"
+            @set-table-is-new="setTableIsNew"
+            @set-table-name="setTableName"
+            @set-primary-key="setPrimaryKey"
+            @set-column-user-defined-name="setColumnUserDefinedName"
+            @set-column-type="setColumnType"
+          />
+          <importer-view-rel-tables
+            :files="relFiles"
+            :schema="schema"
+            :node-files="nodeFiles"
+            @expand="handleExpand"
+            @set-csv-format="setCSVFormat"
+            @set-table-is-new="setTableIsNew"
+            @set-table-name="setTableName"
+            @set-from-table="setFromTable"
+            @set-to-table="setToTable"
+            @set-from-key="setFromKey"
+            @set-to-key="setToKey"
+            @set-column-user-defined-name="setColumnUserDefinedName"
+            @set-column-type="setColumnType"
+          />
+        </div>
       </div>
     </div>
     <importer-view-file-processing-modal
@@ -189,7 +190,11 @@ export default {
       for (const key in filesHash) {
         const processingFile = this.processingFiles.find(f => f.id === key);
         const currentFile = filesHash[key];
-        const extension = currentFile.file.type === 'text/csv' ? 'csv' :
+        const extension = (
+          currentFile.file.name.toLowerCase().endsWith('.csv') ||
+          currentFile.file.name.toLowerCase().endsWith('.txt') ||
+          currentFile.file.name.toLowerCase().endsWith('.tsv')
+        ) ? 'csv' :
           currentFile.file.name.toLowerCase().endsWith('.parquet') ? 'parquet' :
             'unsupported';
         currentFile.extension = extension;
@@ -354,20 +359,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.main-buttons-container {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-
-  .btn-success {
-    flex: 1;
-
-    &:first-child {
-      margin-right: 10px;
-    }
-  }
-}
-
 .import-view__wrapper {
   height: 100%;
   width: 100%;
@@ -386,14 +377,24 @@ export default {
   height: 100%;
 }
 
-.table-wrapper {
-  overflow: scroll;
+.outer-wrapper {
   flex: 1;
-  padding: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .table-wrapper {
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
 
   .btn.btn-success {
     width: 100%;
     margin-bottom: 20px;
   }
+
+  padding: 16px;
 }
 </style>

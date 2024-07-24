@@ -134,7 +134,6 @@
                   <i class="fa-solid fa-file-csv" />
                   Configure CSV Format
                 </a>
-                <br>
                 <table
                   v-if="file.format.Columns.length > 0"
                   class=" table border table-sm properties-table"

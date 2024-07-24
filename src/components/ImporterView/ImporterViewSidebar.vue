@@ -16,61 +16,63 @@
       The selected files are listed below. Please assign table types to the files to get started.
     </div>
 
-    <table class="table border">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Size</th>
-          <th class="table-type-select">
-            Type
-          </th>
-          <th class="actions">
-            Actions
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for=" (file, key) in files"
-          :key="key"
-        >
-          <td>
-            {{ file.file.name }}
-          </td>
-          <td>{{ getReadableSize(file.file.size) }}</td>
-          <td class="table-type-select">
-            <select
-              class="form-select-sm"
-              @change="handleTableTypeChange(key, $event)"
-            >
-              <option
-                value="none"
-                selected
+    <div class="table-wrapper">
+      <table class="table border">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Size</th>
+            <th class="table-type-select">
+              Type
+            </th>
+            <th class="actions">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for=" (file, key) in files"
+            :key="key"
+          >
+            <td>
+              {{ file.file.name }}
+            </td>
+            <td>{{ getReadableSize(file.file.size) }}</td>
+            <td class="table-type-select">
+              <select
+                class="form-select-sm"
+                @change="handleTableTypeChange(key, $event)"
               >
-                None
-              </option>
-              <option value="node">
-                Node
-              </option>
-              <option value="rel">
-                Relationship
-              </option>
-            </select>
-          </td>
-          <td class="actions">
-            <i
-              class="fa-solid fa-trash"
-              @click="removeFile(key)"
-            />
+                <option
+                  value="none"
+                  selected
+                >
+                  None
+                </option>
+                <option value="node">
+                  Node
+                </option>
+                <option value="rel">
+                  Relationship
+                </option>
+              </select>
+            </td>
+            <td class="actions">
+              <i
+                class="fa-solid fa-trash"
+                @click="removeFile(key)"
+              />
             &nbsp;
-            <i
-              class=" fa-solid fa-table"
-              @click="previewFile(key)"
-            />
-          </td>
-        </tr>
-      </tbody>
-    </table>
+              <i
+                class=" fa-solid fa-table"
+                @click="previewFile(key)"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -109,10 +111,15 @@ export default {
   height: 100%;
   background-color: $gray-100;
   padding: 16px;
-
+  display: flex;
+  flex-direction: column;
   .alert {
     margin-bottom: 10px;
     margin-top: 10px;
+  }
+
+  .table-wrapper {
+    overflow-y: scroll;
   }
 
   .btn-primary {
@@ -131,6 +138,10 @@ export default {
   .table-type-select {
     text-align: center;
     width: 100px;
+  }
+
+  td{
+    word-break: break-all;
   }
 }
 </style>

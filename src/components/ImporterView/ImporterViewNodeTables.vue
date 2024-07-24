@@ -109,8 +109,8 @@
                   class="btn btn-link"
                   @click.prevent="setCsvFormat(file)"
                 ><i class="fa-solid fa-file-csv" />
-                  Configure CSV
-                  Format</a>
+                  Configure CSV Format
+                </a>
                 <table class="table border table-sm node-properties-table">
                   <tbody>
                     <tr v-if="file.format.HasHeader">
