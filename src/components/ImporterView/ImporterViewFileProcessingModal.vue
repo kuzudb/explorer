@@ -116,4 +116,7 @@ export default {
   width: 1rem;
   height: 1rem;
 }
+.d-flex {
+  gap: 20px;
+}
 </style>
