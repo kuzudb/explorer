@@ -68,7 +68,10 @@ export default {
       this.$refs.fileInput.click();
     },
     handleFilesSelected(e) {
-      this.$emit("filesSelected", e.target.files);
+      const files = e.target.files;
+      this.$emit("filesSelected", files);
+      // Clear the input value to allow selecting the same file again
+      e.target.value = "";
     },
   },
 };

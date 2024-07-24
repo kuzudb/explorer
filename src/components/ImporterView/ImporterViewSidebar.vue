@@ -60,7 +60,7 @@
           <td class="actions">
             <i
               class="fa-solid fa-trash"
-              @click="removefile(key)"
+              @click="removeFile(key)"
             />
             &nbsp;
             <i
@@ -85,6 +85,7 @@ export default {
   },
   emits: [
     "addFiles",
+    "removeFile",
     "tableTypeChange"
   ],
   methods: {
@@ -94,6 +95,9 @@ export default {
     },
     handleTableTypeChange(key, event) {
       this.$emit("tableTypeChange", key, event.target.value);
+    },
+    removeFile(key) {
+      this.$emit("removeFile", key);
     },
   },
 }

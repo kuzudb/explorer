@@ -21,6 +21,7 @@
         :files="files"
         @table-type-change="handleTableTypeChange"
         @add-files="addFiles"
+        @remove-file="removeFile"
       />
       <div class=" table-wrapper">
         <button
@@ -159,6 +160,10 @@ export default {
   methods: {
     addFiles() {
       this.$refs.dropzone.selectFiles();
+    },
+
+    removeFile(key) {
+      delete this.files[key];
     },
 
     async handleFilesSelected(files) {
