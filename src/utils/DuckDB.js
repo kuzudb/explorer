@@ -72,6 +72,10 @@ class DuckDB {
     await db.registerFileHandle(fileName, file, DuckDBDataProtocol.BROWSER_FILEREADER, true);
   }
 
+  async getCSVHeaderWithCustomSettings() {
+
+  }
+
   async sniffCSVFile(uuid) {
     const db = await this.getDb();
     const conn = await db.connect();

@@ -66,6 +66,9 @@
       :files="processingFiles"
       @close="clearProcessingFiles"
     />
+    <importer-view-csv-format-modal
+      ref="csvFormatModal"
+    />
   </div>
 </template>
 
@@ -81,6 +84,8 @@ import ImporterViewSidebar from './ImporterViewSidebar.vue';
 import ImporterViewNodeTables from './ImporterViewNodeTables.vue';
 import ImporterViewRelTables from './ImporterViewRelTables.vue';
 import ImporterViewFileProcessingModal from './ImporterViewFileProcessingModal.vue';
+import ImporterViewCsvFormatModal from './ImporterViewCsvFormatModal.vue';
+
 export default {
   name: "ImporterMainView",
   components: {
@@ -89,6 +94,7 @@ export default {
     ImporterViewNodeTables,
     ImporterViewRelTables,
     ImporterViewFileProcessingModal,
+    ImporterViewCsvFormatModal,
   },
   props: {
     schema: {

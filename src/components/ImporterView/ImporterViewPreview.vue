@@ -1,32 +1,55 @@
 <template>
-  <div ref="modal" class="modal" tabindex="-1">
+  <div
+    ref="modal"
+    class="modal"
+    tabindex="-1"
+  >
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 v-if="isProcessing" class="modal-title">
+          <h5
+            v-if="isProcessing"
+            class="modal-title"
+          >
             Processing Selected Files...
           </h5>
-          <h5 v-else class="modal-title">
+          <h5
+            v-else
+            class="modal-title"
+          >
             {{ files.length }} Files Processed
           </h5>
         </div>
         <div class="modal-body">
           <ul class="list-group">
-            <li v-for="file in files" :key="file.id" class="list-group-item">
+            <li
+              v-for="file in files"
+              :key="file.id"
+              class="list-group-item"
+            >
               <div class="d-flex justify-content-between">
                 <span>{{ file.fileName }}</span>
                 <span v-if="file.status === 'processing'">
-                  <div class="spinner-border text-primary" role="status" />
+                  <div
+                    class="spinner-border text-primary"
+                    role="status"
+                  />
 
                   &nbsp;
                   <span>Processing...</span>
                 </span>
-                <span v-else-if="file.status === 'success'" class="text-success">
+                <span
+                  v-else-if="file.status === 'success'"
+                  class="text-success"
+                >
                   <i class="fa-solid fa-check-circle" />
                   &nbsp;
                   <span>Sucess</span>
                 </span>
-                <span v-else-if="file.status === 'error'" class="text-danger">
+                <span
+                  v-else-if="file.status === 'error'"
+                  class="text-danger"
+                >
                   <i class="fa-solid fa-exclamation-circle" />
                   &nbsp;
                   <span>{{ file.error }}</span>
