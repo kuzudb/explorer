@@ -391,6 +391,7 @@ export default {
       this.showSchema = false;
       this.showShell = false;
       this.showLoader = false;
+      this.showImporter = false;
     },
     toggleSchema() {
       this.hideAll();
