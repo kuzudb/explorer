@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@antv/g6": "^4.8.24",
+    "@duckdb/duckdb-wasm": "1.28.1-dev218.0",
     "@popperjs/core": "^2.11.8",
     "antlr4-c3": "3.2.3",
     "antlr4ng": "1.0.7",
@@ -24,6 +25,7 @@
     "bootstrap": "^5.3.1",
     "core-js": "^3.8.3",
     "cors": "^2.8.5",
+    "dropzone": "^6.0.0-beta.2",
     "express": "^4.18.2",
     "kuzu": "0.4.2",
     "moment": "^2.29.4",
@@ -46,6 +48,7 @@
     "@vue/cli-plugin-typescript": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "antlr4ng-cli": "^1.0.0",
+    "copy-webpack-plugin": "^12.0.2",
     "eslint": "^8.55.0",
     "eslint-plugin-vue": "^9.19.2",
     "monaco-editor-webpack-plugin": "^7.1.0",
