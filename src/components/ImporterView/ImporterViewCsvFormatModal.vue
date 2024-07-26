@@ -47,23 +47,70 @@
                 </option>
               </select>
             </div>
+
+            <div class="input-group mb-3">
+              <span class="input-group-text">List Begin</span>
+              <input
+                v-model="listBegin"
+                type="text"
+                class="form-control"
+              >
+              <span class="input-group-text">List End</span>
+              <input
+                v-model="listEnd"
+                type="text"
+                class="form-control"
+              >
+            </div>
+
+            <div class="input-group mb-3">
+              <span class="input-group-text">Read CSV in Parallel?</span>
+              <select class="form-select">
+                <option value="true">
+                  Yes
+                </option>
+                <option value="false">
+                  No
+                </option>
+              </select>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-danger"
-            @click="close"
-          >
-            Close
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            @click="save"
-          >
-            Save
-          </button>
+          <div class="d-flex justify-content-between w-100">
+            <span>
+              <a
+                href="https://docs.kuzudb.com/import/csv/"
+                target="_blank"
+              >
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                >
+                  <i class="fa-solid fa-question-circle" />
+                  Help
+                </button>
+              </a>
+
+            </span>
+            <span>
+              <button
+                type="button"
+                class="btn btn-danger"
+                @click="hideModal"
+              >
+                Close
+              </button>
+              &nbsp;
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="save"
+              >
+                Save
+              </button>
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -88,7 +135,6 @@ export default {
   },
   mounted() {
     this.modal = new Modal(this.$refs.modal);
-    this.showModal();
   },
   beforeUnmount() {
     this.modal.dispose();

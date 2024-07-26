@@ -273,7 +273,9 @@ export default {
       file.expanded = !file.expanded;
     },
 
-    setCSVFormat() { },
+    setCSVFormat() {
+      this.$refs.csvFormatModal.showModal();
+     },
 
     setTableName(fileKey, tableName) {
       this.files[fileKey].tableName = tableName;
