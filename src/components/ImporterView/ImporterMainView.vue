@@ -36,7 +36,7 @@
             :files="nodeFiles"
             :schema="schema"
             @expand="handleExpand"
-            @set-csv-format="setCSVFormat"
+            @set-csv-format="openCsvFormatModal"
             @set-table-is-new="setTableIsNew"
             @set-table-name="setTableName"
             @set-primary-key="setPrimaryKey"
@@ -48,7 +48,7 @@
             :schema="schema"
             :node-files="nodeFiles"
             @expand="handleExpand"
-            @set-csv-format="setCSVFormat"
+            @set-csv-format="openCsvFormatModal"
             @set-table-is-new="setTableIsNew"
             @set-table-name="setTableName"
             @set-from-table="setFromTable"
@@ -66,9 +66,7 @@
       :files="processingFiles"
       @close="clearProcessingFiles"
     />
-    <importer-view-csv-format-modal
-      ref="csvFormatModal"
-    />
+    <importer-view-csv-format-modal ref="csvFormatModal" />
   </div>
 </template>
 
@@ -226,16 +224,16 @@ export default {
         tableNameSplit.pop();
         currentFile.tableName = tableNameSplit.join('_');
         currentFile.format = JSON.parse(JSON.stringify(detectedFormat));
+        if (extension === 'csv') {
+          currentFile.format.ListStart = '[';
+          currentFile.format.ListEnd = ']';
+          currentFile.format.Parallelism = 1;
+        }
         currentFile.format.Columns.forEach(c => {
-          if (c.type === 'VARCHAR') {
-            c.type = DATA_TYPES.STRING;
-          }
-          if (c.type === 'BIGINT') {
-            c.type = DATA_TYPES.INT64
-          }
+          c.type = DuckDB.convertDuckDBTypeToKuzuType(c.type);
           c.userDefinedName = c.name;
           c.isPrimaryKey = false;
-        })
+        });
         processingFile.status = 'success';
       }
       this.files = { ...this.files, ...filesHash };
@@ -273,9 +271,24 @@ export default {
       file.expanded = !file.expanded;
     },
 
-    setCSVFormat() {
+    openCsvFormatModal(file) {
+      const key = file.key;
+      const delimiter = file.format.Delimiter;
+      const quote = file.format.Quote;
+      const escape = file.format.Escape;
+      const hasHeader = file.format.HasHeader ? 'true' : 'false';
+      const listBegin = file.format.ListStart;
+      const listEnd = file.format.ListEnd;
+      const parallelism = file.format.Parallelism ? 'true' : 'false';
+      this.$refs.csvFormatModal.setFormat(
+        key, delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism
+      );
       this.$refs.csvFormatModal.showModal();
-     },
+    },
+
+    updateCsvFormat(key, format){
+      
+    },
 
     setTableName(fileKey, tableName) {
       this.files[fileKey].tableName = tableName;

@@ -124,12 +124,14 @@ export default {
   emits: ["close", "save"],
   data: () => ({
     modal: null,
+    fileKey: null,
     delimiter: null,
     quote: null,
     escape: null,
     hasHeader: null,
     listBegin: null,
     listEnd: null,
+    parallelism: null,
   }),
   computed: {
   },
@@ -144,14 +146,35 @@ export default {
       this.modal.show();
     },
 
-    setFormat(delimiter, quote, escape, hasHeader) {
+    setFormat(fileKey, delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism) {
+      this.fileKey = fileKey;
       this.delimiter = delimiter;
       this.quote = quote;
       this.escape = escape;
       this.hasHeader = String(hasHeader);
+      this.listBegin = String(listBegin);
+      this.listEnd = String(listEnd);
+      this.parallelism = String(parallelism);
     },
 
     getFormat() {
+      const processStringWithEscape = (str) => {
+        const enclosedStr = `"${str}"`;
+        try {
+          return JSON.parse(enclosedStr);
+        } catch (e) {
+          return str;
+        }
+      }
+      return {
+        delimiter: processStringWithEscape(this.delimiter),
+        quote: processStringWithEscape(this.quote),
+        escape: processStringWithEscape(this.escape),
+        hasHeader: this.hasHeader === "true",
+        listBegin: processStringWithEscape(this.listBegin),
+        listEnd: processStringWithEscape(this.listEnd),
+        parallelism: this.parallelism === "true",
+      };
 
     },
 
@@ -160,7 +183,9 @@ export default {
     },
 
     save() {
-
+      const format = this.getFormat();
+      this.hideModal();
+      this.$emit("save", this.fileKey, format);
     }
   },
 };

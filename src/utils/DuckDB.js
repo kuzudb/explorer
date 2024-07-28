@@ -1,4 +1,6 @@
 import * as duckdb from "@duckdb/duckdb-wasm";
+import { DATA_TYPES } from './Constants';
+
 const DuckDBDataProtocol = duckdb.DuckDBDataProtocol;
 const FILE_TYPE = {
   CSV: "csv",
@@ -40,10 +42,6 @@ class DuckDB {
     const db = new duckdb.AsyncDuckDB(logger, worker);
     await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
     const conn = await db.connect();
-    // Create temporary file system (currently not working)
-    // await conn.query(`PRAGMA temp_directory='/tmp'`);
-    // Lift memory limit
-    await conn.query(`PRAGMA memory_limit='1.9GB';`);
     const versionResult = await conn.query(`SELECT version()`);
     console.debug("DuckDB version:", versionResult.toArray()[0].toJSON()["version()"]);
     await conn.close();
@@ -123,6 +121,58 @@ class DuckDB {
     const resultArray = result.toArray();
     console.debug(resultArray);
     await conn.close();
+  }
+
+  convertDuckDBTypeToKuzuType(typeStr) {
+    if (typeStr == "BIGINT" || typeStr == "INT8" || typeStr == "LONG") {
+      return DATA_TYPES.INT64;
+    } else if (typeStr == "BLOB" || typeStr == "BYTEA" || typeStr == "BINARY" ||
+      typeStr == "VARBINARY") {
+      return DATA_TYPES.BLOB;
+    } else if (typeStr == "BOOLEAN" || typeStr == "BOOL" || typeStr == "LOGICAL") {
+      return DATA_TYPES.BOOL;
+    } else if (typeStr == "DATE") {
+      return DATA_TYPES.DATE;
+    } else if (typeStr == "DOUBLE" || typeStr == "FLOAT8") {
+      return DATA_TYPES.DOUBLE;
+    } else if (typeStr == "HUGEINT") {
+      return DATA_TYPES.INT128;
+    } else if (typeStr == "INTEGER" || typeStr == "INT4" || typeStr == "INT" ||
+      typeStr == "SIGNED") {
+      return DATA_TYPES.INT32;
+    } else if (typeStr == "INTERVAL") {
+      return DATA_TYPES.INTERVAL;
+    } else if (typeStr == "REAL" || typeStr == "FLOAT" || typeStr == "FLOAT4") {
+      return DATA_TYPES.FLOAT;
+    } else if (typeStr == "SMALLINT" || typeStr == "INT2" || typeStr == "SHORT") {
+      return DATA_TYPES.INT16;
+    } else if (typeStr == "TIMESTAMP" || typeStr == "DATETIME") {
+      return DATA_TYPES.TIMESTAMP;
+    } else if (typeStr == "TIMESTAMP_NS") {
+      return DATA_TYPES.TIMESTAMP_NS;
+    } else if (typeStr == "TIMESTAMP_MS") {
+      return DATA_TYPES.TIMESTAMP_MS;
+    } else if (typeStr == "TIMESTAMP_S") {
+      return DATA_TYPES.TIMESTAMP_SEC;
+    } else if (typeStr == "TIMESTAMP WITH TIME ZONE" || typeStr == "TIMESTAMPTZ") {
+      return DATA_TYPES.TIMESTAMP_TZ;
+    } else if (typeStr == "TINYINT" || typeStr == "INT1") {
+      return DATA_TYPES.INT8;
+    } else if (typeStr == "UBIGINT") {
+      return DATA_TYPES.UINT64;
+    } else if (typeStr == "UINTEGER") {
+      return DATA_TYPES.UINT32;
+    } else if (typeStr == "USMALLINT") {
+      return DATA_TYPES.UINT16;
+    } else if (typeStr == "UTINYINT") {
+      return DATA_TYPES.UINT8;
+    } else if (typeStr == "UUID") {
+      return DATA_TYPES.UUID;
+    } else if (typeStr == "VARCHAR" || typeStr == "CHAR" || typeStr == "BPCHAR" ||
+      typeStr == "TEXT" || typeStr == "STRING") {
+      return DATA_TYPES.STRING;
+    }
+    return DATA_TYPES.STRING;
   }
 }
 
