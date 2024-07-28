@@ -70,11 +70,27 @@ class DuckDB {
     await db.registerFileHandle(fileName, file, DuckDBDataProtocol.BROWSER_FILEREADER, true);
   }
 
-  async getCSVHeaderWithCustomSettings() {
-
+  async getCsvHeaderWithCustomSettings(uuid, delimiter, quote, escape, HasHeader) {
+    const db = await this.getDb();
+    const conn = await db.connect();
+    const fileName = this.getFileName(uuid, FILE_TYPE.CSV);
+    const query = `DESCRIBE SELECT * FROM READ_CSV('${fileName}', delim=?, quote=?, escape=?, header=${HasHeader}) LIMIT 1`;
+    console.debug(query);
+    let preparedQuery = await conn.prepare(query);
+    let result = await preparedQuery.query(delimiter, quote, escape);
+    await conn.close();
+    const resultArray = result.toArray();
+    const columns = resultArray.map((row) => {
+      const rowJSON = row.toJSON();
+      return {
+        name: rowJSON.column_name,
+        type: rowJSON.column_type,
+      };
+    });
+    return columns;
   }
 
-  async sniffCSVFile(uuid) {
+  async sniffCsvFile(uuid) {
     const db = await this.getDb();
     const conn = await db.connect();
     const fileName = this.getFileName(uuid, FILE_TYPE.CSV);

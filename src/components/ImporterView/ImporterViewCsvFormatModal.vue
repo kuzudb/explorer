@@ -147,13 +147,20 @@ export default {
     },
 
     setFormat(fileKey, delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism) {
+      const convertToEscapedString = (str) => {
+        if(str === '"' || str === "'") {
+          return str;
+        }
+        const enclosedStr = JSON.stringify(str);
+        return enclosedStr.slice(1, enclosedStr.length - 1);
+      }
       this.fileKey = fileKey;
-      this.delimiter = delimiter;
-      this.quote = quote;
-      this.escape = escape;
+      this.delimiter = convertToEscapedString(delimiter);
+      this.quote = convertToEscapedString(quote);
+      this.escape = convertToEscapedString(escape);
       this.hasHeader = String(hasHeader);
-      this.listBegin = String(listBegin);
-      this.listEnd = String(listEnd);
+      this.listBegin = convertToEscapedString(listBegin);
+      this.listEnd = convertToEscapedString(listEnd);
       this.parallelism = String(parallelism);
     },
 

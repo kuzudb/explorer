@@ -66,7 +66,7 @@
       :files="processingFiles"
       @close="clearProcessingFiles"
     />
-    <importer-view-csv-format-modal ref="csvFormatModal" />
+    <importer-view-csv-format-modal ref="csvFormatModal" @save="updateCsvFormat" />
   </div>
 </template>
 
@@ -213,7 +213,7 @@ export default {
           await DuckDB.registerFile(key, currentFile.file, extension);
           detectedFormat = extension === 'parquet' ?
             (await DuckDB.sniffParquetFile(key, currentFile.file)) :
-            (await DuckDB.sniffCSVFile(key, currentFile.file));
+            (await DuckDB.sniffCsvFile(key, currentFile.file));
         } catch (error) {
           currentFile.status = 'error';
           currentFile.error = error.message;
@@ -272,7 +272,7 @@ export default {
     },
 
     openCsvFormatModal(file) {
-      const key = file.key;
+      const key = file.id;
       const delimiter = file.format.Delimiter;
       const quote = file.format.Quote;
       const escape = file.format.Escape;
@@ -286,8 +286,38 @@ export default {
       this.$refs.csvFormatModal.showModal();
     },
 
-    updateCsvFormat(key, format){
-      
+    async updateCsvFormat(key, format) {
+      console.log(key, format);
+      const file = this.files[key];
+      const delimiter = format.delimiter;
+      const quote = format.quote;
+      const escape = format.escape;
+      const hasHeader = format.hasHeader;
+      const listBegin = format.listBegin;
+      const listEnd = format.listEnd;
+      const parallelism = format.parallelism;
+
+      const columns = await DuckDB.getCsvHeaderWithCustomSettings(key, delimiter, quote, escape, hasHeader);
+      columns.forEach(c => {
+        c.type = DuckDB.convertDuckDBTypeToKuzuType(c.type);
+        c.userDefinedName = c.name;
+      });
+      file.format.Delimiter = delimiter;
+      file.format.Quote = quote;
+      file.format.Escape = escape;
+      file.format.HasHeader = hasHeader;
+      file.format.ListStart = listBegin;
+      file.format.ListEnd = listEnd;
+      file.format.Parallelism = parallelism;
+      file.format.Columns = columns;
+      file.detectedFormat.Columns = columns;
+      if (file.type === 'node') {
+        file.format.Columns[0].isPrimaryKey = true;
+      }
+      if (file.type === 'rel') {
+        file.format.Columns[0].isFromKey = true;
+        file.format.Columns[1].isToKey = true;
+      }
     },
 
     setTableName(fileKey, tableName) {
