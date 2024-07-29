@@ -27,7 +27,7 @@
       <div class="outer-wrapper">
         <button
           class="btn btn-success"
-          @click="selectFiles"
+          @click="startImport"
         >
           <i class="fa-solid fa-upload" />
           Start Import
@@ -43,6 +43,7 @@
             @set-primary-key="setPrimaryKey"
             @set-column-user-defined-name="setColumnUserDefinedName"
             @set-column-type="setColumnType"
+            @set-column-ignore="setColumnIgnore"
           />
           <importer-view-rel-tables
             :files="relFiles"
@@ -58,6 +59,7 @@
             @set-to-key="setToKey"
             @set-column-user-defined-name="setColumnUserDefinedName"
             @set-column-type="setColumnType"
+            @set-column-ignore="setColumnIgnore"
           />
         </div>
       </div>
@@ -73,9 +75,7 @@
       ref="csvFormatModal"
       @save="updateCsvFormat"
     />
-    <importer-view-preview
-      ref="previewModal"
-    />
+    <importer-view-preview ref="previewModal" />
   </div>
 </template>
 
@@ -258,7 +258,6 @@ export default {
       const file = this.files[fileKey];
       file.type = fileType;
       file.isNew = true;
-      file.isSelectedForImport = true;
       delete file.from;
       delete file.to;
       file.format.Columns.forEach(c => {
@@ -352,13 +351,11 @@ export default {
 
     setPrimaryKey(fileKey, columnIndex) {
       const file = this.files[fileKey];
+      file.format.Columns.forEach((c) => {
+        delete c.isPrimaryKey;
+      });
       const column = file.format.Columns[columnIndex];
       column.isPrimaryKey = true;
-      file.format.Columns.forEach((c, i) => {
-        if (i !== columnIndex) {
-          delete c.isPrimaryKey;
-        }
-      });
     },
 
     setFromTable(fileKey, fromTable) {
@@ -411,6 +408,14 @@ export default {
       }
     },
 
+    setColumnIgnore(fileKey, columnIndex, ignore) {
+      const file = this.files[fileKey];
+      delete file.format.Columns[columnIndex].ignore;
+      if (ignore) {
+        file.format.Columns[columnIndex].ignore = true;
+      }
+    },
+
     getReadableSize(bytes) {
       const i = Math.floor(Math.log(bytes) / Math.log(1024));
       return (bytes / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
@@ -423,6 +428,101 @@ export default {
         await DuckDB.loadParquetFile(key);
       const resultArray = result.toArray().map(row => row.toArray());
       this.$refs.previewModal.preview(resultArray, file.format.Columns.map(c => c.name));
+    },
+
+    getImportSummary() {
+      const summary = [];
+      for (let key in this.files) {
+        const rawFile = this.files[key];
+        if (rawFile.type === 'none') {
+          continue;
+        }
+        const file = {
+          id: rawFile.id,
+          name: rawFile.file.name,
+          extension: rawFile.extension,
+          isNewTable: rawFile.isNew,
+          type: rawFile.type,
+          columns: [],
+        };
+        let foundMatch = null;
+        if (rawFile.isNew) {
+          file.tableName = rawFile.tableName;
+          if (rawFile.type === 'rel') {
+            file.from = rawFile.from;
+            file.to = rawFile.to;
+          }
+        }
+        else {
+          if (rawFile.type === 'node') {
+            foundMatch = this.schema.nodeTables.find(t => t.name === rawFile.tableName);
+            file.tableName = foundMatch ? rawFile.tableName : null;
+          }
+          if (rawFile.type === 'rel') {
+            foundMatch = this.schema.relTables.find(t => t.name === rawFile.tableName);
+            file.tableName = foundMatch ? rawFile.tableName : null;
+          }
+        }
+        for (let rawColumn of rawFile.format.Columns) {
+          const column = {};
+          if (rawColumn.ignore) {
+            column.ignore = true;
+          }
+          if (rawFile.isNew) {
+            column.name = rawColumn.userDefinedName;
+            column.type = rawColumn.type;
+            if (rawColumn.isPrimaryKey) {
+              column.isPrimaryKey = true;
+            }
+          }
+          else {
+            if (rawFile.type === 'node') {
+              column.name = foundMatch ?
+                foundMatch.properties.find(p => p.name === rawColumn.userDefinedName) ?
+                  rawColumn.userDefinedName :
+                  null
+                : null;
+            }
+            if (rawFile.type === 'rel') {
+              column.name = foundMatch ?
+                foundMatch.properties.find(p => p.name === rawColumn.userDefinedName) ?
+                  rawColumn.userDefinedName :
+                  null
+                : null;
+            }
+          }
+          if (rawColumn.isFromKey) {
+            column.isFromKey = true;
+            column.name = 'from';
+          }
+          if (rawColumn.isToKey) {
+            column.isToKey = true;
+            column.name = 'to';
+          }
+          file.columns.push(column);
+        }
+        if (file.extension === 'csv') {
+          file.csvFormat = {
+            delimiter: rawFile.format.Delimiter,
+            quote: rawFile.format.Quote,
+            escape: rawFile.format.Escape,
+            hasHeader: rawFile.format.HasHeader,
+            listBegin: rawFile.format.ListStart,
+            listEnd: rawFile.format.ListEnd,
+            parallelism: rawFile.format.Parallelism,
+          }
+        }
+        summary.push(file);
+      }
+      return {
+        id: uuidv4().toString(),
+        config: summary,
+      }
+    },
+
+    startImport() {
+      const summary = this.getImportSummary();
+      console.log(summary);
     },
   },
 }

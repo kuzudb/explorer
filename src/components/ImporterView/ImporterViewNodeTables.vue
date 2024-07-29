@@ -209,7 +209,8 @@
                         <input
                           type="checkbox"
                           class="form-check-input"
-                          checked
+                          :checked="!column.ignore"
+                          @change="setColumnIgnore(key, index, $event)"
                         >
                       </td>
                     </tr>
@@ -254,7 +255,8 @@ export default {
   emits:
     [
       "expand", "setCsvFormat", "setPrimaryKey", "setTableIsNew",
-      "setTableName", "setColumnUserDefinedName", "setColumnType"
+      "setTableName", "setColumnUserDefinedName", "setColumnType",
+      "setColumnIgnore",
     ],
   data() {
     return {
@@ -374,6 +376,10 @@ export default {
         return "(None)";
       }
       return primaryKey.name;
+    },
+
+    setColumnIgnore(key, index, event) {
+      this.$emit("setColumnIgnore", key, index, !event.target.checked);
     },
   },
 };
