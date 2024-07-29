@@ -247,7 +247,8 @@
                         <input
                           type="checkbox"
                           class="form-check-input"
-                          checked
+                          :checked="!column.ignore"
+                          @change="setColumnIgnore(key, index, $event)"
                         >
                       </td>
                     </tr>
@@ -332,7 +333,7 @@ export default {
   emits: [
     "expand", "setCsvFormat", "setTableIsNew", "setTableName",
     "setColumnType", "setColumnUserDefinedName", "setFromTable",
-    "setToTable", "setFromKey", "setToKey",
+    "setToTable", "setFromKey", "setToKey", "setColumnIgnore",
   ],
   data() {
     return {
@@ -488,6 +489,10 @@ export default {
     setToTable(key, event) {
       const selectedOption = this.srcDstTableOptions.find((option) => option.key === event.target.value);
       this.$emit("setToTable", key, selectedOption);
+    },
+
+    setColumnIgnore(key, index, event) {
+      this.$emit("setColumnIgnore", key, index, !event.target.checked);
     },
   },
 };
