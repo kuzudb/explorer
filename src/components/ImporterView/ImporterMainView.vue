@@ -272,9 +272,7 @@ export default {
         file.from = null;
         file.to = null;
         file.format.Columns[0].isFromKey = true;
-        file.format.Columns[0].userDefinedName = 'from';
         file.format.Columns[1].isToKey = true;
-        file.format.Columns[1].userDefinedName = 'to';
       }
     },
 
@@ -327,9 +325,7 @@ export default {
       }
       if (file.type === 'rel') {
         file.format.Columns[0].isFromKey = true;
-        file.format.Columns[0].userDefinedName = 'from';
         file.format.Columns[1].isToKey = true;
-        file.format.Columns[1].userDefinedName = 'to';
       }
     },
 
@@ -394,7 +390,6 @@ export default {
       if (checked) {
         file.format.Columns[columnIndex].isFromKey = true;
         file.format.Columns[columnIndex].isToKey = false;
-        file.format.Columns[columnIndex].userDefinedName = 'from';
       }
     },
 
@@ -406,7 +401,6 @@ export default {
       if (checked) {
         file.format.Columns[columnIndex].isToKey = true;
         file.format.Columns[columnIndex].isFromKey = false;
-        file.format.Columns[columnIndex].userDefinedName = 'to';
       }
     },
 
@@ -429,7 +423,10 @@ export default {
         await DuckDB.loadCsvFile(key, file.format.Delimiter, file.format.Quote, file.format.Escape, file.format.HasHeader) :
         await DuckDB.loadParquetFile(key);
       const resultArray = result.toArray().map(row => row.toArray());
-      this.$refs.previewModal.preview(resultArray, file.format.Columns.map(c => c.userDefinedName));
+      this.$refs.previewModal.preview(resultArray, file.format.Columns.map(c => {
+        return c.isFromKey ? 'From' :
+          c.isToKey ? 'To' : c.userDefinedName;
+      }));
     },
 
     getImportSummary() {
