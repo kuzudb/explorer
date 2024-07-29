@@ -389,7 +389,7 @@ export default {
     setFromKey(fileKey, columnIndex, checked) {
       const file = this.files[fileKey];
       file.format.Columns.forEach((c) => {
-          delete c.isFromKey;
+        delete c.isFromKey;
       });
       if (checked) {
         file.format.Columns[columnIndex].isFromKey = true;
@@ -401,7 +401,7 @@ export default {
     setToKey(fileKey, columnIndex, checked) {
       const file = this.files[fileKey];
       file.format.Columns.forEach((c) => {
-          delete c.isToKey;
+        delete c.isToKey;
       });
       if (checked) {
         file.format.Columns[columnIndex].isToKey = true;
@@ -522,9 +522,16 @@ export default {
       }
     },
 
-    startImport() {
+    async startImport() {
       const summary = this.getImportSummary();
       console.log(summary);
+      const url = `/api/import/${summary.id}`;
+      try {
+        const res = await Axios.post(url, summary);
+        console.log(res.data);
+      } catch (error) {
+        console.error(error);
+      }
     },
   },
 }

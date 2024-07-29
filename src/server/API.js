@@ -8,6 +8,7 @@ const gpt = require("./Gpt");
 const session = require("./Session");
 const state = require("./State");
 const reset = require("./Reset");
+const importApi = require("./Import");
 
 router.use("/schema", schema);
 router.use("/cypher", cypher);
@@ -16,6 +17,7 @@ router.use("/mode", mode);
 router.use("/gpt", gpt);
 router.use("/session", session);
 router.use("/reset", reset);
+router.use("/import", importApi);
 router.use("/", state);
 
 module.exports = router;
