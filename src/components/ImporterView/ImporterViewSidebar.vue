@@ -88,7 +88,8 @@ export default {
   emits: [
     "addFiles",
     "removeFile",
-    "tableTypeChange"
+    "tableTypeChange",
+    "previewFile"
   ],
   methods: {
     getReadableSize(bytes) {
@@ -101,6 +102,9 @@ export default {
     removeFile(key) {
       this.$emit("removeFile", key);
     },
+    previewFile(key) {
+      this.$emit("previewFile", key);
+    }
   },
 }
 </script>

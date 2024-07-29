@@ -22,6 +22,7 @@
         @table-type-change="handleTableTypeChange"
         @add-files="addFiles"
         @remove-file="removeFile"
+        @preview-file="previewFile"
       />
       <div class="outer-wrapper">
         <button
@@ -36,7 +37,7 @@
             :files="nodeFiles"
             :schema="schema"
             @expand="handleExpand"
-            @set-csv-format="setCSVFormat"
+            @set-csv-format="openCsvFormatModal"
             @set-table-is-new="setTableIsNew"
             @set-table-name="setTableName"
             @set-primary-key="setPrimaryKey"
@@ -48,7 +49,7 @@
             :schema="schema"
             :node-files="nodeFiles"
             @expand="handleExpand"
-            @set-csv-format="setCSVFormat"
+            @set-csv-format="openCsvFormatModal"
             @set-table-is-new="setTableIsNew"
             @set-table-name="setTableName"
             @set-from-table="setFromTable"
@@ -66,6 +67,13 @@
       :files="processingFiles"
       @close="clearProcessingFiles"
     />
+    <importer-view-csv-format-modal
+      ref="csvFormatModal"
+      @save="updateCsvFormat"
+    />
+    <importer-view-preview
+      ref="previewModal"
+    />
   </div>
 </template>
 
@@ -81,6 +89,9 @@ import ImporterViewSidebar from './ImporterViewSidebar.vue';
 import ImporterViewNodeTables from './ImporterViewNodeTables.vue';
 import ImporterViewRelTables from './ImporterViewRelTables.vue';
 import ImporterViewFileProcessingModal from './ImporterViewFileProcessingModal.vue';
+import ImporterViewCsvFormatModal from './ImporterViewCsvFormatModal.vue';
+import ImporterViewPreview from './ImporterViewPreview.vue';
+
 export default {
   name: "ImporterMainView",
   components: {
@@ -89,6 +100,8 @@ export default {
     ImporterViewNodeTables,
     ImporterViewRelTables,
     ImporterViewFileProcessingModal,
+    ImporterViewCsvFormatModal,
+    ImporterViewPreview,
   },
   props: {
     schema: {
@@ -209,7 +222,7 @@ export default {
           await DuckDB.registerFile(key, currentFile.file, extension);
           detectedFormat = extension === 'parquet' ?
             (await DuckDB.sniffParquetFile(key, currentFile.file)) :
-            (await DuckDB.sniffCSVFile(key, currentFile.file));
+            (await DuckDB.sniffCsvFile(key, currentFile.file));
         } catch (error) {
           currentFile.status = 'error';
           currentFile.error = error.message;
@@ -220,16 +233,16 @@ export default {
         tableNameSplit.pop();
         currentFile.tableName = tableNameSplit.join('_');
         currentFile.format = JSON.parse(JSON.stringify(detectedFormat));
+        if (extension === 'csv') {
+          currentFile.format.ListStart = '[';
+          currentFile.format.ListEnd = ']';
+          currentFile.format.Parallelism = 1;
+        }
         currentFile.format.Columns.forEach(c => {
-          if (c.type === 'VARCHAR') {
-            c.type = DATA_TYPES.STRING;
-          }
-          if (c.type === 'BIGINT') {
-            c.type = DATA_TYPES.INT64
-          }
+          c.type = DuckDB.convertDuckDBTypeToKuzuType(c.type);
           c.userDefinedName = c.name;
           c.isPrimaryKey = false;
-        })
+        });
         processingFile.status = 'success';
       }
       this.files = { ...this.files, ...filesHash };
@@ -267,7 +280,53 @@ export default {
       file.expanded = !file.expanded;
     },
 
-    setCSVFormat() { },
+    openCsvFormatModal(file) {
+      const key = file.id;
+      const delimiter = file.format.Delimiter;
+      const quote = file.format.Quote;
+      const escape = file.format.Escape;
+      const hasHeader = file.format.HasHeader ? 'true' : 'false';
+      const listBegin = file.format.ListStart;
+      const listEnd = file.format.ListEnd;
+      const parallelism = file.format.Parallelism ? 'true' : 'false';
+      this.$refs.csvFormatModal.setFormat(
+        key, delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism
+      );
+      this.$refs.csvFormatModal.showModal();
+    },
+
+    async updateCsvFormat(key, format) {
+      const file = this.files[key];
+      const delimiter = format.delimiter;
+      const quote = format.quote;
+      const escape = format.escape;
+      const hasHeader = format.hasHeader;
+      const listBegin = format.listBegin;
+      const listEnd = format.listEnd;
+      const parallelism = format.parallelism;
+
+      const columns = await DuckDB.getCsvHeaderWithCustomSettings(key, delimiter, quote, escape, hasHeader);
+      columns.forEach(c => {
+        c.type = DuckDB.convertDuckDBTypeToKuzuType(c.type);
+        c.userDefinedName = c.name;
+      });
+      file.format.Delimiter = delimiter;
+      file.format.Quote = quote;
+      file.format.Escape = escape;
+      file.format.HasHeader = hasHeader;
+      file.format.ListStart = listBegin;
+      file.format.ListEnd = listEnd;
+      file.format.Parallelism = parallelism;
+      file.format.Columns = columns;
+      file.detectedFormat.Columns = columns;
+      if (file.type === 'node') {
+        file.format.Columns[0].isPrimaryKey = true;
+      }
+      if (file.type === 'rel') {
+        file.format.Columns[0].isFromKey = true;
+        file.format.Columns[1].isToKey = true;
+      }
+    },
 
     setTableName(fileKey, tableName) {
       this.files[fileKey].tableName = tableName;
@@ -353,6 +412,15 @@ export default {
     getReadableSize(bytes) {
       const i = Math.floor(Math.log(bytes) / Math.log(1024));
       return (bytes / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
+    },
+
+    async previewFile(key) {
+      const file = this.files[key];
+      const result = file.extension === 'csv' ?
+        await DuckDB.loadCsvFile(key, file.format.Delimiter, file.format.Quote, file.format.Escape, file.format.HasHeader) :
+        await DuckDB.loadParquetFile(key);
+      const resultArray = result.toArray().map(row => row.toArray());
+      this.$refs.previewModal.preview(resultArray, file.format.Columns.map(c => c.name));
     },
   },
 }
