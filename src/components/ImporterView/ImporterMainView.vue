@@ -527,7 +527,13 @@ export default {
         const res = await Axios.post(url, summary);
         console.log(res.data);
       } catch (error) {
-        console.error(error);
+        const res = error.response;
+        if(res && res.data) {
+          console.error(res.data);
+        }
+        else {
+          console.error(error);
+        }
       }
     },
   },
