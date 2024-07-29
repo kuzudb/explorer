@@ -11,25 +11,25 @@
             v-if="isProcessing"
             class="modal-title"
           >
-            Processing Selected Files...
+            {{ processingTitle }}
           </h5>
           <h5
             v-else
             class="modal-title"
           >
-            {{ files.length }} Files Processed
+            {{ items.length }} {{ doneTitle }}
           </h5>
         </div>
         <div class="modal-body">
           <ul class="list-group">
             <li
-              v-for="file in files"
-              :key="file.id"
+              v-for="(item, i) in items"
+              :key="i"
               class="list-group-item"
             >
               <div class="d-flex justify-content-between">
-                <span>{{ file.fileName }}</span>
-                <span v-if="file.status === 'processing'">
+                <span>{{ item.name }}</span>
+                <span v-if="item.status === 'processing'">
                   <div
                     class="spinner-border text-primary"
                     role="status"
@@ -39,7 +39,7 @@
                   <span>Processing...</span>
                 </span>
                 <span
-                  v-else-if="file.status === 'success'"
+                  v-else-if="item.status === 'success'"
                   class="text-success"
                 >
                   <i class="fa-solid fa-check-circle" />
@@ -47,12 +47,12 @@
                   <span>Sucess</span>
                 </span>
                 <span
-                  v-else-if="file.status === 'error'"
+                  v-else-if="item.status === 'error'"
                   class="text-danger"
                 >
                   <i class="fa-solid fa-exclamation-circle" />
                   &nbsp;
-                  <span>{{ file.error }}</span>
+                  <span>{{ item.error }}</span>
                 </span>
               </div>
             </li>
@@ -78,12 +78,21 @@
 <script lang="js">
 import { Modal } from 'bootstrap';
 export default {
-  name: "ImporterViewFileProcessingModal",
+  name: "ImporterViewProcessingModal",
   props: {
-    files: {
+    items: {
       type: Array,
       required: true,
     },
+    processingTitle: {
+      type: String,
+      default: "Processing..."
+    },
+    doneTitle: {
+      type: String,
+      default:  "Items Processed"
+    },
+
   },
   emits: ["close"],
   data: () => ({
@@ -91,7 +100,7 @@ export default {
   }),
   computed: {
     isProcessing() {
-      return this.files.some((file) => file.status === "processing");
+      return this.items.some((i) => i.status === "processing");
     },
   },
   mounted() {

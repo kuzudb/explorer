@@ -62,9 +62,11 @@
         </div>
       </div>
     </div>
-    <importer-view-file-processing-modal
+    <importer-view-processing-modal
       ref="fileProcessingModal"
-      :files="processingFiles"
+      :items="processingFiles"
+      processing-title="Processing Files..."
+      done-title="Files Processed"
       @close="clearProcessingFiles"
     />
     <importer-view-csv-format-modal
@@ -88,7 +90,7 @@ import ImporterViewDropZone from './ImporterViewDropZone.vue';
 import ImporterViewSidebar from './ImporterViewSidebar.vue';
 import ImporterViewNodeTables from './ImporterViewNodeTables.vue';
 import ImporterViewRelTables from './ImporterViewRelTables.vue';
-import ImporterViewFileProcessingModal from './ImporterViewFileProcessingModal.vue';
+import ImporterViewProcessingModal from './ImporterViewProcessingModal.vue';
 import ImporterViewCsvFormatModal from './ImporterViewCsvFormatModal.vue';
 import ImporterViewPreview from './ImporterViewPreview.vue';
 
@@ -99,7 +101,7 @@ export default {
     ImporterViewSidebar,
     ImporterViewNodeTables,
     ImporterViewRelTables,
-    ImporterViewFileProcessingModal,
+    ImporterViewProcessingModal,
     ImporterViewCsvFormatModal,
     ImporterViewPreview,
   },
@@ -197,7 +199,7 @@ export default {
         this.processingFiles.push({
           id,
           status: 'processing',
-          fileName: file.name,
+          name: file.name,
         });
       }
       for (const key in filesHash) {
