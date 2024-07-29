@@ -266,13 +266,19 @@ export default {
         delete c.isToKey;
       });
       if (fileType === 'node') {
-        file.format.Columns[0].isPrimaryKey = true;
+        if (file.format.Columns[0]) {
+          file.format.Columns[0].isPrimaryKey = true;
+        }
       }
       if (fileType === 'rel') {
         file.from = null;
         file.to = null;
-        file.format.Columns[0].isFromKey = true;
-        file.format.Columns[1].isToKey = true;
+        if (file.format.Columns[0]) {
+          file.format.Columns[0].isFromKey = true;
+        }
+        if (file.format.Columns[1]) {
+          file.format.Columns[1].isToKey = true;
+        }
       }
     },
 
@@ -321,11 +327,17 @@ export default {
       file.format.Columns = columns;
       file.detectedFormat.Columns = columns;
       if (file.type === 'node') {
-        file.format.Columns[0].isPrimaryKey = true;
+        if (file.format.Columns[0]) {
+          file.format.Columns[0].isPrimaryKey = true;
+        }
       }
       if (file.type === 'rel') {
-        file.format.Columns[0].isFromKey = true;
-        file.format.Columns[1].isToKey = true;
+        if (file.format.Columns[0]) {
+          file.format.Columns[0].isFromKey = true;
+        }
+        if (file.format.Columns[1]) {
+          file.format.Columns[1].isToKey = true;
+        }
       }
     },
 
