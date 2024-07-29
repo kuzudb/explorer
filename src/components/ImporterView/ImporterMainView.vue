@@ -272,7 +272,9 @@ export default {
         file.from = null;
         file.to = null;
         file.format.Columns[0].isFromKey = true;
+        file.format.Columns[0].userDefinedName = 'from';
         file.format.Columns[1].isToKey = true;
+        file.format.Columns[1].userDefinedName = 'to';
       }
     },
 
@@ -325,7 +327,9 @@ export default {
       }
       if (file.type === 'rel') {
         file.format.Columns[0].isFromKey = true;
+        file.format.Columns[0].userDefinedName = 'from';
         file.format.Columns[1].isToKey = true;
+        file.format.Columns[1].userDefinedName = 'to';
       }
     },
 
@@ -384,27 +388,25 @@ export default {
 
     setFromKey(fileKey, columnIndex, checked) {
       const file = this.files[fileKey];
-      file.format.Columns.forEach((c, i) => {
-        if (i !== columnIndex) {
+      file.format.Columns.forEach((c) => {
           delete c.isFromKey;
-        }
       });
       if (checked) {
         file.format.Columns[columnIndex].isFromKey = true;
         file.format.Columns[columnIndex].isToKey = false;
+        file.format.Columns[columnIndex].userDefinedName = 'from';
       }
     },
 
     setToKey(fileKey, columnIndex, checked) {
       const file = this.files[fileKey];
-      file.format.Columns.forEach((c, i) => {
-        if (i !== columnIndex) {
+      file.format.Columns.forEach((c) => {
           delete c.isToKey;
-        }
       });
       if (checked) {
         file.format.Columns[columnIndex].isToKey = true;
         file.format.Columns[columnIndex].isFromKey = false;
+        file.format.Columns[columnIndex].userDefinedName = 'to';
       }
     },
 
@@ -427,7 +429,7 @@ export default {
         await DuckDB.loadCsvFile(key, file.format.Delimiter, file.format.Quote, file.format.Escape, file.format.HasHeader) :
         await DuckDB.loadParquetFile(key);
       const resultArray = result.toArray().map(row => row.toArray());
-      this.$refs.previewModal.preview(resultArray, file.format.Columns.map(c => c.name));
+      this.$refs.previewModal.preview(resultArray, file.format.Columns.map(c => c.userDefinedName));
     },
 
     getImportSummary() {
