@@ -34,6 +34,8 @@ class DataImportUtils {
       pushError(error);
       error = this.validateTableFromTo(table, config, schema, false);
       pushError(error);
+      const columnErrors = this.validateColumns(table, schema);
+      columnErrors.forEach(pushError);
     }
     return { success, errors };
   }
@@ -54,13 +56,13 @@ class DataImportUtils {
       return null;
     }
     const targetTable = table[key];
-    if(!targetTable) {
+    if (!targetTable) {
       return `Relationship table ${this.getTableName(table)} is missing a ${key} table`;
     }
-    if(targetTable.isExistingTable) {
+    if (targetTable.isExistingTable) {
       const found = schema.nodeTables.find((nodeTable) => nodeTable.name === targetTable.key);
       if (!found) {
-        return `Relationship table ${this.getTableName(table)}'s ${key} table ${targetTable.key} does not exist in the schema`; 
+        return `Relationship table ${this.getTableName(table)}'s ${key} table ${targetTable.key} does not exist in the schema`;
       }
     } else {
       const found = config.find((t) => t.id === targetTable.key);
@@ -79,13 +81,13 @@ class DataImportUtils {
       if (table.type === "node") {
         const nodeTable = schema.nodeTables.find((nodeTable) => nodeTable.name === table.tableName);
         if (!nodeTable) {
-          return `Table ${table.tableName} is imported as an existing node table, but it does not exist in the schema`;
+          return `Table ${table.tableName} is imported to an existing node table, but it does not exist in the schema`;
         }
       }
       if (table.type === "rel") {
         const relTable = schema.relTables.find((relTable) => relTable.name === table.tableName);
         if (!relTable) {
-          return `Table ${table.tableName} is imported as an existing relationship table, but it does not exist in the schema`;
+          return `Table ${table.tableName} is imported to an existing relationship table, but it does not exist in the schema`;
         }
       }
       return null;
@@ -120,6 +122,10 @@ class DataImportUtils {
     if (numberOfPrimaryKeys > 1) {
       return `Table ${this.getTableName(table)} has more than one primary key`;
     }
+    const primaryKey = table.columns.find((column) => column.isPrimaryKey);
+    if (primaryKey.ignore) {
+      return `Primary key column ${primaryKey.name} in table ${this.getTableName(table)} is ignored`;
+    }
     return null;
   }
 
@@ -136,6 +142,10 @@ class DataImportUtils {
     }
     if (numberOfFromKeys > 1) {
       return `Relationship table ${this.getTableName(table)} has more than one from key`;
+    }
+    const fromKey = table.columns.find((column) => column.isFromKey);
+    if (fromKey.ignore) {
+      return `From key column in table ${this.getTableName(table)} is ignored`;
     }
     return null;
   }
@@ -154,6 +164,10 @@ class DataImportUtils {
     if (numberOfToKeys > 1) {
       return `Relationship table ${this.getTableName(table)} has more than one to key`;
     }
+    const toKey = table.columns.find((column) => column.isToKey);
+    if (toKey.ignore) {
+      return `To key column in table ${this.getTableName(table)} is ignored`;
+    }
     return null;
   }
 
@@ -170,6 +184,61 @@ class DataImportUtils {
       return `Relationship table ${this.getTableName(table)} has the same from and to key`;
     }
     return null;
+  }
+
+  validateColumns(table, schema) {
+    const errors = [];
+    const columns = table.columns;
+    const columnsWithoutIgnore = columns.filter((column) => !column.ignore);
+    // Check if there are any columns to import
+    if (columnsWithoutIgnore.length === 0) {
+      errors.push(`Table ${this.getTableName(table)} has no columns to import`);
+      return errors;
+    }
+    // Check if there are any columns with missing names
+    for (let i = 0; i < columns.length; ++i) {
+      if (!columns[i].name && !columns[i].ignore) {
+        errors.push(`Column ${i} in table ${this.getTableName(table)} is missing column name`);
+      }
+    }
+    // Check if there are any duplicate column names
+    const columnNames = columnsWithoutIgnore.filter(column => !column.isFromKey && !column.isToKey).map(column => column.name);
+    const uniqueColumnNames = new Set(columnNames);
+    if (columnNames.length !== uniqueColumnNames.size) {
+      errors.push(`Table ${this.getTableName(table)} has duplicate column names`);
+    }
+    // Check if there are any columns with missing column types for new tables
+    if (table.isNewTable) {
+      columnsWithoutIgnore.forEach((column, i) => {
+        if (!column.type) {
+          const displayName = column.name || i;
+          errors.push(`Column ${displayName} in table ${this.getTableName(table)} is missing column type`);
+        }
+      });
+    }
+    // Check if there are any missing column for existing node tables
+    else if (table.type === 'node') {
+      const nodeTable = schema.nodeTables.find((nodeTable) => nodeTable.name === table.tableName);
+      if (nodeTable) {
+        nodeTable.properties.forEach((property) => {
+          if (!uniqueColumnNames.has(property.name)) {
+            errors.push(`Table ${this.getTableName(table)} is imported to an existing node table, but it is missing column ${property.name}`);
+          }
+        });
+      }
+    }
+    // Check if there are any missing column for existing relationship tables
+    else if (table.type === 'rel') {
+      const relTable = schema.relTables.find((relTable) => relTable.name === table.tableName);
+      if (relTable) {
+        relTable.properties.forEach((property) => {
+          if (!uniqueColumnNames.has(property.name)) {
+            errors.push(`Table ${this.getTableName(table)} is imported to an existing relationship table, but it is missing column ${property.name}`);
+          }
+        });
+      }
+    }
+    return errors;
   }
 }
 
