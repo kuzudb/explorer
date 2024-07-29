@@ -22,6 +22,7 @@
         @table-type-change="handleTableTypeChange"
         @add-files="addFiles"
         @remove-file="removeFile"
+        @preview-file="previewFile"
       />
       <div class="outer-wrapper">
         <button
@@ -66,7 +67,13 @@
       :files="processingFiles"
       @close="clearProcessingFiles"
     />
-    <importer-view-csv-format-modal ref="csvFormatModal" @save="updateCsvFormat" />
+    <importer-view-csv-format-modal
+      ref="csvFormatModal"
+      @save="updateCsvFormat"
+    />
+    <importer-view-preview
+      ref="previewModal"
+    />
   </div>
 </template>
 
@@ -83,6 +90,7 @@ import ImporterViewNodeTables from './ImporterViewNodeTables.vue';
 import ImporterViewRelTables from './ImporterViewRelTables.vue';
 import ImporterViewFileProcessingModal from './ImporterViewFileProcessingModal.vue';
 import ImporterViewCsvFormatModal from './ImporterViewCsvFormatModal.vue';
+import ImporterViewPreview from './ImporterViewPreview.vue';
 
 export default {
   name: "ImporterMainView",
@@ -93,6 +101,7 @@ export default {
     ImporterViewRelTables,
     ImporterViewFileProcessingModal,
     ImporterViewCsvFormatModal,
+    ImporterViewPreview,
   },
   props: {
     schema: {
@@ -287,7 +296,6 @@ export default {
     },
 
     async updateCsvFormat(key, format) {
-      console.log(key, format);
       const file = this.files[key];
       const delimiter = format.delimiter;
       const quote = format.quote;
@@ -404,6 +412,15 @@ export default {
     getReadableSize(bytes) {
       const i = Math.floor(Math.log(bytes) / Math.log(1024));
       return (bytes / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
+    },
+
+    async previewFile(key) {
+      const file = this.files[key];
+      const result = file.extension === 'csv' ?
+        await DuckDB.loadCsvFile(key, file.format.Delimiter, file.format.Quote, file.format.Escape, file.format.HasHeader) :
+        await DuckDB.loadParquetFile(key);
+      const resultArray = result.toArray().map(row => row.toArray());
+      this.$refs.previewModal.preview(resultArray, file.format.Columns.map(c => c.name));
     },
   },
 }

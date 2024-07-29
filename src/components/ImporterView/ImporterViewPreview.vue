@@ -7,56 +7,41 @@
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
-          <h5
-            v-if="isProcessing"
-            class="modal-title"
-          >
-            Processing Selected Files...
+          <h5 class="modal-title">
+            Preview File
           </h5>
-          <h5
-            v-else
-            class="modal-title"
-          >
-            {{ files.length }} Files Processed
-          </h5>
+          <button
+            type="button"
+            class="btn-close" 
+            @click="hideModal"
+          />
         </div>
         <div class="modal-body">
-          <ul class="list-group">
-            <li
-              v-for="file in files"
-              :key="file.id"
-              class="list-group-item"
-            >
-              <div class="d-flex justify-content-between">
-                <span>{{ file.fileName }}</span>
-                <span v-if="file.status === 'processing'">
-                  <div
-                    class="spinner-border text-primary"
-                    role="status"
-                  />
-
-                  &nbsp;
-                  <span>Processing...</span>
-                </span>
-                <span
-                  v-else-if="file.status === 'success'"
-                  class="text-success"
+          <table class="table table-bordered table-striped">
+            <thead class="table-header">
+              <tr>
+                <th
+                  v-for="(h, index) in header"
+                  :key="index"
                 >
-                  <i class="fa-solid fa-check-circle" />
-                  &nbsp;
-                  <span>Sucess</span>
-                </span>
-                <span
-                  v-else-if="file.status === 'error'"
-                  class="text-danger"
+                  {{ h }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(row, i) in table"
+                :key="i"
+              >
+                <td
+                  v-for="(cell, j) in row"
+                  :key="j"
                 >
-                  <i class="fa-solid fa-exclamation-circle" />
-                  &nbsp;
-                  <span>{{ file.error }}</span>
-                </span>
-              </div>
-            </li>
-          </ul>
+                  {{ cell }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -67,36 +52,31 @@
 import { Modal } from 'bootstrap';
 export default {
   name: "ImporterViewPreview",
-  props: {
-    table: {
-      type: Array,
-      required: true,
-      default: () => [],
-    },
-    title: {
-      type: Array,
-      required: true,
-      default: () => [],
-    },
-  },
-  emits: ["close"],
   data: () => ({
     modal: null,
+    table: [],
+    header: [],
   }),
   computed: {
   },
   mounted() {
     this.modal = new Modal(this.$refs.modal);
-    modal.show();
   },
   beforeUnmount() {
     this.modal.dispose();
   },
   methods: {
+    preview(table, header) {
+      this.table = table;
+      this.header = header;
+      this.showModal();
+    },
     showModal() {
       this.modal.show();
     },
     hideModal() {
+      this.table = [];
+      this.header = [];
       this.modal.hide();
     },
   },
@@ -104,4 +84,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.modal-body {
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.modal-xl {
+  max-width: 90%;
+}
+
+.table-header {
+  position: sticky;
+}
 </style>

@@ -70,11 +70,11 @@ class DuckDB {
     await db.registerFileHandle(fileName, file, DuckDBDataProtocol.BROWSER_FILEREADER, true);
   }
 
-  async getCsvHeaderWithCustomSettings(uuid, delimiter, quote, escape, HasHeader) {
+  async getCsvHeaderWithCustomSettings(uuid, delimiter, quote, escape, hasHeader) {
     const db = await this.getDb();
     const conn = await db.connect();
     const fileName = this.getFileName(uuid, FILE_TYPE.CSV);
-    const query = `DESCRIBE SELECT * FROM READ_CSV('${fileName}', delim=?, quote=?, escape=?, header=${HasHeader}) LIMIT 1`;
+    const query = `DESCRIBE SELECT * FROM READ_CSV('${fileName}', delim=?, quote=?, escape=?, header=${hasHeader}) LIMIT 1`;
     console.debug(query);
     let preparedQuery = await conn.prepare(query);
     let result = await preparedQuery.query(delimiter, quote, escape);
@@ -126,17 +126,27 @@ class DuckDB {
     };
   }
 
-  async loadParquetFile(uuid, file) {
+  async loadCsvFile(uuid, delimiter, quote, escape, hasHeader, limit = 200) {
+    const db = await this.getDb();
+    const conn = await db.connect();
+    const fileName = this.getFileName(uuid, FILE_TYPE.CSV);
+    const query = `SELECT * FROM READ_CSV('${fileName}', delim=?, quote=?, escape=?, header=${hasHeader}) LIMIT ${limit}`;
+    console.debug(query);
+    let preparedQuery = await conn.prepare(query);
+    let result = await preparedQuery.query(delimiter, quote, escape);
+    await conn.close();
+    return result;
+  }
+
+  async loadParquetFile(uuid, limit = 200) {
     const db = await this.getDb();
     const conn = await db.connect();
     const fileName = this.getFileName(uuid, FILE_TYPE.PARQUET);
-    await db.registerFileHandle(fileName, file, DuckDBDataProtocol.BROWSER_FILEREADER, true);
-    const query = `SELECT * FROM sniff_parquet('${fileName}')`;
+    const query = `SELECT * FROM '${fileName}' LIMIT ${limit}`;
     console.debug(query);
-    let result = await conn.query(query);
-    const resultArray = result.toArray();
-    console.debug(resultArray);
+    const result = await conn.query(query);
     await conn.close();
+    return result;
   }
 
   convertDuckDBTypeToKuzuType(typeStr) {
