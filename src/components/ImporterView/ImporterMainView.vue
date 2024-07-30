@@ -76,6 +76,9 @@
       @save="updateCsvFormat"
     />
     <importer-view-preview ref="previewModal" />
+    <importer-view-validation-modal
+      ref="validationModal"
+    />
   </div>
 </template>
 
@@ -93,6 +96,7 @@ import ImporterViewRelTables from './ImporterViewRelTables.vue';
 import ImporterViewProcessingModal from './ImporterViewProcessingModal.vue';
 import ImporterViewCsvFormatModal from './ImporterViewCsvFormatModal.vue';
 import ImporterViewPreview from './ImporterViewPreview.vue';
+import ImporterViewValidationModal from './ImporterViewValidationModal.vue';
 
 export default {
   name: "ImporterMainView",
@@ -104,6 +108,7 @@ export default {
     ImporterViewProcessingModal,
     ImporterViewCsvFormatModal,
     ImporterViewPreview,
+    ImporterViewValidationModal,
   },
   props: {
     schema: {
@@ -532,18 +537,22 @@ export default {
     },
 
     async startImport() {
+      console.log(this.$refs.validationModal);
+      this.$refs.validationModal.showModal();
+      this.$refs.validationModal.setState(true, [], []);
       const summary = this.getImportSummary();
-      console.log(summary);
       const url = `/api/import/${summary.id}`;
       try {
         const res = await Axios.post(url, summary);
+        this.$refs.validationModal.setState(false, [], []);
         console.log(res.data);
       } catch (error) {
         const res = error.response;
-        if(res && res.data) {
-          console.error(res.data);
+        if(res && res.data && res.data.errors) {
+          this.$refs.validationModal.setState(false, res.data.errors, []);
         }
         else {
+          this.$refs.validationModal.setState(false, [error.message], []);
           console.error(error);
         }
       }
