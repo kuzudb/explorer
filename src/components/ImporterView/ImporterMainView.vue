@@ -567,7 +567,7 @@ export default {
       try {
         const res = await Axios.post(url, summary);
         const plan = res.data.plan;
-        this.currentJob = { ...res.data };
+        this.currentJob = { plan, jobId: res.data.jobId, };
         this.$refs.validationModal.setState(false, [], plan);
       } catch (error) {
         const res = error.response;
@@ -591,7 +591,7 @@ export default {
       this.$refs.importProcessingModal.showModal();
       await this.processUploads();
     },
-    
+
     async processUploads() {
       const uploadJobs = this.currentJob.plan.filter(j => j.action === IMPORT_ACTIONS.UPLOAD);
       for (let i = 0; i < uploadJobs.length; ++i) {

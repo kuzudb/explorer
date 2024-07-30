@@ -80,4 +80,16 @@ router.post("/:job_id/:file_name", upload.single("file"), async (_, res) => {
   return res.status(200).send({ success: true });
 });
 
+router.get("/:job_id", async (req, res) => {
+  const jobId = req.params.job_id;
+  if (!jobId || !uuid.validate(jobId)) {
+    return res.status(400).send({ error: "Missing or invalid job ID" });
+  }
+  const job = jobsMap.get(jobId);
+  if (!job) {
+    return res.status(404).send({ error: "Job not found" });
+  }
+  return res.status(200).send(job);
+});
+
 module.exports = router;
