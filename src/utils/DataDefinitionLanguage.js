@@ -166,7 +166,6 @@ class DataDefinitionLanguage {
       statement += ` ${csvOptionsString}`;
     }
     statement += ";";
-    console.log(statement);
     const result = { cypher: statement };
     return result;
   }
