@@ -149,20 +149,25 @@ class DataDefinitionLanguage {
     return `ALTER TABLE ${oldName} RENAME TO ${newName};`;
   }
 
+  getCsvOptionsSubquery(csvFormatOptions) {
+    const { delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism } = csvFormatOptions;
+    let csvOptions = [];
+    csvOptions.push(`HEADER=${hasHeader}`);
+    csvOptions.push(`DELIM="${this._jsonEscapedString(delimiter)}"`);
+    csvOptions.push(`QUOTE="${this._jsonEscapedString(quote)}"`);
+    csvOptions.push(`ESCAPE="${this._jsonEscapedString(escape)}"`);
+    // csvOptions.push(`LIST_BEGIN="${this._jsonEscapedString(listBegin)}"`);
+    // csvOptions.push(`LIST_END="${this._jsonEscapedString(listEnd)}"`);
+    csvOptions.push(`PARALLEL=${parallelism}`);
+    const csvOptionsString = `(${csvOptions.join(", ")})`;
+    return csvOptionsString;
+  }
+
   copyTableSimple(name, path, csvFormatOptions) {
     name = this._escapeName(name);
     let statement = `COPY ${name} FROM '${path}'`;
     if (csvFormatOptions) {
-      const { delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism } = csvFormatOptions;
-      let csvOptions = [];
-      csvOptions.push(`HEADER=${hasHeader}`);
-      csvOptions.push(`DELIM="${this._jsonEscapedString(delimiter)}"`);
-      csvOptions.push(`QUOTE="${this._jsonEscapedString(quote)}"`);
-      csvOptions.push(`ESCAPE="${this._jsonEscapedString(escape)}"`);
-      // csvOptions.push(`LIST_BEGIN="${this._jsonEscapedString(listBegin)}"`);
-      // csvOptions.push(`LIST_END="${this._jsonEscapedString(listEnd)}"`);
-      csvOptions.push(`PARALLEL=${parallelism}`);
-      const csvOptionsString = `(${csvOptions.join(", ")})`;
+      const csvOptionsString = this.getCsvOptionsSubquery(csvFormatOptions);
       statement += ` ${csvOptionsString}`;
     }
     statement += ";";
