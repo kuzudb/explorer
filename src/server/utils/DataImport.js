@@ -1,9 +1,21 @@
 const database = require("./Database");
 const ddl = require("../../utils/DataDefinitionLanguage");
 const path = require("path");
+const fs = require("fs/promises");
 const IMPORT_ACTIONS = require("./Constants").IMPORT_ACTIONS;
 
 class DataImportUtils {
+  getTmpPath(id) {
+    return path.join("/tmp", id);
+  }
+
+  async createTmp(id) {
+    const tmpPath = this.getTmpPath(id);
+    await fs.rm(tmpPath, { recursive: true, force: true });
+    await fs.mkdir(tmpPath);
+    return tmpPath;
+  }
+
   async validateImport(config) {
     let success = true;
     const errors = [];

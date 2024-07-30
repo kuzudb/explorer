@@ -1,86 +1,34 @@
 <template>
-  <div
-    v-if="schema"
-    ref="wrapper"
-    class="import-view__wrapper"
-  >
-    <div
-      v-show="filesLength === 0"
-      class="container p-5"
-    >
-      <importer-view-drop-zone
-        ref="dropzone"
-        @files-selected="handleFilesSelected"
-      />
+  <div v-if="schema" ref="wrapper" class="import-view__wrapper">
+    <div v-show="filesLength === 0" class="container p-5">
+      <importer-view-drop-zone ref="dropzone" @files-selected="handleFilesSelected" />
     </div>
-    <div
-      v-if="filesLength > 0"
-      class="main-wrapper"
-    >
-      <importer-view-sidebar
-        :files="files"
-        @table-type-change="handleTableTypeChange"
-        @add-files="addFiles"
-        @remove-file="removeFile"
-        @preview-file="previewFile"
-      />
+    <div v-if="filesLength > 0" class="main-wrapper">
+      <importer-view-sidebar :files="files" @table-type-change="handleTableTypeChange" @add-files="addFiles"
+        @remove-file="removeFile" @preview-file="previewFile" />
       <div class="outer-wrapper">
-        <button
-          class="btn btn-success"
-          @click="startImport"
-        >
+        <button class="btn btn-success" @click="startImport">
           <i class="fa-solid fa-upload" />
           Start Import
         </button>
         <div class=" table-wrapper">
-          <importer-view-node-tables
-            :files="nodeFiles"
-            :schema="schema"
-            @expand="handleExpand"
-            @set-csv-format="openCsvFormatModal"
-            @set-table-is-new="setTableIsNew"
-            @set-table-name="setTableName"
-            @set-primary-key="setPrimaryKey"
-            @set-column-user-defined-name="setColumnUserDefinedName"
-            @set-column-type="setColumnType"
-            @set-column-ignore="setColumnIgnore"
-          />
-          <importer-view-rel-tables
-            :files="relFiles"
-            :schema="schema"
-            :node-files="nodeFiles"
-            @expand="handleExpand"
-            @set-csv-format="openCsvFormatModal"
-            @set-table-is-new="setTableIsNew"
-            @set-table-name="setTableName"
-            @set-from-table="setFromTable"
-            @set-to-table="setToTable"
-            @set-from-key="setFromKey"
-            @set-to-key="setToKey"
-            @set-column-user-defined-name="setColumnUserDefinedName"
-            @set-column-type="setColumnType"
-            @set-column-ignore="setColumnIgnore"
-          />
+          <importer-view-node-tables :files="nodeFiles" :schema="schema" @expand="handleExpand"
+            @set-csv-format="openCsvFormatModal" @set-table-is-new="setTableIsNew" @set-table-name="setTableName"
+            @set-primary-key="setPrimaryKey" @set-column-user-defined-name="setColumnUserDefinedName"
+            @set-column-type="setColumnType" @set-column-ignore="setColumnIgnore" />
+          <importer-view-rel-tables :files="relFiles" :schema="schema" :node-files="nodeFiles" @expand="handleExpand"
+            @set-csv-format="openCsvFormatModal" @set-table-is-new="setTableIsNew" @set-table-name="setTableName"
+            @set-from-table="setFromTable" @set-to-table="setToTable" @set-from-key="setFromKey" @set-to-key="setToKey"
+            @set-column-user-defined-name="setColumnUserDefinedName" @set-column-type="setColumnType"
+            @set-column-ignore="setColumnIgnore" />
         </div>
       </div>
     </div>
-    <importer-view-processing-modal
-      ref="fileProcessingModal"
-      :items="processingFiles"
-      processing-title="Processing Files..."
-      done-title="Files Processed"
-      @close="clearProcessingFiles"
-    />
-    <importer-view-csv-format-modal
-      ref="csvFormatModal"
-      @save="updateCsvFormat"
-    />
+    <importer-view-processing-modal ref="fileProcessingModal" :items="processingFiles"
+      processing-title="Processing Files..." done-title="Files Processed" @close="clearProcessingFiles" />
+    <importer-view-csv-format-modal ref="csvFormatModal" @save="updateCsvFormat" />
     <importer-view-preview ref="previewModal" />
-    <importer-view-validation-modal
-      ref="validationModal"
-      @close="abortCurrentJob"
-      @execute="executeCurrentJob"
-    />
+    <importer-view-validation-modal ref="validationModal" @close="abortCurrentJob" @execute="executeCurrentJob" />
   </div>
 </template>
 
@@ -89,7 +37,7 @@ import Axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { mapStores } from 'pinia';
 import { useModeStore } from '../../store/ModeStore';
-import { DATA_TYPES } from '../../utils/Constants';
+import { DATA_TYPES, IMPORT_ACTIONS } from '../../utils/Constants';
 import DuckDB from '../../utils/DuckDB';
 import ImporterViewDropZone from './ImporterViewDropZone.vue';
 import ImporterViewSidebar from './ImporterViewSidebar.vue';
@@ -543,16 +491,15 @@ export default {
       this.$refs.validationModal.showModal();
       this.$refs.validationModal.setState(true, [], []);
       const summary = this.getImportSummary();
-      console.log(summary);
       const url = `/api/import/${summary.id}`;
       try {
         const res = await Axios.post(url, summary);
         const plan = res.data.plan;
+        this.currentJob = { ...res.data };
         this.$refs.validationModal.setState(false, [], plan);
-        console.log(plan);
       } catch (error) {
         const res = error.response;
-        if(res && res.data && res.data.errors) {
+        if (res && res.data && res.data.errors) {
           this.$refs.validationModal.setState(false, res.data.errors, []);
         }
         else {
@@ -568,7 +515,22 @@ export default {
 
     async executeCurrentJob() {
       console.log('execute');
-      
+      console.log(this.currentJob);
+      const uploadJobs = this.currentJob.plan.filter(j => j.action === IMPORT_ACTIONS.UPLOAD);
+      for (const job of uploadJobs) {
+        const virtualFileName = job.fileName;
+        const file = Object.values(this.files).find(f => DuckDB.getFileName(f.id, f.extension) === virtualFileName);
+        const api = `/api/import/${this.currentJob.jobId}/${virtualFileName}`;
+        const formData = new FormData();
+        formData.append('file', file.file);
+        await Axios.post(api, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          }
+        });
+      }
+
+
     },
   },
 }

@@ -114,3 +114,9 @@ export const LOOP_POSITIONS = [
   "left",
   "top-left",
 ];
+
+export const IMPORT_ACTIONS = {
+  CREATE: "Create Table",
+  UPLOAD: "Upload File",
+  COPY: "Copy Table",
+};

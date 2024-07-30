@@ -31,6 +31,7 @@
     "moment": "^2.29.4",
     "monaco-editor": "^0.41.0",
     "monaco-themes": "^0.4.4",
+    "multer": "^1.4.5-lts.1",
     "openai": "^4.20.1",
     "pinia": "^2.0.23",
     "pino": "^8.16.1",
