@@ -76,15 +76,7 @@ router.post("/:job_id/exec", async (_, res) => {
   return res.status(200).send({ jobId });
 });
 
-router.post("/:job_id/:file_name", upload.single("file"), async (req, res) => {
-  // const jobId = req.params.job_id;
-  // if (!jobId || !uuid.validate(jobId)) {
-  //   return res.status(400).send({ error: "Missing or invalid job ID" });
-  // }
-  // const fileName = req.params.file_name;
-  // if (!fileId || !uuid.validate(fileId)) {
-  //   return res.status(400).send({ error: "Missing or invalid file ID" });
-  // }
+router.post("/:job_id/:file_name", upload.single("file"), async (_, res) => {
   return res.status(200).send({ success: true });
 });
 

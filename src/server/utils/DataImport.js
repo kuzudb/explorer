@@ -264,6 +264,7 @@ class DataImportUtils {
         displayName: table.name,
         fileName: `${table.id}.${table.extension}`,
         action: IMPORT_ACTIONS.UPLOAD,
+        state: 'pending',
       });
     }
     for (const table of config) {
@@ -281,6 +282,7 @@ class DataImportUtils {
           tableName: table.tableName,
           action: IMPORT_ACTIONS.CREATE,
           type: 'node',
+          state: 'pending',
         });
       }
     }
@@ -316,6 +318,7 @@ class DataImportUtils {
           displayName: table.tableName,
           action: IMPORT_ACTIONS.CREATE,
           type: 'rel',
+          state: 'pending',
         });
       }
     }
@@ -363,6 +366,7 @@ class DataImportUtils {
       result.action = IMPORT_ACTIONS.COPY;
       result.displayName = table.tableName;
       result.tableName = table.tableName;
+      result.state = 'pending';
       return result;
     }
     return null;
