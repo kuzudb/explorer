@@ -78,6 +78,8 @@
     <importer-view-preview ref="previewModal" />
     <importer-view-validation-modal
       ref="validationModal"
+      @close="abortCurrentJob"
+      @execute="executeCurrentJob"
     />
   </div>
 </template>
@@ -124,6 +126,7 @@ export default {
   data: () => ({
     files: {},
     processingFiles: [],
+    currentJob: null,
   }),
   computed: {
     isSchemaEmpty() {
@@ -557,6 +560,15 @@ export default {
           console.error(error);
         }
       }
+    },
+
+    async abortCurrentJob() {
+      this.$refs.validationModal.setState(false, [], []);
+    },
+
+    async executeCurrentJob() {
+      console.log('execute');
+      
     },
   },
 }
