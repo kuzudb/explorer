@@ -29,7 +29,7 @@
             >
               <div class="d-flex justify-content-between">
                 <span>{{ item.name }}</span>
-                <span v-if="item.status === 'processing'">
+                <span v-if="item.status === jobStatus.PROCESSING">
                   <div
                     class="spinner-border text-primary"
                     role="status"
@@ -39,7 +39,7 @@
                   <span>Processing...</span>
                 </span>
                 <span
-                  v-else-if="item.status === 'success'"
+                  v-else-if="item.status === jobStatus.SUCCESS"
                   class="text-success"
                 >
                   <i class="fa-solid fa-check-circle" />
@@ -47,7 +47,7 @@
                   <span>Success</span>
                 </span>
                 <span
-                  v-else-if="item.status === 'error'"
+                  v-else-if="item.status === jobStatus.ERROR"
                   class="text-danger"
                 >
                   <i class="fa-solid fa-exclamation-circle" />
@@ -82,6 +82,8 @@
 
 <script lang="js">
 import { Modal } from 'bootstrap';
+import { JOB_STATUS } from '../../utils/Constants';
+
 export default {
   name: "ImporterViewProcessingModal",
   props: {
@@ -102,10 +104,11 @@ export default {
   emits: ["close"],
   data: () => ({
     modal: null,
+    jobStatus: JOB_STATUS,
   }),
   computed: {
     isProcessing() {
-      return this.items.some((i) => i.status === "processing");
+      return this.items.some((i) => i.status === this.jobStatus.PENDING || i.status === this.jobStatus.PROCESSING);
     },
   },
   mounted() {

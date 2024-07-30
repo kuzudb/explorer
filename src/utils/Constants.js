@@ -120,3 +120,10 @@ export const IMPORT_ACTIONS = {
   UPLOAD: "Upload File",
   COPY: "Copy Table",
 };
+
+export const JOB_STATUS = {
+  PENDING: "PENDING",
+  PROCESSING: "PROCESSING",
+  SUCCESS: "SUCCESS",
+  ERROR: "ERROR",
+};

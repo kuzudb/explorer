@@ -2,7 +2,9 @@ const database = require("./Database");
 const ddl = require("../../utils/DataDefinitionLanguage");
 const path = require("path");
 const fs = require("fs/promises");
-const IMPORT_ACTIONS = require("./Constants").IMPORT_ACTIONS;
+const Constants = require("./Constants");
+const IMPORT_ACTIONS =  Constants.IMPORT_ACTIONS;
+const JOB_STATUS = Constants.JOB_STATUS;
 
 class DataImportUtils {
   getTmpPath(id) {
@@ -264,7 +266,7 @@ class DataImportUtils {
         displayName: table.name,
         fileName: `${table.id}.${table.extension}`,
         action: IMPORT_ACTIONS.UPLOAD,
-        state: 'pending',
+        status: JOB_STATUS.PENDING,
       });
     }
     for (const table of config) {
@@ -282,7 +284,7 @@ class DataImportUtils {
           tableName: table.tableName,
           action: IMPORT_ACTIONS.CREATE,
           type: 'node',
-          state: 'pending',
+          status: JOB_STATUS.PENDING,
         });
       }
     }
@@ -318,7 +320,7 @@ class DataImportUtils {
           displayName: table.tableName,
           action: IMPORT_ACTIONS.CREATE,
           type: 'rel',
-          state: 'pending',
+          status: JOB_STATUS.PENDING,
         });
       }
     }
@@ -366,7 +368,7 @@ class DataImportUtils {
       result.action = IMPORT_ACTIONS.COPY;
       result.displayName = table.tableName;
       result.tableName = table.tableName;
-      result.state = 'pending';
+      result.status = JOB_STATUS.PENDING;
       return result;
     }
     return null;
