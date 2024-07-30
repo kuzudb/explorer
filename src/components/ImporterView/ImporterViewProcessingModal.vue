@@ -44,7 +44,7 @@
                 >
                   <i class="fa-solid fa-check-circle" />
                   &nbsp;
-                  <span>Sucess</span>
+                  <span>Success</span>
                 </span>
                 <span
                   v-else-if="item.status === 'error'"
@@ -53,6 +53,11 @@
                   <i class="fa-solid fa-exclamation-circle" />
                   &nbsp;
                   <span>{{ item.error }}</span>
+                </span>
+                <span v-else>
+                  <i class="fa-solid fa-clock" />
+                  &nbsp;
+                  <span>Pending</span>
                 </span>
               </div>
             </li>

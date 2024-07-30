@@ -143,6 +143,38 @@ class DataDefinitionLanguage {
     newName = this._escapeName(newName);
     return `ALTER TABLE ${oldName} RENAME TO ${newName};`;
   }
+
+  copyTableSimple(name, path, csvFormatOptions) {
+    name = this._escapeName(name);
+    let statement = `COPY ${name} FROM '${path}'`;
+    let params;
+    if (csvFormatOptions) {
+      const { delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism } = csvFormatOptions;
+      let csvOptions = [];
+      csvOptions.push(`HEADER=${hasHeader}`);
+      csvOptions.push(`DELIM=$delimiter`);
+      csvOptions.push(`QUOTE=$quote`);
+      csvOptions.push(`ESCAPE=$escape`);
+      csvOptions.push(`LIST_BEGIN=$listBegin`);
+      csvOptions.push(`LIST_END=$listEnd`);
+      csvOptions.push(`PARALLEL=${parallelism}`);
+      const csvOptionsString = `(${csvOptions.join(", ")})`;
+      statement += ` ${csvOptionsString}`;
+      params = {
+        delimiter,
+        quote,
+        escape,
+        listBegin,
+        listEnd,
+      }
+    }
+    statement += ";";
+    const result = { statement };
+    if (params) {
+      result.params = params;
+    }
+    return result;
+  }
 }
 
 const ddl = new DataDefinitionLanguage();

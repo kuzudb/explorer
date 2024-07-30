@@ -31,7 +31,6 @@ router.post("/:job_id", async (req, res) => {
       errors
     });
   }
-  const plan = await DataImportUtil.createImportPlan(config);
   const tmpDirPath = path.join("/tmp", jobId);
   try {
     await fs.rm(tmpDirPath, { recursive: true, force: true });
@@ -42,6 +41,7 @@ router.post("/:job_id", async (req, res) => {
       errors: ["Error creating temporary directory"]
     });
   }
+  const plan = await DataImportUtil.createImportPlan(config, tmpDirPath);
 
   return res.status(200).send({
     plan,

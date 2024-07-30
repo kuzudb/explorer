@@ -8,9 +8,9 @@ const IRI_PROPERTY_NAME = "iri";
 const IRI_VIRTUAL_PROPERTY_NAME = "iri (Virtual)";
 
 const IMPORT_ACTIONS = {
-  CREATE: "CREATE",
-  UPLOAD: "UPLOAD",
-  COPY: "COPY",
+  CREATE: "Create Table",
+  UPLOAD: "Upload File",
+  COPY: "Copy Table",
 };
 
 module.exports = {

@@ -4,7 +4,7 @@
     class="modal"
     tabindex="-1"
   >
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5
@@ -55,6 +55,26 @@
               {{ error }}
             </li>
           </ul>
+
+          <ul
+            v-if="!isProcessing && errors.length === 0 && plan.length > 0"
+            class="list-group"
+          >
+            <li
+              v-for="(item, i) in plan"
+              :key="i"
+              class="list-group-item"
+            >
+              <div class="d-flex w-100 justify-content-between">
+                <span class="text-primary">
+                  {{ item.action }}
+                </span>
+                <span>
+                  {{ item.displayName }}
+                </span>
+              </div>
+            </li>
+          </ul>
         </div>
         <div
           v-if="!isProcessing"
@@ -71,7 +91,7 @@
             v-if="errors.length === 0"
             type="button"
             class="btn btn-success"
-            @click="hideModal"
+            @click="execute"
           >
             Execute
           </button>
@@ -85,7 +105,7 @@
 import { Modal } from 'bootstrap';
 export default {
   name: "ImporterViewValidationModal",
-  emits: ["close"],
+  emits: ["close", "execute"],
   data: () => ({
     modal: null,
     isProcessing: false,
@@ -111,6 +131,11 @@ export default {
     },
     hideModal() {
       this.modal.hide();
+      this.$emit("close");
+    },
+    execute() {
+      this.modal.hide();
+      this.$emit("execute");
     },
   },
 };
