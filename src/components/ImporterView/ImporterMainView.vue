@@ -76,6 +76,9 @@
       @save="updateCsvFormat"
     />
     <importer-view-preview ref="previewModal" />
+    <importer-view-validation-modal
+      ref="validationModal"
+    />
   </div>
 </template>
 
@@ -93,6 +96,7 @@ import ImporterViewRelTables from './ImporterViewRelTables.vue';
 import ImporterViewProcessingModal from './ImporterViewProcessingModal.vue';
 import ImporterViewCsvFormatModal from './ImporterViewCsvFormatModal.vue';
 import ImporterViewPreview from './ImporterViewPreview.vue';
+import ImporterViewValidationModal from './ImporterViewValidationModal.vue';
 
 export default {
   name: "ImporterMainView",
@@ -104,6 +108,7 @@ export default {
     ImporterViewProcessingModal,
     ImporterViewCsvFormatModal,
     ImporterViewPreview,
+    ImporterViewValidationModal,
   },
   props: {
     schema: {
@@ -266,13 +271,19 @@ export default {
         delete c.isToKey;
       });
       if (fileType === 'node') {
-        file.format.Columns[0].isPrimaryKey = true;
+        if (file.format.Columns[0]) {
+          file.format.Columns[0].isPrimaryKey = true;
+        }
       }
       if (fileType === 'rel') {
         file.from = null;
         file.to = null;
-        file.format.Columns[0].isFromKey = true;
-        file.format.Columns[1].isToKey = true;
+        if (file.format.Columns[0]) {
+          file.format.Columns[0].isFromKey = true;
+        }
+        if (file.format.Columns[1]) {
+          file.format.Columns[1].isToKey = true;
+        }
       }
     },
 
@@ -321,11 +332,17 @@ export default {
       file.format.Columns = columns;
       file.detectedFormat.Columns = columns;
       if (file.type === 'node') {
-        file.format.Columns[0].isPrimaryKey = true;
+        if (file.format.Columns[0]) {
+          file.format.Columns[0].isPrimaryKey = true;
+        }
       }
       if (file.type === 'rel') {
-        file.format.Columns[0].isFromKey = true;
-        file.format.Columns[1].isToKey = true;
+        if (file.format.Columns[0]) {
+          file.format.Columns[0].isFromKey = true;
+        }
+        if (file.format.Columns[1]) {
+          file.format.Columns[1].isToKey = true;
+        }
       }
     },
 
@@ -384,10 +401,8 @@ export default {
 
     setFromKey(fileKey, columnIndex, checked) {
       const file = this.files[fileKey];
-      file.format.Columns.forEach((c, i) => {
-        if (i !== columnIndex) {
-          delete c.isFromKey;
-        }
+      file.format.Columns.forEach((c) => {
+        delete c.isFromKey;
       });
       if (checked) {
         file.format.Columns[columnIndex].isFromKey = true;
@@ -397,10 +412,8 @@ export default {
 
     setToKey(fileKey, columnIndex, checked) {
       const file = this.files[fileKey];
-      file.format.Columns.forEach((c, i) => {
-        if (i !== columnIndex) {
-          delete c.isToKey;
-        }
+      file.format.Columns.forEach((c) => {
+        delete c.isToKey;
       });
       if (checked) {
         file.format.Columns[columnIndex].isToKey = true;
@@ -427,7 +440,10 @@ export default {
         await DuckDB.loadCsvFile(key, file.format.Delimiter, file.format.Quote, file.format.Escape, file.format.HasHeader) :
         await DuckDB.loadParquetFile(key);
       const resultArray = result.toArray().map(row => row.toArray());
-      this.$refs.previewModal.preview(resultArray, file.format.Columns.map(c => c.name));
+      this.$refs.previewModal.preview(resultArray, file.format.Columns.map(c => {
+        return c.isFromKey ? 'From' :
+          c.isToKey ? 'To' : c.userDefinedName;
+      }));
     },
 
     getImportSummary() {
@@ -520,9 +536,27 @@ export default {
       }
     },
 
-    startImport() {
+    async startImport() {
+      console.log(this.$refs.validationModal);
+      this.$refs.validationModal.showModal();
+      this.$refs.validationModal.setState(true, [], []);
       const summary = this.getImportSummary();
-      console.log(summary);
+      const url = `/api/import/${summary.id}`;
+      try {
+        const res = await Axios.post(url, summary);
+        const plan = res.data.plan;
+        this.$refs.validationModal.setState(false, [], plan);
+        console.log(plan);
+      } catch (error) {
+        const res = error.response;
+        if(res && res.data && res.data.errors) {
+          this.$refs.validationModal.setState(false, res.data.errors, []);
+        }
+        else {
+          this.$refs.validationModal.setState(false, [error.message], []);
+          console.error(error);
+        }
+      }
     },
   },
 }

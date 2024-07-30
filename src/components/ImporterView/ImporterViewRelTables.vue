@@ -308,7 +308,7 @@
 </template>
 
 <script lang="js">
-import { DATA_TYPES } from '../../utils/Constants';
+import { BASIC_DATA_TYPES } from '../../utils/Constants';
 export default {
   name: "ImporterViewRelTables",
   props: {
@@ -345,7 +345,7 @@ export default {
     },
 
     dataTypes() {
-      return Object.keys(DATA_TYPES);
+      return Object.keys(BASIC_DATA_TYPES);
     },
 
     srcDstTableOptions() {

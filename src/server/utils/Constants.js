@@ -7,8 +7,15 @@ const MODES = {
 const IRI_PROPERTY_NAME = "iri";
 const IRI_VIRTUAL_PROPERTY_NAME = "iri (Virtual)";
 
+const IMPORT_ACTIONS = {
+  CREATE: "CREATE",
+  UPLOAD: "UPLOAD",
+  COPY: "COPY",
+};
+
 module.exports = {
   MODES,
   IRI_PROPERTY_NAME,
   IRI_VIRTUAL_PROPERTY_NAME,
+  IMPORT_ACTIONS,
 };
