@@ -259,8 +259,16 @@ export default {
           continue;
         }
         currentFile.detectedFormat = detectedFormat;
-        const tableNameSplit = currentFile.file.name.split('.');
+        let tableNameSplit = currentFile.file.name.split('.');
         tableNameSplit.pop();
+        currentFile.tableName = tableNameSplit.join('_');
+        tableNameSplit = currentFile.tableName.split('-');
+        currentFile.tableName = tableNameSplit.join('_');
+        tableNameSplit = currentFile.tableName.split(' ');
+        currentFile.tableName = tableNameSplit.join('_');
+        tableNameSplit = currentFile.tableName.split('"');
+        currentFile.tableName = tableNameSplit.join('_');
+        tableNameSplit = currentFile.tableName.split("'");
         currentFile.tableName = tableNameSplit.join('_');
         currentFile.format = JSON.parse(JSON.stringify(detectedFormat));
         if (extension === 'csv') {
