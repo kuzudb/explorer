@@ -146,4 +146,4 @@ class DataDefinitionLanguage {
 }
 
 const ddl = new DataDefinitionLanguage();
-export default ddl;
+module.exports = ddl;

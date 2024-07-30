@@ -1,4 +1,6 @@
 const database = require("./Database");
+const ddl = require("../../utils/DataDefinitionLanguage");
+const IMPORT_ACTIONS = require("./Constants").IMPORT_ACTIONS;
 
 class DataImportUtils {
   async validateImport(config) {
@@ -239,6 +241,72 @@ class DataImportUtils {
       }
     }
     return errors;
+  }
+
+  async createImportPlan(config) {
+    const schema = await database.getSchema();
+    const plan = [];
+    for (const table of config) {
+      plan.push({
+        displayName: table.name,
+        fileName: `${table.id}.${table.extension}`,
+        action: IMPORT_ACTIONS.UPLOAD,
+      });
+    }
+    for (const table of config) {
+      if (table.isNewTable && table.type === 'node') {
+        const properties = table.columns.filter((column) => !column.ignore)
+          .map((column) => ({
+            name: column.name,
+            type: column.type,
+            isPrimaryKey: !!column.isPrimaryKey
+          }));
+        const cypher = ddl.addNodeTable(table.tableName, properties);
+        plan.push({
+          cypher,
+          displayName: table.tableName,
+          tableName: table.tableName,
+          action: IMPORT_ACTIONS.CREATE,
+          type: 'node',
+        });
+      }
+    }
+    for (const table of config) {
+      if (table.isNewTable && table.type === 'rel') {
+        const properties = table.columns.filter((column) => !column.ignore)
+          .filter((column) => !column.isFromKey && !column.isToKey)
+          .map((column) => ({
+            name: column.name,
+            type: column.type,
+          }));
+        const fromTable = table.from;
+        const toTable = table.to;
+        let fromTableName, toTableName;
+        if (fromTable.isExistingTable) {
+          fromTableName = fromTable.key;
+        }
+        else {
+          const found = config.find((t) => t.id === fromTable.key);
+          fromTableName = found.tableName;
+        }
+        if (toTable.isExistingTable) {
+          toTableName = toTable.key;
+        } else {
+          const found = config.find((t) => t.id === toTable.key);
+          toTableName = found.tableName;
+        }
+        const cypher = ddl.addRelTable(table.tableName, properties, fromTableName, toTableName);
+        plan.push({
+          cypher,
+          from: fromTableName,
+          to: toTableName,
+          displayName: table.tableName,
+          action: IMPORT_ACTIONS.CREATE,
+          type: 'rel',
+        });
+      }
+    }
+    return plan;
   }
 }
 

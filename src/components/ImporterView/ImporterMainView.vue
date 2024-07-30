@@ -544,8 +544,9 @@ export default {
       const url = `/api/import/${summary.id}`;
       try {
         const res = await Axios.post(url, summary);
-        this.$refs.validationModal.setState(false, [], []);
-        console.log(res.data);
+        const plan = res.data.plan;
+        this.$refs.validationModal.setState(false, [], plan);
+        console.log(plan);
       } catch (error) {
         const res = error.response;
         if(res && res.data && res.data.errors) {

@@ -25,7 +25,7 @@
             v-if="!isProcessing && errors.length === 0"
             class="modal-title"
           >
-            Validation Complete
+            Import Plan
           </h5>
         </div>
         <div class="modal-body">
@@ -73,7 +73,7 @@
             class="btn btn-success"
             @click="hideModal"
           >
-            Proceed
+            Execute
           </button>
         </div>
       </div>

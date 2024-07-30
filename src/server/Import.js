@@ -3,6 +3,7 @@ const router = express.Router();
 const database = require("./utils/Database");
 const uuid = require("uuid");
 const fs = require("fs/promises");
+const path = require("path");
 const DataImportUtil = require("./utils/DataImport");
 
 const jobsMap = new Map();
@@ -30,9 +31,22 @@ router.post("/:job_id", async (req, res) => {
       errors
     });
   }
+  const plan = await DataImportUtil.createImportPlan(config);
+  const tmpDirPath = path.join("/tmp", jobId);
+  try {
+    await fs.rm(tmpDirPath, { recursive: true, force: true });
+    await fs.mkdir(tmpDirPath);
+  } catch (err) {
+    return res.status(500).send({
+      success: false,
+      errors: ["Error creating temporary directory"]
+    });
+  }
+
   return res.status(200).send({
+    plan,
+    jobId,
     success: true,
-    jobId
   });
 });
 
