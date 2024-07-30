@@ -18,6 +18,11 @@ class DataImportUtils {
     return tmpPath;
   }
 
+  async deleteTmp(id) {
+    const tmpPath = this.getTmpPath(id);
+    await fs.rm(tmpPath, { recursive: true, force: true });
+  }
+
   async validateImport(config) {
     let success = true;
     const errors = [];
