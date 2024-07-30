@@ -519,7 +519,9 @@ export default {
       const uploadJobs = this.currentJob.plan.filter(j => j.action === IMPORT_ACTIONS.UPLOAD);
       for (const job of uploadJobs) {
         const virtualFileName = job.fileName;
-        const file = Object.values(this.files).find(f => DuckDB.getFileName(f.id, f.extension) === virtualFileName);
+        const file = Object.values(this.files).find(
+          (f) => DuckDB.getFileName(f.id, f.extension) === virtualFileName
+        );
         const api = `/api/import/${this.currentJob.jobId}/${virtualFileName}`;
         const formData = new FormData();
         formData.append('file', file.file);
