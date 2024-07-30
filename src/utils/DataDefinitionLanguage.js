@@ -9,6 +9,11 @@ class DataDefinitionLanguage {
     return name;
   }
 
+  _jsonEscapedString = (str) => {
+    const enclosedStr = JSON.stringify(str);
+    return enclosedStr.slice(1, enclosedStr.length - 1);
+  }
+
   _fixColumnType(columnType) {
     if (columnType === "BOOL") {
       return "BOOLEAN";
@@ -147,32 +152,21 @@ class DataDefinitionLanguage {
   copyTableSimple(name, path, csvFormatOptions) {
     name = this._escapeName(name);
     let statement = `COPY ${name} FROM '${path}'`;
-    let params;
     if (csvFormatOptions) {
       const { delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism } = csvFormatOptions;
       let csvOptions = [];
       csvOptions.push(`HEADER=${hasHeader}`);
-      csvOptions.push(`DELIM=$delimiter`);
-      csvOptions.push(`QUOTE=$quote`);
-      csvOptions.push(`ESCAPE=$escape`);
-      csvOptions.push(`LIST_BEGIN=$listBegin`);
-      csvOptions.push(`LIST_END=$listEnd`);
+      csvOptions.push(`DELIM="${this._jsonEscapedString(delimiter)}"`);
+      csvOptions.push(`QUOTE="${this._jsonEscapedString(quote)}"`);
+      csvOptions.push(`ESCAPE="${this._jsonEscapedString(escape)}"`);
+      // csvOptions.push(`LIST_BEGIN="${this._jsonEscapedString(listBegin)}"`);
+      // csvOptions.push(`LIST_END="${this._jsonEscapedString(listEnd)}"`);
       csvOptions.push(`PARALLEL=${parallelism}`);
       const csvOptionsString = `(${csvOptions.join(", ")})`;
       statement += ` ${csvOptionsString}`;
-      params = {
-        delimiter,
-        quote,
-        escape,
-        listBegin,
-        listEnd,
-      }
     }
     statement += ";";
-    const result = { statement };
-    if (params) {
-      result.params = params;
-    }
+    const result = { cypher: statement };
     return result;
   }
 }

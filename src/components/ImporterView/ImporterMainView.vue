@@ -71,6 +71,13 @@
       done-title="Files Processed"
       @close="clearProcessingFiles"
     />
+    <importer-view-processing-modal
+      ref="importProcessingModal"
+      :items="importProgress"
+      processing-title="Importing Files..."
+      done-title="Steps Processed"
+      @close="finishImport"
+    />
     <importer-view-csv-format-modal
       ref="csvFormatModal"
       @save="updateCsvFormat"
@@ -89,7 +96,7 @@ import Axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { mapStores } from 'pinia';
 import { useModeStore } from '../../store/ModeStore';
-import { DATA_TYPES } from '../../utils/Constants';
+import { DATA_TYPES, IMPORT_ACTIONS, JOB_STATUS } from '../../utils/Constants';
 import DuckDB from '../../utils/DuckDB';
 import ImporterViewDropZone from './ImporterViewDropZone.vue';
 import ImporterViewSidebar from './ImporterViewSidebar.vue';
@@ -175,6 +182,19 @@ export default {
     numberOfRelFiles() {
       return Object.keys(this.relFiles).length;
     },
+    importProgress() {
+      if (!this.currentJob || !this.currentJob.plan) {
+        return [];
+      }
+      return this.currentJob.plan.map((job) => {
+        return {
+          status: job.status,
+          name: `${job.action}\t${job.displayName}`,
+          error: job.error,
+        }
+      });
+
+    },
     ...mapStores(useModeStore),
   },
   watch: {
@@ -206,7 +226,7 @@ export default {
         }
         this.processingFiles.push({
           id,
-          status: 'processing',
+          status: JOB_STATUS.PROCESSING,
           name: file.name,
         });
       }
@@ -222,7 +242,7 @@ export default {
             'unsupported';
         currentFile.extension = extension;
         if (extension === 'unsupported') {
-          processingFile.status = 'error';
+          processingFile.status = JOB_STATUS.ERROR;
           processingFile.error = 'Unsupported file format';
           delete filesHash[key];
           continue;
@@ -234,7 +254,7 @@ export default {
             (await DuckDB.sniffParquetFile(key, currentFile.file)) :
             (await DuckDB.sniffCsvFile(key, currentFile.file));
         } catch (error) {
-          currentFile.status = 'error';
+          currentFile.status = JOB_STATUS.ERROR;
           currentFile.error = error.message;
           continue;
         }
@@ -253,7 +273,7 @@ export default {
           c.userDefinedName = c.name;
           c.isPrimaryKey = false;
         });
-        processingFile.status = 'success';
+        processingFile.status = JOB_STATUS.SUCCESS;
       }
       this.files = { ...this.files, ...filesHash };
     },
@@ -543,16 +563,15 @@ export default {
       this.$refs.validationModal.showModal();
       this.$refs.validationModal.setState(true, [], []);
       const summary = this.getImportSummary();
-      console.log(summary);
       const url = `/api/import/${summary.id}`;
       try {
         const res = await Axios.post(url, summary);
         const plan = res.data.plan;
+        this.currentJob = { plan, jobId: res.data.jobId, };
         this.$refs.validationModal.setState(false, [], plan);
-        console.log(plan);
       } catch (error) {
         const res = error.response;
-        if(res && res.data && res.data.errors) {
+        if (res && res.data && res.data.errors) {
           this.$refs.validationModal.setState(false, res.data.errors, []);
         }
         else {
@@ -568,8 +587,80 @@ export default {
 
     async executeCurrentJob() {
       console.log('execute');
-      
+      console.log(this.currentJob);
+      this.$refs.importProcessingModal.showModal();
+      await this.processUploads();
+      await this.startJobExecution();
+      this.pollJobStatus();
     },
+
+    async startJobExecution() {
+      const api = `/api/import/${this.currentJob.jobId}/exec`;
+      try {
+        await Axios.post(api);
+      } catch (error) {
+        console.error(error);
+        this.currentJob.plan.forEach(j => {
+          if (!j.action === IMPORT_ACTIONS.UPLOAD) {
+            j.status = JOB_STATUS.ERROR;
+            j.error = error.message;
+          }
+        });
+      }
+    },
+
+    async processUploads() {
+      const uploadJobs = this.currentJob.plan.filter(j => j.action === IMPORT_ACTIONS.UPLOAD);
+      for (let i = 0; i < uploadJobs.length; ++i) {
+        const job = uploadJobs[i];
+        job.status = JOB_STATUS.PROCESSING;
+        const virtualFileName = job.fileName;
+        const file = Object.values(this.files).find(
+          (f) => DuckDB.getFileName(f.id, f.extension) === virtualFileName
+        );
+        const api = `/api/import/${this.currentJob.jobId}/${virtualFileName}`;
+        const formData = new FormData();
+        formData.append('file', file.file);
+        try {
+          await Axios.post(api, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            }
+          });
+          job.status = JOB_STATUS.SUCCESS;
+        } catch (error) {
+          console.error(error);
+          job.status = JOB_STATUS.ERROR;
+          job.error = error.message;
+          const currentUploadJobIndex = this.currentJob.plan.findIndex(j => j.fileName === virtualFileName);
+          for (let j = currentUploadJobIndex + 1; j < this.currentJob.plan.length; ++j) {
+            this.currentJob.plan[j].status = JOB_STATUS.ERROR;
+            this.currentJob.plan[j].error = 'Previous step failed';
+          }
+          break;
+        }
+      }
+    },
+
+    pollJobStatus() {
+      const interval = window.setInterval(async () => {
+        try {
+          const res = await Axios.get(`/api/import/${this.currentJob.jobId}`);
+          const isAllDone = res.data.plan.every(j => j.status !== JOB_STATUS.PROCESSING && j.status !== JOB_STATUS.PENDING);
+          this.currentJob.plan = res.data.plan;
+          if (isAllDone) {
+            window.clearInterval(interval);
+          }
+        } catch (error) {
+          console.error(error);
+          window.clearInterval(interval);
+        }
+      }, 500);
+    },
+
+    finishImport() {
+
+    }
   },
 }
 </script>

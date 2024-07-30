@@ -1,9 +1,23 @@
 const database = require("./Database");
 const ddl = require("../../utils/DataDefinitionLanguage");
 const path = require("path");
-const IMPORT_ACTIONS = require("./Constants").IMPORT_ACTIONS;
+const fs = require("fs/promises");
+const Constants = require("./Constants");
+const IMPORT_ACTIONS =  Constants.IMPORT_ACTIONS;
+const JOB_STATUS = Constants.JOB_STATUS;
 
 class DataImportUtils {
+  getTmpPath(id) {
+    return path.join("/tmp", id);
+  }
+
+  async createTmp(id) {
+    const tmpPath = this.getTmpPath(id);
+    await fs.rm(tmpPath, { recursive: true, force: true });
+    await fs.mkdir(tmpPath);
+    return tmpPath;
+  }
+
   async validateImport(config) {
     let success = true;
     const errors = [];
@@ -252,6 +266,7 @@ class DataImportUtils {
         displayName: table.name,
         fileName: `${table.id}.${table.extension}`,
         action: IMPORT_ACTIONS.UPLOAD,
+        status: JOB_STATUS.PENDING,
       });
     }
     for (const table of config) {
@@ -269,6 +284,7 @@ class DataImportUtils {
           tableName: table.tableName,
           action: IMPORT_ACTIONS.CREATE,
           type: 'node',
+          status: JOB_STATUS.PENDING,
         });
       }
     }
@@ -304,13 +320,24 @@ class DataImportUtils {
           displayName: table.tableName,
           action: IMPORT_ACTIONS.CREATE,
           type: 'rel',
+          status: JOB_STATUS.PENDING,
         });
       }
     }
     for (const table of config) {
-      const copyResult = this.planCopy(table, schema, tmpPath);
-      if (copyResult) {
-        plan.push(copyResult);
+      if (table.type === 'node') {
+        const copyResult = this.planCopy(table, schema, tmpPath);
+        if (copyResult) {
+          plan.push(copyResult);
+        }
+      }
+    }
+    for (const table of config) {
+      if (table.type === 'rel') {
+        const copyResult = this.planCopy(table, schema, tmpPath);
+        if (copyResult) {
+          plan.push(copyResult);
+        }
       }
     }
     return plan;
@@ -351,6 +378,7 @@ class DataImportUtils {
       result.action = IMPORT_ACTIONS.COPY;
       result.displayName = table.tableName;
       result.tableName = table.tableName;
+      result.status = JOB_STATUS.PENDING;
       return result;
     }
     return null;
