@@ -48,7 +48,7 @@
               </select>
             </div>
 
-            <div class="input-group mb-3">
+            <div class="input-group mb-3" hidden>
               <span class="input-group-text">List Begin</span>
               <input
                 v-model="listBegin"

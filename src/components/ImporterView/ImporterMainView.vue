@@ -590,12 +590,30 @@ export default {
       console.log(this.currentJob);
       this.$refs.importProcessingModal.showModal();
       await this.processUploads();
+      await this.startJobExecution();
+      this.pollJobStatus();
+    },
+
+    async startJobExecution() {
+      const api = `/api/import/${this.currentJob.jobId}/exec`;
+      try {
+        await Axios.post(api);
+      } catch (error) {
+        console.error(error);
+        this.currentJob.plan.forEach(j => {
+          if (!j.action === IMPORT_ACTIONS.UPLOAD) {
+            j.status = JOB_STATUS.ERROR;
+            j.error = error.message;
+          }
+        });
+      }
     },
 
     async processUploads() {
       const uploadJobs = this.currentJob.plan.filter(j => j.action === IMPORT_ACTIONS.UPLOAD);
       for (let i = 0; i < uploadJobs.length; ++i) {
         const job = uploadJobs[i];
+        job.status = JOB_STATUS.PROCESSING;
         const virtualFileName = job.fileName;
         const file = Object.values(this.files).find(
           (f) => DuckDB.getFileName(f.id, f.extension) === virtualFileName
@@ -617,11 +635,27 @@ export default {
           const currentUploadJobIndex = this.currentJob.plan.findIndex(j => j.fileName === virtualFileName);
           for (let j = currentUploadJobIndex + 1; j < this.currentJob.plan.length; ++j) {
             this.currentJob.plan[j].status = JOB_STATUS.ERROR;
-            this.currentJob.plan[j].error = 'Previous job failed';
+            this.currentJob.plan[j].error = 'Previous step failed';
           }
           break;
         }
       }
+    },
+
+    pollJobStatus() {
+      const interval = window.setInterval(async () => {
+        try {
+          const res = await Axios.get(`/api/import/${this.currentJob.jobId}`);
+          const isAllDone = res.data.plan.every(j => j.status !== JOB_STATUS.PROCESSING && j.status !== JOB_STATUS.PENDING);
+          this.currentJob.plan = res.data.plan;
+          if (isAllDone) {
+            window.clearInterval(interval);
+          }
+        } catch (error) {
+          console.error(error);
+          window.clearInterval(interval);
+        }
+      }, 500);
     },
 
     finishImport() {

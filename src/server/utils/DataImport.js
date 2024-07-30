@@ -325,9 +325,19 @@ class DataImportUtils {
       }
     }
     for (const table of config) {
-      const copyResult = this.planCopy(table, schema, tmpPath);
-      if (copyResult) {
-        plan.push(copyResult);
+      if (table.type === 'node') {
+        const copyResult = this.planCopy(table, schema, tmpPath);
+        if (copyResult) {
+          plan.push(copyResult);
+        }
+      }
+    }
+    for (const table of config) {
+      if (table.type === 'rel') {
+        const copyResult = this.planCopy(table, schema, tmpPath);
+        if (copyResult) {
+          plan.push(copyResult);
+        }
       }
     }
     return plan;
