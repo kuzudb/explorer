@@ -1,5 +1,6 @@
 const database = require("./Database");
 const ddl = require("../../utils/DataDefinitionLanguage");
+const path = require("path");
 const IMPORT_ACTIONS = require("./Constants").IMPORT_ACTIONS;
 
 class DataImportUtils {
@@ -243,7 +244,7 @@ class DataImportUtils {
     return errors;
   }
 
-  async createImportPlan(config) {
+  async createImportPlan(config, tmpPath) {
     const schema = await database.getSchema();
     const plan = [];
     for (const table of config) {
@@ -306,7 +307,53 @@ class DataImportUtils {
         });
       }
     }
+    for (const table of config) {
+      const copyResult = this.planCopy(table, schema, tmpPath);
+      if (copyResult) {
+        plan.push(copyResult);
+      }
+    }
     return plan;
+  }
+
+  planCopy(table, schema, tmpPath) {
+    // Simple copy: all columns are copied and the file schema aligns with the 
+    // table schema. In this case, we can directly invoke COPY FROM.
+    let isCopySimple = false;
+    if (table.isNewTable) {
+      if (table.type === 'node') {
+        isCopySimple = table.columns.every((column) => !column.ignore);
+      }
+      if (table.type === 'rel') {
+        isCopySimple = table.columns.every((column) => !column.ignore)
+          && table.columns[0].isFromKey
+          && table.columns[1].isToKey;
+      }
+    } else {
+      if (table.type === 'node') {
+        const nodeTable = schema.nodeTables.find((nodeTable) => nodeTable.name === table.tableName);
+        isCopySimple = table.columns.length === nodeTable.properties.length
+          && table.columns.every((column) => !column.ignore)
+          && table.columns.every((column, i) => column.name === nodeTable.properties[i].name);
+      }
+      if (table.type === 'rel') {
+        const relTable = schema.relTables.find((relTable) => relTable.name === table.tableName);
+        isCopySimple = table.columns.every((column) => !column.ignore) &&
+          table.columns[0].isFromKey &&
+          table.columns[1].isToKey &&
+          table.columns.length === relTable.properties.length + 2 &&
+          table.columns.slice(2).every((column, i) => column.name === relTable.properties[i].name);
+      }
+    }
+    const filePath = path.join(tmpPath, `${table.id}.${table.extension}`);
+    if (isCopySimple) {
+      const result = ddl.copyTableSimple(table.tableName, filePath, table.csvFormat);
+      result.action = IMPORT_ACTIONS.COPY;
+      result.displayName = table.tableName;
+      result.tableName = table.tableName;
+      return result;
+    }
+    return null;
   }
 }
 

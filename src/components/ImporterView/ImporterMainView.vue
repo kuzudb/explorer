@@ -243,7 +243,7 @@ export default {
         if (extension === 'csv') {
           currentFile.format.ListStart = '[';
           currentFile.format.ListEnd = ']';
-          currentFile.format.Parallelism = 1;
+          currentFile.format.Parallelism = true;
         }
         currentFile.format.Columns.forEach(c => {
           c.type = DuckDB.convertDuckDBTypeToKuzuType(c.type);
@@ -537,10 +537,10 @@ export default {
     },
 
     async startImport() {
-      console.log(this.$refs.validationModal);
       this.$refs.validationModal.showModal();
       this.$refs.validationModal.setState(true, [], []);
       const summary = this.getImportSummary();
+      console.log(summary);
       const url = `/api/import/${summary.id}`;
       try {
         const res = await Axios.post(url, summary);
