@@ -3,7 +3,7 @@ const ddl = require("../../utils/DataDefinitionLanguage");
 const path = require("path");
 const fs = require("fs/promises");
 const Constants = require("./Constants");
-const IMPORT_ACTIONS =  Constants.IMPORT_ACTIONS;
+const IMPORT_ACTIONS = Constants.IMPORT_ACTIONS;
 const JOB_STATUS = Constants.JOB_STATUS;
 
 class DataImportUtils {
@@ -266,6 +266,7 @@ class DataImportUtils {
   async createImportPlan(config, tmpPath) {
     const schema = await database.getSchema();
     const plan = [];
+    // Plan for uploading files
     for (const table of config) {
       plan.push({
         displayName: table.name,
@@ -274,6 +275,7 @@ class DataImportUtils {
         status: JOB_STATUS.PENDING,
       });
     }
+    // Plan for creating new node tables
     for (const table of config) {
       if (table.isNewTable && table.type === 'node') {
         const properties = table.columns.filter((column) => !column.ignore)
@@ -293,6 +295,7 @@ class DataImportUtils {
         });
       }
     }
+    // Plan for creating new rel tables
     for (const table of config) {
       if (table.isNewTable && table.type === 'rel') {
         const properties = table.columns.filter((column) => !column.ignore)
@@ -329,17 +332,19 @@ class DataImportUtils {
         });
       }
     }
+    // Plan for copying node tables
     for (const table of config) {
       if (table.type === 'node') {
-        const copyResult = this.planCopy(table, schema, tmpPath);
+        const copyResult = this.planCopy(table, config, schema, tmpPath);
         if (copyResult) {
           plan.push(copyResult);
         }
       }
     }
+    // Plan for copying rel tables
     for (const table of config) {
       if (table.type === 'rel') {
-        const copyResult = this.planCopy(table, schema, tmpPath);
+        const copyResult = this.planCopy(table, config, schema, tmpPath);
         if (copyResult) {
           plan.push(copyResult);
         }
@@ -348,7 +353,13 @@ class DataImportUtils {
     return plan;
   }
 
-  planCopy(table, schema, tmpPath) {
+  planCopy(table, config, schema, tmpPath) {
+    const result = {
+      displayName: table.name,
+      action: IMPORT_ACTIONS.COPY,
+      tableName: table.tableName,
+      status: JOB_STATUS.PENDING,
+    }
     // Simple copy: all columns are copied and the file schema aligns with the 
     // table schema. In this case, we can directly invoke COPY FROM.
     let isCopySimple = false;
@@ -379,14 +390,90 @@ class DataImportUtils {
     }
     const filePath = path.join(tmpPath, `${table.id}.${table.extension}`);
     if (isCopySimple) {
-      const result = ddl.copyTableSimple(table.tableName, filePath, table.csvFormat);
-      result.action = IMPORT_ACTIONS.COPY;
-      result.displayName = table.tableName;
-      result.tableName = table.tableName;
-      result.status = JOB_STATUS.PENDING;
+      const { cypher } = ddl.copyTableSimple(table.tableName, filePath, table.csvFormat);
+      result.cypher = cypher;
       return result;
     }
-    return null;
+    // Complex copy: the file schema does not align with the table schema. In 
+    // this case, we need to use `LOAD FROM` subqueries to transform the data.
+    const columnMapping = [];
+    if (table.type === 'node') {
+      if (table.isNewTable) {
+        table.columns.forEach((column) => {
+          if (!column.ignore) {
+            columnMapping.push({
+              rawName: column.rawName,
+              name: column.name,
+              type: column.type,
+            });
+          }
+        });
+      } else {
+        const nodeTable = schema.nodeTables.find((nodeTable) => nodeTable.name === table.tableName);
+        nodeTable.properties.forEach((property) => {
+          const matchingColumn = table.columns.find((column) => column.name === property.name);
+          columnMapping.push({
+            rawName: matchingColumn.rawName,
+            name: property.name,
+            type: property.type,
+          });
+        });
+      }
+    } else if (table.type === 'rel') {
+      // First two columns are from and to keys
+      const fromTable = table.from.isExistingTable ?
+        schema.nodeTables.find((nodeTable) => nodeTable.name === table.from.key) :
+        config.find((t) => t.id === table.from.key);
+      const toTable = table.to.isExistingTable ?
+        schema.nodeTables.find((nodeTable) => nodeTable.name === table.to.key) :
+        config.find((t) => t.id === table.to.key);
+      const fromTablePrimaryKey = table.from.isExistingTable ?
+        fromTable.properties.find((property) => property.isPrimaryKey) :
+        fromTable.columns.find((column) => column.isPrimaryKey);
+      const toTablePrimaryKey = table.to.isExistingTable ?
+        toTable.properties.find((property) => property.isPrimaryKey) :
+        toTable.columns.find((column) => column.isPrimaryKey);
+      const fromTablePrimaryKeyType = fromTablePrimaryKey.type;
+      const toTablePrimaryKeyType = toTablePrimaryKey.type;
+      const fromKey = table.columns.find((column) => column.isFromKey);
+      const toKey = table.columns.find((column) => column.isToKey);
+      columnMapping.push({
+        rawName: fromKey.rawName,
+        name: "from",
+        type: fromTablePrimaryKeyType,
+      });
+      columnMapping.push({
+        rawName: toKey.rawName,
+        name: "to",
+        type: toTablePrimaryKeyType,
+      });
+      // Other columns
+      if (table.isNewTable) {
+        table.columns.forEach((column) => {
+          if (!column.ignore && !column.isFromKey && !column.isToKey) {
+            columnMapping.push({
+              rawName: column.rawName,
+              name: column.name,
+              type: column.type,
+            });
+          }
+        });
+      }
+      else {
+        const relTable = schema.relTables.find((relTable) => relTable.name === table.tableName);
+        relTable.properties.forEach((property) => {
+          const matchingColumn = table.columns.find((column) => column.name === property.name);
+          columnMapping.push({
+            rawName: matchingColumn.rawName,
+            name: property.name,
+            type: property.type,
+          });
+        });
+      }
+    }
+    const { cypher } = ddl.copyTableComplex(table.tableName, filePath, table.csvFormat, columnMapping);
+    result.cypher = cypher;
+    return result;
   }
 }
 

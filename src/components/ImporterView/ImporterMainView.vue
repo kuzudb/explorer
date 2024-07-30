@@ -511,7 +511,9 @@ export default {
           }
         }
         for (let rawColumn of rawFile.format.Columns) {
-          const column = {};
+          const column = {
+            rawName: rawColumn.name,
+          };
           if (rawColumn.ignore) {
             column.ignore = true;
           }

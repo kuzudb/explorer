@@ -169,6 +169,10 @@ class DataDefinitionLanguage {
     const result = { cypher: statement };
     return result;
   }
+
+  copyTableComplex(name, path, csvFormatOptions, columnMapping) {
+    
+  }
 }
 
 const ddl = new DataDefinitionLanguage();
