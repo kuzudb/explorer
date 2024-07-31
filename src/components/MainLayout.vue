@@ -162,6 +162,7 @@
         v-show="showImporter"
         :schema="schema"
         :navbar-height="navbarHeight"
+        @reload-schema="reloadSchema"
       />
     </div>
 
