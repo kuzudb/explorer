@@ -122,6 +122,7 @@ export default {
       this.modal.show();
     },
     hideModal() {
+      this.$emit("close");
       this.modal.hide();
     },
   },

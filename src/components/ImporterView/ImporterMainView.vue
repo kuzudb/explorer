@@ -594,8 +594,19 @@ export default {
       }
     },
 
-    async abortCurrentJob() {
+    abortCurrentJob() {
       this.$refs.validationModal.setState(false, [], []);
+      this.deleteCurrentJob();
+    },
+
+    async deleteCurrentJob() {
+      const jobId = this.currentJob.jobId;
+      const api = `/api/import/${jobId}`;
+      try {
+        await Axios.delete(api);
+      } catch (error) {
+        console.error(error);
+      }
     },
 
     async executeCurrentJob() {
@@ -669,8 +680,11 @@ export default {
       }, 500);
     },
 
-    finishImport() {
-
+    async finishImport() {
+      await this.deleteCurrentJob();
+      this.$emit('reloadSchema');
+      this.currentJob = null;
+      this.files = {};
     }
   },
 }
