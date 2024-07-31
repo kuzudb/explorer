@@ -421,16 +421,22 @@ class DataImportUtils {
       }
     } else if (table.type === 'rel') {
       // First two columns are from and to keys
-      const fromTable = table.from.isExistingTable ?
-        schema.nodeTables.find((nodeTable) => nodeTable.name === table.from.key) :
-        config.find((t) => t.id === table.from.key);
-      const toTable = table.to.isExistingTable ?
-        schema.nodeTables.find((nodeTable) => nodeTable.name === table.to.key) :
-        config.find((t) => t.id === table.to.key);
-      const fromTablePrimaryKey = table.from.isExistingTable ?
+      const fromTable =
+        (!table.isNewTable) ?
+          schema.nodeTables.find((nodeTable) => nodeTable.name === schema.relTables.find((relTable) => relTable.name === table.tableName).src) :
+          table.from.isExistingTable ?
+            schema.nodeTables.find((nodeTable) => nodeTable.name === table.from.key) :
+            config.find((t) => t.id === table.from.key);
+      const toTable =
+        (!table.isNewTable) ?
+          schema.nodeTables.find((nodeTable) => nodeTable.name === schema.relTables.find((relTable) => relTable.name === table.tableName).dst) :
+          table.to.isExistingTable ?
+            schema.nodeTables.find((nodeTable) => nodeTable.name === table.to.key) :
+            config.find((t) => t.id === table.to.key);
+      const fromTablePrimaryKey = (!table.isNewTable) || table.from.isExistingTable ?
         fromTable.properties.find((property) => property.isPrimaryKey) :
         fromTable.columns.find((column) => column.isPrimaryKey);
-      const toTablePrimaryKey = table.to.isExistingTable ?
+      const toTablePrimaryKey = (!table.isNewTable) || table.to.isExistingTable ?
         toTable.properties.find((property) => property.isPrimaryKey) :
         toTable.columns.find((column) => column.isPrimaryKey);
       const fromTablePrimaryKeyType = fromTablePrimaryKey.type;

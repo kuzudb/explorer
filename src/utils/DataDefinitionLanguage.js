@@ -176,7 +176,19 @@ class DataDefinitionLanguage {
   }
 
   copyTableComplex(name, path, csvFormatOptions, columnMapping) {
-    
+    let statement = `COPY ${name} FROM `;
+    let loadStatement = `LOAD FROM '${path}'`;
+    if (csvFormatOptions) {
+      const csvOptionsString = this.getCsvOptionsSubquery(csvFormatOptions);
+      loadStatement += ` ${csvOptionsString}`;
+    }
+    let returnStatement = "RETURN " +
+      (columnMapping.map((mapping) => {
+        return `CAST(${mapping.rawName} AS ${mapping.type})`;
+      }).join(", "));
+    loadStatement += ` ${returnStatement}`;
+    statement += `(${loadStatement});`;
+    return { cypher: statement };
   }
 }
 
