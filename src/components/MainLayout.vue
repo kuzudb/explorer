@@ -85,7 +85,7 @@
             </li>
 
             <li
-              v-if="!modeStore.isDemo"
+              v-if="!modeStore.isDemo && !modeStore.isReadOnly"
               :class="['nav-item', { active: showImporter }]"
             >
               <a
