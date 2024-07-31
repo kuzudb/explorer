@@ -28,8 +28,7 @@
               class="list-group-item"
             >
               <div class="d-flex justify-content-between">
-                <span class="item-name"
-                >{{ item.name }}</span>
+                <span class="item-name">{{ item.name }}</span>
                 <span v-if="item.status === jobStatus.PROCESSING">
                   <div
                     class="spinner-border text-primary"
