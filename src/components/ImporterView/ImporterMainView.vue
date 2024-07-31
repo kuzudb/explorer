@@ -259,8 +259,16 @@ export default {
           continue;
         }
         currentFile.detectedFormat = detectedFormat;
-        const tableNameSplit = currentFile.file.name.split('.');
+        let tableNameSplit = currentFile.file.name.split('.');
         tableNameSplit.pop();
+        currentFile.tableName = tableNameSplit.join('_');
+        tableNameSplit = currentFile.tableName.split('-');
+        currentFile.tableName = tableNameSplit.join('_');
+        tableNameSplit = currentFile.tableName.split(' ');
+        currentFile.tableName = tableNameSplit.join('_');
+        tableNameSplit = currentFile.tableName.split('"');
+        currentFile.tableName = tableNameSplit.join('_');
+        tableNameSplit = currentFile.tableName.split("'");
         currentFile.tableName = tableNameSplit.join('_');
         currentFile.format = JSON.parse(JSON.stringify(detectedFormat));
         if (extension === 'csv') {
@@ -268,9 +276,10 @@ export default {
           currentFile.format.ListEnd = ']';
           currentFile.format.Parallelism = true;
         }
-        currentFile.format.Columns.forEach(c => {
+        currentFile.format.Columns.forEach((c, i) => {
           c.type = DuckDB.convertDuckDBTypeToKuzuType(c.type);
           c.userDefinedName = c.name;
+          c.name = currentFile.format.HasHeader ? c.name : `column${i}`;
           c.isPrimaryKey = false;
         });
         processingFile.status = JOB_STATUS.SUCCESS;
@@ -341,8 +350,9 @@ export default {
       const parallelism = format.parallelism;
 
       const columns = await DuckDB.getCsvHeaderWithCustomSettings(key, delimiter, quote, escape, hasHeader);
-      columns.forEach(c => {
+      columns.forEach((c, i) => {
         c.type = DuckDB.convertDuckDBTypeToKuzuType(c.type);
+        c.name = hasHeader ? c.name : `column${i}`;
         c.userDefinedName = c.name;
       });
       file.format.Delimiter = delimiter;
@@ -386,7 +396,8 @@ export default {
     },
 
     setTableIsNew(fileKey, isNew) {
-      this.files[fileKey].isNew = isNew;
+      const file = this.files[fileKey];
+      file.isNew = isNew;
     },
 
     setPrimaryKey(fileKey, columnIndex) {
@@ -503,7 +514,9 @@ export default {
           }
         }
         for (let rawColumn of rawFile.format.Columns) {
-          const column = {};
+          const column = {
+            rawName: rawColumn.name,
+          };
           if (rawColumn.ignore) {
             column.ignore = true;
           }
@@ -586,8 +599,6 @@ export default {
     },
 
     async executeCurrentJob() {
-      console.log('execute');
-      console.log(this.currentJob);
       this.$refs.importProcessingModal.showModal();
       await this.processUploads();
       await this.startJobExecution();

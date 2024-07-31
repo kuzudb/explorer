@@ -103,8 +103,18 @@ router.post("/:job_id/exec", async (req, res) => {
         job.plan[j].status = JOB_STATUS.ERROR;
         job.plan[j].error = 'Previous step failed';
       }
+      try {
+        await DataImportUtil.deleteTmp(jobId);
+      } catch (err) {
+        // Ignore
+      }
       return;
     }
+  }
+  try {
+    await DataImportUtil.deleteTmp(jobId);
+  } catch (err) {
+    // Ignore
   }
 });
 
@@ -140,6 +150,20 @@ router.get("/:job_id", async (req, res) => {
     return res.status(404).send({ error: "Job not found" });
   }
   return res.status(200).send(job);
+});
+
+router.delete("/:job_id", async (req, res) => {
+  const jobId = req.params.job_id;
+  if (jobId) {
+    jobsMap.delete(jobId);
+    try {
+      await DataImportUtil.deleteTmp(jobId);
+    }
+    catch (err) {
+      // Ignore
+    }
+  }
+  return res.sendStatus(204);
 });
 
 module.exports = router;
