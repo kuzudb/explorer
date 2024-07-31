@@ -355,7 +355,7 @@ class DataImportUtils {
 
   planCopy(table, config, schema, tmpPath) {
     const result = {
-      displayName: table.name,
+      displayName: `${table.name} →  ${table.tableName}`,
       action: IMPORT_ACTIONS.COPY,
       tableName: table.tableName,
       status: JOB_STATUS.PENDING,
