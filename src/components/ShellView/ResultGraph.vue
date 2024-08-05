@@ -546,12 +546,8 @@ export default {
       this.numHiddenRels = 0;
     },
 
-    encodeNodeId(id) {
+    encodeId(id) {
       return `${id.table}_${id.offset}`;
-    },
-
-    encodeRelId(src, dst, label) {
-      return `${src.table}_${src.offset}_${dst.table}_${dst.offset}_${label}`;
     },
 
     extractGraphFromQueryResult(queryResult, linkDistance = 200) {
@@ -588,7 +584,7 @@ export default {
       }
 
       const processNode = (rawNode) => {
-        const nodeId = this.encodeNodeId(rawNode._id);
+        const nodeId = this.encodeId(rawNode._id);
         nodeLabels[rawNode._id.table] = rawNode._label;
         const nodeSettings = this.settingsStore.settingsForLabel(rawNode._label);
         const g6Node = {
@@ -622,14 +618,14 @@ export default {
 
       const processRel = (rawRel) => {
         const relSettings = this.settingsStore.settingsForLabel(rawRel._label);
-        const relId = this.encodeRelId(rawRel._src, rawRel._dst, rawRel._label);
+        const relId = this.encodeId(rawRel._id);
         const numberOfOverlappingRels = increaseRelCounter(rawRel._src, rawRel._dst);
         const g6Rel = {
           ...relSettings.g6Settings,
           id: relId,
           properties: rawRel,
-          source: this.encodeNodeId(rawRel._src),
-          target: this.encodeNodeId(rawRel._dst),
+          source: this.encodeId(rawRel._src),
+          target: this.encodeId(rawRel._dst),
         }
         if (g6Rel.source === g6Rel.target) {
           g6Rel.type = "loop";
@@ -692,7 +688,7 @@ export default {
               const recursiveRel = { ...row[key] };
               recursiveRel._nodes.forEach((node) => {
                 node = { ...node };
-                const nodeId = this.encodeNodeId(node._id);
+                const nodeId = this.encodeId(node._id);
                 if (nodes[nodeId]) {
                   return;
                 }
@@ -705,7 +701,7 @@ export default {
               });
               recursiveRel._rels.forEach((rel) => {
                 rel = { ...rel };
-                const relId = this.encodeRelId(rel._src, rel._dst, rel._label);
+                const relId = this.encodeId(rel._id);
                 if (edges[relId]) {
                   return;
                 }
@@ -925,7 +921,7 @@ export default {
       // Recursively collapse neighbors
       neighbors.rows.forEach((neighbor) => {
         if (neighbor.dst) {
-          const id = this.encodeNodeId(neighbor.dst._id);
+          const id = this.encodeId(neighbor.dst._id);
           this.collapseNode(id);
         }
       });
