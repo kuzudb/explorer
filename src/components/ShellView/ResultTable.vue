@@ -240,7 +240,7 @@ export default {
       rowsForPage.forEach((row) => {
         this.rows.push([]);
         for (let key in row) {
-          if (!row[key]) {
+          if (row[key] === null || row[key] === undefined) {
             this.rows[this.rows.length - 1].push('NULL');
           }
           else if (tableTypes[key] === DATA_TYPES.RECURSIVE_REL) {
