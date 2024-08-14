@@ -152,9 +152,6 @@ class DataImportUtils {
   }
 
   validateFromKey(table) {
-    if (!table.isNewTable) {
-      return null;
-    }
     if (table.type !== 'rel') {
       return null;
     }
@@ -173,9 +170,6 @@ class DataImportUtils {
   }
 
   validateToKey(table) {
-    if (!table.isNewTable) {
-      return null;
-    }
     if (table.type !== 'rel') {
       return null;
     }
