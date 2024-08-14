@@ -103,13 +103,13 @@ class DataImportUtils {
       if (table.type === "node") {
         const nodeTable = schema.nodeTables.find((nodeTable) => nodeTable.name === table.tableName);
         if (!nodeTable) {
-          return `Table ${table.tableName} is imported to an existing node table, but it does not exist in the schema`;
+          return `Table ${table.tableName} is not found in the schema. This indicates an inconsistency between the server and client of Explorer. Please consider refreshing your browser.`;
         }
       }
       if (table.type === "rel") {
         const relTable = schema.relTables.find((relTable) => relTable.name === table.tableName);
         if (!relTable) {
-          return `Table ${table.tableName} is imported to an existing relationship table, but it does not exist in the schema`;
+          return `Table ${table.tableName} is not found in the schema. This indicates an inconsistency between the server and client of Explorer. Please consider refreshing your browser.`;
         }
       }
       return null;
