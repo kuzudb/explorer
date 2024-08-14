@@ -113,16 +113,21 @@ export default {
   },
   mounted() {
     this.modal = new Modal(this.$refs.modal);
+    this.$refs.modal.addEventListener("hidden.bs.modal", this.emitClose);
   },
   beforeUnmount() {
+    this.$refs.modal.removeEventListener("hidden.bs.modal", this.emitClose);
     this.modal.dispose();
   },
   methods: {
+    emitClose() {
+      this.$emit("close");
+    },
     showModal() {
       this.modal.show();
     },
     hideModal() {
-      this.$emit("close");
+      this.emitClose();
       this.modal.hide();
     },
   },
