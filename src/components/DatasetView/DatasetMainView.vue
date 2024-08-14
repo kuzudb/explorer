@@ -4,64 +4,78 @@
     ref="wrapper"
     class="dataset-view__wrapper"
   >
-    <div
-      v-if="!isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite"
-      class="alert alert-warning"
-      role="alert"
-    >
-      <i class="fa-solid fa-info-circle" />
-      You have already loaded a database. You can still review the schema of the bundled
-      datasets. If you want to load a different dataset, please restart your Kùzu Explorer
-      Docker image with an empty database or drop all tables in the current database.
-    </div>
-
-    <div
-      v-if="isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite"
-      class="alert alert-info"
-      role="alert"
-    >
-      <i class="fa-solid fa-info-circle" />
-      The schema of the current database is empty. You can load a dataset into the
-      database.
-    </div>
-
-    <div
-      v-if="!isProduction && modeStore.isReadWrite"
-      class="alert alert-warning"
-      role="alert"
-    >
-      <i class="fa-solid fa-info-circle" />
-      You are running Kùzu Explorer in development mode. You can load any dataset into the
-      database. However, please make sure there is no conflict with the existing schema.
-    </div>
-
-    <div
-      v-if="modeStore.isReadOnly"
-      class="alert alert-warning"
-      role="alert"
-    >
-      <i class="fa-solid fa-info-circle" />
-      Kùzu Explorer is running in read-only mode. You can still review the schema of the
-      bundled datasets. If you want to load a dataset, please restart your Kùzu Explorer
-      Docker image in read-write mode with an empty database.
-    </div>
-
-    <div
-      v-if="modeStore.isDemo"
-      class="alert alert-warning"
-      role="alert"
-    >
-      <i class="fa-solid fa-info-circle" />
-      Kùzu Explorer is running in demo mode. You can still review the schema of the bundled
-      datasets. Loading a dataset is not possible in this demo. However, you can load a
-      bundled dataset or use your own dataset if you run Kùzu Explorer locally. Please
-      refer to
-      <a
-        target="_blank"
-        href="https://docs.kuzudb.com"
+    <div class="alert-and-button-wrapper">
+      <button
+        class="btn btn-lg btn-secondary"
+        title="Back"
+        @click="$emit('back')"
       >
-        the documentation </a>for more information.
+        <i class="fa-solid  fa-arrow-left" />
+        &nbsp;
+        Back
+      </button>
+
+      <div
+        v-if=" !isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite"
+        class="alert alert-warning"
+        role="alert"
+      >
+        <i class="fa-solid fa-info-circle" />
+        You have already loaded a database. You can still review the schema of the bundled
+        datasets. If you want to load a different dataset, please restart your Kùzu Explorer
+        Docker image with an empty database or drop all tables in the current database.
+      </div>
+
+      <div
+        v-if="isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite"
+        class="alert alert-info"
+        role="alert"
+      >
+        <i class="fa-solid fa-info-circle" />
+        The schema of the current database is empty. You can load a dataset into the
+        database.
+      </div>
+
+      <div
+        v-if="!isProduction && modeStore.isReadWrite"
+        class="alert alert-warning"
+        role="alert"
+      >
+        <i class="fa-solid fa-info-circle" />
+        You are running Kùzu Explorer in development mode. You can load any dataset into the
+        database. However, please make sure there is no conflict with the existing schema.
+      </div>
+
+      <div
+        v-if="modeStore.isReadOnly"
+        class="alert alert-warning"
+        role="alert"
+      >
+        <i class="fa-solid fa-info-circle" />
+        Kùzu Explorer is running in read-only mode. You can still review the schema of the
+        bundled datasets. If you want to load a dataset, please restart your Kùzu Explorer
+        Docker image in read-write mode with an empty database.
+      </div>
+
+      <div
+        v-if="modeStore.isDemo"
+        class="alert alert-warning"
+        role="alert"
+      >
+        <i class="fa-solid fa-info-circle" />
+        Kùzu Explorer is running in demo mode. You can still review the schema of the bundled
+        datasets. Loading a dataset is not possible in this demo. However, you can load a
+        bundled dataset or use your own dataset if you run Kùzu Explorer locally. Please
+        refer to
+        <a
+          target="_blank"
+          href="https://docs.kuzudb.com"
+        >
+          the documentation </a>for more information.
+      </div>
     </div>
+
+
     <div
       v-if="!datasetLoadingLog"
       class="form-group"
@@ -130,7 +144,7 @@ export default {
       default: null,
     },
   },
-  emits: ["reloadSchema"],
+  emits: ["reloadSchema", "back"],
   data: () => ({
     selectedDataset: null,
     selectedDatasetSchema: null,
@@ -241,6 +255,20 @@ export default {
     color: $gray-900;
     background-color: $gray-100;
     font-size: 16px;
+  }
+
+  .alert-and-button-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+
+    div {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    margin-bottom: 16px;
   }
 }
 </style>

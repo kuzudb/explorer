@@ -17,7 +17,20 @@
               <button
                 class="btn btn-primary mb-2"
                 @click="selectFiles"
-              >Browse Files</button>
+              >
+                <i class="fa-solid fa-folder-open" />
+                &nbsp;
+                Browse Files
+              </button>
+              <div class="hr-sect">or</div>
+              <button
+                class="btn btn-primary mb-2"
+                @click="$emit('loadBundledDataset')"
+              >
+                <i class="fa-solid fa-database" />
+                &nbsp;
+                Load Bundled Dataset
+              </button>
             </div>
           </label>
           <input
@@ -38,7 +51,7 @@ import Dropzone from "dropzone";
 
 export default {
   name: "ImporterViewDropZone",
-  emits: ["filesSelected"],
+  emits: ["filesSelected", "loadBundledDataset"],
   data() {
     return {
       dropzone: null,
@@ -129,5 +142,8 @@ export default {
     line-height: 0px;
     margin: 0px 8px;
   }
+}
+.btn.btn-primary.mb-2 {
+  width: 400px;
 }
 </style>

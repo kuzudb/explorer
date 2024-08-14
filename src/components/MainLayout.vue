@@ -71,8 +71,8 @@
             </li>
 
             <li
-              v-if="!modeStore.isDemo"
               :class="['nav-item', { active: showLoader }]"
+              hidden
             >
               <a
                 class="nav-link"
@@ -86,7 +86,9 @@
 
             <li
               v-if="!modeStore.isDemo && !modeStore.isReadOnly"
-              :class="['nav-item', { active: showImporter }]"
+              :class="['nav-item', {
+                active: showImporter || showLoader
+              }]"
             >
               <a
                 class="nav-link"
@@ -157,12 +159,14 @@
         :schema="schema"
         :navbar-height="navbarHeight"
         @reload-schema="reloadSchema"
+        @back="toggleImporter(true)"
       />
       <ImporterMainView
         v-show="showImporter"
         :schema="schema"
         :navbar-height="navbarHeight"
         @reload-schema="reloadSchema"
+        @load-bundled-dataset="toggleLoader"
       />
     </div>
 
@@ -407,11 +411,16 @@ export default {
     },
     toggleLoader() {
       this.hideAll();
-      this.showLoader = true;
+
+     
+        this.showLoader = true;
+      
     },
-    toggleImporter() {
-      this.hideAll();
-      this.showImporter = true;
+    toggleImporter(force = false) {
+      if (force || !this.showLoader) {
+        this.hideAll();
+        this.showImporter = true;
+      }
     },
     showSettingsModal() {
       this.showSettings = true;
