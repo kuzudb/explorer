@@ -60,23 +60,68 @@
             </td>
             <td class="actions">
               <i
-                class="fa-solid fa-trash"
-                @click="removeFile(key)"
+                v-if="file.extension === 'csv'"
+                class="fa-solid fa-file-csv"
+                data-bs-toggle="tooltip"
+                title="Configure CSV Format"
+                @click="setCsvFormat(file)"
               />
-            &nbsp;
+              &nbsp;
               <i
                 class=" fa-solid fa-table"
+                data-bs-toggle="tooltip"
+                title="Preview Table"
                 @click="previewFile(key)"
+              />
+              &nbsp;
+              <i
+                class="fa-solid fa-trash"
+                data-bs-toggle="tooltip"
+                title="Remove File"
+                @click="startFileRemoval(file)"
               />
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <div
+      ref="modal"
+      class="modal"
+      tabindex="-1"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <p>
+              Are you sure you want to remove the file {{ removingFile ? removingFile.file.name : "" }}?
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              @click="hideModal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              @click="confirmFileRemoval"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="js">
+import { Modal } from 'bootstrap';
 export default {
   name: "ImporterViewSidebar",
   props: {
@@ -89,8 +134,21 @@ export default {
     "addFiles",
     "removeFile",
     "tableTypeChange",
-    "previewFile"
+    "previewFile",
+    "setCsvFormat"
   ],
+  data: () => ({
+    removingFile: null,
+    modal: null,
+  }),
+  mounted() {
+    this.modal = new Modal(this.$refs.modal);
+    this.$refs.modal.addEventListener("hidden.bs.modal", this.cancelFileRemoval);
+  },
+  beforeUnmount() {
+    this.modal.dispose();
+    this.$refs.modal.removeEventListener("hidden.bs.modal", this.cancelFileRemoval);
+  },
   methods: {
     getReadableSize(bytes) {
       const i = Math.floor(Math.log(bytes) / Math.log(1024));
@@ -99,13 +157,26 @@ export default {
     handleTableTypeChange(key, event) {
       this.$emit("tableTypeChange", key, event.target.value);
     },
-    removeFile(key) {
-      this.$emit("removeFile", key);
+    startFileRemoval(file) {
+      this.removingFile = file;
+      console.log(this.removingFile);
+      this.modal.show();
+
+    },
+    confirmFileRemoval() {
+      this.$emit("removeFile", this.removingFile.id);
+      this.modal.hide();
+    },
+    cancelFileRemoval() {
+      this.removingFile = null;
     },
     previewFile(key) {
       this.$emit("previewFile", key);
+    },
+    setCsvFormat(file) {
+      this.$emit("setCsvFormat", file);
     }
-  },
+  }
 }
 </script>
 
@@ -117,6 +188,7 @@ export default {
   padding: 16px;
   display: flex;
   flex-direction: column;
+
   .alert {
     margin-bottom: 10px;
     margin-top: 10px;
@@ -136,6 +208,9 @@ export default {
     i {
       cursor: pointer;
 
+      &:hover {
+        opacity: 0.7;
+      }
     }
   }
 
@@ -144,7 +219,7 @@ export default {
     width: 100px;
   }
 
-  td{
+  td {
     word-break: break-all;
   }
 }

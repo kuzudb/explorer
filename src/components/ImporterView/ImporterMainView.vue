@@ -23,6 +23,7 @@
         @add-files="addFiles"
         @remove-file="removeFile"
         @preview-file="previewFile"
+        @set-csv-format="openCsvFormatModal"
       />
       <div class="outer-wrapper">
         <button
