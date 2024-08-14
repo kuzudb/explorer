@@ -127,7 +127,6 @@ export default {
       this.modal.show();
     },
     hideModal() {
-      this.emitClose();
       this.modal.hide();
     },
   },
