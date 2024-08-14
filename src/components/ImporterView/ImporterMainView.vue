@@ -600,6 +600,9 @@ export default {
     },
 
     async deleteCurrentJob() {
+      if (!this.currentJob) {
+        return;
+      }
       const jobId = this.currentJob.jobId;
       const api = `/api/import/${jobId}`;
       try {
@@ -681,10 +684,13 @@ export default {
     },
 
     async finishImport() {
+      const isAllSuccess = this.currentJob.plan.every(j => j.status === JOB_STATUS.SUCCESS);
       await this.deleteCurrentJob();
-      this.$emit('reloadSchema');
       this.currentJob = null;
-      this.files = {};
+      if (isAllSuccess) {
+        this.$emit('reloadSchema');
+        this.files = {};
+      }
     }
   },
 }
