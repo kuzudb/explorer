@@ -68,11 +68,10 @@
       <div class="schema_side-panel__edit-table-actions-container">
         <button
           class="btn btn-sm btn-outline-primary"
-          title="Cancel Edit"
+          title="Go Back to Schema View"
           @click="goBack"
         >
           <i class="fa-solid fa-long-arrow-left" />
-          Cancel Edit
         </button>
         &nbsp;
         <button
