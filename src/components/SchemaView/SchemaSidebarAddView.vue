@@ -1,11 +1,7 @@
 <template>
   <div>
     <div>
-      <div
-        v-if="isRelGroup"
-        class="alert alert-info text-justify"
-        role="alert"
-      >
+      <div v-if="isRelGroup" class="alert alert-info text-justify" role="alert">
         <i class="fa-solid fa-info-circle" />
         When creating a relationship group, multiple relationship tables with the same
         properties will be created.
@@ -16,54 +12,31 @@
       <h5>
         <div class="input-group flex-nowrap">
           <span class="input-group-text">Name</span>
-          <input
-            v-model="currLabel"
-            type="text"
-            class="form-control"
-            :style="{
+          <input v-model="currLabel" type="text" class="form-control" :style="{
               backgroundColor: !isRelGroup ? ` ${getColor()} !important` : '#ffffff',
               color: isNode ? '#ffffff' : '#000000',
-            }"
-          >
+            }">
         </div>
       </h5>
       <hr>
 
       <div class="schema_side-panel__add-table-actions-container">
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-success"
-          title="Save Table"
-          @click="saveTable"
-        >
+        <button type="button" class="btn btn-sm btn-outline-success" title="Save Table" @click="saveTable">
           <i class="fa-solid fa-save" />
           Save
         </button>
         &nbsp;
-        <button
-          class="btn btn-sm btn-outline-danger"
-          title="Discard Table"
-          @click="discardTable"
-        >
+        <button class="btn btn-sm btn-outline-danger" title="Discard Table" @click="discardTable">
           <i class="fa-solid fa-trash" />
           Discard
         </button>
         &nbsp;
-        <button
-          class="btn btn-sm btn-outline-primary"
-          title="Add Property"
-          @click="addProperty"
-        >
+        <button class="btn btn-sm btn-outline-primary" title="Add Property" @click="addProperty">
           <i class="fa-solid fa-plus" />
           Property
         </button>
         &nbsp;
-        <button
-          v-if="isRelGroup"
-          class="btn btn-sm btn-outline-primary"
-          title="Relationship"
-          @click="addRel"
-        >
+        <button v-if="isRelGroup" class="btn btn-sm btn-outline-primary" title="Relationship" @click="addRel">
           <i class="fa-solid fa-plus" />
           Connection
         </button>
@@ -73,23 +46,12 @@
       <div v-if="isRelGroup">
         <h5>Connections</h5>
         <hr>
-        <div
-          v-for="rel in currRelGroupRels"
-          :key="rel.id"
-        >
+        <div v-for="rel in currRelGroupRels" :key="rel.id">
           <div>
             <div class="schema_side-panel__add-table-rel-group-container">
               <div class="input-group flex-nowrap">
-                <select
-                  v-model="rel.src"
-                  class="form-select"
-                  :style="getSelectStyle(rel.src)"
-                >
-                  <option
-                    v-for="option in relTableSrcAndDstOptions"
-                    :key="option.text"
-                    :value="option.value"
-                  >
+                <select v-model="rel.src" class="form-select" :style="getSelectStyle(rel.src)">
+                  <option v-for="option in relTableSrcAndDstOptions" :key="option.text" :value="option.value">
                     {{ option.text }}
                   </option>
                 </select>
@@ -97,29 +59,16 @@
               <span class="input-group-text no-border">
                 <i class="fa-solid fa-arrow-right" /></span>
               <div class="input-group flex-nowrap">
-                <select
-                  v-model="rel.dst"
-                  class="form-select"
-                  :style="getSelectStyle(rel.dst)"
-                >
-                  <option
-                    v-for="option in relTableSrcAndDstOptions"
-                    :key="option.text"
-                    :value="option.value"
-                  >
+                <select v-model="rel.dst" class="form-select" :style="getSelectStyle(rel.dst)">
+                  <option v-for="option in relTableSrcAndDstOptions" :key="option.text" :value="option.value">
                     {{ option.text }}
                   </option>
                 </select>
               </div>
               &nbsp;
               <div>
-                <button
-                  v-if="currRelGroupRels.length > 1"
-                  type="button"
-                  class="btn btn-sm btn-outline-danger"
-                  title="Drop"
-                  @click="deleteRel(rel.id)"
-                >
+                <button v-if="currRelGroupRels.length > 1" type="button" class="btn btn-sm btn-outline-danger"
+                  title="Drop" @click="deleteRel(rel.id)">
                   <i class="fa-solid fa-trash" />
                 </button>
               </div>
@@ -134,33 +83,17 @@
         <h5>Connection</h5>
         <hr>
         <div class="input-group flex-nowrap">
-          <span class="input-group-text">From</span>
-          <select
-            v-model="currSrc"
-            class="form-select"
-            :style="getSelectStyle(currSrc)"
-          >
-            <option
-              v-for="option in relTableSrcAndDstOptions"
-              :key="option.text"
-              :value="option.value"
-            >
+          <span class="input-group-text schema_side-panel__add-table-rel-label">From</span>
+          <select v-model="currSrc" class="form-select" :style="getSelectStyle(currSrc)">
+            <option v-for="option in relTableSrcAndDstOptions" :key="option.text" :value="option.value">
               {{ option.text }}
             </option>
           </select>
         </div>
         <div class="input-group flex-nowrap">
-          <span class="input-group-text">To</span>
-          <select
-            v-model="currDst"
-            class="form-select"
-            :style="getSelectStyle(currDst)"
-          >
-            <option
-              v-for="option in relTableSrcAndDstOptions"
-              :key="option.text"
-              :value="option.value"
-            >
+          <span class="input-group-text schema_side-panel__add-table-rel-label">To</span>
+          <select v-model="currDst" class="form-select" :style="getSelectStyle(currDst)">
+            <option v-for="option in relTableSrcAndDstOptions" :key="option.text" :value="option.value">
               {{ option.text }}
             </option>
           </select>
@@ -170,10 +103,7 @@
 
       <h5>Properties</h5>
       <hr>
-      <table
-        v-if="schema"
-        class="table table-sm table-bordered schema_side-panel__add-table"
-      >
+      <table v-if="schema" class="table table-sm table-bordered schema_side-panel__add-table">
         <thead>
           <tr v-if="currProperties.length > 0">
             <th scope="col">
@@ -182,10 +112,7 @@
             <th scope="col">
               Type
             </th>
-            <th
-              scope="col"
-              class="schema_side-panel__add-table-buttons-container"
-            >
+            <th scope="col" class="schema_side-panel__add-table-buttons-container">
               Actions
             </th>
           </tr>
@@ -197,50 +124,25 @@
         </thead>
 
         <tbody v-if="currProperties.length > 0">
-          <tr
-            v-for="property in currProperties"
-            :key="property.id"
-          >
-            <SchemaPropertyEditCell
-              v-if="property.isEditing"
-              :ref="'editCell-' + property.id"
-              :property="property"
-              :colspan="3"
-              :is-new-property="true"
-              :is-new-table="true"
-              :is-node-table="isNode"
-              @save="(...args) => saveProperty(property.id, ...args)"
-              @cancel="cancelEditMode(property.id)"
-            />
+          <tr v-for="property in currProperties" :key="property.id">
+            <SchemaPropertyEditCell v-if="property.isEditing" :ref="'editCell-' + property.id" :property="property"
+              :colspan="3" :is-new-property="true" :is-new-table="true" :is-node-table="isNode"
+              @save="(...args) => saveProperty(property.id, ...args)" @cancel="cancelEditMode(property.id)" />
             <td v-if="!property.isEditing">
               {{ property.name }}
-              <span
-                v-if="property.isPrimaryKey"
-                class="badge bg-primary"
-              >PK</span>
+              <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
             </td>
             <td v-if="!property.isEditing">
               {{ property.type }}
             </td>
-            <td
-              v-if="!property.isEditing"
-              class="schema_side-panel__add-table-buttons-container"
-            >
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-primary"
-                title="Edit"
-                @click="enterEditMode(property.id)"
-              >
+            <td v-if="!property.isEditing" class="schema_side-panel__add-table-buttons-container">
+              <button type="button" class="btn btn-sm btn-outline-primary" title="Edit"
+                @click="enterEditMode(property.id)">
                 <i class="fa-solid fa-pencil" />
               </button>
               &nbsp;
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-danger"
-                title="Drop"
-                @click="dropProperty(property.id)"
-              >
+              <button type="button" class="btn btn-sm btn-outline-danger" title="Drop"
+                @click="dropProperty(property.id)">
                 <i class="fa-solid fa-trash" />
               </button>
             </td>
@@ -491,5 +393,9 @@ export default {
   .input-group-text.no-border {
     border: none;
   }
+}
+
+.schema_side-panel__add-table-rel-label{
+  min-width: 70px;
 }
 </style>
