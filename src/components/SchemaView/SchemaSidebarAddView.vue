@@ -34,6 +34,7 @@
           type="button"
           class="btn btn-sm btn-outline-success"
           title="Save Table"
+          :disabled="!isValid"
           @click="saveTable"
         >
           <i class="fa-solid fa-save" />
@@ -328,6 +329,13 @@ export default {
       }
       return result;
     },
+    isValid() {
+      return this.currLabel.length > 0 && (
+        this.isNode || (
+          this.currSrc && this.currDst
+        )
+      );
+    }
   },
   watch: {
     currLabel() {
@@ -493,7 +501,7 @@ export default {
   }
 }
 
-.schema_side-panel__add-table-rel-label{
+.schema_side-panel__add-table-rel-label {
   min-width: 70px;
 }
 </style>
