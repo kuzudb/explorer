@@ -134,7 +134,7 @@
         <h5>Connection</h5>
         <hr>
         <div class="input-group flex-nowrap">
-          <span class="input-group-text">From</span>
+          <span class="input-group-text schema_side-panel__add-table-rel-label">From</span>
           <select
             v-model="currSrc"
             class="form-select"
@@ -150,7 +150,7 @@
           </select>
         </div>
         <div class="input-group flex-nowrap">
-          <span class="input-group-text">To</span>
+          <span class="input-group-text schema_side-panel__add-table-rel-label">To</span>
           <select
             v-model="currDst"
             class="form-select"
@@ -491,5 +491,9 @@ export default {
   .input-group-text.no-border {
     border: none;
   }
+}
+
+.schema_side-panel__add-table-rel-label{
+  min-width: 70px;
 }
 </style>
