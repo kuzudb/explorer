@@ -565,6 +565,12 @@ table {
 .outer-table {
   width: 100%;
   table-layout: fixed;
+
+  td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .inner-table__wrapper {

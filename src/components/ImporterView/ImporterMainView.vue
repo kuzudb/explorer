@@ -465,11 +465,6 @@ export default {
       }
     },
 
-    getReadableSize(bytes) {
-      const i = Math.floor(Math.log(bytes) / Math.log(1024));
-      return (bytes / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
-    },
-
     async previewFile(key) {
       const file = this.files[key];
       const result = file.extension === 'csv' ?
