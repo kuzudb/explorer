@@ -35,10 +35,12 @@
             v-for=" (file, key) in files"
             :key="key"
           >
-            <td>
+            <td class="table-name">
               {{ file.file.name }}
             </td>
-            <td>{{ getReadableSize(file.file.size) }}</td>
+            <td class="table-size">
+              {{ getReadableSize(file.file.size) }}
+            </td>
             <td class="table-type-select">
               <select
                 class="form-select-sm"
@@ -152,7 +154,7 @@ export default {
   methods: {
     getReadableSize(bytes) {
       const i = Math.floor(Math.log(bytes) / Math.log(1024));
-      return (bytes / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
+      return (bytes / Math.pow(1024, i)).toFixed(0) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
     },
     handleTableTypeChange(key, event) {
       this.$emit("tableTypeChange", key, event.target.value);
@@ -182,7 +184,7 @@ export default {
 
 <style lang="scss" scoped>
 .sidebar {
-  width: 450px;
+  width: 480px;
   height: 100%;
   background-color: $gray-100;
   padding: 16px;
@@ -203,6 +205,7 @@ export default {
   }
 
   .actions {
+    min-width: 90px;
     text-align: center;
 
     i {
@@ -219,8 +222,12 @@ export default {
     width: 100px;
   }
 
-  td {
+  td.table-name {
     word-break: break-all;
+  }
+
+  td.table-size {
+    min-width: 75px;
   }
 }
 </style>

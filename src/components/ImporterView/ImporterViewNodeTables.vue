@@ -452,6 +452,11 @@ table {
   width: 100%;
   overflow-x: hidden;
   table-layout: fixed;
+  td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .inner-table__wrapper {
