@@ -181,7 +181,7 @@
                         <select
                           v-if="!file.isNew && !!file.tableName && !column.isFromKey && !column.isToKey"
                           class="form-select form-select-sm"
-                          :value="getPropertySelectedOption(key, column)"
+                          :value="getPropertySelectedOption(key, column, index)"
                           @change="setColumnUserDefinedName(key, index, $event)"
                         >
                           <option
@@ -456,7 +456,7 @@ export default {
       if (!relTable) {
         return "";
       }
-      const property = relTable.properties.find((property) => property.name === userDefinedName);
+      const property = relTable.properties.find((property) => property.name.toLowerCase() === userDefinedName.toLowerCase());
       if (!property) {
         return "";
       }

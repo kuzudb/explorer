@@ -155,7 +155,7 @@
                         <select
                           v-if="!file.isNew && !!file.tableName"
                           class="form-select form-select-sm"
-                          :value="getPropertySelectedOption(key, column)"
+                          :value="getPropertySelectedOption(key, column, index)"
                           @change="setColumnUserDefinedName(key, index, $event)"
                         >
                           <option
@@ -348,7 +348,7 @@ export default {
       if (!nodeTable) {
         return "";
       }
-      const property = nodeTable.properties.find((property) => property.name === userDefinedName);
+      const property = nodeTable.properties.find((property) => property.name.toLowerCase() === userDefinedName.toLowerCase());
       if (!property) {
         return "";
       }
