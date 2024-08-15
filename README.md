@@ -76,6 +76,19 @@ docker run -p 8000:8000 \
            --rm kuzudb/explorer:latest
 ```
 
+#### In-memory mode
+
+By default, Kùzu Explorer is launched in disk-based mode. If you want to launch Kùzu Explorer in in-memory mode, you can do so by setting the `KUZU_IN_MEMORY` environment variable to `true` as follows.
+
+```bash
+docker run -p 8000:8000 \
+           -e KUZU_IN_MEMORY=true \
+           --rm kuzudb/explorer:latest
+```
+
+In in-memory mode, the database is stored in memory and all changes are lost when the server is shut down even if a database directory is mounted. Also, read-only access mode is not supported in in-memory mode.
+
+
 #### Dev builds
 
 If you want to launch Kùzu Explorer with the latest development build of Kùzu, you can do so by using the `dev` tag instead of `latest`.

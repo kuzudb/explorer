@@ -36,9 +36,10 @@ const os = require("os");
 
 class Database {
   constructor() {
+    const isInMemory = process.env.KUZU_IN_MEMORY && process.env.KUZU_IN_MEMORY.toLowerCase() === "true";
     const mode = this.getAccessModeString();
     const isReadOnlyMode = mode !== READ_WRITE_MODE;
-    const dbPath = process.env.KUZU_PATH;
+    const dbPath = isInMemory ? ":memory:" : process.env.KUZU_PATH;
     let bufferPoolSize = parseInt(process.env.KUZU_BUFFER_POOL_SIZE);
     bufferPoolSize = isNaN(bufferPoolSize) ? 0 : bufferPoolSize;
     let numberConnections = parseInt(process.env.KUZU_NUM_CONNECTIONS);
@@ -72,6 +73,9 @@ class Database {
     logger.info(
       `Access mode: ${isReadOnlyMode ? MODES.READ_ONLY : MODES.READ_WRITE}`
     );
+    if (isInMemory) {
+      logger.info("In-memory mode is enabled");
+    }
     const queryTimeout = parseInt(process.env.KUZU_QUERY_TIMEOUT);
     if (!isNaN(queryTimeout)) {
       logger.info(`Query timeout: ${queryTimeout} ms`);
