@@ -525,20 +525,10 @@ export default {
             }
           }
           else {
-            if (rawFile.type === 'node') {
-              column.name = foundMatch ?
-                foundMatch.properties.find(p => p.name === rawColumn.userDefinedName) ?
-                  rawColumn.userDefinedName :
-                  null
-                : null;
-            }
-            if (rawFile.type === 'rel') {
-              column.name = foundMatch ?
-                foundMatch.properties.find(p => p.name === rawColumn.userDefinedName) ?
-                  rawColumn.userDefinedName :
-                  null
-                : null;
-            }
+            const matchedProperty = foundMatch ?
+              foundMatch.properties.find(p => p.name.toLowerCase() === rawColumn.userDefinedName.toLowerCase()) :
+              null;
+            column.name = matchedProperty ? matchedProperty.name : null;
           }
           if (rawColumn.isFromKey) {
             column.isFromKey = true;
