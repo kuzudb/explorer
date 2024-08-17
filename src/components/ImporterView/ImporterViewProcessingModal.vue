@@ -140,8 +140,12 @@ export default {
 }
 .d-flex {
   gap: 20px;
+  span:last-child {
+    min-width: 100px;
+  }
 }
 span.item-name {
  min-width: 200px;
+      word-break: break-all;
 }
 </style>

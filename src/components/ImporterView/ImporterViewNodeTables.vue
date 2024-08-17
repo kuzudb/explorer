@@ -452,7 +452,7 @@ table {
   width: 100%;
   overflow-x: hidden;
   table-layout: fixed;
-  td {
+  td:not(.expand-btn-column) {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
