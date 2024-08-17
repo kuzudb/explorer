@@ -210,7 +210,20 @@ export default {
     },
 
     removeFile(key) {
+      const file = this.files[key];
       delete this.files[key];
+      if (file.type === 'node') {
+        for (const key in this.files) {
+          if (this.files[key].type === 'rel') {
+            if (this.files[key].from && this.files[key].from.key === file.id) {
+              this.files[key].from = null;
+            }
+            if (this.files[key].to && this.files[key].to.key === file.id) {
+              this.files[key].to = null;
+            }
+          }
+        }
+      }
     },
 
     escapeName(name) {

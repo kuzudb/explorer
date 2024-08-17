@@ -89,7 +89,7 @@
                   v-for="(option, index) in srcDstTableOptions"
                   :key="index"
                   :value="option.key"
-                  :selected="option.key === file.from"
+                  :selected="isFromTableOptionSelected(file, option)"
                 >
                   {{ option.text }}
                 </option>
@@ -108,7 +108,7 @@
                   v-for="(option, index) in srcDstTableOptions"
                   :key="index"
                   :value="option.key"
-                  :selected="option.key === file.to"
+                  :selected="isToTableOptionSelected(file, option)"
                 >
                   {{ option.text }}
                 </option>
@@ -494,6 +494,15 @@ export default {
 
     setColumnIgnore(key, index, event) {
       this.$emit("setColumnIgnore", key, index, !event.target.checked);
+    },
+
+    isFromTableOptionSelected(file, option) {
+      return (!file.from && !option.key) || (file.from && option.key === file.from.key);
+
+    },
+
+    isToTableOptionSelected(file, option) {
+      return (!file.to && !option.key) || (file.to && option.key === file.to.key);
     },
   },
 };
