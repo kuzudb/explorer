@@ -213,6 +213,20 @@ export default {
       delete this.files[key];
     },
 
+    escapeName(name) {
+      let nameSplit = name.split('.');
+      name = nameSplit.join('_');
+      nameSplit = name.split('-');
+      name = nameSplit.join('_');
+      nameSplit = name.split(' ');
+      name = nameSplit.join('_');
+      nameSplit = name.split('"');
+      name = nameSplit.join('_');
+      nameSplit = name.split("'");
+      name = nameSplit.join('_');
+      return name;
+    },
+
     async handleFilesSelected(files) {
       this.$refs.fileProcessingModal.showModal();
       const filesHash = {};
@@ -264,15 +278,8 @@ export default {
         currentFile.detectedFormat = detectedFormat;
         let tableNameSplit = currentFile.file.name.split('.');
         tableNameSplit.pop();
-        currentFile.tableName = tableNameSplit.join('_');
-        tableNameSplit = currentFile.tableName.split('-');
-        currentFile.tableName = tableNameSplit.join('_');
-        tableNameSplit = currentFile.tableName.split(' ');
-        currentFile.tableName = tableNameSplit.join('_');
-        tableNameSplit = currentFile.tableName.split('"');
-        currentFile.tableName = tableNameSplit.join('_');
-        tableNameSplit = currentFile.tableName.split("'");
-        currentFile.tableName = tableNameSplit.join('_');
+        currentFile.tableName = tableNameSplit.join('.');
+        currentFile.tableName = this.escapeName(currentFile.tableName);
         currentFile.format = JSON.parse(JSON.stringify(detectedFormat));
         if (extension === 'csv') {
           currentFile.format.ListStart = '[';
@@ -281,7 +288,7 @@ export default {
         }
         currentFile.format.Columns.forEach((c, i) => {
           c.type = DuckDB.convertDuckDBTypeToKuzuType(c.type);
-          c.userDefinedName = c.name;
+          c.userDefinedName = this.escapeName(c.name);
           c.name = currentFile.format.HasHeader ? c.name : `column${i}`;
           c.isPrimaryKey = false;
         });
@@ -356,7 +363,7 @@ export default {
       columns.forEach((c, i) => {
         c.type = DuckDB.convertDuckDBTypeToKuzuType(c.type);
         c.name = hasHeader ? c.name : `column${i}`;
-        c.userDefinedName = c.name;
+        c.userDefinedName = this.escapeName(c.name);
       });
       file.format.Delimiter = delimiter;
       file.format.Quote = quote;

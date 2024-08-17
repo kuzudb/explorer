@@ -3,7 +3,7 @@ class DataDefinitionLanguage {
     if (!name) {
       return "";
     }
-    if (name.includes(" ")) {
+    if (name.includes(" ") || name.includes(".")) {
       return `\`${name}\``;
     }
     return name;
@@ -44,6 +44,7 @@ class DataDefinitionLanguage {
 
   dropProperty(tableName, columnName) {
     tableName = this._escapeName(tableName);
+    columnName = this._escapeName(columnName);
     return `ALTER TABLE ${tableName} DROP ${columnName};`;
   }
 
@@ -184,7 +185,7 @@ class DataDefinitionLanguage {
     }
     let returnStatement = "RETURN " +
       (columnMapping.map((mapping) => {
-        return `CAST(${mapping.rawName} AS ${mapping.type})`;
+        return `CAST(${this._escapeName(mapping.rawName)} AS ${mapping.type})`;
       }).join(", "));
     loadStatement += ` ${returnStatement}`;
     statement += `(${loadStatement});`;
