@@ -1,5 +1,8 @@
 <template>
-  <div class="sidebar">
+  <div
+    ref="sidebar"
+    class="sidebar"
+  >
     <button
       class="btn btn-primary"
       @click="$emit('addFiles')"
@@ -13,7 +16,8 @@
     >
       <i class="fa-solid fa-info-circle" />
       &nbsp;
-      The selected files are listed below. Please assign table types to the files to get started.
+      Please assign table types to the files to get started.
+      You can drag more files to the this panel to add them.
     </div>
 
     <div class="table-wrapper">
@@ -123,6 +127,7 @@
 </template>
 
 <script lang="js">
+import Dropzone from "dropzone";
 import { Modal } from 'bootstrap';
 export default {
   name: "ImporterViewSidebar",
@@ -137,7 +142,8 @@ export default {
     "removeFile",
     "tableTypeChange",
     "previewFile",
-    "setCsvFormat"
+    "setCsvFormat",
+    "dropFiles",
   ],
   data: () => ({
     removingFile: null,
@@ -146,6 +152,17 @@ export default {
   mounted() {
     this.modal = new Modal(this.$refs.modal);
     this.$refs.modal.addEventListener("hidden.bs.modal", this.cancelFileRemoval);
+    this.dropzone = new Dropzone(this.$refs.sidebar, {
+      url: "/",
+      autoProcessQueue: false,
+      uploadMultiple: true,
+      disablePreviews: true,
+    });
+    this.dropzone.on("drop", (e) => {
+      e.preventDefault();
+      const files = e.dataTransfer.files;
+      this.$emit("dropFiles", files);
+    });
   },
   beforeUnmount() {
     this.modal.dispose();
@@ -177,6 +194,9 @@ export default {
     },
     setCsvFormat(file) {
       this.$emit("setCsvFormat", file);
+    },
+    hideModal() {
+      this.modal.hide();
     }
   }
 }
@@ -198,6 +218,8 @@ export default {
 
   .table-wrapper {
     overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
   .btn-primary {
@@ -228,6 +250,12 @@ export default {
 
   td.table-size {
     min-width: 75px;
+  }
+
+  .modal-body {
+    p{
+      word-break: break-all;
+    }
   }
 }
 </style>

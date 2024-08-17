@@ -22,6 +22,7 @@
         :files="files"
         @table-type-change="handleTableTypeChange"
         @add-files="addFiles"
+        @drop-files="handleFilesSelected"
         @remove-file="removeFile"
         @preview-file="previewFile"
         @set-csv-format="openCsvFormatModal"
@@ -443,6 +444,7 @@ export default {
       if (checked) {
         file.format.Columns[columnIndex].isFromKey = true;
         file.format.Columns[columnIndex].isToKey = false;
+        delete file.format.Columns[columnIndex].ignore;
       }
     },
 
@@ -454,6 +456,7 @@ export default {
       if (checked) {
         file.format.Columns[columnIndex].isToKey = true;
         file.format.Columns[columnIndex].isFromKey = false;
+        delete file.format.Columns[columnIndex].ignore;
       }
     },
 
@@ -714,6 +717,8 @@ export default {
 
   .table-wrapper {
     overflow: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
     display: flex;
     flex-direction: column;
     flex: 1;

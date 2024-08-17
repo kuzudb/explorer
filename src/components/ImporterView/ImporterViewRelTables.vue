@@ -248,6 +248,7 @@
                           type="checkbox"
                           class="form-check-input"
                           :checked="!column.ignore"
+                          :disabled="column.isFromKey || column.isToKey"
                           @change="setColumnIgnore(key, index, $event)"
                         >
                       </td>
@@ -566,7 +567,7 @@ table {
   width: 100%;
   table-layout: fixed;
 
-  td {
+  td:not(.expand-btn-column) {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
