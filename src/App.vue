@@ -14,6 +14,7 @@ export default {
   mounted() {
     this.tooltip = new Tooltip(document.body, {
       selector: "[data-bs-toggle='tooltip']",
+      trigger: "hover",
     });
   },
   beforeUnmount() {

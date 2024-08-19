@@ -5,6 +5,7 @@ export const DATA_TYPES = {
   RECURSIVE_REL: "RECURSIVE_REL",
   SERIAL: "SERIAL",
   BOOL: "BOOL",
+  INT128: "INT128",
   INT64: "INT64",
   INT32: "INT32",
   INT16: "INT16",
@@ -17,6 +18,10 @@ export const DATA_TYPES = {
   FLOAT: "FLOAT",
   DATE: "DATE",
   TIMESTAMP: "TIMESTAMP",
+  TIMESTAMP_NS: "TIMESTAMP_NS",
+  TIMESTAMP_MS: "TIMESTAMP_MS",
+  TIMESTAMP_SEC: "TIMESTAMP_SEC",
+  TIMESTAMP_TZ: "TIMESTAMP_TZ",
   INTERVAL: "INTERVAL",
   FIXED_LIST: "FIXED_LIST",
   INTERNAL_ID: "INTERNAL_ID",
@@ -27,7 +32,16 @@ export const DATA_TYPES = {
   STRUCT: "STRUCT",
   MAP: "MAP",
   UNION: "UNION",
+  UUID: "UUID",
 };
+
+export const NESTED_DATA_TYPES = [
+  DATA_TYPES.MAP,
+  DATA_TYPES.STRUCT,
+  DATA_TYPES.UNION,
+  DATA_TYPES.FIXED_LIST,
+  DATA_TYPES.VAR_LIST,
+];
 
 export const INTERNAL_DATA_TYPES = [
   DATA_TYPES.ANY,
@@ -37,6 +51,16 @@ export const INTERNAL_DATA_TYPES = [
   DATA_TYPES.INTERNAL_ID,
   DATA_TYPES.ARROW_COLUMN,
 ];
+
+const basicDataTypes = JSON.parse(JSON.stringify(DATA_TYPES));
+for (const internalType of INTERNAL_DATA_TYPES) {
+  delete basicDataTypes[internalType];
+}
+for (const nestedType of NESTED_DATA_TYPES) {
+  delete basicDataTypes[nestedType];
+}
+delete basicDataTypes.SERIAL;
+export const BASIC_DATA_TYPES = basicDataTypes;
 
 export const SCHEMA_ACTION_TYPES = {
   DROP_TABLE: "dropTable",
@@ -90,3 +114,16 @@ export const LOOP_POSITIONS = [
   "left",
   "top-left",
 ];
+
+export const IMPORT_ACTIONS = {
+  CREATE: "Create Table",
+  UPLOAD: "Upload File",
+  COPY: "Copy Table",
+};
+
+export const JOB_STATUS = {
+  PENDING: "PENDING",
+  PROCESSING: "PROCESSING",
+  SUCCESS: "SUCCESS",
+  ERROR: "ERROR",
+};

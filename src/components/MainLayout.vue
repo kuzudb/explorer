@@ -69,9 +69,10 @@
                 Schema
               </a>
             </li>
+
             <li
-              v-if="!modeStore.isDemo"
               :class="['nav-item', { active: showLoader }]"
+              hidden
             >
               <a
                 class="nav-link"
@@ -80,6 +81,22 @@
               >
                 <i class="fa-solid fa-database" />
                 Datasets
+              </a>
+            </li>
+
+            <li
+              v-if="!modeStore.isDemo && !modeStore.isReadOnly"
+              :class="['nav-item', {
+                active: showImporter || showLoader
+              }]"
+            >
+              <a
+                class="nav-link"
+                href="#"
+                @click="toggleImporter()"
+              >
+                <i class="fa-solid fa-upload" />
+                Import Data
               </a>
             </li>
 
@@ -142,6 +159,14 @@
         :schema="schema"
         :navbar-height="navbarHeight"
         @reload-schema="reloadSchema"
+        @back="toggleImporter(true)"
+      />
+      <ImporterMainView
+        v-show="showImporter"
+        :schema="schema"
+        :navbar-height="navbarHeight"
+        @reload-schema="reloadSchema"
+        @load-bundled-dataset="toggleLoader"
       />
     </div>
 
@@ -201,11 +226,13 @@ import SchemaViewMain from "./SchemaView/SchemaViewMain.vue";
 import ShellMainView from "./ShellView/ShellMainView.vue";
 import SettingsMainView from "./SettingsView/SettingsMainView.vue"
 import DatasetMainView from "./DatasetView/DatasetMainView.vue"
+import ImporterMainView from "./ImporterView/ImporterMainView.vue";
 import Axios from "axios";
 import { useSettingsStore } from "../store/SettingsStore";
 import { useModeStore } from "../store/ModeStore";
 import { mapActions, mapStores } from 'pinia'
 import { Modal } from 'bootstrap';
+import DuckDB from '../utils/DuckDB';
 
 export default {
   name: "MainLayout",
@@ -213,11 +240,13 @@ export default {
     SchemaViewMain,
     ShellMainView,
     SettingsMainView,
-    DatasetMainView
+    DatasetMainView,
+    ImporterMainView,
   },
   data: () => ({
     accessModeModal: null,
     showSchema: false,
+    showImporter: false,
     showShell: true,
     showLoader: false,
     showSettings: false,
@@ -231,6 +260,9 @@ export default {
     this.updateNavbarHeight();
     this.accessModeModal = new Modal(this.$refs.modal);
     window.addEventListener("resize", this.updateNavbarHeight);
+    window.setTimeout(() => {
+        DuckDB.init();
+      }, 500);
   },
   beforeUnmount() {
     this.accessModeModal.dispose();
@@ -364,6 +396,7 @@ export default {
       this.showSchema = false;
       this.showShell = false;
       this.showLoader = false;
+      this.showImporter = false;
     },
     toggleSchema() {
       this.hideAll();
@@ -378,7 +411,16 @@ export default {
     },
     toggleLoader() {
       this.hideAll();
-      this.showLoader = true;
+
+     
+        this.showLoader = true;
+      
+    },
+    toggleImporter(force = false) {
+      if (force || !this.showLoader) {
+        this.hideAll();
+        this.showImporter = true;
+      }
     },
     showSettingsModal() {
       this.showSettings = true;
@@ -404,7 +446,7 @@ export default {
 
 <style scoped lang="scss">
 nav.navbar {
-  > div.container {
+  >div.container {
     max-width: 100%;
   }
 }
