@@ -697,8 +697,8 @@ export default {
       const isAllSuccess = this.currentJob.plan.every(j => j.status === JOB_STATUS.SUCCESS);
       await this.deleteCurrentJob();
       this.currentJob = null;
+      this.$emit('reloadSchema');
       if (isAllSuccess) {
-        this.$emit('reloadSchema');
         this.files = {};
       }
     },
