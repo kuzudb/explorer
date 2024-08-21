@@ -214,7 +214,7 @@
             >
           </div>
           <small class="form-text text-muted">
-            The OpenAI API key is used to generate queries from questions using GPT-3.5.
+            The OpenAI API key is used to generate Cypher queries from natural language using the specified model.
             It can be obtained from
             <a
               href="https://platform.openai.com/"
