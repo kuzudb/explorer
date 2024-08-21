@@ -28,7 +28,7 @@ ${question}"
 router.post("/", async (req, res) => {
   const question = req.body.question;
   const apiToken = req.body.token;
-  const model = req.body.model ? req.body.model : "gpt-3.5-turbo";
+  const model = req.body.model ? req.body.model : "gpt-4o";
   if (!apiToken || !typeof apiToken === "string" || apiToken.length === 0) {
     return res.status(400).send({ error: "The API token is missing." });
   }

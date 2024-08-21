@@ -93,7 +93,7 @@ export const MODES = {
   READ_ONLY: "READ_ONLY",
 };
 
-export const GPT_MODELS = ["gpt-3.5-turbo", "gpt-4"];
+export const GPT_MODELS = ["gpt-4o", "gpt-4o-mini", "gpt-4"];
 
 export const PLACEHOLDER_NODE_TABLE = "__placeholder_node_table__";
 export const PLACEHOLDER_REL_TABLE = "__placeholder_rel_table__";

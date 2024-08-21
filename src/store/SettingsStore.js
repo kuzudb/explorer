@@ -216,6 +216,10 @@ export const useSettingsStore = defineStore("settings", {
         this.schemaView = storedSettingsCopy.schemaView;
       }
       if (storedSettingsCopy.gpt) {
+        // Migrate old settings
+        if (storedSettingsCopy.gpt.model === "gpt-3.5-turbo") {
+          storedSettingsCopy.gpt.model = "gpt-4o";
+        }
         this.gpt.model = storedSettingsCopy.gpt.model;
       }
       if (storedSettingsCopy.colors) {
