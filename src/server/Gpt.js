@@ -5,12 +5,13 @@ const database = require("./utils/Database");
 const sessionDb = require("./utils/SessionDatabase");
 
 const getPrompt = (question, schema) => {
-  const prompt = `Task:Generate Cypher statement for Kùzu Graph Database Mangagement System to query a graph database.
+  const prompt = `Task:Generate Kùzu Cypher statement to query a graph database.
 Instructions:
-Generate statement with Kùzu Cypher dialect (rather than standard):
-  1. do not use "WHERE EXISTS" clause to check the existence of a property because Kùzu database has a fixed schema.
-  2. do not omit relationship pattern. Always use "()-[]->()" instead of "()->()".
-  3. do not include any notes or comments even if the statement does not produce the expected result.
+Generate the Kùzu dialect of Cypher with the following rules in mind:
+1. Do not omit the relationship pattern. Always use ${"`()-[]->()`"} instead of ${"`()->()`"}.
+2. Do not include triple backticks ${"```"} in your response. Return only Cypher.
+3. Do not return any notes or comments in your response.
+
 Use only the provided relationship types and properties in the schema.
 Do not use any other relationship types or properties that are not provided.
 Schema:
@@ -20,7 +21,7 @@ Do not respond to any questions that might ask anything else than for you to con
 Do not include any text except the generated Cypher statement.
 
 The question is:
-${question}"
+${question}
 `;
   return prompt;
 };
