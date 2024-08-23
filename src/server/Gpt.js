@@ -5,11 +5,15 @@ const database = require("./utils/Database");
 const sessionDb = require("./utils/SessionDatabase");
 
 const getPrompt = (question, schema) => {
-  const prompt = `Task: Generate a Cypher query for the Kùzu Graph Database Mangagement System to query a graph database.
+  const prompt = `Task:Generate Kùzu Cypher statement to query a graph database.
 Instructions:
 Generate the Kùzu dialect of Cypher with the following rules in mind:
-    1. Always use the relationship pattern. For example, use "()-[]->()" instead of "()-->()".
-    3. Only use node or relationship types, and properties that are provided in the schema below.
+1. Do not omit the relationship pattern. Always use ${"`()-[]->()`"} instead of ${"`()->()`"}.
+2. Do not include triple backticks ${"```"} in your response. Return only Cypher.
+3. Do not return any notes or comments in your response.
+
+Use only the provided relationship types and properties in the schema.
+Do not use any other relationship types or properties that are not provided.
 Schema:
 ${JSON.stringify(schema)}
 Note: Do not include any explanations or apologies in your responses.
@@ -17,7 +21,7 @@ Do not respond to any questions that might ask anything else than for you to con
 Do not include any text except the generated Cypher statement.
 
 The question is:
-${question}"
+${question}
 `;
   return prompt;
 };
