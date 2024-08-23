@@ -5,7 +5,7 @@ const database = require("./utils/Database");
 const sessionDb = require("./utils/SessionDatabase");
 
 const getPrompt = (question, schema) => {
-  const prompt = `Task: Generate Cypher queries for the Kùzu Graph Database Mangagement System to query a graph database.
+  const prompt = `Task: Generate a Cypher query for the Kùzu Graph Database Mangagement System to query a graph database.
 Instructions:
 Generate the Kùzu dialect of Cypher with the following rules in mind:
     1. Always use the relationship pattern. For example, use "()-[]->()" instead of "()-->()".
