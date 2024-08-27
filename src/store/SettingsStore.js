@@ -24,8 +24,8 @@ const COLOR_PALETTE = [
 ];
 
 function randomChromaColor(){
-  const randomSaturation = Math.random() * 0.2 + 0.6; 
-  const randomLightness = Math.random() * 0.2 + 0.6; 
+  const randomSaturation = Math.random() * 0.2 + 0.6;  //Sets saturation to a random value between 0.6 and 0.8
+  const randomLightness = Math.random() * 0.2 + 0.6;   //Sets lightness to a random value between 0.6 and 0.8
   return chroma.random().set('hsl.s', randomSaturation).set('hsl.l', randomLightness).hex();
 }
 
