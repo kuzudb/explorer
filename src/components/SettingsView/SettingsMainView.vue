@@ -205,13 +205,16 @@
             </select>
           </div>
           <div class="input-group flex-nowrap">
-            <span class="input-group-text">GPT API Key</span>
+            <span class="input-group-text">OpenAI API Key</span>
             <input
+              :type="showPassword ? 'text' : 'password'"
               v-model="currentSettings.gpt.apiToken"
-              type="text"
               class="form-control"
               title="Enter your OpenAI API key"
             >
+            <button @click="togglePasswordVisibility" type="button" class="btn btn-outline-secondary">
+              <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+            </button>
           </div>
           <small class="form-text text-muted">
             The OpenAI API key is used to generate Cypher queries from natural language using the specified model.
@@ -302,6 +305,7 @@ export default {
     gptModelOptions: GPT_MODELS,
     databaseResetStateText: "",
     databaseResetStateClass: "primary",
+    showPassword: false, 
   }),
   computed: {
     ...mapStores(useSettingsStore, useModeStore),
@@ -315,6 +319,9 @@ export default {
     this.modal.dispose();
   },
   methods: {
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword;
+    },
     toggleModal() {
       this.modal.toggle();
     },
