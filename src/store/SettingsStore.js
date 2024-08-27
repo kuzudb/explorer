@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import randomcolor from "randomcolor";
+import chroma, { random } from 'chroma-js';
 import Axios from "axios";
 import {
   SHOW_REL_LABELS_OPTIONS,
@@ -22,6 +22,12 @@ const COLOR_PALETTE = [
   "#59a14f", // green
   "#4e79a7", // blue
 ];
+
+function randomChromaColor(){
+  const randomSaturation = Math.random() * 0.2 + 0.6;  //Sets saturation to a random value between 0.6 and 0.8
+  const randomLightness = Math.random() * 0.2 + 0.6;   //Sets lightness to a random value between 0.6 and 0.8
+  return chroma.random().set('hsl.s', randomSaturation).set('hsl.l', randomLightness).hex();
+}
 
 const NULL_COLOR = "#d9d9d9";
 const DEFAULT_NUMBER_OF_NODES_TO_EXPAND = 100;
@@ -150,7 +156,7 @@ export const useSettingsStore = defineStore("settings", {
       const g6Settings = JSON.parse(JSON.stringify(nodeDefault));
       let color = this.colors.pop();
       if (!color) {
-        color = randomcolor({ luminosity: "dark", hue: "random" });
+        color = randomChromaColor();
       }
       g6Settings.style.fill = color;
       g6Settings.style.stroke = G6Utils.shadeColor(color);
@@ -311,7 +317,7 @@ export const useSettingsStore = defineStore("settings", {
       const g6Settings = JSON.parse(JSON.stringify(nodeDefault));
       let color = this.colors.pop();
       if (!color) {
-        color = randomcolor({ luminosity: "dark", hue: "random" });
+        color = randomChromaColor();
       }
       g6Settings.style.fill = color;
       const nodeSettings = {
