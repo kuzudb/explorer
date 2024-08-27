@@ -207,13 +207,17 @@
           <div class="input-group flex-nowrap">
             <span class="input-group-text">OpenAI API Key</span>
             <input
-              :type="showPassword ? 'text' : 'password'"
               v-model="currentSettings.gpt.apiToken"
+              :type="showPassword ? 'text' : 'password'"
               class="form-control"
               title="Enter your OpenAI API key"
             >
-            <button @click="togglePasswordVisibility" type="button" class="btn btn-outline-secondary">
-              <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              @click="togglePasswordVisibility"
+            >
+              <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'" />
             </button>
           </div>
           <small class="form-text text-muted">
