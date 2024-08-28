@@ -644,7 +644,7 @@ export default {
           };
         } else if (numberOfOverlappingRels > 1) {
           g6Rel.type = 'quadratic';
-          g6Rel.curveOffset = ARC_CURVE_OFFSETS[(numberOfOverlappingRels-2) % ARC_CURVE_OFFSETS.length];
+          g6Rel.curveOffset = ARC_CURVE_OFFSETS[(numberOfOverlappingRels-1) % ARC_CURVE_OFFSETS.length];
         }
 
         const expectedPropertiesType = {};
