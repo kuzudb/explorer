@@ -365,8 +365,9 @@ export default {
         layout: {
           type: 'force',
           preventOverlap: true,
-          linkDistance: 300,
-          nodeStrength: -50,
+          linkDistance: 30,
+          nodeStrength: 0.1,
+          edgeStrength: 0.1,
           nodeSpacing: 80,
           alpha: 0.5,
           alphaDecay: 0.05,
@@ -451,6 +452,7 @@ export default {
       // Auto layout after drag
       this.g6Graph.on('node:dragstart', (e) => {
         this.g6Graph.layout();
+        this.refreshDraggedNodePosition(e);
       });
 
       this.g6Graph.on('node:drag', (e) => {
