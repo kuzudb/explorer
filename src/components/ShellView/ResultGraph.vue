@@ -365,15 +365,9 @@ export default {
         layout: {
           type: 'force',
           preventOverlap: true,
-          linkDistance: d => {
-              return 30;
-          },
-          nodeStrength: d => {
-            return 0.1;
-          },
-          edgeStrength: d => {
-            return 0.1;
-          },
+          linkDistance: 30,
+          nodeStrength: 0.1,
+          edgeStrength: 0.1,
           nodeSpacing: 80,
           alpha: 0.5,
           alphaDecay: 0.05,
@@ -462,7 +456,6 @@ export default {
       });
 
       this.g6Graph.on('node:drag', (e) => {
-        this.g6Graph.layout();
         this.refreshDraggedNodePosition(e);
       });
 
@@ -640,11 +633,11 @@ export default {
           g6Rel.type = "loop";
           g6Rel.loopCfg = {
             dist: 50,
-            position: LOOP_POSITIONS[(numberOfOverlappingRels-1) % LOOP_POSITIONS.length],
+            position: LOOP_POSITIONS[(numberOfOverlappingRels - 1) % LOOP_POSITIONS.length],
           };
         } else if (numberOfOverlappingRels > 1) {
           g6Rel.type = 'quadratic';
-          g6Rel.curveOffset = ARC_CURVE_OFFSETS[(numberOfOverlappingRels-1) % ARC_CURVE_OFFSETS.length];
+          g6Rel.curveOffset = ARC_CURVE_OFFSETS[(numberOfOverlappingRels - 1) % ARC_CURVE_OFFSETS.length];
         }
 
         const expectedPropertiesType = {};
