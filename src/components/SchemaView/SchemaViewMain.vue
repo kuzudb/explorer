@@ -241,22 +241,26 @@ export default {
       }
       return relTable.group ? relTable.group : relTableName;
     },
+    
+    refreshDragedNodePosition(e) {
+      const model = e.item.get('model');
+      model.fx = e.x;
+      model.fy = e.y;
+    },
+
     getLayoutConfig(edges) {
+      const nodeSpacing = edges.length * 5;
       const config = {
-        type: 'force',
+        type: 'comboForce',
         preventOverlap: true,
         preventNodeOverlap: true,
         preventComboOverlap: true,
-        linkDistance: 30,
-        nodeStrength: 0.1,
+        linkDistance: 250,
+        nodeStrength: 100,
         nodeSize: 100,
         comboSpacing: 10,
         comboCollideStrength: 0.2,
-        edgeStrength: 0.1,
-        nodeSpacing: 80,
-        alpha: 0.5,
-        alphaDecay: 0.05,
-        alphaMin: 0.05,
+        nodeSpacing,
       };
       return config;
     },
@@ -446,7 +450,15 @@ export default {
       });
 
       this.g6graph.on('node:drag', (e) => {
-          this.layoutGraph()
+          this.refreshDragedNodePosition(e)
+      })
+      this.g6graph.on('node:dragstart', (e) => {
+          this.g6graph.layout()
+          this.refreshDragedNodePosition(e);
+      })
+      this.g6graph.on('node:dragend', (e) => {
+          e.item.get('model').fx = null;
+          e.item.get('model').fy = null;
       })
 
       this.g6graph.on('canvas:click', () => {
