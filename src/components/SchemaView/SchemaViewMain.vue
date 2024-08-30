@@ -242,18 +242,21 @@ export default {
       return relTable.group ? relTable.group : relTableName;
     },
     getLayoutConfig(edges) {
-      const nodeSpacing = edges.length * 5;
       const config = {
-        type: 'comboForce',
+        type: 'force',
         preventOverlap: true,
         preventNodeOverlap: true,
         preventComboOverlap: true,
-        linkDistance: 250,
-        nodeStrength: 100,
+        linkDistance: 30,
+        nodeStrength: 1,
         nodeSize: 100,
-        nodeSpacing,
         comboSpacing: 10,
         comboCollideStrength: 0.2,
+        edgeStrength: 0.1,
+        nodeSpacing: 80,
+        alpha: 0.5,
+        alphaDecay: 0.05,
+        alphaMin: 0.05,
       };
       return config;
     },
@@ -441,6 +444,10 @@ export default {
         this.clickedIsNode = false;
         this.clickedLabel = edgeItem._cfg.model._label;
       });
+
+      this.g6graph.on('node:drag', (e) => {
+          this.layoutGraph()
+      })
 
       this.g6graph.on('canvas:click', () => {
         if (this.clickedIsNewTable) {
