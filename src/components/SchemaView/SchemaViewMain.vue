@@ -248,7 +248,7 @@ export default {
         preventNodeOverlap: true,
         preventComboOverlap: true,
         linkDistance: 30,
-        nodeStrength: 1,
+        nodeStrength: 0.1,
         nodeSize: 100,
         comboSpacing: 10,
         comboCollideStrength: 0.2,
