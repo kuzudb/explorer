@@ -72,7 +72,6 @@ export const SCHEMA_ACTION_TYPES = {
   ADD_NODE_TABLE: "addNodeTable",
   ADD_REL_TABLE: "addRelTable",
   ADD_REL_GROUP: "addRelGroup",
-  ADD_RDF: "addRdf",
 };
 
 export const UI_SIZE = {
@@ -98,7 +97,6 @@ export const GPT_MODELS = ["gpt-4o", "gpt-4o-mini", "gpt-4"];
 export const PLACEHOLDER_NODE_TABLE = "__placeholder_node_table__";
 export const PLACEHOLDER_REL_TABLE = "__placeholder_rel_table__";
 
-export const IRI_PROPERTY_NAME = "iri";
 
 export const ARC_CURVE_OFFSETS = [
   0, 60, -60, 80, -80, 100, -100, 120, -120, 140, -140, 160, -160, 180, -180, 200, -200,

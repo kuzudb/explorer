@@ -32,16 +32,6 @@ class DataDefinitionLanguage {
     return `DROP TABLE ${tableName};`;
   }
 
-  addRdf(name) {
-    name = this._escapeName(name);
-    return `CREATE RDFGRAPH ${name};`;
-  }
-
-  dropRdf(name) {
-    name = this._escapeName(name);
-    return `DROP RDFGRAPH ${name};`;
-  }
-
   dropProperty(tableName, columnName) {
     tableName = this._escapeName(tableName);
     columnName = this._escapeName(columnName);

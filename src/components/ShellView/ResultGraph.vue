@@ -451,16 +451,15 @@ export default {
 
       // Auto layout after drag
       this.g6Graph.on('node:dragstart', (e) => {
-        this.g6Graph.layout();
         this.refreshDraggedNodePosition(e);
       });
 
       this.g6Graph.on('node:drag', (e) => {
+        this.g6Graph.layout();
         this.refreshDraggedNodePosition(e);
       });
 
       this.g6Graph.on('node:dragend', (e) => {
-        this.refreshDraggedNodePosition(e);
         e.item.get('model').fx = null;
         e.item.get('model').fy = null;
       });
@@ -608,7 +607,7 @@ export default {
         } else {
           g6Node.label = rawNode[nodeLabelProp];
           if (nodeLabelProp in expectedPropertiesType) {
-            g6Node.label = ValueFormatter.beautifyValue(rawNode[nodeLabelProp], expectedPropertiesType[nodeLabelProp], nodeLabelProp);
+            g6Node.label = ValueFormatter.beautifyValue(rawNode[nodeLabelProp], expectedPropertiesType[nodeLabelProp]);
           }
           g6Node.label = String(g6Node.label);
           const nodeSize = nodeSettings.g6Settings.size;
@@ -655,7 +654,7 @@ export default {
             g6Rel.label = relTable.group;
           }
           if (relLabelProp in expectedPropertiesType) {
-            g6Rel.label = ValueFormatter.beautifyValue(rawRel[relLabelProp], expectedPropertiesType[relLabelProp], relLabelProp);
+            g6Rel.label = ValueFormatter.beautifyValue(rawRel[relLabelProp], expectedPropertiesType[relLabelProp]);
           }
           g6Rel.label = String(g6Rel.label);
           const fontSize = relSettings.g6Settings.labelCfg.style.fontSize;

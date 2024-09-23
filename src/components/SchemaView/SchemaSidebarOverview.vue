@@ -23,22 +23,18 @@
           >
             <td
               scope="row"
-              :colspan="nodeTable.rdf ? 2 : 1"
             >
               <span
                 class="badge bg-primary"
                 :style="{ backgroundColor: `${getColor(nodeTable.name)} !important` }"
               >{{ nodeTable.name }}</span>
               <br>
-              <small v-if="!nodeTable.rdf">
+              <small>
                 {{ nodeTable.properties.length }} properties
-              </small>
-              <small v-if="nodeTable.rdf">
-                <b>{{ nodeTable.rdf }} </b> RDF graph
               </small>
             </td>
             <td
-              v-if="modeStore.isReadWrite && !nodeTable.rdf"
+              v-if="modeStore.isReadWrite"
               class="schema_side-panel__overview-table-buttons-container"
             >
               <div>
@@ -100,7 +96,7 @@
           >
             <td
               scope="row"
-              :colspan="relTable.rdf || relTable.group ? 2 : 1"
+              :colspan="relTable.group ? 2 : 1"
             >
               <span
                 class="badge bg-primary"
@@ -111,19 +107,16 @@
               >
                 {{ relTable.name }}</span>
               <br>
-              <small v-if="!relTable.rdf">
+              <small>
                 {{ relTable.properties.length }}
                 {{ relTable.properties.length <= 1 ? "property" : "properties" }}
               </small>
               <small v-if="relTable.group">
                 &nbsp;&nbsp; <b>{{ relTable.group }} </b> group
               </small>
-              <small v-if="relTable.rdf">
-                <b>{{ relTable.rdf }} </b> RDF graph
-              </small>
             </td>
             <td
-              v-if="modeStore.isReadWrite && !relTable.rdf && !relTable.group"
+              v-if="modeStore.isReadWrite && !relTable.group"
               class="schema_side-panel__overview-table-buttons-container"
             >
               <div>
@@ -238,125 +231,6 @@
       </table>
       <br>
     </div>
-
-    <div>
-      <div class="d-flex justify-content-between">
-        <h5>RDF</h5>
-        <button
-          v-if="modeStore.isReadWrite"
-          class="btn btn-sm btn-primary"
-          @click="isAddingRdf = true"
-        >
-          Add
-        </button>
-      </div>
-      <hr>
-      <table
-        v-if="schema || isAddingRdf"
-        class="table table-sm table-bordered schema_side-panel__overview-table"
-      >
-        <tbody>
-          <tr v-if="isAddingRdf">
-            <td colspan="2">
-              <div class="d-flex justify-content-between">
-                <div class="input-group d-flex">
-                  <input
-                    v-model="newRdfName"
-                    type="text"
-                    class="form-control"
-                    placeholder="Enter a name for the new RDF graph"
-                  >
-                </div>
-                <div class="d-flex">
-                  &nbsp;
-                  <button
-                    class="btn btn-sm btn-outline-primary"
-                    @click="$emit('addRdf', newRdfName)"
-                  >
-                    <i class="fa-solid fa-check" />
-                  </button>
-                  &nbsp;
-                  <button
-                    class="btn btn-sm btn-outline-danger"
-                    @click="cancelAddRdf"
-                  >
-                    <i class="fa-solid fa-times" />
-                  </button>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr
-            v-for="rdf in schema.rdf"
-            :key="rdf.name"
-          >
-            <td scope="row">
-              <small>{{ rdf.name }} </small>
-              <br>
-              <ul>
-                <li
-                  v-for="nodeTableName in rdf.nodes"
-                  :key="nodeTableName"
-                >
-                  <span
-                    class="badge bg-primary"
-                    :style="{
-                      backgroundColor: `${getColor(nodeTableName)} !important`,
-                      color: '#ffffff',
-                      marginRight: '4px',
-                    }"
-                  >
-                    {{ nodeTableName }}
-                  </span>
-                </li>
-                <li
-                  v-for="relTableName in rdf.rels"
-                  :key="relTableName"
-                >
-                  <span
-                    class="badge bg-primary"
-                    :style="{
-                      backgroundColor: `${getColor(relTableName)} !important`,
-                      color: '#000000',
-                      marginRight: '4px',
-                    }"
-                  >
-                    {{ relTableName }}
-                  </span>
-                </li>
-              </ul>
-            </td>
-            <td
-              v-if="modeStore.isReadWrite"
-              class="schema_side-panel__overview-table-buttons-container schema_side-panel__overview-rel-groups-buttons-container"
-            >
-              <div>
-                <button
-                  class="btn btn-sm btn-outline-danger"
-                  @click="$emit('dropRdf', rdf.name)"
-                >
-                  <i class="fa-solid fa-trash-can" />
-                </button>
-              </div>
-            </td>
-          </tr>
-          <tr v-if="schema.rdf.length === 0">
-            <td
-              v-if="modeStore.isReadWrite"
-              colspan="2"
-            >
-              There are no RDF graphs in this schema. Click "Add" to add one.
-            </td>
-            <td
-              v-else
-              colspan="2"
-            >
-              There are no RDF graphs in this schema.
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
   </div>
 </template>
 
@@ -372,12 +246,7 @@ export default {
       required: true,
     },
   },
-  emits: ["dropTable", "dropRdf",
-   "editTable", "addNodeTable", "addRelTable", "addRelGroup", "addRdf"],
-  data: () => ({
-    newRdfName: "",
-    isAddingRdf: false,
-  }),
+  emits: ["dropTable", "editTable", "addNodeTable", "addRelTable", "addRelGroup", ],
   computed: {
     ...mapStores(useSettingsStore, useModeStore)
   },
@@ -390,13 +259,6 @@ export default {
     },
     editTable(tableName) {
       this.$emit("editTable", tableName);
-    },
-    addRdf(rdfName) {
-      this.$emit("addRdf", rdfName);
-    },
-    cancelAddRdf() {
-      this.isAddingRdf = false;
-      this.newRdfName = "";
     },
   },
 };

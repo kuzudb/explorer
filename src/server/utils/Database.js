@@ -6,15 +6,10 @@ const TABLE_TYPES = {
   NODE: "NODE",
   REL: "REL",
   REL_GROUP: "REL_GROUP",
-  RDF: "RDFGraph",
 };
-const RDF_NODE_TABLE_SUFFIXES = ["_l", "_r"];
-const RDF_REL_TABLE_SUFFIXES = ["_lt", "_rt"];
 const CONSTANTS = require("./Constants");
 const MODES = CONSTANTS.MODES;
 const READ_WRITE_MODE = MODES.READ_WRITE;
-const IRI_PROPERTY_NAME = CONSTANTS.IRI_PROPERTY_NAME;
-const IRI_VIRTUAL_PROPERTY_NAME = CONSTANTS.IRI_VIRTUAL_PROPERTY_NAME;
 
 let kuzu;
 if (process.env.NODE_ENV !== "production") {
@@ -189,7 +184,6 @@ class Database {
       const nodeTables = [];
       const relTables = [];
       const relGroups = [];
-      const rdf = [];
       for (const table of tables) {
         const properties = (
           await conn
@@ -221,8 +215,6 @@ class Database {
         } else if (table.type === TABLE_TYPES.REL_GROUP) {
           const name = table.name;
           relGroups.push({ name });
-        } else if (table.type === TABLE_TYPES.RDF) {
-          rdf.push(table);
         }
       }
       relGroups.forEach((relGroup) => {
@@ -230,31 +222,10 @@ class Database {
           .filter((relTable) => isBelongToGroup(relTable, relGroup.name))
           .map((relTable) => relTable.name);
       });
-      const rdfRelTables = new Set();
-      rdf.forEach((r) => {
-        r.nodes = RDF_NODE_TABLE_SUFFIXES.map((suffix) => r.name + suffix);
-        r.rels = RDF_REL_TABLE_SUFFIXES.map((suffix) => {
-          const name = r.name + suffix;
-          rdfRelTables.add(name);
-          return name;
-        });
-      });
-      relTables.forEach((relTable) => {
-        if (rdfRelTables.has(relTable.name)) {
-          const indexOfVirtualProperty = relTable.properties.findIndex(
-            (property) => property.name === IRI_VIRTUAL_PROPERTY_NAME
-          );
-          if (indexOfVirtualProperty > -1) {
-            relTable.properties[indexOfVirtualProperty].name =
-              IRI_PROPERTY_NAME;
-          }
-        }
-      });
       nodeTables.sort((a, b) => a.name.localeCompare(b.name));
       relTables.sort((a, b) => a.name.localeCompare(b.name));
       relGroups.sort((a, b) => a.name.localeCompare(b.name));
-      rdf.sort((a, b) => a.name.localeCompare(b.name));
-      return { nodeTables, relTables, relGroups, rdf };
+      return { nodeTables, relTables, relGroups };
     } finally {
       this.releaseConnection(conn);
     }
