@@ -63,12 +63,10 @@
         ref="overview"
         :schema="schema"
         @drop-table="dropTable"
-        @drop-rdf="dropRdf"
         @edit-table="enterEditTableMode"
         @add-node-table="enterAddNodeTableMode"
         @add-rel-table="enterAddRelTableMode"
         @add-rel-group="enterAddRelGroupMode"
-        @add-rdf="addRdf"
       />
       <!-- Read only view for hovered label -->
       <!-- If edit view is shown, hovering over another label will not change the view -->
@@ -139,8 +137,6 @@ import SchemaSidebarReadOnlyView from './SchemaSidebarReadOnlyView.vue';
 import SchemaSidebarOverview from './SchemaSidebarOverview.vue';
 import SchemaActionDialog from './SchemaActionDialog.vue';
 
-const COMBO_LABEL_FONT_SIZE = 18;
-const NULL_PLACEHOLDER_RDF_GRAPH = "null";
 
 export default {
   name: "SchemaViewMain",
@@ -225,8 +221,8 @@ export default {
   },
 
   beforeUnmount() {
-    if (this.g6graph) {
-      this.g6graph.destroy();
+    if (this.g6Graph) {
+      this.g6Graph.destroy();
     }
     window.removeEventListener("resize", this.handleResize);
   },
@@ -242,34 +238,36 @@ export default {
       return relTable.group ? relTable.group : relTableName;
     },
     getLayoutConfig(edges) {
-      const nodeSpacing = edges.length * 5;
+      let nodeSpacing = edges.length * 10;
+      nodeSpacing = nodeSpacing < 80 ? 80 : nodeSpacing;
+      nodeSpacing = nodeSpacing > 500 ? 500 : nodeSpacing;
       const config = {
-        type: 'comboForce',
-        preventOverlap: true,
-        preventNodeOverlap: true,
-        preventComboOverlap: true,
-        linkDistance: 250,
-        nodeStrength: 100,
-        nodeSize: 100,
         nodeSpacing,
-        comboSpacing: 10,
-        comboCollideStrength: 0.2,
+          type: 'force',
+          preventOverlap: true,
+          linkDistance: 30,
+          nodeStrength: 0.1,
+          edgeStrength: 0.1,
+          alpha: 0.5,
+          alphaDecay: 0.05,
+          alphaMin: 0.05,
+
       };
       return config;
     },
     drawGraph() {
-      if (this.graphCreated && this.g6graph) {
-        this.g6graph.destroy();
+      if (this.graphCreated && this.g6Graph) {
+        this.g6Graph.destroy();
       }
       if (!this.schema) {
         return;
       }
-      const { nodes, edges, combos } = this.extractGraphFromSchema(this.schema);
+      const { nodes, edges } = this.extractGraphFromSchema(this.schema);
       const container = this.$refs.graph;
       const width = container.offsetWidth;
       const height = container.offsetHeight;
 
-      this.g6graph = new G6.Graph({
+      this.g6Graph = new G6.Graph({
         container,
         width,
         height,
@@ -347,62 +345,40 @@ export default {
           },
         },
         modes: {
-          default: [
-            'drag-canvas',
-            'zoom-canvas',
-            { type: 'drag-node', onlyChangeComboSize: true },
-            { type: 'drag-combo', onlyChangeComboSize: true },
-          ],
+          default: ['drag-canvas', 'zoom-canvas', 'drag-node']
         },
-        defaultCombo: {
-          type: 'rect',
-          size: [10, 10],
-          padding: [120, 20, 10, 20],
-          style: {
-            lineWidth: 2,
-          },
-          labelCfg: {
-            style: {
-              fontSize: COMBO_LABEL_FONT_SIZE,
-              fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
-              fontWeight: 600,
-              fill: "#000",
-            },
-          },
-        },
-        comboStateStyles: {},
       });
 
-      this.g6graph.data({ nodes, edges, combos });
+      this.g6Graph.data({ nodes, edges,  });
 
-      this.g6graph.on('node:mouseenter', (e) => {
+      this.g6Graph.on('node:mouseenter', (e) => {
         const nodeItem = e.item;
-        this.g6graph.setItemState(nodeItem, 'hover', true);
+        this.g6Graph.setItemState(nodeItem, 'hover', true);
         this.handleHover(nodeItem._cfg.model.label, true);
       });
 
-      this.g6graph.on('node:mouseleave', (e) => {
+      this.g6Graph.on('node:mouseleave', (e) => {
         const nodeItem = e.item;
-        this.g6graph.setItemState(nodeItem, 'hover', false);
+        this.g6Graph.setItemState(nodeItem, 'hover', false);
         this.resetHover();
       });
 
-      this.g6graph.on('node:click', (e) => {
+      this.g6Graph.on('node:click', (e) => {
         if (this.clickedIsNewTable) {
           return;
         }
         this.resetClick();
         const nodeItem = e.item;
-        this.g6graph.setItemState(nodeItem, 'click', true);
+        this.g6Graph.setItemState(nodeItem, 'click', true);
         this.clickedLabel = nodeItem._cfg.model.label;
         this.clickedIsNode = true;
       });
 
-      this.g6graph.on('edge:mouseenter', (e) => {
+      this.g6Graph.on('edge:mouseenter', (e) => {
         const edgeItem = e.item;
-        this.g6graph.setItemState(edgeItem, 'hover', true);
+        this.g6Graph.setItemState(edgeItem, 'hover', true);
         if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-          this.g6graph.updateItem(edgeItem, {
+          this.g6Graph.updateItem(edgeItem, {
             label: this.getRelTableDisplayLabel(edgeItem._cfg.model._label)
           });
           edgeItem.toFront();
@@ -410,30 +386,30 @@ export default {
         this.handleHover(edgeItem._cfg.model._label, false);
       });
 
-      this.g6graph.on('edge:mouseleave', (e) => {
+      this.g6Graph.on('edge:mouseleave', (e) => {
         const edgeItem = e.item;
-        this.g6graph.setItemState(edgeItem, 'hover', false);
+        this.g6Graph.setItemState(edgeItem, 'hover', false);
         this.resetHover();
         if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-          const currentSelectedEdge = this.g6graph.findAllByState('edge', 'click')[0];
+          const currentSelectedEdge = this.g6Graph.findAllByState('edge', 'click')[0];
           if (currentSelectedEdge && currentSelectedEdge._cfg.id === edgeItem._cfg.id) {
             return;
           }
-          this.g6graph.updateItem(edgeItem, {
+          this.g6Graph.updateItem(edgeItem, {
             label: ""
           });
         }
       });
 
-      this.g6graph.on('edge:click', (e) => {
+      this.g6Graph.on('edge:click', (e) => {
         if (this.clickedIsNewTable) {
           return;
         }
         this.resetClick();
         const edgeItem = e.item;
-        this.g6graph.setItemState(edgeItem, 'click', true);
+        this.g6Graph.setItemState(edgeItem, 'click', true);
         if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-          this.g6graph.updateItem(edgeItem, {
+          this.g6Graph.updateItem(edgeItem, {
             label: this.getRelTableDisplayLabel(edgeItem._cfg.model._label)
           });
           edgeItem.toFront();
@@ -442,21 +418,29 @@ export default {
         this.clickedLabel = edgeItem._cfg.model._label;
       });
 
-      this.g6graph.on('canvas:click', () => {
+      this.g6Graph.on('canvas:click', () => {
         if (this.clickedIsNewTable) {
           return;
         }
         this.resetClick();
       });
 
-      this.g6graph.on('combo:click', () => {
-        if (this.clickedIsNewTable) {
-          return;
-        }
-        this.resetClick();
+      // Auto layout after drag
+      this.g6Graph.on('node:dragstart', (e) => {
+        this.refreshDraggedNodePosition(e);
       });
 
-      this.g6graph.render();
+      this.g6Graph.on('node:drag', (e) => {
+        this.g6Graph.layout();
+        this.refreshDraggedNodePosition(e);
+      });
+
+      this.g6Graph.on('node:dragend', (e) => {
+        e.item.get('model').fx = null;
+        e.item.get('model').fy = null;
+      });
+
+      this.g6Graph.render();
       this.graphCreated = true;
     },
 
@@ -473,7 +457,6 @@ export default {
             lineWidth: 4,
 
           },
-          comboId: n.rdf ? n.rdf : NULL_PLACEHOLDER_RDF_GRAPH,
         };
         returnVal.style.stroke = G6Utils.shadeColor(returnVal.style.fill);
         return returnVal;
@@ -548,36 +531,17 @@ export default {
           }
           return edge;
         }).filter(e => Boolean(e));
-
-      const combos = schema.rdf.map(r => {
-        const label = `RDF Graph: ${r.name}`;
-        const textWidth = G6Utils.calcTextWidth(label, COMBO_LABEL_FONT_SIZE) / 2;
-        return {
-          id: r.name,
-          label: `RDF Graph: ${r.name}`,
-          fixCollapseSize: [textWidth, COMBO_LABEL_FONT_SIZE],
-        };
-      });
-      combos.push({
-        id: NULL_PLACEHOLDER_RDF_GRAPH,
-        label: "",
-        style: {
-          lineWidth: 0,
-          fillOpacity: 0,
-        },
-        padding: [0, 0, 0, 0],
-      });
-      return { nodes, edges, combos };
+      return { nodes, edges };
     },
 
     handleResize() {
       this.$nextTick(() => {
         const width = this.computeGraphWidth();
         const height = this.computeGraphHeight();
-        if (this.g6graph) {
-          this.g6graph.changeSize(width, height);
+        if (this.g6Graph) {
+          this.g6Graph.changeSize(width, height);
           this.layoutGraph();
-          this.g6graph.fitCenter();
+          this.g6Graph.fitCenter();
         }
       });
     },
@@ -617,24 +581,22 @@ export default {
         this.$nextTick(() => {
           this.cancelAdd();
         });
-      } else if (action.type === SCHEMA_ACTION_TYPES.ADD_RDF) {
-        this.$refs.overview.cancelAddRdf();
       }
     },
 
     resetClick() {
-      if (!this.g6graph) {
+      if (!this.g6Graph) {
         return;
       }
-      const currentSelectedNode = this.g6graph.findAllByState('node', 'click')[0];
+      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
       if (currentSelectedNode) {
-        this.g6graph.setItemState(currentSelectedNode, 'click', false);
+        this.g6Graph.setItemState(currentSelectedNode, 'click', false);
       }
-      const currentSelectedEdge = this.g6graph.findAllByState('edge', 'click')[0];
+      const currentSelectedEdge = this.g6Graph.findAllByState('edge', 'click')[0];
       if (currentSelectedEdge) {
-        this.g6graph.setItemState(currentSelectedEdge, 'click', false);
+        this.g6Graph.setItemState(currentSelectedEdge, 'click', false);
         if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-          this.g6graph.updateItem(currentSelectedEdge, {
+          this.g6Graph.updateItem(currentSelectedEdge, {
             label: ""
           });
         }
@@ -657,10 +619,16 @@ export default {
     },
 
     layoutGraph() {
-      if (!this.g6graph) {
+      if (!this.g6Graph) {
         return;
       }
-      this.g6graph.layout();
+      this.g6Graph.layout();
+    },
+
+    refreshDraggedNodePosition(e) {
+      const model = e.item.get('model');
+      model.fx = e.x;
+      model.fy = e.y;
     },
 
     computeGraphWidth() {
@@ -684,7 +652,7 @@ export default {
         clearTimeout(this.toolbarDebounceTimer);
       }
       this.toolbarDebounceTimer = setTimeout(() => {
-        G6Utils.zoomIn(this.g6graph);
+        G6Utils.zoomIn(this.g6Graph);
       }, this.toolbarDebounceTimeout);
     },
 
@@ -693,7 +661,7 @@ export default {
         clearTimeout(this.toolbarDebounceTimer);
       }
       this.toolbarDebounceTimer = setTimeout(() => {
-        G6Utils.zoomOut(this.g6graph);
+        G6Utils.zoomOut(this.g6Graph);
       }, this.toolbarDebounceTimeout);
     },
 
@@ -702,7 +670,7 @@ export default {
         clearTimeout(this.toolbarDebounceTimer);
       }
       this.toolbarDebounceTimer = setTimeout(() => {
-        G6Utils.fitToView(this.g6graph);
+        G6Utils.fitToView(this.g6Graph);
       }, this.toolbarDebounceTimeout);
     },
 
@@ -711,18 +679,18 @@ export default {
         clearTimeout(this.toolbarDebounceTimer);
       }
       this.toolbarDebounceTimer = setTimeout(() => {
-        G6Utils.actualSize(this.g6graph);
+        G6Utils.actualSize(this.g6Graph);
       }, this.toolbarDebounceTimeout);
     },
 
     handleSettingsChange() {
-      const { nodes, edges, combos } = this.extractGraphFromSchema(this.schema);
-      if (!this.g6graph) {
+      const { nodes, edges,  } = this.extractGraphFromSchema(this.schema);
+      if (!this.g6Graph) {
         return;
       }
-      this.g6graph.changeData({ nodes, edges, combos });
+      this.g6Graph.changeData({ nodes, edges,  });
       const layoutConfig = this.getLayoutConfig(edges);
-      this.g6graph.updateLayout(layoutConfig);
+      this.g6Graph.updateLayout(layoutConfig);
       if (this.clickedLabel) {
         this.setG6Click(this.clickedLabel);
       }
@@ -740,15 +708,15 @@ export default {
     },
 
     setG6Click(tableName) {
-      const g6Item = this.g6graph ? this.g6graph.findById(tableName) : null;
+      const g6Item = this.g6Graph ? this.g6Graph.findById(tableName) : null;
       if (g6Item) {
-        this.g6graph.setItemState(g6Item, 'click', true);
+        this.g6Graph.setItemState(g6Item, 'click', true);
       }
       else {
         return;
       }
       if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-        this.g6graph.updateItem(g6Item, {
+        this.g6Graph.updateItem(g6Item, {
           label: this.getRelTableDisplayLabel(tableName),
         });
         g6Item.toFront();
@@ -820,9 +788,9 @@ export default {
     },
 
     setPlaceholder(label) {
-      const g6Item = this.g6graph ? this.g6graph.findById(label) : null;
+      const g6Item = this.g6Graph ? this.g6Graph.findById(label) : null;
       if (g6Item) {
-        this.g6graph.updateItem(g6Item, {
+        this.g6Graph.updateItem(g6Item, {
           isPlaceholder: true,
         });
       }
@@ -833,7 +801,7 @@ export default {
       if (isNode) {
         this.updatePlaceholderNodeTableLabel(newLabel);
       } else {
-        const g6Item = this.g6graph ? this.g6graph.find('edge', edge => edge._cfg.model.isPlaceholder) : null;
+        const g6Item = this.g6Graph ? this.g6Graph.find('edge', edge => edge._cfg.model.isPlaceholder) : null;
         const src = g6Item._cfg.model.source;
         const dst = g6Item._cfg.model.target;
         this.updatePlaceholderRelTable({ name: newLabel, src, dst });
@@ -849,9 +817,9 @@ export default {
       if (this.clickedLabel === newLabel) {
         return;
       }
-      const g6Item = this.g6graph ? this.g6graph.find('node', node => node._cfg.model.isPlaceholder) : null;
+      const g6Item = this.g6Graph ? this.g6Graph.find('node', node => node._cfg.model.isPlaceholder) : null;
       if (g6Item) {
-        this.g6graph.updateItem(g6Item, {
+        this.g6Graph.updateItem(g6Item, {
           label: newLabel,
         });
       }
@@ -862,14 +830,14 @@ export default {
     updatePlaceholderRelTable(newTable) {
       this.$emit("updatePlaceholderRelTable", newTable);
       this.clickedLabel = newTable.name;
-      const g6Item = this.g6graph ? this.g6graph.find('edge', edge => edge._cfg.model.isPlaceholder) : null;
+      const g6Item = this.g6Graph ? this.g6Graph.find('edge', edge => edge._cfg.model.isPlaceholder) : null;
       // If the edge has not been created yet, and the user has not selected a source and destination, do nothing
       if (!g6Item && (!newTable.src || !newTable.dst)) {
         return;
       }
       // If the edge has been created and only the label has changed, update the label and return
       if (g6Item && g6Item._cfg.model.src === newTable.src && g6Item._cfg.model.dst === newTable.dst) {
-        this.g6graph.updateItem(g6Item, {
+        this.g6Graph.updateItem(g6Item, {
           label: newTable.name,
         });
         return;
@@ -878,14 +846,6 @@ export default {
       this.$nextTick(() => {
         this.handleSettingsChange();
       });
-    },
-
-    addRdf(name) {
-      this.$refs.actionDialog.addRdf(name);
-    },
-
-    dropRdf(rdf) {
-      this.$refs.actionDialog.dropRdf(rdf);
     },
 
     dropTable(tableName) {
@@ -920,7 +880,7 @@ export default {
       const clickedItem = this.clickedIsNode ?
         this.schema.nodeTables.find(t => t.name === this.clickedLabel) :
         this.schema.relTables.find(t => t.name === this.clickedLabel);
-      return !this.modeStore.isReadWrite || (clickedItem && (clickedItem.rdf || clickedItem.group));
+      return !this.modeStore.isReadWrite || (clickedItem && clickedItem.group);
     },
 
     reloadSchema() {

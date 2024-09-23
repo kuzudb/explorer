@@ -14,10 +14,6 @@
       </h5>
       <hr>
 
-      <h6 v-if="rdf">
-        <b>{{ rdf }} </b> RDF graph
-      </h6>
-
       <div v-if="!isNode">
         <h6>
           <span
@@ -105,16 +101,6 @@ export default {
   },
   computed: {
     ...mapStores(useSettingsStore),
-
-    rdf() {
-      if (!this.schema || !this.label) {
-        return null;
-      }
-      if (this.isNode) {
-        return this.schema.nodeTables.find(t => t.name === this.label).rdf;
-      }
-      return this.schema.relTables.find(t => t.name === this.label).rdf;
-    },
 
     source() {
       if (!this.schema || !this.label || this.isNode) {

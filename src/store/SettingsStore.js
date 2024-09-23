@@ -6,7 +6,6 @@ import {
   PLACEHOLDER_NODE_TABLE,
   PLACEHOLDER_REL_TABLE,
   GPT_MODELS,
-  IRI_PROPERTY_NAME,
 } from "../utils/Constants";
 import G6Utils from "../utils/G6Utils";
 import G6 from "@antv/g6";
@@ -170,14 +169,6 @@ export const useSettingsStore = defineStore("settings", {
         g6Settings,
         label,
       };
-      if (node.rdf) {
-        const isIriPropertyExist = node.properties.some(
-          (property) => property.name === IRI_PROPERTY_NAME
-        );
-        if (isIriPropertyExist) {
-          nodeSettings.label = IRI_PROPERTY_NAME;
-        }
-      }
       return nodeSettings;
     },
 
@@ -191,14 +182,6 @@ export const useSettingsStore = defineStore("settings", {
         g6Settings,
         label,
       };
-      if (rel.rdf) {
-        const isIriPropertyExist = rel.properties.some(
-          (property) => property.name === IRI_PROPERTY_NAME
-        );
-        if (isIriPropertyExist) {
-          relSettings.label = IRI_PROPERTY_NAME;
-        }
-      }
       return relSettings;
     },
 

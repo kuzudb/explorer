@@ -171,23 +171,6 @@ export default {
       this.statement = statement;
       this.showModal();
     },
-    addRdf(tableName, rdf) {
-      this.reset();
-      this.currentAction = {
-        type: SCHEMA_ACTION_TYPES.ADD_RDF,
-        table: tableName,
-        rdf,
-      };
-      const statement = DataDefinitionLanguage.addRdf(tableName, rdf);
-      this.statement = statement;
-      this.showModal();
-    },
-    dropRdf(tableName) {
-      this.reset();
-      const statement = DataDefinitionLanguage.dropRdf(tableName);
-      this.statement = statement;
-      this.showModal();
-    },
     dropProperty(table, property) {
       this.reset();
       const statement = DataDefinitionLanguage.dropProperty(table, property);

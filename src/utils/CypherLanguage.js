@@ -260,14 +260,6 @@ class CypherLanguage {
           insertText: relGroup.name,
         });
       });
-      schema.rdf.forEach((rdf) => {
-        monacoSuggestions.push({
-          range,
-          label: rdf.name,
-          kind: Monaco.languages.CompletionItemKind.Class,
-          insertText: rdf.name,
-        });
-      });
     }
     return {
       suggestions: monacoSuggestions,

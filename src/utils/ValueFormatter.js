@@ -1,5 +1,5 @@
 import Moment from "moment";
-import { DATA_TYPES, IRI_PROPERTY_NAME } from "./Constants";
+import { DATA_TYPES } from "./Constants";
 
 class ValueFormatter {
   constructor() {
@@ -51,20 +51,7 @@ class ValueFormatter {
     return extractedType;
   }
 
-  beautifyValue(value, type, propName = "") {
-    if (type === DATA_TYPES.STRING && propName === IRI_PROPERTY_NAME) {
-      if (value.startsWith("http")) {
-        // Extract the last part of the IRI as the label
-        const parts = value.split("/");
-        for (let i = parts.length - 1; i >= 0; --i) {
-          const currentPart = parts[i].trim();
-          if (currentPart.length > 0) {
-            return currentPart;
-          }
-        }
-        return value;
-      }
-    }
+  beautifyValue(value, type) {
     if (type === DATA_TYPES.DATE) {
       return Moment(value).format("YYYY-MM-DD");
     } else if (type === DATA_TYPES.TIMESTAMP) {
