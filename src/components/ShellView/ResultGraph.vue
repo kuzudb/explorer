@@ -363,15 +363,11 @@ export default {
         width,
         height,
         layout: {
-          type: 'force',
+          type: 'force2',
           preventOverlap: true,
-          linkDistance: 30,
-          nodeStrength: 0.1,
-          edgeStrength: 0.1,
-          nodeSpacing: 80,
-          alpha: 0.5,
-          alphaDecay: 0.05,
-          alphaMin: 0.05,
+          nodeStrength: 2000,
+          animate: true,
+            maxIteration: 500,
         },
         defaultNode: this.settingsStore.defaultNode,
         nodeStateStyles: {
@@ -455,15 +451,14 @@ export default {
       });
 
       this.g6Graph.on('node:drag', (e) => {
-        this.g6Graph.layout();
         this.refreshDraggedNodePosition(e);
       });
 
       this.g6Graph.on('node:dragend', (e) => {
-        e.item.get('model').fx = null;
-        e.item.get('model').fy = null;
+        this.refreshDraggedNodePosition(e);
+        this.g6Graph.layout();
       });
-
+      
       this.g6Graph.on('edge:mouseenter', (e) => {
         const edgeItem = e.item;
         this.g6Graph.setItemState(edgeItem, 'hover', true);
@@ -501,6 +496,8 @@ export default {
       const model = e.item.get('model');
       model.fx = e.x;
       model.fy = e.y;
+      model.x = e.x;
+      model.y = e.y;
     },
 
     hideNode() {

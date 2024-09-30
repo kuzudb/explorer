@@ -238,19 +238,13 @@ export default {
       return relTable.group ? relTable.group : relTableName;
     },
     getLayoutConfig(edges) {
-      let nodeSpacing = edges.length * 10;
+      let nodeSpacing = edges.length * 8;
       nodeSpacing = nodeSpacing < 80 ? 80 : nodeSpacing;
       nodeSpacing = nodeSpacing > 500 ? 500 : nodeSpacing;
       const config = {
-        nodeSpacing,
+          nodeSpacing,
           type: 'force',
           preventOverlap: true,
-          linkDistance: 30,
-          nodeStrength: 0.1,
-          edgeStrength: 0.1,
-          alpha: 0.5,
-          alphaDecay: 0.05,
-          alphaMin: 0.05,
 
       };
       return config;
