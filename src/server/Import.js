@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const path = require("path");
 const multer = require("multer");
 const database = require("./utils/Database");
 const uuid = require("uuid");
@@ -82,39 +83,71 @@ router.post("/:job_id/exec", async (req, res) => {
   }
   res.status(202).send({ jobId });
   const conn = await database.getConnection();
-  for (let i = 0; i < job.plan.length; ++i) {
-    const step = job.plan[i];
-    if (step.action === IMPORT_ACTIONS.UPLOAD) {
-      continue;
-    }
-    step.status = JOB_STATUS.PROCESSING;
-    try {
-      if (step.params) {
-        const preparedStatement = await conn.prepare(step.cypher);
-        await conn.execute(preparedStatement, step.params);
-      } else {
-        await conn.query(step.cypher);
-      }
-      step.status = JOB_STATUS.SUCCESS;
-    } catch (err) {
-      step.status = JOB_STATUS.ERROR;
-      step.error = err.message;
-      for (let j = i + 1; j < job.plan.length; ++j) {
-        job.plan[j].status = JOB_STATUS.ERROR;
-        job.plan[j].error = 'Previous step failed';
-      }
-      try {
-        await DataImportUtil.deleteTmp(jobId);
-      } catch (err) {
-        // Ignore
-      }
-      return;
-    }
-  }
+  // Clear all previous warnings
+  await conn.query("CALL clear_warnings();");
   try {
-    await DataImportUtil.deleteTmp(jobId);
-  } catch (err) {
-    // Ignore
+    for (let i = 0; i < job.plan.length; ++i) {
+      const step = job.plan[i];
+      if (step.action === IMPORT_ACTIONS.UPLOAD) {
+        continue;
+      }
+      step.status = JOB_STATUS.PROCESSING;
+      try {
+        if (step.params) {
+          const preparedStatement = await conn.prepare(step.cypher);
+          await conn.execute(preparedStatement, step.params);
+        } else {
+          await conn.query(step.cypher);
+        }
+        step.status = JOB_STATUS.SUCCESS;
+      } catch (err) {
+        step.status = JOB_STATUS.ERROR;
+        step.error = err.message;
+        for (let j = i + 1; j < job.plan.length; ++j) {
+          job.plan[j].status = JOB_STATUS.ERROR;
+          job.plan[j].error = 'Previous step failed';
+        }
+        try {
+          await DataImportUtil.deleteTmp(jobId);
+        } catch (deleteErr) {
+          // Ignore
+        }
+        // Rethrow error to stop execution
+        throw err;
+      }
+    }
+    const numberOfWarningsQueryResult = await conn.query("CALL SHOW_WARNINGS() RETURN COUNT(*) AS count;");
+    const numberOfWarnings = (await numberOfWarningsQueryResult.getNext()).count;
+    job.numberOfWarnings = numberOfWarnings;
+    if (numberOfWarnings > 0) {
+      const warningsQueryResult = await conn.query("CALL SHOW_WARNINGS() RETURN * LIMIT 100;");
+      const warnings = await warningsQueryResult.getAll();
+      const fileNameHash = {};
+      job.plan.forEach((step) => {
+        if (step.action === IMPORT_ACTIONS.UPLOAD) {
+          fileNameHash[step.fileName] = step.displayName;
+        }
+      });
+      job.warnings = warnings.map((warning) => {
+        const message = warning.message;
+        const lineNumber = warning.line_number;
+        const filePath = path.parse(warning.file_path);
+        const fileNameOnDisk = filePath.base;
+        const fileName = fileNameHash[fileNameOnDisk] ? fileNameHash[fileNameOnDisk] : fileNameOnDisk;
+        return {
+          message,
+          lineNumber,
+          fileName,
+        };
+      });
+    }
+    try {
+      await DataImportUtil.deleteTmp(jobId);
+    } catch (err) {
+      // Ignore
+    }
+  } finally {
+    database.releaseConnection(conn);
   }
 });
 

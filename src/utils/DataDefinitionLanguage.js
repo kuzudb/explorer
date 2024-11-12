@@ -150,6 +150,8 @@ class DataDefinitionLanguage {
     // csvOptions.push(`LIST_BEGIN="${this._jsonEscapedString(listBegin)}"`);
     // csvOptions.push(`LIST_END="${this._jsonEscapedString(listEnd)}"`);
     csvOptions.push(`PARALLEL=${parallelism}`);
+    // Always ignore errors for data import UI
+    csvOptions.push(`IGNORE_ERRORS=true`);
     const csvOptionsString = `(${csvOptions.join(", ")})`;
     return csvOptionsString;
   }

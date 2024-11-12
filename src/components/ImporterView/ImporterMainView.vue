@@ -77,6 +77,8 @@
     <importer-view-processing-modal
       ref="importProcessingModal"
       :items="importProgress"
+      :number-of-warnings="currentJob ? currentJob.numberOfWarnings : 0"
+      :warnings="currentJob ? currentJob.warnings : []"
       processing-title="Importing Files..."
       done-title="Steps Processed"
       @close="finishImport"
@@ -683,6 +685,8 @@ export default {
           const res = await Axios.get(`/api/import/${this.currentJob.jobId}`);
           const isAllDone = res.data.plan.every(j => j.status !== JOB_STATUS.PROCESSING && j.status !== JOB_STATUS.PENDING);
           this.currentJob.plan = res.data.plan;
+          this.currentJob.numberOfWarnings = res.data.numberOfWarnings;
+          this.currentJob.warnings = res.data.warnings;
           if (isAllDone) {
             window.clearInterval(interval);
           }
