@@ -300,6 +300,7 @@ export default {
           currentFile.format.ListStart = '[';
           currentFile.format.ListEnd = ']';
           currentFile.format.Parallelism = true;
+          currentFile.format.IgnoreErrors = true;
         }
         currentFile.format.Columns.forEach((c, i) => {
           c.type = DuckDB.convertDuckDBTypeToKuzuType(c.type);
@@ -358,8 +359,9 @@ export default {
       const listBegin = file.format.ListStart;
       const listEnd = file.format.ListEnd;
       const parallelism = file.format.Parallelism ? 'true' : 'false';
+      const ignoreErrors = file.format.IgnoreErrors ? 'true' : 'false';
       this.$refs.csvFormatModal.setFormat(
-        key, delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism
+        key, delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism, ignoreErrors
       );
       this.$refs.csvFormatModal.showModal();
     },
@@ -373,6 +375,7 @@ export default {
       const listBegin = format.listBegin;
       const listEnd = format.listEnd;
       const parallelism = format.parallelism;
+      const ignoreErrors = format.ignoreErrors;
 
       const columns = await DuckDB.getCsvHeaderWithCustomSettings(key, delimiter, quote, escape, hasHeader);
       columns.forEach((c, i) => {
@@ -388,6 +391,7 @@ export default {
       file.format.ListEnd = listEnd;
       file.format.Parallelism = parallelism;
       file.format.Columns = columns;
+      file.format.IgnoreErrors = ignoreErrors;
       file.detectedFormat.Columns = columns;
       if (file.type === 'node') {
         if (file.format.Columns[0]) {
@@ -574,6 +578,7 @@ export default {
             listBegin: rawFile.format.ListStart,
             listEnd: rawFile.format.ListEnd,
             parallelism: rawFile.format.Parallelism,
+            ignoreErrors: rawFile.format.IgnoreErrors,
           }
         }
         summary.push(file);
