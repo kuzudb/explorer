@@ -162,7 +162,6 @@ export default {
 
     save() {
       const format = this.getFormat();
-      console.log("save", format);
       this.hideModal();
       this.$emit("save", this.fileKey, format);
     }
