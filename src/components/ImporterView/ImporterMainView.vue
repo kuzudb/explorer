@@ -93,6 +93,10 @@
       @close="abortCurrentJob"
       @execute="executeCurrentJob"
     />
+    <importer-view-error-modal
+      ref="errorModal"
+      :error-message="errorMessage"
+    />
   </div>
 </template>
 
@@ -111,6 +115,7 @@ import ImporterViewProcessingModal from './ImporterViewProcessingModal.vue';
 import ImporterViewCsvFormatModal from './ImporterViewCsvFormatModal.vue';
 import ImporterViewPreview from './ImporterViewPreview.vue';
 import ImporterViewValidationModal from './ImporterViewValidationModal.vue';
+import ImporterViewErrorModal from './ImporterViewErrorModal.vue';
 
 export default {
   name: "ImporterMainView",
@@ -123,6 +128,7 @@ export default {
     ImporterViewCsvFormatModal,
     ImporterViewPreview,
     ImporterViewValidationModal,
+    ImporterViewErrorModal,
   },
   props: {
     schema: {
@@ -139,6 +145,7 @@ export default {
     files: {},
     processingFiles: [],
     currentJob: null,
+    errorMessage: "",
   }),
   computed: {
     isSchemaEmpty() {
@@ -377,7 +384,14 @@ export default {
       const parallelism = format.parallelism;
       const ignoreErrors = format.ignoreErrors;
 
-      const columns = await DuckDB.getCsvHeaderWithCustomSettings(key, delimiter, quote, escape, hasHeader);
+      let columns;
+      try {
+        columns = await DuckDB.getCsvHeaderWithCustomSettings(key, delimiter, quote, escape, hasHeader);
+      } catch (error) {
+        this.errorMessage = `Could not detect the columns with the given CSV format settings for file ${file.file.name}. Please check the settings and try again.`;
+        this.$refs.errorModal.showModal();
+        return;
+      }
       columns.forEach((c, i) => {
         c.type = DuckDB.convertDuckDBTypeToKuzuType(c.type);
         c.name = hasHeader ? c.name : `column${i}`;
