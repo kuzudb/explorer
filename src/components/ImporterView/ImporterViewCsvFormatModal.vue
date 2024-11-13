@@ -1,5 +1,9 @@
 <template>
-  <div ref="modal" class="modal" tabindex="-1">
+  <div
+    ref="modal"
+    class="modal"
+    tabindex="-1"
+  >
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
@@ -11,15 +15,30 @@
           <div>
             <div class="input-group mb-3">
               <span class="input-group-text">Delimiter</span>
-              <input v-model="delimiter" type="text" class="form-control">
+              <input
+                v-model="delimiter"
+                type="text"
+                class="form-control"
+              >
               <span class="input-group-text">Quote</span>
-              <input v-model="quote" type="text" class="form-control">
+              <input
+                v-model="quote"
+                type="text"
+                class="form-control"
+              >
             </div>
             <div class="input-group mb-3">
               <span class="input-group-text">Escape</span>
-              <input v-model="escape" type="text" class="form-control">
+              <input
+                v-model="escape"
+                type="text"
+                class="form-control"
+              >
               <span class="input-group-text">Header?</span>
-              <select v-model="hasHeader" class="form-select">
+              <select
+                v-model="hasHeader"
+                class="form-select"
+              >
                 <option value="true">
                   Yes
                 </option>
@@ -29,16 +48,30 @@
               </select>
             </div>
 
-            <div class="input-group mb-3" hidden>
+            <div
+              class="input-group mb-3"
+              hidden
+            >
               <span class="input-group-text">List Begin</span>
-              <input v-model="listBegin" type="text" class="form-control">
+              <input
+                v-model="listBegin"
+                type="text"
+                class="form-control"
+              >
               <span class="input-group-text">List End</span>
-              <input v-model="listEnd" type="text" class="form-control">
+              <input
+                v-model="listEnd"
+                type="text"
+                class="form-control"
+              >
             </div>
 
             <div class="input-group mb-3">
               <span class="input-group-text">Read CSV in Parallel?</span>
-              <select class="form-select" v-model="parallelism">
+              <select
+                v-model="parallelism"
+                class="form-select"
+              >
                 <option value="true">
                   Yes
                 </option>
@@ -47,7 +80,10 @@
                 </option>
               </select>
               <span class="input-group-text">Ignore Errors?</span>
-              <select class="form-select" v-model="ignoreErrors">
+              <select
+                v-model="ignoreErrors"
+                class="form-select"
+              >
                 <option value="true">
                   Yes
                 </option>
@@ -61,8 +97,14 @@
         <div class="modal-footer">
           <div class="d-flex justify-content-between w-100">
             <span>
-              <a href="https://docs.kuzudb.com/import/csv/" target="_blank">
-                <button type="button" class="btn btn-secondary">
+              <a
+                href="https://docs.kuzudb.com/import/csv/"
+                target="_blank"
+              >
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                >
                   <i class="fa-solid fa-question-circle" />
                   Help
                 </button>
@@ -70,11 +112,19 @@
 
             </span>
             <span>
-              <button type="button" class="btn btn-danger" @click="hideModal">
+              <button
+                type="button"
+                class="btn btn-danger"
+                @click="hideModal"
+              >
                 Close
               </button>
               &nbsp;
-              <button type="button" class="btn btn-primary" @click="save">
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="save"
+              >
                 Save
               </button>
             </span>
