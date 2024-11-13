@@ -1,18 +1,26 @@
 <template>
-  <div ref="modal" class="modal" tabindex="-1">
+  <div
+    ref="modal"
+    class="modal"
+    tabindex="-1"
+  >
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-body">
           <div>
             <p class="text-danger">
-              <i class="fas fa-exclamation-triangle"></i>
+              <i class="fas fa-exclamation-triangle" />
               {{ errorMessage }}
             </p>
           </div>
         </div>
         <div class="modal-footer">
           <span>
-            <button type="button" class="btn btn-danger" @click="hideModal">
+            <button
+              type="button"
+              class="btn btn-danger"
+              @click="hideModal"
+            >
               Close
             </button>
           </span>
