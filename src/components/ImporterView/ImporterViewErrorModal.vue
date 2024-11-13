@@ -4,7 +4,7 @@
     class="modal"
     tabindex="-1"
   >
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-body">
           <div>
