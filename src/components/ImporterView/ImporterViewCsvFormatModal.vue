@@ -38,7 +38,7 @@
 
             <div class="input-group mb-3">
               <span class="input-group-text">Read CSV in Parallel?</span>
-              <select class="form-select">
+              <select class="form-select" v-model="parallelism">
                 <option value="true">
                   Yes
                 </option>
@@ -47,7 +47,7 @@
                 </option>
               </select>
               <span class="input-group-text">Ignore Errors?</span>
-              <select class="form-select">
+              <select class="form-select" v-model="ignoreErrors">
                 <option value="true">
                   Yes
                 </option>
@@ -162,6 +162,7 @@ export default {
 
     save() {
       const format = this.getFormat();
+      console.log("save", format);
       this.hideModal();
       this.$emit("save", this.fileKey, format);
     }
