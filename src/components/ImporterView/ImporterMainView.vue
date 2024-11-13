@@ -1,98 +1,41 @@
 <template>
-  <div
-    v-if="schema"
-    ref="wrapper"
-    class="import-view__wrapper"
-  >
-    <div
-      v-show="filesLength === 0"
-      class="container p-5"
-    >
-      <importer-view-drop-zone
-        ref="dropzone"
-        @files-selected="handleFilesSelected"
-        @load-bundled-dataset="loadBundledDataset"
-      />
+  <div v-if="schema" ref="wrapper" class="import-view__wrapper">
+    <div v-show="filesLength === 0" class="container p-5">
+      <importer-view-drop-zone ref="dropzone" @files-selected="handleFilesSelected"
+        @load-bundled-dataset="loadBundledDataset" />
     </div>
-    <div
-      v-if="filesLength > 0"
-      class="main-wrapper"
-    >
-      <importer-view-sidebar
-        :files="files"
-        @table-type-change="handleTableTypeChange"
-        @add-files="addFiles"
-        @drop-files="handleFilesSelected"
-        @remove-file="removeFile"
-        @preview-file="previewFile"
-        @set-csv-format="openCsvFormatModal"
-      />
+    <div v-if="filesLength > 0" class="main-wrapper">
+      <importer-view-sidebar :files="files" @table-type-change="handleTableTypeChange" @add-files="addFiles"
+        @drop-files="handleFilesSelected" @remove-file="removeFile" @preview-file="previewFile"
+        @set-csv-format="openCsvFormatModal" />
       <div class="outer-wrapper">
-        <button
-          class="btn btn-success"
-          @click="startImport"
-        >
+        <button class="btn btn-success" @click="startImport">
           <i class="fa-solid fa-upload" />
           Start Import
         </button>
         <div class=" table-wrapper">
-          <importer-view-node-tables
-            :files="nodeFiles"
-            :schema="schema"
-            @expand="handleExpand"
-            @set-csv-format="openCsvFormatModal"
-            @set-table-is-new="setTableIsNew"
-            @set-table-name="setTableName"
-            @set-primary-key="setPrimaryKey"
-            @set-column-user-defined-name="setColumnUserDefinedName"
-            @set-column-type="setColumnType"
-            @set-column-ignore="setColumnIgnore"
-          />
-          <importer-view-rel-tables
-            :files="relFiles"
-            :schema="schema"
-            :node-files="nodeFiles"
-            @expand="handleExpand"
-            @set-csv-format="openCsvFormatModal"
-            @set-table-is-new="setTableIsNew"
-            @set-table-name="setTableName"
-            @set-from-table="setFromTable"
-            @set-to-table="setToTable"
-            @set-from-key="setFromKey"
-            @set-to-key="setToKey"
-            @set-column-user-defined-name="setColumnUserDefinedName"
-            @set-column-type="setColumnType"
-            @set-column-ignore="setColumnIgnore"
-          />
+          <importer-view-node-tables :files="nodeFiles" :schema="schema" @expand="handleExpand"
+            @set-csv-format="openCsvFormatModal" @set-table-is-new="setTableIsNew" @set-table-name="setTableName"
+            @set-primary-key="setPrimaryKey" @set-column-user-defined-name="setColumnUserDefinedName"
+            @set-column-type="setColumnType" @set-column-ignore="setColumnIgnore" />
+          <importer-view-rel-tables :files="relFiles" :schema="schema" :node-files="nodeFiles" @expand="handleExpand"
+            @set-csv-format="openCsvFormatModal" @set-table-is-new="setTableIsNew" @set-table-name="setTableName"
+            @set-from-table="setFromTable" @set-to-table="setToTable" @set-from-key="setFromKey" @set-to-key="setToKey"
+            @set-column-user-defined-name="setColumnUserDefinedName" @set-column-type="setColumnType"
+            @set-column-ignore="setColumnIgnore" />
         </div>
       </div>
     </div>
-    <importer-view-processing-modal
-      ref="fileProcessingModal"
-      :items="processingFiles"
-      processing-title="Processing Files..."
-      done-title="Files Processed"
-      @close="clearProcessingFiles"
-    />
-    <importer-view-processing-modal
-      ref="importProcessingModal"
-      :items="importProgress"
+    <importer-view-processing-modal ref="fileProcessingModal" :items="processingFiles"
+      processing-title="Processing Files..." done-title="Files Processed" @close="clearProcessingFiles" />
+    <importer-view-processing-modal ref="importProcessingModal" :items="importProgress"
       :number-of-warnings="currentJob ? currentJob.numberOfWarnings : 0"
-      :warnings="currentJob ? currentJob.warnings : []"
-      processing-title="Importing Files..."
-      done-title="Steps Processed"
-      @close="finishImport"
-    />
-    <importer-view-csv-format-modal
-      ref="csvFormatModal"
-      @save="updateCsvFormat"
-    />
+      :warnings="currentJob ? currentJob.warnings : []" processing-title="Importing Files..."
+      done-title="Steps Processed" @close="finishImport" />
+    <importer-view-csv-format-modal ref="csvFormatModal" @save="updateCsvFormat" />
     <importer-view-preview ref="previewModal" />
-    <importer-view-validation-modal
-      ref="validationModal"
-      @close="abortCurrentJob"
-      @execute="executeCurrentJob"
-    />
+    <importer-view-validation-modal ref="validationModal" @close="abortCurrentJob" @execute="executeCurrentJob" />
+    <importer-view-error-modal ref="errorModal" :error-message="errorMessage" />
   </div>
 </template>
 
@@ -111,6 +54,7 @@ import ImporterViewProcessingModal from './ImporterViewProcessingModal.vue';
 import ImporterViewCsvFormatModal from './ImporterViewCsvFormatModal.vue';
 import ImporterViewPreview from './ImporterViewPreview.vue';
 import ImporterViewValidationModal from './ImporterViewValidationModal.vue';
+import ImporterViewErrorModal from './ImporterViewErrorModal.vue';
 
 export default {
   name: "ImporterMainView",
@@ -123,6 +67,7 @@ export default {
     ImporterViewCsvFormatModal,
     ImporterViewPreview,
     ImporterViewValidationModal,
+    ImporterViewErrorModal,
   },
   props: {
     schema: {
@@ -139,6 +84,7 @@ export default {
     files: {},
     processingFiles: [],
     currentJob: null,
+    errorMessage: "",
   }),
   computed: {
     isSchemaEmpty() {
@@ -377,7 +323,14 @@ export default {
       const parallelism = format.parallelism;
       const ignoreErrors = format.ignoreErrors;
 
-      const columns = await DuckDB.getCsvHeaderWithCustomSettings(key, delimiter, quote, escape, hasHeader);
+      let columns;
+      try {
+        columns = await DuckDB.getCsvHeaderWithCustomSettings(key, delimiter, quote, escape, hasHeader);
+      } catch (error) {
+        this.errorMessage = `Could not detect the columns with the given CSV format settings for file ${file.file.name}. Please check the settings and try again.`;
+        this.$refs.errorModal.showModal();
+        return;
+      }
       columns.forEach((c, i) => {
         c.type = DuckDB.convertDuckDBTypeToKuzuType(c.type);
         c.name = hasHeader ? c.name : `column${i}`;
