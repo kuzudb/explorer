@@ -74,7 +74,7 @@ class DuckDB {
     const db = await this.getDb();
     const conn = await db.connect();
     const fileName = this.getFileName(uuid, FILE_TYPE.CSV);
-    const query = `DESCRIBE SELECT * FROM READ_CSV('${fileName}', delim=?, quote=?, escape=?, header=${hasHeader}) LIMIT 1`;
+    const query = `DESCRIBE SELECT * FROM READ_CSV('${fileName}', delim=?, quote=?, escape=?, header=${hasHeader}, ignore_errors=true)  LIMIT 1`;
     console.debug(query);
     let preparedQuery = await conn.prepare(query);
     let result = await preparedQuery.query(delimiter, quote, escape);
@@ -130,7 +130,7 @@ class DuckDB {
     const db = await this.getDb();
     const conn = await db.connect();
     const fileName = this.getFileName(uuid, FILE_TYPE.CSV);
-    const query = `SELECT * FROM READ_CSV('${fileName}', delim=?, quote=?, escape=?, header=${hasHeader}) LIMIT ${limit}`;
+    const query = `SELECT * FROM READ_CSV('${fileName}', delim=?, quote=?, escape=?, header=${hasHeader}, ignore_errors=true) LIMIT ${limit}`;
     console.debug(query);
     let preparedQuery = await conn.prepare(query);
     let result = await preparedQuery.query(delimiter, quote, escape);
