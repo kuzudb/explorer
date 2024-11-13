@@ -116,6 +116,14 @@ router.post("/:job_id/exec", async (req, res) => {
         throw err;
       }
     }
+    try {
+      await DataImportUtil.deleteTmp(jobId);
+    } catch (err) {
+      // Ignore
+    }
+  } catch (err) {
+    // Ignore 
+  } finally {
     const numberOfWarningsQueryResult = await conn.query("CALL SHOW_WARNINGS() RETURN COUNT(*) AS count;");
     const numberOfWarnings = (await numberOfWarningsQueryResult.getNext()).count;
     job.numberOfWarnings = numberOfWarnings;
@@ -141,12 +149,6 @@ router.post("/:job_id/exec", async (req, res) => {
         };
       });
     }
-    try {
-      await DataImportUtil.deleteTmp(jobId);
-    } catch (err) {
-      // Ignore
-    }
-  } finally {
     database.releaseConnection(conn);
   }
 });

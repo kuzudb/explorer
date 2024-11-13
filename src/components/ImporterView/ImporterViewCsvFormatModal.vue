@@ -68,7 +68,22 @@
 
             <div class="input-group mb-3">
               <span class="input-group-text">Read CSV in Parallel?</span>
-              <select class="form-select">
+              <select
+                v-model="parallelism"
+                class="form-select"
+              >
+                <option value="true">
+                  Yes
+                </option>
+                <option value="false">
+                  No
+                </option>
+              </select>
+              <span class="input-group-text">Ignore Errors?</span>
+              <select
+                v-model="ignoreErrors"
+                class="form-select"
+              >
                 <option value="true">
                   Yes
                 </option>
@@ -135,6 +150,7 @@ export default {
     listBegin: null,
     listEnd: null,
     parallelism: null,
+    ignoreErrors: null,
   }),
   computed: {
   },
@@ -149,7 +165,7 @@ export default {
       this.modal.show();
     },
 
-    setFormat(fileKey, delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism) {
+    setFormat(fileKey, delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism, ignoreErrors) {
       const convertToEscapedString = (str) => {
         if(str === '"' || str === "'") {
           return str;
@@ -165,6 +181,7 @@ export default {
       this.listBegin = convertToEscapedString(listBegin);
       this.listEnd = convertToEscapedString(listEnd);
       this.parallelism = String(parallelism);
+      this.ignoreErrors = String(ignoreErrors);
     },
 
     getFormat() {
@@ -184,6 +201,7 @@ export default {
         listBegin: processStringWithEscape(this.listBegin),
         listEnd: processStringWithEscape(this.listEnd),
         parallelism: this.parallelism === "true",
+        ignoreErrors: this.ignoreErrors === "true",
       };
 
     },
