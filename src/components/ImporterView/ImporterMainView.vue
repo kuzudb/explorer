@@ -77,6 +77,8 @@
     <importer-view-processing-modal
       ref="importProcessingModal"
       :items="importProgress"
+      :number-of-warnings="currentJob ? currentJob.numberOfWarnings : 0"
+      :warnings="currentJob ? currentJob.warnings : []"
       processing-title="Importing Files..."
       done-title="Steps Processed"
       @close="finishImport"
@@ -90,6 +92,10 @@
       ref="validationModal"
       @close="abortCurrentJob"
       @execute="executeCurrentJob"
+    />
+    <importer-view-error-modal
+      ref="errorModal"
+      :error-message="errorMessage"
     />
   </div>
 </template>
@@ -109,6 +115,7 @@ import ImporterViewProcessingModal from './ImporterViewProcessingModal.vue';
 import ImporterViewCsvFormatModal from './ImporterViewCsvFormatModal.vue';
 import ImporterViewPreview from './ImporterViewPreview.vue';
 import ImporterViewValidationModal from './ImporterViewValidationModal.vue';
+import ImporterViewErrorModal from './ImporterViewErrorModal.vue';
 
 export default {
   name: "ImporterMainView",
@@ -121,6 +128,7 @@ export default {
     ImporterViewCsvFormatModal,
     ImporterViewPreview,
     ImporterViewValidationModal,
+    ImporterViewErrorModal,
   },
   props: {
     schema: {
@@ -137,6 +145,7 @@ export default {
     files: {},
     processingFiles: [],
     currentJob: null,
+    errorMessage: "",
   }),
   computed: {
     isSchemaEmpty() {
@@ -298,6 +307,7 @@ export default {
           currentFile.format.ListStart = '[';
           currentFile.format.ListEnd = ']';
           currentFile.format.Parallelism = true;
+          currentFile.format.IgnoreErrors = true;
         }
         currentFile.format.Columns.forEach((c, i) => {
           c.type = DuckDB.convertDuckDBTypeToKuzuType(c.type);
@@ -356,8 +366,9 @@ export default {
       const listBegin = file.format.ListStart;
       const listEnd = file.format.ListEnd;
       const parallelism = file.format.Parallelism ? 'true' : 'false';
+      const ignoreErrors = file.format.IgnoreErrors ? 'true' : 'false';
       this.$refs.csvFormatModal.setFormat(
-        key, delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism
+        key, delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism, ignoreErrors
       );
       this.$refs.csvFormatModal.showModal();
     },
@@ -371,8 +382,16 @@ export default {
       const listBegin = format.listBegin;
       const listEnd = format.listEnd;
       const parallelism = format.parallelism;
+      const ignoreErrors = format.ignoreErrors;
 
-      const columns = await DuckDB.getCsvHeaderWithCustomSettings(key, delimiter, quote, escape, hasHeader);
+      let columns;
+      try {
+        columns = await DuckDB.getCsvHeaderWithCustomSettings(key, delimiter, quote, escape, hasHeader);
+      } catch (error) {
+        this.errorMessage = `Could not detect the columns with the given CSV format settings for file ${file.file.name}. Please check the settings and try again.`;
+        this.$refs.errorModal.showModal();
+        return;
+      }
       columns.forEach((c, i) => {
         c.type = DuckDB.convertDuckDBTypeToKuzuType(c.type);
         c.name = hasHeader ? c.name : `column${i}`;
@@ -386,6 +405,7 @@ export default {
       file.format.ListEnd = listEnd;
       file.format.Parallelism = parallelism;
       file.format.Columns = columns;
+      file.format.IgnoreErrors = ignoreErrors;
       file.detectedFormat.Columns = columns;
       if (file.type === 'node') {
         if (file.format.Columns[0]) {
@@ -572,6 +592,7 @@ export default {
             listBegin: rawFile.format.ListStart,
             listEnd: rawFile.format.ListEnd,
             parallelism: rawFile.format.Parallelism,
+            ignoreErrors: rawFile.format.IgnoreErrors,
           }
         }
         summary.push(file);
@@ -683,6 +704,8 @@ export default {
           const res = await Axios.get(`/api/import/${this.currentJob.jobId}`);
           const isAllDone = res.data.plan.every(j => j.status !== JOB_STATUS.PROCESSING && j.status !== JOB_STATUS.PENDING);
           this.currentJob.plan = res.data.plan;
+          this.currentJob.numberOfWarnings = res.data.numberOfWarnings;
+          this.currentJob.warnings = res.data.warnings;
           if (isAllDone) {
             window.clearInterval(interval);
           }

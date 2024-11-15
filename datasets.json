@@ -32,24 +32,6 @@
       "path": "snap/twitter/csv",
       "isProduction": true,
       "description": ""
-    },
-    {
-      "name": "RDF Taxonomy",
-      "path": "copy-test/rdf",
-      "isProduction": false,
-      "description": ""
-    },
-    {
-      "name": "RDF SPB",
-      "path": "rdf/spb",
-      "isProduction": true,
-      "description": ""
-    },
-    {
-      "name": "RDFox Example",
-      "path": "rdf/rdfox_example",
-      "isProduction": false,
-      "description": ""
     }
   ]
 }

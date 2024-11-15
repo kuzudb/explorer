@@ -141,7 +141,7 @@ class DataDefinitionLanguage {
   }
 
   getCsvOptionsSubquery(csvFormatOptions) {
-    const { delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism } = csvFormatOptions;
+    const { delimiter, quote, escape, hasHeader, listBegin, listEnd, parallelism, ignoreErrors } = csvFormatOptions;
     let csvOptions = [];
     csvOptions.push(`HEADER=${hasHeader}`);
     csvOptions.push(`DELIM="${this._jsonEscapedString(delimiter)}"`);
@@ -150,6 +150,7 @@ class DataDefinitionLanguage {
     // csvOptions.push(`LIST_BEGIN="${this._jsonEscapedString(listBegin)}"`);
     // csvOptions.push(`LIST_END="${this._jsonEscapedString(listEnd)}"`);
     csvOptions.push(`PARALLEL=${parallelism}`);
+    csvOptions.push(`IGNORE_ERRORS=${ignoreErrors}`);
     const csvOptionsString = `(${csvOptions.join(", ")})`;
     return csvOptionsString;
   }

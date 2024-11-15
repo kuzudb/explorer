@@ -62,6 +62,39 @@
               </div>
             </li>
           </ul>
+
+          <div
+            v-if="numberOfWarnings > 0"
+            class="alert alert-warning mt-3"
+          >
+            <h5 v-if="numberOfWarnings <= 100">
+              {{ numberOfWarnings }}
+              Warning{{ numberOfWarnings > 1 ? 's' : '' }}
+              Reported
+            </h5>
+            <h5 v-else>
+              Showing first 100 warnings of {{ numberOfWarnings }} total
+            </h5>
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>File</th>
+                  <th>Line</th>
+                  <th>Message</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(warning, i) in warnings"
+                  :key="i"
+                >
+                  <td>{{ warning.fileName }}</td>
+                  <td>{{ warning.lineNumber }}</td>
+                  <td>{{ warning.message }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
         <div
           v-if="!isProcessing"
@@ -99,7 +132,14 @@ export default {
       type: String,
       default:  "Items Processed"
     },
-
+    numberOfWarnings: {
+      type: Number,
+      default: 0,
+    },
+    warnings: {
+      type: Array,
+      default: () => [],
+    },
   },
   emits: ["close"],
   data: () => ({
@@ -147,5 +187,10 @@ export default {
 span.item-name {
  min-width: 200px;
       word-break: break-all;
+}
+
+.modal-dialog.modal-xl .table> :not(caption)>*>* {
+  background-color: transparent;
+  --bs-table-border-color: #000;
 }
 </style>
