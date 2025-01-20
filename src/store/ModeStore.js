@@ -20,8 +20,12 @@ export const useModeStore = defineStore("mode", {
     },
 
     isReadWrite(state) {
-      return state.currentMode === MODES.READ_WRITE;
+      return state.currentMode === MODES.READ_WRITE || state.currentMode === MODES.WASM || state.currentMode === MODES.DEMO;
     },
+
+    isWasm(state) {
+      return state.currentMode === MODES.WASM || state.currentMode === MODES.DEMO;
+    }
   },
 
   actions: {

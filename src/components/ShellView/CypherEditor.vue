@@ -49,7 +49,7 @@
         />
       </div>
       <div
-        v-show="!isLoading"
+        v-show="!isLoading && !modeStore.isWasm"
         class="shell-editor__button"
       >
         <i
@@ -82,6 +82,8 @@ import MonacoCypherLanguage from "../../utils/MonacoCypherLanguage";
 import * as Monaco from "monaco-editor";
 import { UI_SIZE } from "../../utils/Constants";
 import PlaceholderContentWidget from "../../utils/MonacoPlaceholderContentWidget";
+import { useModeStore } from "../../store/ModeStore";
+import { mapStores } from "pinia";
 
 // Make sure Monaco is not reactive. Otherwise, it will cause the Vue.js
 // app to crash.
@@ -126,6 +128,7 @@ export default {
   },
 
   computed: {
+    ...mapStores(useModeStore),
     maximizeButtonClass() {
       return (this.isMaximized ? "fa-minimize" : "fa-maximize") + " fa-lg fa-solid";
     },
@@ -308,7 +311,7 @@ $margin: 20px;
   padding-top: 4px;
   padding-bottom: 4px;
 
-  > i {
+  >i {
     cursor: pointer;
 
     &:hover {
@@ -320,16 +323,16 @@ $margin: 20px;
     }
   }
 
-  > i.fa-play {
+  >i.fa-play {
     color: $success;
   }
 
-  > i.fa-times {
+  >i.fa-times {
     color: $red;
   }
 
-  > i.fa-maximize,
-  > i.fa-minimize {
+  >i.fa-maximize,
+  >i.fa-minimize {
     color: $info;
   }
 }

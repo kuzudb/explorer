@@ -1,14 +1,25 @@
 const express = require("express");
 const router = express.Router();
 const database = require("./utils/Database");
+const MODES = require("./utils/Constants").MODES;
+
+const isWasmMode = process.env.KUZU_WASM &&
+  process.env.KUZU_WASM.toLowerCase() === "true";
 
 router.get("/", async (_, res) => {
+  const isProduction = process.env.NODE_ENV === "production";
   try {
     const mode = database.getAccessModeString();
+    if (isWasmMode && mode !== MODES.DEMO) {
+      return res.send({
+        mode: MODES.WASM,
+        isProduction,
+      });
+    }
     res.send({
       mode,
-      isProduction: process.env.NODE_ENV === "production",
-  });
+      isProduction,
+    });
   } catch (err) {
     return res.status(400).send({ error: err.message });
   }

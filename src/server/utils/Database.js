@@ -31,6 +31,11 @@ const os = require("os");
 
 class Database {
   constructor() {
+    const isWasmMode = process.env.KUZU_WASM &&
+      process.env.KUZU_WASM.toLowerCase() === "true";
+    if (isWasmMode) {
+      return;
+    }
     const isInMemory = process.env.KUZU_IN_MEMORY && process.env.KUZU_IN_MEMORY.toLowerCase() === "true";
     const mode = this.getAccessModeString();
     const isReadOnlyMode = mode !== READ_WRITE_MODE;

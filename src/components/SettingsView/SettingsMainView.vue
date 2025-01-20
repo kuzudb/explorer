@@ -237,27 +237,6 @@
         </div>
 
         <div class="modal-footer">
-          <span
-            v-show="!modeStore.isDemo"
-            class="pull-left"
-          >
-            <button
-              type="button"
-              class="btn btn-danger"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              title="If you are making changes to the mounted Kùzu database outside of Kùzu Explorer,
-            the changes may not be reflected within Kùzu Explorer. This button will reset the Kùzu connection, which will force 
-            reloading the data."
-              @click="resetDatabase()"
-            >
-              <i class=" fa fa-refresh" />
-              Reset Kùzu Connection
-            </button>
-
-            <span :class="`text-${databaseResetStateClass}`">&nbsp;&nbsp;&nbsp; {{ databaseResetStateText }} </span>
-          </span>
-
           <button
             type="button"
             class="btn btn-secondary"
@@ -393,24 +372,6 @@ export default {
         rel.g6Settings.style.endArrow = {};
       }
       rel.g6Settings.style.endArrow.fill = rel.g6Settings.style.stroke;
-    },
-
-    async resetDatabase() {
-      this.databaseResetStateText = "Resetting...";
-      this.databaseResetStateClass = "primary";
-      try {
-        const res = await Axios.post("/api/reset");
-        this.databaseResetStateText = res.data.message;
-        this.databaseResetStateClass = "success";
-      } catch (error) {
-        console.error(error);
-        this.databaseResetStateClass = "danger";
-        if (error.response && error.response.data) {
-          this.databaseResetStateText = error.response.data.error;
-        } else {
-          this.databaseResetStateText = "An error occurred while resetting the database.";
-        }
-      }
     },
   },
 }

@@ -4,10 +4,12 @@ const path = require("path");
 const multer = require("multer");
 const database = require("./utils/Database");
 const uuid = require("uuid");
-const DataImportUtil = require("./utils/DataImport");
+const DataImportUtils = require("../utils/DataImport");
+const DataImportFsUtils = require("./utils/DataImportFs");
 const Constants = require("./utils/Constants");
 const JOB_STATUS = Constants.JOB_STATUS;
 const IMPORT_ACTIONS = Constants.IMPORT_ACTIONS;
+const ddl = require("../utils/DataDefinitionLanguage");
 
 
 const jobsMap = new Map();
@@ -15,7 +17,7 @@ const jobsMap = new Map();
 const storage = multer.diskStorage({
   destination: function (req, _, cb) {
     const jobId = req.params.job_id;
-    const tmpDirPath = DataImportUtil.getTmpPath(jobId);
+    const tmpDirPath = DataImportFsUtils.getTmpPath(jobId);
     cb(null, tmpDirPath);
   },
   filename: function (req, _, cb) {
@@ -41,7 +43,8 @@ router.post("/:job_id", async (req, res) => {
       errors: ["Missing config"]
     });
   }
-  const { success, errors } = await DataImportUtil.validateImport(config);
+  const schema = await database.getSchema();
+  const { success, errors } = DataImportUtils.validateImport(config, schema);
   if (!success) {
     return res.status(400).send({
       success: false,
@@ -50,14 +53,14 @@ router.post("/:job_id", async (req, res) => {
   }
   let tmpDirPath;
   try {
-    tmpDirPath = await DataImportUtil.createTmp(jobId);
+    tmpDirPath = await DataImportFsUtils.createTmp(jobId);
   } catch (err) {
     return res.status(500).send({
       success: false,
       errors: ["Error creating temporary directory"]
     });
   }
-  const plan = await DataImportUtil.createImportPlan(config, tmpDirPath);
+  const plan = DataImportUtils.createImportPlan(config, tmpDirPath, schema, ddl);
   jobsMap.set(jobId, {
     id: jobId,
     plan,
@@ -108,7 +111,7 @@ router.post("/:job_id/exec", async (req, res) => {
           job.plan[j].error = 'Previous step failed';
         }
         try {
-          await DataImportUtil.deleteTmp(jobId);
+          await DataImportFsUtils.deleteTmp(jobId);
         } catch (deleteErr) {
           // Ignore
         }
@@ -117,7 +120,7 @@ router.post("/:job_id/exec", async (req, res) => {
       }
     }
     try {
-      await DataImportUtil.deleteTmp(jobId);
+      await DataImportFsUtils.deleteTmp(jobId);
     } catch (err) {
       // Ignore
     }
@@ -192,7 +195,7 @@ router.delete("/:job_id", async (req, res) => {
   if (jobId) {
     jobsMap.delete(jobId);
     try {
-      await DataImportUtil.deleteTmp(jobId);
+      await DataImportFsUtils.deleteTmp(jobId);
     }
     catch (err) {
       // Ignore
