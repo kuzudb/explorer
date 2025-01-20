@@ -1,29 +1,20 @@
-const database = require("./Database");
-const ddl = require("../../utils/DataDefinitionLanguage");
-const path = require("path");
-const fs = require("fs/promises");
-const Constants = require("./Constants");
-const IMPORT_ACTIONS = Constants.IMPORT_ACTIONS;
-const JOB_STATUS = Constants.JOB_STATUS;
+// TODO: Refactor this to use the global Constants module after we move the
+// backend to use ESM instead of CommonJS.
+const IMPORT_ACTIONS = {
+  CREATE: "Create Table",
+  UPLOAD: "Upload File",
+  COPY: "Copy Table",
+};
+
+const JOB_STATUS = {
+  PENDING: "PENDING",
+  PROCESSING: "PROCESSING",
+  SUCCESS: "SUCCESS",
+  ERROR: "ERROR",
+};
 
 class DataImportUtils {
-  getTmpPath(id) {
-    return path.join("/tmp", id);
-  }
-
-  async createTmp(id) {
-    const tmpPath = this.getTmpPath(id);
-    await fs.rm(tmpPath, { recursive: true, force: true });
-    await fs.mkdir(tmpPath);
-    return tmpPath;
-  }
-
-  async deleteTmp(id) {
-    const tmpPath = this.getTmpPath(id);
-    await fs.rm(tmpPath, { recursive: true, force: true });
-  }
-
-  async validateImport(config) {
+  validateImport(config, schema) {
     let success = true;
     const errors = [];
     const pushError = (error) => {
@@ -33,7 +24,6 @@ class DataImportUtils {
       errors.push(error);
       success = false;
     }
-    const schema = await database.getSchema();
     if (config.length === 0) {
       pushError("No files to import");
     }
@@ -257,8 +247,7 @@ class DataImportUtils {
     return errors;
   }
 
-  async createImportPlan(config, tmpPath) {
-    const schema = await database.getSchema();
+  createImportPlan(config, tmpPath, schema, ddl) {
     const plan = [];
     // Plan for uploading files
     for (const table of config) {
@@ -329,7 +318,7 @@ class DataImportUtils {
     // Plan for copying node tables
     for (const table of config) {
       if (table.type === 'node') {
-        const copyResult = this.planCopy(table, config, schema, tmpPath);
+        const copyResult = this.planCopy(table, config, schema, tmpPath, ddl);
         if (copyResult) {
           plan.push(copyResult);
         }
@@ -338,7 +327,7 @@ class DataImportUtils {
     // Plan for copying rel tables
     for (const table of config) {
       if (table.type === 'rel') {
-        const copyResult = this.planCopy(table, config, schema, tmpPath);
+        const copyResult = this.planCopy(table, config, schema, tmpPath, ddl);
         if (copyResult) {
           plan.push(copyResult);
         }
@@ -347,7 +336,7 @@ class DataImportUtils {
     return plan;
   }
 
-  planCopy(table, config, schema, tmpPath) {
+  planCopy(table, config, schema, tmpPath, ddl) {
     const result = {
       displayName: `${table.name} →  ${table.tableName}`,
       action: IMPORT_ACTIONS.COPY,
@@ -382,7 +371,9 @@ class DataImportUtils {
           table.columns.slice(2).every((column, i) => column.name === relTable.properties[i].name);
       }
     }
-    const filePath = path.join(tmpPath, `${table.id}.${table.extension}`);
+    const filePath = tmpPath ?
+      `${tmpPath}/${table.id}.${table.extension}` :
+      `${table.id}.${table.extension}`;
     if (isCopySimple) {
       const { cypher } = ddl.copyTableSimple(table.tableName, filePath, table.csvFormat);
       result.cypher = cypher;

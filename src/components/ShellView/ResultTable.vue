@@ -15,7 +15,7 @@
               href="#"
               @click="page -= 1"
             >
-              <span aria-hidden="true">&laquo;</span>
+              <span>&laquo;</span>
             </a>
           </li>
           <li
@@ -42,7 +42,7 @@
               href="#"
               @click="page += 1"
             >
-              <span aria-hidden="true">&raquo;</span>
+              <span>&raquo;</span>
             </a>
           </li>
         </ul>

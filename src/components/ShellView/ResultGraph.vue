@@ -201,6 +201,7 @@ import {
 } from "../../utils/Constants";
 import NeighborsFetcher from "../../utils/NeighborsFetcher";
 import { useSettingsStore } from "../../store/SettingsStore";
+import { useModeStore } from "../../store/ModeStore";
 import { mapStores } from 'pinia'
 import ValueFormatter from "../../utils/ValueFormatter";
 
@@ -290,7 +291,7 @@ export default {
     displayProperties() {
       return this.hoveredProperties.length > 0 ? this.hoveredProperties : this.clickedProperties;
     },
-    ...mapStores(useSettingsStore),
+    ...mapStores(useSettingsStore, useModeStore),
   },
   watch: {
     performanceSettings: {
@@ -367,7 +368,7 @@ export default {
           preventOverlap: true,
           nodeStrength: 2000,
           animate: true,
-            maxIteration: 500,
+          maxIteration: 500,
         },
         defaultNode: this.settingsStore.defaultNode,
         nodeStateStyles: {
@@ -458,7 +459,7 @@ export default {
         this.refreshDraggedNodePosition(e);
         this.g6Graph.layout();
       });
-      
+
       this.g6Graph.on('edge:mouseenter', (e) => {
         const edgeItem = e.item;
         this.g6Graph.setItemState(edgeItem, 'hover', true);
@@ -879,6 +880,7 @@ export default {
           primaryKeyName,
           primaryKeyValue,
           sizeLimit,
+          this.modeStore.isWasm
         );
       } catch (e) {
         // Ignore error for now. Just don't expand if the core does not execute the query.

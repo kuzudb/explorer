@@ -43,7 +43,7 @@ class DuckDB {
     await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
     const conn = await db.connect();
     const versionResult = await conn.query(`SELECT version()`);
-    console.debug("DuckDB version:", versionResult.toArray()[0].toJSON()["version()"]);
+    console.log("DuckDB version:", versionResult.toArray()[0].toJSON()["version()"]);
     await conn.close();
     this.db = db;
     console.timeEnd("DuckDB init");

@@ -90,6 +90,7 @@ export const MODES = {
   DEMO: "DEMO",
   READ_WRITE: "READ_WRITE",
   READ_ONLY: "READ_ONLY",
+  WASM: "WASM",
 };
 
 export const GPT_MODELS = ["gpt-4o", "gpt-4o-mini", "gpt-4"];
@@ -124,4 +125,15 @@ export const JOB_STATUS = {
   PROCESSING: "PROCESSING",
   SUCCESS: "SUCCESS",
   ERROR: "ERROR",
+};
+
+export const TABLE_TYPES = {
+  NODE: "NODE",
+  REL: "REL",
+  REL_GROUP: "REL_GROUP",
+};
+
+export const LOADING_STATUS = {
+  EVAL: "Evaluating query...",
+  PROCESS: "Processing results...",
 };

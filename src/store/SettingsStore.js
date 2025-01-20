@@ -22,7 +22,7 @@ const COLOR_PALETTE = [
   "#4e79a7", // blue
 ];
 
-function randomChromaColor(){
+function randomChromaColor() {
   const randomSaturation = Math.random() * 0.2 + 0.6;  //Sets saturation to a random value between 0.6 and 0.8
   const randomLightness = Math.random() * 0.2 + 0.6;   //Sets lightness to a random value between 0.6 and 0.8
   return chroma.random().set('hsl.s', randomSaturation).set('hsl.l', randomLightness).hex();
@@ -400,14 +400,17 @@ export const useSettingsStore = defineStore("settings", {
       return {};
     },
 
-    uploadSettings() {
+    async uploadSettings() {
       const settings = JSON.parse(JSON.stringify(this.allSettings));
       settings.colors = this.colors;
       delete settings.gpt.apiToken;
       localStorage.setItem("settings", JSON.stringify(settings));
-      return Axios.post("/api/session/settings", settings).then((response) => {
+      try {
+        const response = await Axios.post("/api/session/settings", settings)
         return response.data;
-      });
+      } catch (error) {
+        // Ignore the error
+      }
     },
   },
 });

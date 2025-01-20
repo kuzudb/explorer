@@ -3,6 +3,7 @@ const router = express.Router();
 const path = require("path");
 const posixPath = require("path/posix");
 const fs = require("fs/promises");
+const fsSync = require("fs");
 const process = require("process");
 const database = require("./utils/Database");
 
@@ -59,11 +60,55 @@ router.get("/:dataset", async (req, res) => {
     return res.sendStatus(404);
   }
   const schema = path.join(datasetPath, SCHEMA_FILE);
+  const copy = path.join(datasetPath, COPY_FILE);
   try {
-    const content = await fs.readFile(schema, "utf-8");
-    return res.send({ dataset, schema: content });
+    const datasetRelativePath = DATASETS_TO_SHOW[dataset];
+    let copyContent = await fs.readFile(copy, "utf-8");
+    // Remove all "datasetRelativePath" from the copy file
+    copyContent = copyContent.replace(
+      new RegExp(`dataset/${datasetRelativePath}`, "g"),
+      ""
+    );
+    // List all files in the `datasetPath`, and remove the `schema` and `copy` files
+    const files = await fs.readdir(datasetPath);
+    const filesToShow = files.filter(
+      (file) => file !== SCHEMA_FILE && file !== COPY_FILE
+    );
+    let schemaContent = await fs.readFile(schema, "utf-8");
+    return res.send({ dataset, schema: schemaContent, copy: copyContent, files: filesToShow });
   } catch (err) {
     return res.sendStatus(400);
+  }
+});
+
+router.get("/:dataset/files/:file", async (req, res) => {
+  await getDatasetsToShow();
+  const dataset = req.params.dataset;
+  const fileName = req.params.file;
+  const datasetPath = getDatasetPath(dataset);
+  if (!datasetPath) {
+    return res.sendStatus(404);
+  }
+  const filesToShow = await fs.readdir(datasetPath);
+  if (!filesToShow.includes(fileName)) {
+    return res.sendStatus(404);
+  }
+  try {
+    const filePath = path.join(datasetPath, fileName);
+    if (fileName.endsWith(".csv")) {
+      res.set("Content-Type", "text/csv");
+    } else if (fileName.endsWith(".parquet")) {
+      res.set("Content-Type", "application/octet-stream");
+    } else if (fileName.endsWith(".json")) {
+      res.set("Content-Type", "application/json");
+    }
+    const stream = fsSync.createReadStream(filePath);
+    stream.on("error", _ => {
+      return res.sendStatus(500);
+    });
+    stream.pipe(res);
+  } catch (err) {
+    return res.sendStatus(404);
   }
 });
 
