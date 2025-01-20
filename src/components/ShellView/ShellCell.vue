@@ -1,17 +1,41 @@
 <template>
   <div class="shell-cell__wrapper">
-    <CypherEditor ref="editor" :schema="schema" :navbar-height="navbarHeight" :is-maximizable="isMaximizable"
-      :is-loading="isLoading" @evaluate-cypher="evaluateCypher" @generate-and-evaluate-query="generateAndEvaluateQuery"
-      @remove="removeCell" @toggle-maximize="toggleMaximize" @editor-resize="handleEditorResize" />
-    <ResultContainer v-for="(_, index) in queryResults" :key="index" :ref="getRefName(index)"
-      :is-maximized="isMaximized" :navbar-height="navbarHeight" />
-    <ResultContainer v-if="errorMessage" ref="resultErrorContainer" is-maximized="false"
-      :navbar-height="navbarHeight" />
-    <div v-if="isLoading" class="d-flex align-items-center">
+    <CypherEditor
+      ref="editor"
+      :schema="schema"
+      :navbar-height="navbarHeight"
+      :is-maximizable="isMaximizable"
+      :is-loading="isLoading"
+      @evaluate-cypher="evaluateCypher"
+      @generate-and-evaluate-query="generateAndEvaluateQuery"
+      @remove="removeCell"
+      @toggle-maximize="toggleMaximize"
+      @editor-resize="handleEditorResize"
+    />
+    <ResultContainer
+      v-for="(_, index) in queryResults"
+      :key="index"
+      :ref="getRefName(index)"
+      :is-maximized="isMaximized"
+      :navbar-height="navbarHeight"
+    />
+    <ResultContainer
+      v-if="errorMessage"
+      ref="resultErrorContainer"
+      is-maximized="false"
+      :navbar-height="navbarHeight"
+    />
+    <div
+      v-if="isLoading"
+      class="d-flex align-items-center"
+    >
       <strong class="text-secondary">{{
         loadingText ? loadingText : "Loading..."
       }}</strong>
-      <div class="spinner-border text-secondary ms-auto" role="status" />
+      <div
+        class="spinner-border text-secondary ms-auto"
+        role="status"
+      />
     </div>
   </div>
 </template>
