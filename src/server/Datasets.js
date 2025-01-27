@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const path = require("path");
-const posixPath = require("path/posix");
 const fs = require("fs/promises");
 const process = require("process");
 const database = require("./utils/Database");
@@ -90,7 +89,9 @@ router.get("/:dataset/copy", async (req, res) => {
       .split("\n")
       .map((line) => line.trim())
       .filter((line) => line.length > 0)
-      .map((line) => line.replace("dataset/", posixPath.resolve(base) + "/"));
+      .map((line) => {
+        return line.replace("dataset/", base + "/")
+      });
     commands = ddls.concat(copyCommands);
   } catch (err) {
     return res.sendStatus(500);
