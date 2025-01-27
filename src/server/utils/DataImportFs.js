@@ -1,9 +1,10 @@
 const path = require("path");
 const fs = require("fs/promises");
+const os = require("os");
 
 class DataImportFsUtils {
   getTmpPath(id) {
-    return path.join("/tmp", id);
+    return path.join(os.tmpdir(), id);
   }
 
   async createTmp(id) {

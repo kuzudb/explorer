@@ -157,6 +157,7 @@ class DataDefinitionLanguage {
 
   copyTableSimple(name, path, csvFormatOptions) {
     name = this._escapeName(name);
+    path = path.replaceAll("\\", "/");
     let statement = `COPY ${name} FROM '${path}'`;
     if (csvFormatOptions) {
       const csvOptionsString = this.getCsvOptionsSubquery(csvFormatOptions);
@@ -169,6 +170,7 @@ class DataDefinitionLanguage {
 
   copyTableComplex(name, path, csvFormatOptions, columnMapping) {
     let statement = `COPY ${name} FROM `;
+    path = path.replaceAll("\\", "/");
     let loadStatement = `LOAD FROM '${path}'`;
     if (csvFormatOptions) {
       const csvOptionsString = this.getCsvOptionsSubquery(csvFormatOptions);
