@@ -57,7 +57,7 @@ jobs:
       - name: Prebuild - fetch datasets
         run: npm run fetch-datasets
       - name: Prebuild - cleanup
-        run: rm -rf node_modules .git
+        run: rm -rf node_modules .git explorer.db
       - name: Prebuild - get version
         shell: bash
         run: |
@@ -91,7 +91,6 @@ jobs:
           node-version: "20"
       - name: Get version
         shell: bash
-        working-directory: explorer-prebuild
         run: |
           VERSION=$(node -e 'fs=require("fs");console.log(JSON.parse(fs.readFileSync("package.json")).dependencies.kuzu)')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
@@ -115,7 +114,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: ./explorer-prebuild
+          context: .
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.TAGS }}
@@ -126,19 +125,84 @@ jobs:
 
   windows:
     needs: prebuild
-    name: Build and push Windows Deployment Package
+    name: Build and push Windows deployment package
     runs-on: windows-latest
     steps:
       - name: Download prebuild
         uses: actions/download-artifact@v4
         with:
           name: explorer-prebuild
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
       - name: Install dependencies
-        run: |
-          ls
-          npm install
+        run: npm install
       - name: Upload current directory
         uses: actions/upload-artifact@v4
         with:
-          path: explorer-prebuild
+          path: .
           name: explorer-windows-x64
+
+  linux-x64:
+    needs: prebuild
+    name: Build and push Linux x64 deployment package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download prebuild
+        uses: actions/download-artifact@v4
+        with:
+          name: explorer-prebuild
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install
+      - name: Upload current directory
+        uses: actions/upload-artifact@v4
+        with:
+          path: .
+          name: explorer-linux-x64
+
+  mac-arm64:
+    needs: prebuild
+    name: Build and push macOS arm64 deployment package
+    runs-on: macos-latest
+    steps:
+      - name: Download prebuild
+        uses: actions/download-artifact@v4
+        with:
+          name: explorer-prebuild
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install
+      - name: Upload current directory
+        uses: actions/upload-artifact@v4
+        with:
+          path: .
+          name: explorer-mac-arm64
+  
+  mac-x64:
+    needs: prebuild
+    name: Build and push macOS x64 deployment package
+    runs-on: macos-13
+    steps:
+      - name: Download prebuild
+        uses: actions/download-artifact@v4
+        with:
+          name: explorer-prebuild
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install
+      - name: Upload current directory
+        uses: actions/upload-artifact@v4
+        with:
+          path: .
+          name: explorer-mac-x64
