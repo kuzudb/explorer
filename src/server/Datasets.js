@@ -117,6 +117,7 @@ router.get("/:dataset/copy", async (req, res) => {
   const dataset = req.params.dataset;
   const datasetPath = getDatasetPath(dataset);
   const base = getBasePath();
+  base = base.replaceAll("\\", "/");
   if (!datasetPath) {
     return res.sendStatus(404);
   }
