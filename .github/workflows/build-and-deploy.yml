@@ -71,6 +71,13 @@ jobs:
         run: echo "TAGS=kuzudb/explorer:latest,kuzudb/explorer:${{ env.VERSION }}" >> $GITHUB_ENV
       - name: Prebuild - show tags
         run: echo $TAGS
+      - name: Prebuild - write version to file
+        run: echo $VERSION > version.txt
+      - name: Upload version
+        uses: actions/upload-artifact@v4
+        with:
+          path: version.txt
+          name: version
       - name: Upload current directory
         uses: actions/upload-artifact@v4
         with:
@@ -107,8 +114,9 @@ jobs:
         with:
           name: explorer-prebuild
       - name: Install dependencies
-        working-directory: explorer-prebuild
-        run: npm install
+        run: |
+          ls
+          npm install
       - name: Upload current directory
         uses: actions/upload-artifact@v4
         with:
