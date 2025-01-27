@@ -27,9 +27,9 @@ jobs:
     uses: ./.github/workflows/lint.yml
     secrets: inherit
 
-  docker:
+  prebuild:
     needs: lint
-    name: Build and push Docker image
+    name: Prebuild
     runs-on: ubuntu-latest
     steps:
       - name: Checkout (default branch)
@@ -63,14 +63,6 @@ jobs:
         run: |
           VERSION=$(node -e 'fs=require("fs");console.log(JSON.parse(fs.readFileSync("package.json")).dependencies.kuzu)')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - name: Prebuild - set tag for nightly build
-        if: ${{ github.event_name == 'schedule' || github.event.inputs.isNightly == 'true' || github.ref_name == 'next' }}
-        run: echo "TAGS=kuzudb/explorer:dev" >> $GITHUB_ENV
-      - name: Prebuild - set tag for release build
-        if: ${{ github.event_name != 'schedule' && github.event.inputs.isNightly != 'true' && github.ref_name != 'next' }}
-        run: echo "TAGS=kuzudb/explorer:latest,kuzudb/explorer:${{ env.VERSION }}" >> $GITHUB_ENV
-      - name: Prebuild - show tags
-        run: echo $TAGS
       - name: Prebuild - write version to file
         run: echo $VERSION > version.txt
       - name: Upload version
@@ -83,6 +75,34 @@ jobs:
         with:
           path: .
           name: explorer-prebuild
+
+  docker:
+    needs: prebuild
+    name: Build and push Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download prebuild
+        uses: actions/download-artifact@v4
+        with:
+          name: explorer-prebuild
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+      - name: Get version
+        shell: bash
+        working-directory: explorer-prebuild
+        run: |
+          VERSION=$(node -e 'fs=require("fs");console.log(JSON.parse(fs.readFileSync("package.json")).dependencies.kuzu)')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Set tag for nightly build
+        if: ${{ github.event_name == 'schedule' || github.event.inputs.isNightly == 'true' || github.ref_name == 'next' }}
+        run: echo "TAGS=kuzudb/explorer:dev" >> $GITHUB_ENV
+      - name: Set tag for release build
+        if: ${{ github.event_name != 'schedule' && github.event.inputs.isNightly != 'true' && github.ref_name != 'next' }}
+        run: echo "TAGS=kuzudb/explorer:latest,kuzudb/explorer:${{ env.VERSION }}" >> $GITHUB_ENV
+      - name: Show tags
+        run: echo $TAGS
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -95,7 +115,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./explorer-prebuild
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.TAGS }}
@@ -105,7 +125,7 @@ jobs:
             SKIP_DATASETS=true
 
   windows:
-    needs: docker
+    needs: prebuild
     name: Build and push Windows Deployment Package
     runs-on: windows-latest
     steps:
