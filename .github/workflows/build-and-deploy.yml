@@ -71,6 +71,11 @@ jobs:
         run: echo "TAGS=kuzudb/explorer:latest,kuzudb/explorer:${{ env.VERSION }}" >> $GITHUB_ENV
       - name: Prebuild - show tags
         run: echo $TAGS
+      - name: Upload current directory
+        uses: actions/upload-artifact@v4
+        with:
+          path: .
+          name: explorer-prebuild
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
