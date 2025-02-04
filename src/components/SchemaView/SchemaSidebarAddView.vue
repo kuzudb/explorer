@@ -114,17 +114,25 @@
           </div>
           <div class="schema_side-panel__add-table-rel-group-blank-space" />
         </div>
+
+        <div v-if="currConnectivity.length === 0">
+          <div class="alert alert-info text-justify">
+            There are no connections in this table yet.
+            It is required to have at least one connection for a relationship table.
+            You can add one by clicking the "Connection" button above.
+          </div>
+        </div>
         <br>
       </div>
 
       <h5>Properties</h5>
       <hr>
       <table
-        v-if="schema"
+        v-if="schema && currProperties.length > 0"
         class="table table-sm table-bordered schema_side-panel__add-table"
       >
         <thead>
-          <tr v-if="currProperties.length > 0">
+          <tr>
             <th scope="col">
               Name
             </th>
@@ -138,14 +146,9 @@
               Actions
             </th>
           </tr>
-          <tr v-else>
-            <th scope="col">
-              There are no properties in this table
-            </th>
-          </tr>
         </thead>
 
-        <tbody v-if="currProperties.length > 0">
+        <tbody>
           <tr
             v-for="property in currProperties"
             :key="property.id"
@@ -196,6 +199,13 @@
           </tr>
         </tbody>
       </table>
+
+      <div v-if="currProperties.length === 0">
+        <div class="alert alert-info text-justify">
+          There are no properties in this table yet.
+          You can add one by clicking the "Property" button above.
+        </div>
+      </div>
     </div>
   </div>
 </template>

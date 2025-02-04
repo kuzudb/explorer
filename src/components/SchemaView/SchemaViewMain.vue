@@ -783,7 +783,7 @@ export default {
       if (isNode) {
         this.updatePlaceholderNodeTableLabel(newLabel);
       } else {
-        this.updatePlaceholderRelTable(newLabel);
+        this.updatePlaceholderRelTable({ name: newLabel });
       }
     },
 
@@ -806,12 +806,9 @@ export default {
       this.clickedLabel = newLabel;
     },
 
-    updatePlaceholderRelTable(newLabel) {
-      if (this.clickedLabel === newLabel) {
-        return;
-      }
-      this.$emit("updatePlaceholderRelTable", { name: newLabel });
-      this.clickedLabel = newLabel;
+    updatePlaceholderRelTable(newTable) {
+      this.$emit("updatePlaceholderRelTable", newTable);
+      this.clickedLabel = newTable.name;
       // Rerender the graph to update the edge
       this.$nextTick(() => {
         this.handleSettingsChange();
