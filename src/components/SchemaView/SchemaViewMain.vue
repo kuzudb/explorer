@@ -242,9 +242,9 @@ export default {
       nodeSpacing = nodeSpacing < 80 ? 80 : nodeSpacing;
       nodeSpacing = nodeSpacing > 500 ? 500 : nodeSpacing;
       const config = {
-          nodeSpacing,
-          type: 'force',
-          preventOverlap: true,
+        nodeSpacing,
+        type: 'force',
+        preventOverlap: true,
 
       };
       return config;
@@ -343,7 +343,7 @@ export default {
         },
       });
 
-      this.g6Graph.data({ nodes, edges,  });
+      this.g6Graph.data({ nodes, edges, });
 
       this.g6Graph.on('node:mouseenter', (e) => {
         const nodeItem = e.item;
@@ -438,6 +438,10 @@ export default {
       this.graphCreated = true;
     },
 
+    getEdgeId(src, dst, label) {
+      return `${src}-${dst}-${label}`;
+    },
+
     extractGraphFromSchema(schema) {
       const overlapEdgeHash = {};
       const nodes = schema.nodeTables.map(n => {
@@ -470,12 +474,14 @@ export default {
         numberOfEdgesBetweenNodesHash[key] += 1;
       });
 
-      const edges = schema.relTables.
-        map(r => {
+      let edges = [];
+
+      for (const r of schema.relTables) {
+        for (const conn of r.connectivity) {
           const edge = {
-            id: r.name,
-            source: r.src,
-            target: r.dst,
+            id: this.getEdgeId(conn.src, conn.dst, r.name),
+            source: conn.src,
+            target: conn.dst,
             label: this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.ALWAYS ? this.getRelTableDisplayLabel(r.name) : "",
             _label: r.name,
             isPlaceholder: Boolean(r.isPlaceholder),
@@ -523,8 +529,10 @@ export default {
               edge.type = 'line';
             }
           }
-          return edge;
-        }).filter(e => Boolean(e));
+          edges.push(edge);
+        }
+      }
+      edges = edges.filter(e => Boolean(e));
       return { nodes, edges };
     },
 
@@ -678,11 +686,11 @@ export default {
     },
 
     handleSettingsChange() {
-      const { nodes, edges,  } = this.extractGraphFromSchema(this.schema);
+      const { nodes, edges, } = this.extractGraphFromSchema(this.schema);
       if (!this.g6Graph) {
         return;
       }
-      this.g6Graph.changeData({ nodes, edges,  });
+      this.g6Graph.changeData({ nodes, edges, });
       const layoutConfig = this.getLayoutConfig(edges);
       this.g6Graph.updateLayout(layoutConfig);
       if (this.clickedLabel) {

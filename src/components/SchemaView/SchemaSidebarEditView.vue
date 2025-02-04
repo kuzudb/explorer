@@ -41,14 +41,17 @@
           <b>{{ relGroup }} </b> group
         </h6>
 
-        <h6>
+        <h6
+          v-for="conn in connectivity"
+          :key="conn"
+        >
           <span
             class="badge bg-primary"
             :style="{
-              backgroundColor: ` ${getColor(source)} !important`,
+              backgroundColor: ` ${getColor(conn.src)} !important`,
             }"
           >
-            {{ source }}
+            {{ conn.src }}
           </span>
           &nbsp;
           <i class="fa-solid fa-arrow-right" />
@@ -56,10 +59,10 @@
           <span
             class="badge bg-primary"
             :style="{
-              backgroundColor: ` ${getColor(destination)} !important`,
+              backgroundColor: ` ${getColor(conn.dst)} !important`,
             }"
           >
-            {{ destination }}
+            {{ conn.dst }}
           </span>
         </h6>
         <br>
@@ -230,24 +233,11 @@ export default {
   }),
   computed: {
     ...mapStores(useSettingsStore),
-    source() {
-      if (this.isEditingLabel) {
-        return this.schema.relTables.find(t => t.isPlaceholder).src;
-      }
+    connectivity() {
       if (!this.schema || !this.label || this.isNode) {
         return null;
       }
-      return this.schema.relTables.find(t => t.name === this.label).src;
-    },
-
-    destination() {
-      if (this.isEditingLabel) {
-        return this.schema.relTables.find(t => t.isPlaceholder).dst;
-      }
-      if (!this.schema || !this.label || this.isNode) {
-        return null;
-      }
-      return this.schema.relTables.find(t => t.name === this.label).dst;
+      return this.schema.relTables.find(t => t.name === this.label).connectivity;
     },
 
     relGroup() {
