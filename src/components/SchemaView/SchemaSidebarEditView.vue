@@ -322,7 +322,6 @@ export default {
       this.currLabel = this.oldLabel;
     },
     finishTableRename() {
-      console.log("finishTableRename", this.label);
       this.isEditingLabel = false;
       this.oldLabel = "";
     },

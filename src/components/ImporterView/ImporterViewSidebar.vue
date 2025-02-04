@@ -178,7 +178,6 @@ export default {
     },
     startFileRemoval(file) {
       this.removingFile = file;
-      console.log(this.removingFile);
       this.modal.show();
 
     },

@@ -534,7 +534,6 @@ export default {
           edges.push(edge);
         }
       }
-      console.log(overlapEdgeHash);
       edges = edges.filter(e => Boolean(e));
       return { nodes, edges };
     },

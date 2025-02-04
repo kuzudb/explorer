@@ -167,7 +167,6 @@ export default {
             if (this.errorMessage) {
               this.$nextTick(() => {
                 const errorContainer = this.$refs.resultErrorContainer;
-                console.log(errorContainer);
                 errorContainer.handleDataChange(this.schema, null, this.errorMessage);
               });
             }
