@@ -188,8 +188,8 @@
           </div>
           <div class="modal-body">
             <p v-if="modeStore.isDemo">
-              This is a demo of <a href="https://kuzudb.com/">Kùzu</a> powered by WebAssembly. 
-              You can go to the Dataset tab to load a sample dataset or import your own data to 
+              This is a demo of <a href="https://kuzudb.com/">Kùzu</a> powered by WebAssembly.
+              You can go to the Dataset tab to load a sample dataset or import your own data to
               explore the features of Kùzu. Note that no data is persisted between sessions in
               demo mode.
             </p>
@@ -287,17 +287,6 @@ export default {
         schema = response.data;
       }
       this.schema = schema;
-      const relGroupsMap = {};
-      this.schema.relGroups.forEach((g) => {
-        g.rels.forEach((r) => {
-          relGroupsMap[r] = g.name
-        });
-      });
-      this.schema.relTables.forEach((r) => {
-        if (relGroupsMap[r.name]) {
-          r.group = relGroupsMap[r.name];
-        }
-      });
     },
     async getMode() {
       const response = await Axios.get("/api/mode");
@@ -330,8 +319,7 @@ export default {
     addPlaceholderRelTable(tableName) {
       this.schema.relTables.push({
         name: tableName,
-        src: "",
-        dst: "",
+        connectivity: [],
         properties: [],
         isPlaceholder: true,
       });
@@ -342,9 +330,12 @@ export default {
     },
     updatePlaceholderRelTable(newTable) {
       const table = this.schema.relTables.find((t) => t.isPlaceholder);
-      table.name = newTable.name;
-      table.src = newTable.src;
-      table.dst = newTable.dst;
+      if (newTable.name) {
+        table.name = newTable.name;
+      }
+      if (newTable.connectivity) {
+        table.connectivity = newTable.connectivity;
+      }
     },
     setPlaceholder(name) {
       let table = this.schema.nodeTables.find((t) => t.name === name);

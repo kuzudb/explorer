@@ -37,18 +37,17 @@
       <hr>
 
       <div v-if="!isNode">
-        <h6 v-if="relGroup">
-          <b>{{ relGroup }} </b> group
-        </h6>
-
-        <h6>
+        <h6
+          v-for="conn in connectivity"
+          :key="conn"
+        >
           <span
             class="badge bg-primary"
             :style="{
-              backgroundColor: ` ${getColor(source)} !important`,
+              backgroundColor: ` ${getColor(conn.src)} !important`,
             }"
           >
-            {{ source }}
+            {{ conn.src }}
           </span>
           &nbsp;
           <i class="fa-solid fa-arrow-right" />
@@ -56,10 +55,10 @@
           <span
             class="badge bg-primary"
             :style="{
-              backgroundColor: ` ${getColor(destination)} !important`,
+              backgroundColor: ` ${getColor(conn.dst)} !important`,
             }"
           >
-            {{ destination }}
+            {{ conn.dst }}
           </span>
         </h6>
         <br>
@@ -96,11 +95,11 @@
       <br>
 
       <table
-        v-if="schema"
+        v-if="schema && (tableProperties.length > 0 || addingProperty)"
         class="table table-sm table-bordered schema_side-panel__edit-table"
       >
         <thead>
-          <tr v-if="tableProperties.length > 0 || addingProperty">
+          <tr>
             <th scope="col">
               Name
             </th>
@@ -114,13 +113,8 @@
               Actions
             </th>
           </tr>
-          <tr v-else>
-            <th scope="col">
-              There are no properties in this table
-            </th>
-          </tr>
         </thead>
-        <tbody v-if="tableProperties.length > 0 || addingProperty">
+        <tbody>
           <tr>
             <SchemaPropertyEditCell
               v-if="addingProperty"
@@ -128,7 +122,7 @@
               :colspan="3"
               :is-new-property="true"
               :is-new-table="false"
-              :is-node-table="isNode"
+              :is-node-table="!!isNode"
               @cancel="cancelAddMode"
               @save="addProperty"
             />
@@ -178,6 +172,7 @@
               :colspan="3"
               :is-new-property="false"
               :is-new-table="false"
+              :is-node-table="!!isNode"
               @cancel="cancelEditMode"
               @save="renameProperty"
             >
@@ -186,6 +181,13 @@
           </tr>
         </tbody>
       </table>
+      <div v-else>
+        <div class="alert alert-info text-justify">
+          <i class="fa-solid fa-info-circle" />
+          There are no properties in this table yet.
+          You can add one by clicking the "Property" button above.
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -230,51 +232,19 @@ export default {
   }),
   computed: {
     ...mapStores(useSettingsStore),
-    source() {
-      if (this.isEditingLabel) {
-        return this.schema.relTables.find(t => t.isPlaceholder).src;
-      }
-      if (!this.schema || !this.label || this.isNode) {
-        return null;
-      }
-      return this.schema.relTables.find(t => t.name === this.label).src;
-    },
-
-    destination() {
-      if (this.isEditingLabel) {
-        return this.schema.relTables.find(t => t.isPlaceholder).dst;
-      }
-      if (!this.schema || !this.label || this.isNode) {
-        return null;
-      }
-      return this.schema.relTables.find(t => t.name === this.label).dst;
-    },
-
-    relGroup() {
-      if (!this.schema || !this.label || this.isNode) {
-        return null;
-      }
-      return this.schema.relTables.find(t => t.name === this.label).group;
-    },
-    tableProperties() {
-      if (this.isEditingLabel) {
-        if (this.isNode) {
-          return this.schema.nodeTables.find(t => t.isPlaceholder).properties;
-        }
-        return this.schema.relTables.find(t => t.isPlaceholder).properties;
-      }
-      if (!this.schema || !this.label) {
+    connectivity() {
+      const table = this.getTableFromSchema();
+      if (!table) {
         return [];
       }
-      if (this.isNode) {
-        return this.schema.nodeTables
-          .find(t => t.name === this.label)
-          .properties;
-      } else {
-        return this.schema.relTables
-          .find(t => t.name === this.label)
-          .properties;
+      return table.connectivity;
+    },
+    tableProperties() {
+      const table = this.getTableFromSchema();
+      if (!table) {
+        return [];
       }
+      return table.properties;
     },
   },
   watch: {
@@ -306,6 +276,24 @@ export default {
     this.currLabel = this.label;
   },
   methods: {
+    getTableFromSchema() {
+      if (this.isEditingLabel) {
+        if (this.isNode) {
+          return this.schema.nodeTables.find(t => t.isPlaceholder);
+        }
+        return this.schema.relTables.find(t => t.isPlaceholder);
+      }
+      if (!this.schema || !this.label) {
+        return [];
+      }
+      if (this.isNode) {
+        return this.schema.nodeTables
+          .find(t => t.name === this.label);
+      } else {
+        return this.schema.relTables
+          .find(t => t.name === this.label);
+      }
+    },
     getColor(label) {
       return this.settingsStore.colorForLabel(label);
     },
@@ -337,7 +325,6 @@ export default {
       this.currLabel = this.oldLabel;
     },
     finishTableRename() {
-      this.currLabel = this.label;
       this.isEditingLabel = false;
       this.oldLabel = "";
     },

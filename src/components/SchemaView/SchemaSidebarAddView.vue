@@ -1,18 +1,6 @@
 <template>
   <div>
     <div>
-      <div
-        v-if="isRelGroup"
-        class="alert alert-info text-justify"
-        role="alert"
-      >
-        <i class="fa-solid fa-info-circle" />
-        When creating a relationship group, multiple relationship tables with the same
-        properties will be created.
-        <br>
-        The visualization will not show a preview of the relationship group, but each
-        relationship table will be shown after the relationship group is saved.
-      </div>
       <h5>
         <div class="input-group flex-nowrap">
           <span class="input-group-text">Name</span>
@@ -21,7 +9,7 @@
             type="text"
             class="form-control"
             :style="{
-              backgroundColor: !isRelGroup ? ` ${getColor()} !important` : '#ffffff',
+              backgroundColor: `${getColor()} !important`,
               color: isNode ? '#ffffff' : '#000000',
             }"
           >
@@ -60,7 +48,6 @@
         </button>
         &nbsp;
         <button
-          v-if="isRelGroup"
           class="btn btn-sm btn-outline-primary"
           title="Relationship"
           @click="addRel"
@@ -71,11 +58,11 @@
       </div>
       <br>
 
-      <div v-if="isRelGroup">
+      <div v-if="!isNode">
         <h5>Connections</h5>
         <hr>
         <div
-          v-for="rel in currRelGroupRels"
+          v-for="rel in currConnectivity"
           :key="rel.id"
         >
           <div>
@@ -115,7 +102,6 @@
               &nbsp;
               <div>
                 <button
-                  v-if="currRelGroupRels.length > 1"
                   type="button"
                   class="btn btn-sm btn-outline-danger"
                   title="Drop"
@@ -128,43 +114,14 @@
           </div>
           <div class="schema_side-panel__add-table-rel-group-blank-space" />
         </div>
-        <br>
-      </div>
 
-      <div v-if="!isNode && !isRelGroup">
-        <h5>Connection</h5>
-        <hr>
-        <div class="input-group flex-nowrap">
-          <span class="input-group-text schema_side-panel__add-table-rel-label">From</span>
-          <select
-            v-model="currSrc"
-            class="form-select"
-            :style="getSelectStyle(currSrc)"
-          >
-            <option
-              v-for="option in relTableSrcAndDstOptions"
-              :key="option.text"
-              :value="option.value"
-            >
-              {{ option.text }}
-            </option>
-          </select>
-        </div>
-        <div class="input-group flex-nowrap">
-          <span class="input-group-text schema_side-panel__add-table-rel-label">To</span>
-          <select
-            v-model="currDst"
-            class="form-select"
-            :style="getSelectStyle(currDst)"
-          >
-            <option
-              v-for="option in relTableSrcAndDstOptions"
-              :key="option.text"
-              :value="option.value"
-            >
-              {{ option.text }}
-            </option>
-          </select>
+        <div v-if="currConnectivity.length === 0">
+          <div class="alert alert-info text-justify">
+            <i class="fa-solid fa-info-circle" />
+            There are no connections in this table yet.
+            It is required to have at least one connection for a relationship table.
+            You can add one by clicking the "Connection" button above.
+          </div>
         </div>
         <br>
       </div>
@@ -172,11 +129,11 @@
       <h5>Properties</h5>
       <hr>
       <table
-        v-if="schema"
+        v-if="schema && currProperties.length > 0"
         class="table table-sm table-bordered schema_side-panel__add-table"
       >
         <thead>
-          <tr v-if="currProperties.length > 0">
+          <tr>
             <th scope="col">
               Name
             </th>
@@ -190,14 +147,9 @@
               Actions
             </th>
           </tr>
-          <tr v-else>
-            <th scope="col">
-              There are no properties in this table
-            </th>
-          </tr>
         </thead>
 
-        <tbody v-if="currProperties.length > 0">
+        <tbody>
           <tr
             v-for="property in currProperties"
             :key="property.id"
@@ -248,6 +200,14 @@
           </tr>
         </tbody>
       </table>
+
+      <div v-if="currProperties.length === 0">
+        <div class="alert alert-info text-justify">
+          <i class="fa-solid fa-info-circle" />
+          There are no properties in this table yet.
+          You can add one by clicking the "Property" button above.
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -276,10 +236,6 @@ export default {
       type: Boolean,
       required: true,
     },
-    isRelGroup: {
-      type: Boolean,
-      required: true,
-    }
   },
   emits: ["save", "discard", "updateNodeTableLabel", "updatePlaceholderRelTable"],
   data: () => ({
@@ -302,9 +258,7 @@ export default {
     },
     currLabel: "",
     currProperties: [],
-    currRelGroupRels: [],
-    currSrc: null,
-    currDst: null,
+    currConnectivity: [],
     placeholderNodeTable: PLACEHOLDER_NODE_TABLE,
     placeholderRelTable: PLACEHOLDER_REL_TABLE,
     currLabelInputDebounce: null,
@@ -331,9 +285,7 @@ export default {
     },
     isValid() {
       return this.currLabel.length > 0 && (
-        this.isNode || (
-          this.currSrc && this.currDst
-        )
+        this.isNode || (this.currConnectivity.length > 0 && this.currConnectivity.every(r => r.src && r.dst))
       );
     }
   },
@@ -343,26 +295,24 @@ export default {
       this.currLabelInputDebounce = setTimeout(() => {
         if (this.isNode) {
           this.$emit("updateNodeTableLabel", this.currLabel);
-        } else if (!this.isRelGroup) {
+        } else {
           this.updatePlaceholderRelTable();
         }
       }, 300);
     },
-    currSrc() {
-      this.updatePlaceholderRelTable();
-    },
-    currDst() {
-      this.updatePlaceholderRelTable();
+
+    currConnectivity: {
+      handler() {
+        this.updatePlaceholderRelTable();
+      },
+      deep: true,
     },
   },
 
   mounted() {
     this.currLabel = this.label;
-    if (this.isRelGroup) {
-      this.currRelGroupRels = [];
-      this.addRel();
-    }
     if (!this.isNode) {
+      this.currConnectivity = [];
       return;
     }
     const primaryKey = { ...this.defaultPrimaryKey };
@@ -398,7 +348,7 @@ export default {
         return;
       }
       this.$nextTick(() => {
-        this.$emit("save", this.currLabel, this.currProperties, this.currSrc, this.currDst, this.currRelGroupRels);
+        this.$emit("save", this.currLabel, this.currProperties, this.processCurrConnectivity());
       });
     },
     discardTable() {
@@ -449,11 +399,29 @@ export default {
         color: "#ffffff",
       };
     },
+    processCurrConnectivity() {
+      const connectivityHash = {};
+      this.currConnectivity.forEach(r => {
+        if (!r.src || !r.dst) {
+          return;
+        }
+        if (!connectivityHash[r.src]) {
+          connectivityHash[r.src] = {};
+        }
+        connectivityHash[r.src][r.dst] = true;
+      });
+      const connectivity = [];
+      for (const src in connectivityHash) {
+        for (const dst in connectivityHash[src]) {
+          connectivity.push({ src, dst });
+        }
+      }
+      return connectivity;
+    },
     updatePlaceholderRelTable() {
-      const src = this.currSrc;
-      const dst = this.currDst;
+      const connectivity = this.processCurrConnectivity();
       const name = this.currLabel;
-      this.$emit("updatePlaceholderRelTable", { src, dst, name });
+      this.$emit("updatePlaceholderRelTable", { name, connectivity });
     },
     addRel() {
       const newRel = {
@@ -461,11 +429,11 @@ export default {
         src: null,
         dst: null,
       };
-      this.currRelGroupRels.push(newRel);
+      this.currConnectivity.push(newRel);
     },
     deleteRel(id) {
-      const index = this.currRelGroupRels.findIndex(r => r.id === id);
-      this.currRelGroupRels.splice(index, 1);
+      const index = this.currConnectivity.findIndex(r => r.id === id);
+      this.currConnectivity.splice(index, 1);
     },
   },
 };

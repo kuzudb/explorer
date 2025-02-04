@@ -22,6 +22,7 @@ const CMD = "npm view kuzu@next version";
       }
       const packageJson = JSON.parse(data);
       packageJson.dependencies.kuzu = `${latestVersion}`;
+      packageJson.dependencies["kuzu-wasm"] = `${latestVersion}`;
       fs.writeFile(
         PACKAGE_JSON_PATH,
         JSON.stringify(packageJson, null, 2),

@@ -66,7 +66,6 @@
         @edit-table="enterEditTableMode"
         @add-node-table="enterAddNodeTableMode"
         @add-rel-table="enterAddRelTableMode"
-        @add-rel-group="enterAddRelGroupMode"
       />
       <!-- Read only view for hovered label -->
       <!-- If edit view is shown, hovering over another label will not change the view -->
@@ -106,7 +105,6 @@
         :schema="schema"
         :label="clickedLabel"
         :is-node="clickedIsNode"
-        :is-rel-group="clickedIsRelGroup"
         @discard="cancelAdd"
         @save="addNewTable"
         @update-node-table-label="updatePlaceholderNodeTableLabel"
@@ -176,7 +174,6 @@ export default {
     clickedLabel: null,
     clickedIsNode: false,
     clickedIsNewTable: false,
-    clickedIsRelGroup: false,
     toolbarDebounceTimeout: 100,
     toolbarDebounceTimer: null,
   }),
@@ -242,9 +239,9 @@ export default {
       nodeSpacing = nodeSpacing < 80 ? 80 : nodeSpacing;
       nodeSpacing = nodeSpacing > 500 ? 500 : nodeSpacing;
       const config = {
-          nodeSpacing,
-          type: 'force',
-          preventOverlap: true,
+        nodeSpacing,
+        type: 'force',
+        preventOverlap: true,
 
       };
       return config;
@@ -343,7 +340,7 @@ export default {
         },
       });
 
-      this.g6Graph.data({ nodes, edges,  });
+      this.g6Graph.data({ nodes, edges, });
 
       this.g6Graph.on('node:mouseenter', (e) => {
         const nodeItem = e.item;
@@ -438,12 +435,17 @@ export default {
       this.graphCreated = true;
     },
 
+    getEdgeId(src, dst, label) {
+      return `${src}-${dst}-${label}`;
+    },
+
     extractGraphFromSchema(schema) {
       const overlapEdgeHash = {};
       const nodes = schema.nodeTables.map(n => {
         const returnVal = {
           id: n.name,
           label: n.name,
+          _label: n.name,
           isPlaceholder: Boolean(n.isPlaceholder),
           style: {
             fill:
@@ -463,19 +465,29 @@ export default {
       }
       const numberOfEdgesBetweenNodesHash = {};
       schema.relTables.forEach(r => {
-        const key = getEdgeKey(r.src, r.dst, true);
-        if (!numberOfEdgesBetweenNodesHash[key]) {
-          numberOfEdgesBetweenNodesHash[key] = 0;
-        }
-        numberOfEdgesBetweenNodesHash[key] += 1;
+        r.connectivity.forEach(conn => {
+          if (!conn.src || !conn.dst) {
+            return;
+          }
+          const key = getEdgeKey(conn.src, conn.dst);
+          if (!numberOfEdgesBetweenNodesHash[key]) {
+            numberOfEdgesBetweenNodesHash[key] = 0;
+          }
+          numberOfEdgesBetweenNodesHash[key] += 1;
+        });
       });
 
-      const edges = schema.relTables.
-        map(r => {
+      let edges = [];
+
+      for (const r of schema.relTables) {
+        if (!r.connectivity || r.connectivity.length === 0) {
+          continue;
+        }
+        for (const conn of r.connectivity) {
           const edge = {
-            id: r.name,
-            source: r.src,
-            target: r.dst,
+            id: this.getEdgeId(conn.src, conn.dst, r.name),
+            source: conn.src,
+            target: conn.dst,
             label: this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.ALWAYS ? this.getRelTableDisplayLabel(r.name) : "",
             _label: r.name,
             isPlaceholder: Boolean(r.isPlaceholder),
@@ -484,10 +496,10 @@ export default {
             }
           };
           if (!edge.source || !edge.target) {
-            return null;
+            continue;
           }
-          const hashKey = getEdgeKey(r.src, r.dst);
-          const sortedHashKey = getEdgeKey(r.src, r.dst, true);
+          const hashKey = getEdgeKey(edge.source, edge.target);
+          const sortedHashKey = getEdgeKey(edge.source, edge.target, true);
           if (!overlapEdgeHash[sortedHashKey]) {
             overlapEdgeHash[sortedHashKey] = 0;
           }
@@ -501,30 +513,28 @@ export default {
             };
           }
           else {
-            if (numberOfEdgesBetweenNodesHash[sortedHashKey] > 1) {
-              edge.type = 'quadratic';
-              edge.curveOffset = ARC_CURVE_OFFSETS[(overlapEdgeHash[sortedHashKey] - 1) % ARC_CURVE_OFFSETS.length];
-              if (sortedHashKey !== hashKey) {
-                // There is a second edge between the same nodes, but in the opposite direction
-                // In this case, G6 by default draws the second edge with a slightly different start and end point
-                // Which looks weird, so we add a workaround
+            edge.type = 'quadratic';
+            edge.curveOffset = ARC_CURVE_OFFSETS[(overlapEdgeHash[sortedHashKey] - 1) % ARC_CURVE_OFFSETS.length];
+            if (sortedHashKey !== hashKey) {
+              // There is a second edge between the same nodes, but in the opposite direction
+              // In this case, G6 by default draws the second edge with a slightly different start and end point
+              // Which looks weird, so we add a workaround
 
-                // Exchange source and target
-                const temp = edge.source;
-                edge.source = edge.target;
-                edge.target = temp;
+              // Exchange source and target
+              const temp = edge.source;
+              edge.source = edge.target;
+              edge.target = temp;
 
-                // Set start arrow to true
-                edge.style.startArrow = true;
-                // Set end arrow to false
-                edge.style.endArrow = false;
-              }
-            } else {
-              edge.type = 'line';
+              // Set start arrow to true
+              edge.style.startArrow = true;
+              // Set end arrow to false
+              edge.style.endArrow = false;
             }
           }
-          return edge;
-        }).filter(e => Boolean(e));
+          edges.push(edge);
+        }
+      }
+      edges = edges.filter(e => Boolean(e));
       return { nodes, edges };
     },
 
@@ -568,10 +578,6 @@ export default {
         });
       } else if (action.type === SCHEMA_ACTION_TYPES.ADD_REL_TABLE) {
         this.settingsStore.renameRelTable(PLACEHOLDER_REL_TABLE, action.table);
-        this.$nextTick(() => {
-          this.cancelAdd();
-        });
-      } else if (action.type === SCHEMA_ACTION_TYPES.ADD_REL_GROUP) {
         this.$nextTick(() => {
           this.cancelAdd();
         });
@@ -678,16 +684,13 @@ export default {
     },
 
     handleSettingsChange() {
-      const { nodes, edges,  } = this.extractGraphFromSchema(this.schema);
+      const { nodes, edges, } = this.extractGraphFromSchema(this.schema);
       if (!this.g6Graph) {
         return;
       }
-      this.g6Graph.changeData({ nodes, edges,  });
+      this.g6Graph.changeData({ nodes, edges, });
       const layoutConfig = this.getLayoutConfig(edges);
       this.g6Graph.updateLayout(layoutConfig);
-      if (this.clickedLabel) {
-        this.setG6Click(this.clickedLabel);
-      }
     },
 
     enterEditTableMode(tableName) {
@@ -698,23 +701,22 @@ export default {
       }
       this.clickedIsNode = isTableNode;
       this.clickedLabel = tableName;
-      this.setG6Click(tableName);
     },
 
     setG6Click(tableName) {
-      const g6Item = this.g6Graph ? this.g6Graph.findById(tableName) : null;
-      if (g6Item) {
+      const g6Items = this.g6Graph ? this.g6Graph.findAll(
+        this.clickedIsNode ? 'node' : 'edge',
+        item => item._cfg.model._label === tableName
+      ) : [];
+      g6Items.forEach(g6Item => {
         this.g6Graph.setItemState(g6Item, 'click', true);
-      }
-      else {
-        return;
-      }
-      if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-        this.g6Graph.updateItem(g6Item, {
-          label: this.getRelTableDisplayLabel(tableName),
-        });
-        g6Item.toFront();
-      }
+        if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
+          this.g6Graph.updateItem(g6Item, {
+            label: this.getRelTableDisplayLabel(tableName),
+          });
+          g6Item.toFront();
+        }
+      });
     },
 
     enterAddNodeTableMode() {
@@ -729,7 +731,6 @@ export default {
       this.settingsStore.addNewNodeTable(PLACEHOLDER_NODE_TABLE);
       this.$nextTick(() => {
         this.handleSettingsChange();
-        this.setG6Click(newTableName);
       });
       this.clickedLabel = newTableName;
       this.clickedIsNode = true;
@@ -751,42 +752,29 @@ export default {
       this.clickedIsNewTable = true;
     },
 
-    enterAddRelGroupMode() {
-      let newTableName = "NewRelGroup";
-      this.clickedIsNewTable = true;
-      let counter = 1;
-      while (this.schema.relTables.find(t => t.name === newTableName)) {
-        newTableName = `NewRelGroup-${counter}`;
-        counter += 1;
-      }
-      this.clickedLabel = newTableName;
-      this.clickedIsNode = false;
-      this.clickedIsNewTable = true;
-      this.clickedIsRelGroup = true;
-    },
-
     cancelAdd() {
       if (this.clickedIsNode) {
         this.settingsStore.removeNodeTable(PLACEHOLDER_NODE_TABLE);
       }
-      else if (!this.clickedIsRelGroup) {
-        this.settingsStore.removeRelTable(PLACEHOLDER_REL_TABLE);
-      }
-      this.clickedIsRelGroup = false;
       this.resetClick();
       this.reloadSchema();
     },
 
-    addNewTable(table, properties, src, dst, relGroupRels) {
-      this.$refs.actionDialog.addNewTable(table, properties, this.clickedIsNode, this.clickedIsRelGroup, src, dst, relGroupRels);
+    addNewTable(table, properties, connectivity) {
+      this.$refs.actionDialog.addNewTable(table, properties, this.clickedIsNode, connectivity);
     },
 
     setPlaceholder(label) {
-      const g6Item = this.g6Graph ? this.g6Graph.findById(label) : null;
-      if (g6Item) {
-        this.g6Graph.updateItem(g6Item, {
-          isPlaceholder: true,
-        });
+      const g6Items = this.g6Graph.findAll(
+        this.clickedIsNode ? 'node' : 'edge',
+        item => item._cfg.model._label === label
+      );
+      if (g6Items.length > 0) {
+        for (const g6Item of g6Items) {
+          this.g6Graph.updateItem(g6Item, {
+            isPlaceholder: true,
+          });
+        }
       }
       this.$emit("setPlaceholder", label);
     },
@@ -795,10 +783,7 @@ export default {
       if (isNode) {
         this.updatePlaceholderNodeTableLabel(newLabel);
       } else {
-        const g6Item = this.g6Graph ? this.g6Graph.find('edge', edge => edge._cfg.model.isPlaceholder) : null;
-        const src = g6Item._cfg.model.source;
-        const dst = g6Item._cfg.model.target;
-        this.updatePlaceholderRelTable({ name: newLabel, src, dst });
+        this.updatePlaceholderRelTable({ name: newLabel });
       }
     },
 
@@ -824,18 +809,6 @@ export default {
     updatePlaceholderRelTable(newTable) {
       this.$emit("updatePlaceholderRelTable", newTable);
       this.clickedLabel = newTable.name;
-      const g6Item = this.g6Graph ? this.g6Graph.find('edge', edge => edge._cfg.model.isPlaceholder) : null;
-      // If the edge has not been created yet, and the user has not selected a source and destination, do nothing
-      if (!g6Item && (!newTable.src || !newTable.dst)) {
-        return;
-      }
-      // If the edge has been created and only the label has changed, update the label and return
-      if (g6Item && g6Item._cfg.model.src === newTable.src && g6Item._cfg.model.dst === newTable.dst) {
-        this.g6Graph.updateItem(g6Item, {
-          label: newTable.name,
-        });
-        return;
-      }
       // Rerender the graph to update the edge
       this.$nextTick(() => {
         this.handleSettingsChange();

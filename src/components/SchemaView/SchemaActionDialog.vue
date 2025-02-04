@@ -144,22 +144,22 @@ export default {
         }
       })
         .catch((error) => {
-        this.isExecuting = false;
-        if (this.modeStore.isWasm) {
-          this.errorMessage = error.message;
-          return;
-        }
-        if (!error.response) {
-          this.errorMessage = "The application is disconnected from the server. Please try to restart the server.";
-          return;
-        }
-        else if (!error.response.data) {
-          this.errorMessage = String(error).trim();
-          return;
-        }
-        this.errorMessage = error.response.data.error.trim();
-        console.error(error.response.data.error.trim());
-      });
+          this.isExecuting = false;
+          if (this.modeStore.isWasm) {
+            this.errorMessage = error.message;
+            return;
+          }
+          if (!error.response) {
+            this.errorMessage = "The application is disconnected from the server. Please try to restart the server.";
+            return;
+          }
+          else if (!error.response.data) {
+            this.errorMessage = String(error).trim();
+            return;
+          }
+          this.errorMessage = error.response.data.error.trim();
+          console.error(error.response.data.error.trim());
+        });
     },
     reset() {
       this.statement = "";
@@ -226,7 +226,7 @@ export default {
       this.statement = statement;
       this.showModal();
     },
-    addNewTable(table, properties, isNodeTable, isRelGroup, src, dst, relGroupRels) {
+    addNewTable(table, properties, isNodeTable, connectivity) {
       this.reset();
       if (isNodeTable) {
         const pk = properties.find(p => p.isPrimaryKey);
@@ -235,11 +235,6 @@ export default {
           primaryKey: pk ? pk.name : null,
           table,
         };
-      } else if (isRelGroup) {
-        this.currentAction = {
-          type: SCHEMA_ACTION_TYPES.ADD_REL_GROUP,
-          group: table,
-        };
       } else {
         this.currentAction = {
           type: SCHEMA_ACTION_TYPES.ADD_REL_TABLE,
@@ -247,11 +242,9 @@ export default {
         };
       }
       const statement =
-        isRelGroup ?
-          DataDefinitionLanguage.addRelGroup(table, properties, relGroupRels) :
-          isNodeTable ?
-            DataDefinitionLanguage.addNodeTable(table, properties) :
-            DataDefinitionLanguage.addRelTable(table, properties, src, dst);
+        isNodeTable ?
+          DataDefinitionLanguage.addNodeTable(table, properties) :
+          DataDefinitionLanguage.addRelTable(table, properties, connectivity);
       this.statement = statement;
       this.showModal();
     },
