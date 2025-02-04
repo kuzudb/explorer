@@ -604,6 +604,11 @@ export default {
       this.clickedLabel = null;
       this.clickedIsNode = false;
       this.clickedIsNewTable = false;
+      this.$nextTick(() => {
+        if (this.$refs.editView) {
+          this.$refs.editView.reset();
+        }
+      });
     },
 
     resetHover() {

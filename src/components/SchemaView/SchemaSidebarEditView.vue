@@ -354,6 +354,13 @@ export default {
     cancelAddMode() {
       this.addingProperty = false;
     },
+    reset() {
+      this.currLabel = this.label;
+      this.editingPropertyIndex = -1;
+      this.addingProperty = false;
+      this.isEditingLabel = false;
+      this.oldLabel = "";
+    },
     renameProperty(oldProperty, newProperty) {
       const oldName = oldProperty.name;
       const newName = newProperty.name;
