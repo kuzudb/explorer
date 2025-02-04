@@ -4,32 +4,54 @@
       <h5>
         <div class="input-group flex-nowrap">
           <span class="input-group-text">Name</span>
-          <input v-model="currLabel" type="text" class="form-control" :style="{
+          <input
+            v-model="currLabel"
+            type="text"
+            class="form-control"
+            :style="{
               backgroundColor: `${getColor()} !important`,
               color: isNode ? '#ffffff' : '#000000',
-            }">
+            }"
+          >
         </div>
       </h5>
       <hr>
 
       <div class="schema_side-panel__add-table-actions-container">
-        <button type="button" class="btn btn-sm btn-outline-success" title="Save Table" :disabled="!isValid"
-          @click="saveTable">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-success"
+          title="Save Table"
+          :disabled="!isValid"
+          @click="saveTable"
+        >
           <i class="fa-solid fa-save" />
           Save
         </button>
         &nbsp;
-        <button class="btn btn-sm btn-outline-danger" title="Discard Table" @click="discardTable">
+        <button
+          class="btn btn-sm btn-outline-danger"
+          title="Discard Table"
+          @click="discardTable"
+        >
           <i class="fa-solid fa-trash" />
           Discard
         </button>
         &nbsp;
-        <button class="btn btn-sm btn-outline-primary" title="Add Property" @click="addProperty">
+        <button
+          class="btn btn-sm btn-outline-primary"
+          title="Add Property"
+          @click="addProperty"
+        >
           <i class="fa-solid fa-plus" />
           Property
         </button>
         &nbsp;
-        <button class="btn btn-sm btn-outline-primary" title="Relationship" @click="addRel">
+        <button
+          class="btn btn-sm btn-outline-primary"
+          title="Relationship"
+          @click="addRel"
+        >
           <i class="fa-solid fa-plus" />
           Connection
         </button>
@@ -39,12 +61,23 @@
       <div v-if="!isNode">
         <h5>Connections</h5>
         <hr>
-        <div v-for="rel in currConnectivity" :key="rel.id">
+        <div
+          v-for="rel in currConnectivity"
+          :key="rel.id"
+        >
           <div>
             <div class="schema_side-panel__add-table-rel-group-container">
               <div class="input-group flex-nowrap">
-                <select v-model="rel.src" class="form-select" :style="getSelectStyle(rel.src)">
-                  <option v-for="option in relTableSrcAndDstOptions" :key="option.text" :value="option.value">
+                <select
+                  v-model="rel.src"
+                  class="form-select"
+                  :style="getSelectStyle(rel.src)"
+                >
+                  <option
+                    v-for="option in relTableSrcAndDstOptions"
+                    :key="option.text"
+                    :value="option.value"
+                  >
                     {{ option.text }}
                   </option>
                 </select>
@@ -52,15 +85,28 @@
               <span class="input-group-text no-border">
                 <i class="fa-solid fa-arrow-right" /></span>
               <div class="input-group flex-nowrap">
-                <select v-model="rel.dst" class="form-select" :style="getSelectStyle(rel.dst)">
-                  <option v-for="option in relTableSrcAndDstOptions" :key="option.text" :value="option.value">
+                <select
+                  v-model="rel.dst"
+                  class="form-select"
+                  :style="getSelectStyle(rel.dst)"
+                >
+                  <option
+                    v-for="option in relTableSrcAndDstOptions"
+                    :key="option.text"
+                    :value="option.value"
+                  >
                     {{ option.text }}
                   </option>
                 </select>
               </div>
               &nbsp;
               <div>
-                <button type="button" class="btn btn-sm btn-outline-danger" title="Drop" @click="deleteRel(rel.id)">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger"
+                  title="Drop"
+                  @click="deleteRel(rel.id)"
+                >
                   <i class="fa-solid fa-trash" />
                 </button>
               </div>
@@ -82,8 +128,10 @@
 
       <h5>Properties</h5>
       <hr>
-      <table v-if="schema && currProperties.length > 0"
-        class="table table-sm table-bordered schema_side-panel__add-table">
+      <table
+        v-if="schema && currProperties.length > 0"
+        class="table table-sm table-bordered schema_side-panel__add-table"
+      >
         <thead>
           <tr>
             <th scope="col">
@@ -92,32 +140,60 @@
             <th scope="col">
               Type
             </th>
-            <th scope="col" class="schema_side-panel__add-table-buttons-container">
+            <th
+              scope="col"
+              class="schema_side-panel__add-table-buttons-container"
+            >
               Actions
             </th>
           </tr>
         </thead>
 
         <tbody>
-          <tr v-for="property in currProperties" :key="property.id">
-            <SchemaPropertyEditCell v-if="property.isEditing" :ref="'editCell-' + property.id" :property="property"
-              :colspan="3" :is-new-property="true" :is-new-table="true" :is-node-table="isNode"
-              @save="(...args) => saveProperty(property.id, ...args)" @cancel="cancelEditMode(property.id)" />
+          <tr
+            v-for="property in currProperties"
+            :key="property.id"
+          >
+            <SchemaPropertyEditCell
+              v-if="property.isEditing"
+              :ref="'editCell-' + property.id"
+              :property="property"
+              :colspan="3"
+              :is-new-property="true"
+              :is-new-table="true"
+              :is-node-table="isNode"
+              @save="(...args) => saveProperty(property.id, ...args)"
+              @cancel="cancelEditMode(property.id)"
+            />
             <td v-if="!property.isEditing">
               {{ property.name }}
-              <span v-if="property.isPrimaryKey" class="badge bg-primary">PK</span>
+              <span
+                v-if="property.isPrimaryKey"
+                class="badge bg-primary"
+              >PK</span>
             </td>
             <td v-if="!property.isEditing">
               {{ property.type }}
             </td>
-            <td v-if="!property.isEditing" class="schema_side-panel__add-table-buttons-container">
-              <button type="button" class="btn btn-sm btn-outline-primary" title="Edit"
-                @click="enterEditMode(property.id)">
+            <td
+              v-if="!property.isEditing"
+              class="schema_side-panel__add-table-buttons-container"
+            >
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-primary"
+                title="Edit"
+                @click="enterEditMode(property.id)"
+              >
                 <i class="fa-solid fa-pencil" />
               </button>
               &nbsp;
-              <button type="button" class="btn btn-sm btn-outline-danger" title="Drop"
-                @click="dropProperty(property.id)">
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                title="Drop"
+                @click="dropProperty(property.id)"
+              >
                 <i class="fa-solid fa-trash" />
               </button>
             </td>
