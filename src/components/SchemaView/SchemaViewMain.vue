@@ -66,7 +66,6 @@
         @edit-table="enterEditTableMode"
         @add-node-table="enterAddNodeTableMode"
         @add-rel-table="enterAddRelTableMode"
-        @add-rel-group="enterAddRelGroupMode"
       />
       <!-- Read only view for hovered label -->
       <!-- If edit view is shown, hovering over another label will not change the view -->
@@ -106,7 +105,6 @@
         :schema="schema"
         :label="clickedLabel"
         :is-node="clickedIsNode"
-        :is-rel-group="clickedIsRelGroup"
         @discard="cancelAdd"
         @save="addNewTable"
         @update-node-table-label="updatePlaceholderNodeTableLabel"
@@ -176,7 +174,6 @@ export default {
     clickedLabel: null,
     clickedIsNode: false,
     clickedIsNewTable: false,
-    clickedIsRelGroup: false,
     toolbarDebounceTimeout: 100,
     toolbarDebounceTimer: null,
   }),
@@ -467,16 +464,24 @@ export default {
       }
       const numberOfEdgesBetweenNodesHash = {};
       schema.relTables.forEach(r => {
-        const key = getEdgeKey(r.src, r.dst, true);
-        if (!numberOfEdgesBetweenNodesHash[key]) {
-          numberOfEdgesBetweenNodesHash[key] = 0;
-        }
-        numberOfEdgesBetweenNodesHash[key] += 1;
+        r.connectivity.forEach(conn => {
+          if (!conn.src || !conn.dst) {
+            return;
+          }
+          const key = getEdgeKey(conn.src, conn.dst);
+          if (!numberOfEdgesBetweenNodesHash[key]) {
+            numberOfEdgesBetweenNodesHash[key] = 0;
+          }
+          numberOfEdgesBetweenNodesHash[key] += 1;
+        });
       });
 
       let edges = [];
 
       for (const r of schema.relTables) {
+        if (!r.connectivity || r.connectivity.length === 0) {
+          continue;
+        }
         for (const conn of r.connectivity) {
           const edge = {
             id: this.getEdgeId(conn.src, conn.dst, r.name),
@@ -490,10 +495,10 @@ export default {
             }
           };
           if (!edge.source || !edge.target) {
-            return null;
+            continue;
           }
-          const hashKey = getEdgeKey(r.src, r.dst);
-          const sortedHashKey = getEdgeKey(r.src, r.dst, true);
+          const hashKey = getEdgeKey(edge.source, edge.target);
+          const sortedHashKey = getEdgeKey(edge.source, edge.target, true);
           if (!overlapEdgeHash[sortedHashKey]) {
             overlapEdgeHash[sortedHashKey] = 0;
           }
@@ -507,31 +512,28 @@ export default {
             };
           }
           else {
-            if (numberOfEdgesBetweenNodesHash[sortedHashKey] > 1) {
-              edge.type = 'quadratic';
-              edge.curveOffset = ARC_CURVE_OFFSETS[(overlapEdgeHash[sortedHashKey] - 1) % ARC_CURVE_OFFSETS.length];
-              if (sortedHashKey !== hashKey) {
-                // There is a second edge between the same nodes, but in the opposite direction
-                // In this case, G6 by default draws the second edge with a slightly different start and end point
-                // Which looks weird, so we add a workaround
+            edge.type = 'quadratic';
+            edge.curveOffset = ARC_CURVE_OFFSETS[(overlapEdgeHash[sortedHashKey] - 1) % ARC_CURVE_OFFSETS.length];
+            if (sortedHashKey !== hashKey) {
+              // There is a second edge between the same nodes, but in the opposite direction
+              // In this case, G6 by default draws the second edge with a slightly different start and end point
+              // Which looks weird, so we add a workaround
 
-                // Exchange source and target
-                const temp = edge.source;
-                edge.source = edge.target;
-                edge.target = temp;
+              // Exchange source and target
+              const temp = edge.source;
+              edge.source = edge.target;
+              edge.target = temp;
 
-                // Set start arrow to true
-                edge.style.startArrow = true;
-                // Set end arrow to false
-                edge.style.endArrow = false;
-              }
-            } else {
-              edge.type = 'line';
+              // Set start arrow to true
+              edge.style.startArrow = true;
+              // Set end arrow to false
+              edge.style.endArrow = false;
             }
           }
           edges.push(edge);
         }
       }
+      console.log(overlapEdgeHash);
       edges = edges.filter(e => Boolean(e));
       return { nodes, edges };
     },
@@ -576,10 +578,6 @@ export default {
         });
       } else if (action.type === SCHEMA_ACTION_TYPES.ADD_REL_TABLE) {
         this.settingsStore.renameRelTable(PLACEHOLDER_REL_TABLE, action.table);
-        this.$nextTick(() => {
-          this.cancelAdd();
-        });
-      } else if (action.type === SCHEMA_ACTION_TYPES.ADD_REL_GROUP) {
         this.$nextTick(() => {
           this.cancelAdd();
         });
@@ -759,34 +757,16 @@ export default {
       this.clickedIsNewTable = true;
     },
 
-    enterAddRelGroupMode() {
-      let newTableName = "NewRelGroup";
-      this.clickedIsNewTable = true;
-      let counter = 1;
-      while (this.schema.relTables.find(t => t.name === newTableName)) {
-        newTableName = `NewRelGroup-${counter}`;
-        counter += 1;
-      }
-      this.clickedLabel = newTableName;
-      this.clickedIsNode = false;
-      this.clickedIsNewTable = true;
-      this.clickedIsRelGroup = true;
-    },
-
     cancelAdd() {
       if (this.clickedIsNode) {
         this.settingsStore.removeNodeTable(PLACEHOLDER_NODE_TABLE);
       }
-      else if (!this.clickedIsRelGroup) {
-        this.settingsStore.removeRelTable(PLACEHOLDER_REL_TABLE);
-      }
-      this.clickedIsRelGroup = false;
       this.resetClick();
       this.reloadSchema();
     },
 
-    addNewTable(table, properties, src, dst, relGroupRels) {
-      this.$refs.actionDialog.addNewTable(table, properties, this.clickedIsNode, this.clickedIsRelGroup, src, dst, relGroupRels);
+    addNewTable(table, properties, connectivity) {
+      this.$refs.actionDialog.addNewTable(table, properties, this.clickedIsNode, connectivity);
     },
 
     setPlaceholder(label) {
@@ -831,19 +811,6 @@ export default {
 
     updatePlaceholderRelTable(newTable) {
       this.$emit("updatePlaceholderRelTable", newTable);
-      this.clickedLabel = newTable.name;
-      const g6Item = this.g6Graph ? this.g6Graph.find('edge', edge => edge._cfg.model.isPlaceholder) : null;
-      // If the edge has not been created yet, and the user has not selected a source and destination, do nothing
-      if (!g6Item && (!newTable.src || !newTable.dst)) {
-        return;
-      }
-      // If the edge has been created and only the label has changed, update the label and return
-      if (g6Item && g6Item._cfg.model.src === newTable.src && g6Item._cfg.model.dst === newTable.dst) {
-        this.g6Graph.updateItem(g6Item, {
-          label: newTable.name,
-        });
-        return;
-      }
       // Rerender the graph to update the edge
       this.$nextTick(() => {
         this.handleSettingsChange();

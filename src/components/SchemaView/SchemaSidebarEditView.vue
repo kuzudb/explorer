@@ -37,10 +37,6 @@
       <hr>
 
       <div v-if="!isNode">
-        <h6 v-if="relGroup">
-          <b>{{ relGroup }} </b> group
-        </h6>
-
         <h6
           v-for="conn in connectivity"
           :key="conn"
@@ -238,13 +234,6 @@ export default {
         return null;
       }
       return this.schema.relTables.find(t => t.name === this.label).connectivity;
-    },
-
-    relGroup() {
-      if (!this.schema || !this.label || this.isNode) {
-        return null;
-      }
-      return this.schema.relTables.find(t => t.name === this.label).group;
     },
     tableProperties() {
       if (this.isEditingLabel) {

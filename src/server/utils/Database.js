@@ -5,7 +5,6 @@ const fs = require("fs");
 const TABLE_TYPES = {
   NODE: "NODE",
   REL: "REL",
-  REL_GROUP: "REL_GROUP",
 };
 const CONSTANTS = require("./Constants");
 const MODES = CONSTANTS.MODES;
@@ -221,7 +220,7 @@ class Database {
       }
       nodeTables.sort((a, b) => a.name.localeCompare(b.name));
       relTables.sort((a, b) => a.name.localeCompare(b.name));
-      return { nodeTables, relTables, relGroups: [] };
+      return { nodeTables, relTables};
     } finally {
       this.releaseConnection(conn);
     }

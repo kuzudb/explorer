@@ -71,7 +71,6 @@ export const SCHEMA_ACTION_TYPES = {
   ADD_PROPERTY: "addProperty",
   ADD_NODE_TABLE: "addNodeTable",
   ADD_REL_TABLE: "addRelTable",
-  ADD_REL_GROUP: "addRelGroup",
 };
 
 export const UI_SIZE = {
@@ -130,7 +129,6 @@ export const JOB_STATUS = {
 export const TABLE_TYPES = {
   NODE: "NODE",
   REL: "REL",
-  REL_GROUP: "REL_GROUP",
 };
 
 export const LOADING_STATUS = {

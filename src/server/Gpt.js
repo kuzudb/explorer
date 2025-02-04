@@ -41,7 +41,6 @@ router.post("/", async (req, res) => {
   let schema;
   try {
     schema = await database.getSchema();
-    delete schema.relGroups;
   } catch (err) {
     return res
       .status(500)

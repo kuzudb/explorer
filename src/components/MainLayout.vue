@@ -287,17 +287,6 @@ export default {
         schema = response.data;
       }
       this.schema = schema;
-      const relGroupsMap = {};
-      this.schema.relGroups.forEach((g) => {
-        g.rels.forEach((r) => {
-          relGroupsMap[r] = g.name
-        });
-      });
-      this.schema.relTables.forEach((r) => {
-        if (relGroupsMap[r.name]) {
-          r.group = relGroupsMap[r.name];
-        }
-      });
     },
     async getMode() {
       const response = await Axios.get("/api/mode");
@@ -330,8 +319,7 @@ export default {
     addPlaceholderRelTable(tableName) {
       this.schema.relTables.push({
         name: tableName,
-        src: "",
-        dst: "",
+        connectivity: [],
         properties: [],
         isPlaceholder: true,
       });
@@ -343,8 +331,7 @@ export default {
     updatePlaceholderRelTable(newTable) {
       const table = this.schema.relTables.find((t) => t.isPlaceholder);
       table.name = newTable.name;
-      table.src = newTable.src;
-      table.dst = newTable.dst;
+      table.connectivity = newTable.connectivity;
     },
     setPlaceholder(name) {
       let table = this.schema.nodeTables.find((t) => t.name === name);

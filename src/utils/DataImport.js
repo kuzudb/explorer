@@ -303,7 +303,7 @@ class DataImportUtils {
           const found = config.find((t) => t.id === toTable.key);
           toTableName = found.tableName;
         }
-        const cypher = ddl.addRelTable(table.tableName, properties, fromTableName, toTableName);
+        const cypher = ddl.addRelTableWithSingleConnection(table.tableName, properties, fromTableName, toTableName);
         plan.push({
           cypher,
           from: fromTableName,
