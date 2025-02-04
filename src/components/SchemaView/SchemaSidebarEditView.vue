@@ -4,32 +4,18 @@
       <div class="d-flex justify-content-between">
         <div class="input-group d-flex">
           <span class="input-group-text">Name</span>
-          <input
-            v-model="currLabel"
-            type="text"
-            class="form-control"
-            :style="{
-              backgroundColor: ` ${getBackgroundColorForEditingTable()} !important`,
-              color: isNode ? '#ffffff' : '#000000',
-            }"
-          >
+          <input v-model="currLabel" type="text" class="form-control" :style="{
+            backgroundColor: ` ${getBackgroundColorForEditingTable()} !important`,
+            color: isNode ? '#ffffff' : '#000000',
+          }">
         </div>
-        <div
-          v-if="isEditingLabel"
-          class="d-flex"
-        >
+        <div v-if="isEditingLabel" class="d-flex">
           &nbsp;
-          <button
-            class="btn btn-sm btn-outline-primary"
-            @click="renameTable"
-          >
+          <button class="btn btn-sm btn-outline-primary" @click="renameTable">
             <i class="fa-solid fa-check" />
           </button>
           &nbsp;
-          <button
-            class="btn btn-sm btn-outline-danger"
-            @click="cancelTableRename"
-          >
+          <button class="btn btn-sm btn-outline-danger" @click="cancelTableRename">
             <i class="fa-solid fa-times" />
           </button>
         </div>
@@ -37,27 +23,18 @@
       <hr>
 
       <div v-if="!isNode">
-        <h6
-          v-for="conn in connectivity"
-          :key="conn"
-        >
-          <span
-            class="badge bg-primary"
-            :style="{
-              backgroundColor: ` ${getColor(conn.src)} !important`,
-            }"
-          >
+        <h6 v-for="conn in connectivity" :key="conn">
+          <span class="badge bg-primary" :style="{
+            backgroundColor: ` ${getColor(conn.src)} !important`,
+          }">
             {{ conn.src }}
           </span>
           &nbsp;
           <i class="fa-solid fa-arrow-right" />
           &nbsp;
-          <span
-            class="badge bg-primary"
-            :style="{
-              backgroundColor: ` ${getColor(conn.dst)} !important`,
-            }"
-          >
+          <span class="badge bg-primary" :style="{
+            backgroundColor: ` ${getColor(conn.dst)} !important`,
+          }">
             {{ conn.dst }}
           </span>
         </h6>
@@ -65,28 +42,16 @@
       </div>
 
       <div class="schema_side-panel__edit-table-actions-container">
-        <button
-          class="btn btn-sm btn-outline-primary"
-          title="Go Back to Schema View"
-          @click="goBack"
-        >
+        <button class="btn btn-sm btn-outline-primary" title="Go Back to Schema View" @click="goBack">
           <i class="fa-solid fa-long-arrow-left" />
         </button>
         &nbsp;
-        <button
-          class="btn btn-sm btn-outline-primary"
-          title="Add Property"
-          @click="enterAddMode"
-        >
+        <button class="btn btn-sm btn-outline-primary" title="Add Property" @click="enterAddMode">
           <i class="fa-solid fa-plus" />
           Property
         </button>
         &nbsp;
-        <button
-          class="btn btn-sm btn-outline-danger"
-          title="Drop Table"
-          @click="$emit('dropTable', label)"
-        >
+        <button class="btn btn-sm btn-outline-danger" title="Drop Table" @click="$emit('dropTable', label)">
           <i class="fa-solid fa-trash" />
           Drop Table
         </button>
@@ -94,97 +59,61 @@
       </div>
       <br>
 
-      <table
-        v-if="schema"
-        class="table table-sm table-bordered schema_side-panel__edit-table"
-      >
+      <table v-if="schema && (tableProperties.length > 0 || addingProperty)"
+        class="table table-sm table-bordered schema_side-panel__edit-table">
         <thead>
-          <tr v-if="tableProperties.length > 0 || addingProperty">
+          <tr>
             <th scope="col">
               Name
             </th>
             <th scope="col">
               Type
             </th>
-            <th
-              scope="col"
-              class="schema_side-panel__edit-table-buttons-container"
-            >
+            <th scope="col" class="schema_side-panel__edit-table-buttons-container">
               Actions
             </th>
           </tr>
-          <tr v-else>
-            <th scope="col">
-              There are no properties in this table
-            </th>
-          </tr>
+
         </thead>
-        <tbody v-if="tableProperties.length > 0 || addingProperty">
+        <tbody>
           <tr>
-            <SchemaPropertyEditCell
-              v-if="addingProperty"
-              :property="defaultNewProperty"
-              :colspan="3"
-              :is-new-property="true"
-              :is-new-table="false"
-              :is-node-table="isNode"
-              @cancel="cancelAddMode"
-              @save="addProperty"
-            />
+            <SchemaPropertyEditCell v-if="addingProperty" :property="defaultNewProperty" :colspan="3"
+              :is-new-property="true" :is-new-table="false" :is-node-table="!!isNode" @cancel="cancelAddMode"
+              @save="addProperty" />
           </tr>
-          <tr
-            v-for="(property, i) in tableProperties"
-            :key="property.name"
-          >
-            <td
-              v-if="i !== editingPropertyIndex"
-              scope="row"
-            >
+          <tr v-for="(property, i) in tableProperties" :key="property.name">
+            <td v-if="i !== editingPropertyIndex" scope="row">
               {{ property.name }}
-              <span
-                v-if="property.isPrimaryKey"
-                class="badge bg-primary"
-              > PK </span>
+              <span v-if="property.isPrimaryKey" class="badge bg-primary"> PK </span>
             </td>
             <td v-if="i !== editingPropertyIndex">
               {{ property.type }}
             </td>
-            <td
-              v-if="i !== editingPropertyIndex"
-              class="schema_side-panel__edit-table-buttons-container"
-            >
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-primary"
-                title="Edit"
-                @click="enterEditMode(i)"
-              >
+            <td v-if="i !== editingPropertyIndex" class="schema_side-panel__edit-table-buttons-container">
+              <button type="button" class="btn btn-sm btn-outline-primary" title="Edit" @click="enterEditMode(i)">
                 <i class="fa-solid fa-pencil" />
               </button>
               &nbsp;
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-danger"
-                title="Drop"
-                @click="dropProperty(property.name)"
-              >
+              <button type="button" class="btn btn-sm btn-outline-danger" title="Drop"
+                @click="dropProperty(property.name)">
                 <i class="fa-solid fa-trash" />
               </button>
             </td>
-            <SchemaPropertyEditCell
-              v-if="i === editingPropertyIndex"
-              :property="property"
-              :colspan="3"
-              :is-new-property="false"
-              :is-new-table="false"
-              @cancel="cancelEditMode"
-              @save="renameProperty"
-            >
+            <SchemaPropertyEditCell v-if="i === editingPropertyIndex" :property="property" :colspan="3"
+              :is-new-property="false" :is-new-table="false" :is-node-table="!!isNode" @cancel="cancelEditMode"
+              @save="renameProperty">
               {{ property.name }}
             </SchemaPropertyEditCell>
           </tr>
         </tbody>
       </table>
+      <div v-else>
+        <div class="alert alert-info text-justify">
+          <i class="fa-solid fa-info-circle" />
+          There are no properties in this table yet.
+          You can add one by clicking the "Property" button above.
+        </div>
+      </div>
     </div>
   </div>
 </template>
