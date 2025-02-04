@@ -445,6 +445,7 @@ export default {
         const returnVal = {
           id: n.name,
           label: n.name,
+          _label: n.name,
           isPlaceholder: Boolean(n.isPlaceholder),
           style: {
             fill:
@@ -691,9 +692,6 @@ export default {
       this.g6Graph.changeData({ nodes, edges, });
       const layoutConfig = this.getLayoutConfig(edges);
       this.g6Graph.updateLayout(layoutConfig);
-      if (this.clickedLabel) {
-        this.setG6Click(this.clickedLabel);
-      }
     },
 
     enterEditTableMode(tableName) {
@@ -704,23 +702,22 @@ export default {
       }
       this.clickedIsNode = isTableNode;
       this.clickedLabel = tableName;
-      this.setG6Click(tableName);
     },
 
     setG6Click(tableName) {
-      const g6Item = this.g6Graph ? this.g6Graph.findById(tableName) : null;
-      if (g6Item) {
+      const g6Items = this.g6Graph ? this.g6Graph.findAll(
+        this.clickedIsNode ? 'node' : 'edge',
+        item => item._cfg.model._label === tableName
+      ) : [];
+      g6Items.forEach(g6Item => {
         this.g6Graph.setItemState(g6Item, 'click', true);
-      }
-      else {
-        return;
-      }
-      if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-        this.g6Graph.updateItem(g6Item, {
-          label: this.getRelTableDisplayLabel(tableName),
-        });
-        g6Item.toFront();
-      }
+        if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
+          this.g6Graph.updateItem(g6Item, {
+            label: this.getRelTableDisplayLabel(tableName),
+          });
+          g6Item.toFront();
+        }
+      });
     },
 
     enterAddNodeTableMode() {
@@ -735,7 +732,6 @@ export default {
       this.settingsStore.addNewNodeTable(PLACEHOLDER_NODE_TABLE);
       this.$nextTick(() => {
         this.handleSettingsChange();
-        this.setG6Click(newTableName);
       });
       this.clickedLabel = newTableName;
       this.clickedIsNode = true;
@@ -770,11 +766,16 @@ export default {
     },
 
     setPlaceholder(label) {
-      const g6Item = this.g6Graph ? this.g6Graph.findById(label) : null;
-      if (g6Item) {
-        this.g6Graph.updateItem(g6Item, {
-          isPlaceholder: true,
-        });
+      const g6Items = this.g6Graph.findAll(
+        this.clickedIsNode ? 'node' : 'edge',
+        item => item._cfg.model._label === label
+      );
+      if (g6Items.length > 0) {
+        for (const g6Item of g6Items) {
+          this.g6Graph.updateItem(g6Item, {
+            isPlaceholder: true,
+          });
+        }
       }
       this.$emit("setPlaceholder", label);
     },
@@ -783,10 +784,7 @@ export default {
       if (isNode) {
         this.updatePlaceholderNodeTableLabel(newLabel);
       } else {
-        const g6Item = this.g6Graph ? this.g6Graph.find('edge', edge => edge._cfg.model.isPlaceholder) : null;
-        const src = g6Item._cfg.model.source;
-        const dst = g6Item._cfg.model.target;
-        this.updatePlaceholderRelTable({ name: newLabel, src, dst });
+        this.updatePlaceholderRelTable(newLabel);
       }
     },
 
@@ -809,8 +807,12 @@ export default {
       this.clickedLabel = newLabel;
     },
 
-    updatePlaceholderRelTable(newTable) {
-      this.$emit("updatePlaceholderRelTable", newTable);
+    updatePlaceholderRelTable(newLabel) {
+      if (this.clickedLabel === newLabel) {
+        return;
+      }
+      this.$emit("updatePlaceholderRelTable", { name: newLabel });
+      this.clickedLabel = newLabel;
       // Rerender the graph to update the edge
       this.$nextTick(() => {
         this.handleSettingsChange();

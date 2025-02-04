@@ -188,8 +188,8 @@
           </div>
           <div class="modal-body">
             <p v-if="modeStore.isDemo">
-              This is a demo of <a href="https://kuzudb.com/">Kùzu</a> powered by WebAssembly. 
-              You can go to the Dataset tab to load a sample dataset or import your own data to 
+              This is a demo of <a href="https://kuzudb.com/">Kùzu</a> powered by WebAssembly.
+              You can go to the Dataset tab to load a sample dataset or import your own data to
               explore the features of Kùzu. Note that no data is persisted between sessions in
               demo mode.
             </p>
@@ -330,8 +330,12 @@ export default {
     },
     updatePlaceholderRelTable(newTable) {
       const table = this.schema.relTables.find((t) => t.isPlaceholder);
-      table.name = newTable.name;
-      table.connectivity = newTable.connectivity;
+      if (newTable.name) {
+        table.name = newTable.name;
+      }
+      if (newTable.connectivity) {
+        table.connectivity = newTable.connectivity;
+      }
     },
     setPlaceholder(name) {
       let table = this.schema.nodeTables.find((t) => t.name === name);

@@ -230,30 +230,18 @@ export default {
   computed: {
     ...mapStores(useSettingsStore),
     connectivity() {
-      if (!this.schema || !this.label || this.isNode) {
-        return null;
-      }
-      return this.schema.relTables.find(t => t.name === this.label).connectivity;
-    },
-    tableProperties() {
-      if (this.isEditingLabel) {
-        if (this.isNode) {
-          return this.schema.nodeTables.find(t => t.isPlaceholder).properties;
-        }
-        return this.schema.relTables.find(t => t.isPlaceholder).properties;
-      }
-      if (!this.schema || !this.label) {
+      const table = this.getTableFromSchema();
+      if (!table) {
         return [];
       }
-      if (this.isNode) {
-        return this.schema.nodeTables
-          .find(t => t.name === this.label)
-          .properties;
-      } else {
-        return this.schema.relTables
-          .find(t => t.name === this.label)
-          .properties;
+      return table.connectivity;
+    },
+    tableProperties() {
+      const table = this.getTableFromSchema();
+      if (!table) {
+        return [];
       }
+      return table.properties;
     },
   },
   watch: {
@@ -285,6 +273,24 @@ export default {
     this.currLabel = this.label;
   },
   methods: {
+    getTableFromSchema() {
+      if (this.isEditingLabel) {
+        if (this.isNode) {
+          return this.schema.nodeTables.find(t => t.isPlaceholder);
+        }
+        return this.schema.relTables.find(t => t.isPlaceholder);
+      }
+      if (!this.schema || !this.label) {
+        return [];
+      }
+      if (this.isNode) {
+        return this.schema.nodeTables
+          .find(t => t.name === this.label);
+      } else {
+        return this.schema.relTables
+          .find(t => t.name === this.label);
+      }
+    },
     getColor(label) {
       return this.settingsStore.colorForLabel(label);
     },
@@ -316,7 +322,7 @@ export default {
       this.currLabel = this.oldLabel;
     },
     finishTableRename() {
-      this.currLabel = this.label;
+      console.log("finishTableRename", this.label);
       this.isEditingLabel = false;
       this.oldLabel = "";
     },

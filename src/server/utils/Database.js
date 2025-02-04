@@ -204,10 +204,6 @@ class Database {
           const connectivity = await conn
             .query(`CALL SHOW_CONNECTION('${table.name}') RETURN *;`)
             .then((res) => res.getAll());
-          const src = connectivity[0]["source table name"];
-          const dst = connectivity[0]["destination table name"];
-          table.src = src;
-          table.dst = dst;
           table.connectivity = [];
           connectivity.forEach(c => {
             table.connectivity.push({
