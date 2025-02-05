@@ -150,8 +150,6 @@ class Kuzu {
           }
           currentResult = await currentResult.getNextQueryResult();
         }
-        const lastResultBody = await this.processSingleResult(currentResult);
-        responseBody.results.push(lastResultBody);
         // We only need to close the first result, the rest will be closed
         // automatically when the first one is closed.
         await result.close();
