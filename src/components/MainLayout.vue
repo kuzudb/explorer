@@ -187,12 +187,37 @@
             </h5>
           </div>
           <div class="modal-body">
-            <p v-if="modeStore.isDemo">
-              This is a demo of <a href="https://kuzudb.com/">Kùzu</a> powered by WebAssembly.
-              You can go to the Dataset tab to load a sample dataset or import your own data to
-              explore the features of Kùzu. Note that no data is persisted between sessions in
-              demo mode.
-            </p>
+            <div v-if="modeStore.isDemo">
+              <p>
+                This is a demo of <a href="https://kuzudb.com/">Kùzu</a> powered by WebAssembly. You can go to the
+                "Import
+                data" tab to import sample data
+                or your own data to explore it as a graph via the Cypher query language. Note that <b>no data is
+                  persisted</b>
+                between sessions in demo mode.
+              </p>
+              <hr>
+              <div
+                v-if="!isKuzuWasmInitialized"
+                class="d-flex align-items-center"
+              >
+                <strong class="text-primary">
+                  Initializing WebAssembly module...
+                </strong>
+                <div
+                  class="spinner-border text-primary ms-auto"
+                  role="status"
+                />
+              </div>
+              <div
+                v-else
+                class="d-flex align-items-center"
+              >
+                <strong class="text-success">
+                  <i class="fa-solid fa-check" />&nbsp; WebAssembly module initialized! You can now start exploring
+                  your data. </strong>
+              </div>
+            </div>
             <p v-if="modeStore.isReadOnly">
               Kùzu Explorer is running in read-only mode. In this mode, you cannot load a
               dataset, modify the schema, or execute write queries. If you want to make
@@ -247,6 +272,7 @@ export default {
     showSettings: false,
     navbarHeight: 0,
     schema: null,
+    isKuzuWasmInitialized: false,
   }),
   computed: {
     ...mapStores(useModeStore)
@@ -266,7 +292,9 @@ export default {
   async created() {
     await this.getMode();
     if (this.modeStore.isWasm) {
+      this.isKuzuWasmInitialized = false;
       await Kuzu.init();
+      this.isKuzuWasmInitialized = true;
     }
     const res = await Promise.all([this.getSchema(), this.getStoredSettings()])
     let storedSettings = res[1];
@@ -454,5 +482,10 @@ nav.navbar {
       color: $gray-300;
     }
   }
+}
+
+.d-flex.align-items-center{
+  padding-left: 20px;
+  padding-right: 20px;
 }
 </style>
