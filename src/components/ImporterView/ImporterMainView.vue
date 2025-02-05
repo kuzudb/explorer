@@ -107,6 +107,7 @@ import { mapStores } from 'pinia';
 import { useModeStore } from '../../store/ModeStore';
 import { DATA_TYPES, IMPORT_ACTIONS, JOB_STATUS } from '../../utils/Constants';
 import DuckDB from '../../utils/DuckDB';
+import Kuzu from '../../utils/KuzuWasm';
 import ImporterViewDropZone from './ImporterViewDropZone.vue';
 import ImporterViewSidebar from './ImporterViewSidebar.vue';
 import ImporterViewNodeTables from './ImporterViewNodeTables.vue';
@@ -116,6 +117,8 @@ import ImporterViewCsvFormatModal from './ImporterViewCsvFormatModal.vue';
 import ImporterViewPreview from './ImporterViewPreview.vue';
 import ImporterViewValidationModal from './ImporterViewValidationModal.vue';
 import ImporterViewErrorModal from './ImporterViewErrorModal.vue';
+import DataImportUtils from '@/utils/DataImport';
+import ddl from '@/utils/DataDefinitionLanguage';
 
 export default {
   name: "ImporterMainView",
@@ -603,10 +606,37 @@ export default {
       }
     },
 
+    async getImportPlanFromWasm(summary) {
+      const schema = await Kuzu.getSchema();
+      const config = summary.config;
+      const { success, errors } = DataImportUtils.validateImport(config, schema);
+      if (!success) {
+        return { success, errors };
+      }
+      const plan = DataImportUtils.createImportPlan(config, null, schema, ddl);
+      return { success: true, plan, jobId: summary.id };
+    },
+
     async startImport() {
       this.$refs.validationModal.showModal();
       this.$refs.validationModal.setState(true, [], []);
       const summary = this.getImportSummary();
+      if (this.modeStore.isWasm) {
+        try {
+          const { success, plan, errors } = await this.getImportPlanFromWasm(summary);
+          if (!success) {
+            this.$refs.validationModal.setState(false, errors, []);
+            return;
+          }
+          this.currentJob = { plan, jobId: summary.id, };
+          this.$refs.validationModal.setState(false, [], plan);
+          return;
+        } catch (error) {
+          console.error(error);
+          this.$refs.validationModal.setState(false, [error.message], []);
+          return;
+        }
+      }
       const url = `/api/import/${summary.id}`;
       try {
         const res = await Axios.post(url, summary);
@@ -627,12 +657,17 @@ export default {
 
     abortCurrentJob() {
       this.$refs.validationModal.setState(false, [], []);
-      this.deleteCurrentJob();
+      if (!this.modeStore.isWasm) {
+        this.deleteCurrentJob();
+      }
     },
 
     async deleteCurrentJob() {
       if (!this.currentJob) {
         return;
+      }
+      if (this.modeStore.isWasm) {
+        await this.deleteCurrentJobFromWasm();
       }
       const jobId = this.currentJob.jobId;
       const api = `/api/import/${jobId}`;
@@ -643,11 +678,89 @@ export default {
       }
     },
 
+    async deleteCurrentJobFromWasm() {
+      const FS = Kuzu.getFS();
+      const plan = this.currentJob.plan.filter(j => j.action === IMPORT_ACTIONS.UPLOAD);
+      for (let i = 0; i < plan.length; ++i) {
+        const job = plan[i];
+        const virtualFileName = job.fileName;
+        try {
+          await FS.unlink(virtualFileName);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    },
+
     async executeCurrentJob() {
       this.$refs.importProcessingModal.showModal();
       await this.processUploads();
-      await this.startJobExecution();
-      this.pollJobStatus();
+      if (!this.modeStore.isWasm) {
+        await this.startJobExecution();
+        this.pollJobStatus();
+      } else {
+        await this.executeImportWasm();
+      }
+    },
+
+    async executeImportWasm() {
+      const plan = this.currentJob.plan.filter(j => j.action !== IMPORT_ACTIONS.UPLOAD);
+      const db = await Kuzu.getDb();
+      const conn = new Kuzu.kuzu.Connection(db);
+      try {
+        await conn.query("CALL clear_warnings();");
+      } catch (error) {
+        console.error(error);
+      }
+      for (let i = 0; i < plan.length; ++i) {
+        const job = plan[i];
+        job.status = JOB_STATUS.PROCESSING;
+        const cypher = job.cypher;
+        try {
+          await conn.query(cypher);
+          job.status = JOB_STATUS.SUCCESS;
+        } catch (error) {
+          console.error(error);
+          job.status = JOB_STATUS.ERROR;
+          job.error = error.message;
+          for (let j = i + 1; j < plan.length; ++j) {
+            plan[j].status = JOB_STATUS.ERROR;
+            plan[j].error = 'Previous step failed';
+          }
+          await this.deleteCurrentJobFromWasm();
+          break;
+        }
+      }
+      try {
+        const numberOfWarningsQueryResult = await conn.query("CALL SHOW_WARNINGS() RETURN COUNT(*) AS count;");
+        const numberOfWarnings = (await numberOfWarningsQueryResult.getNext())[0];
+        this.currentJob.numberOfWarnings = numberOfWarnings;
+        if (numberOfWarnings > 0) {
+          const fileNameHash = {};
+          for (let i = 0; i < this.currentJob.plan.length; ++i) {
+            const job = this.currentJob.plan[i];
+            if (job.action === IMPORT_ACTIONS.UPLOAD) {
+              fileNameHash[job.fileName] = job.displayName;
+            }
+          }
+          const warningsQueryResult = await conn.query("CALL SHOW_WARNINGS() RETURN * LIMIT 100;");
+          const warnings = await warningsQueryResult.getAllObjects();
+          this.currentJob.warnings = warnings.map(warning => {
+            const message = warning.message;
+            const lineNumber = warning.line_number;
+            const fileNameOnDisk = warning.file_path.replace("/", "");
+            const fileName = fileNameHash[fileNameOnDisk] ? fileNameHash[fileNameOnDisk] : fileNameOnDisk;
+            return {
+              message,
+              lineNumber,
+              fileName,
+            };
+          })
+        }
+      } catch (error) {
+        console.error(error);
+      }
+      await conn.close();
     },
 
     async startJobExecution() {
@@ -674,15 +787,22 @@ export default {
         const file = Object.values(this.files).find(
           (f) => DuckDB.getFileName(f.id, f.extension) === virtualFileName
         );
-        const api = `/api/import/${this.currentJob.jobId}/${virtualFileName}`;
-        const formData = new FormData();
-        formData.append('file', file.file);
+
         try {
-          await Axios.post(api, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            }
-          });
+          if (!this.modeStore.isWasm) {
+            const api = `/api/import/${this.currentJob.jobId}/${virtualFileName}`;
+            const formData = new FormData();
+            formData.append('file', file.file);
+            await Axios.post(api, formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              }
+            });
+          } else {
+            const FS = Kuzu.getFS();
+            const fileData = await file.file.arrayBuffer();
+            await FS.writeFile(virtualFileName, new Uint8Array(fileData));
+          }
           job.status = JOB_STATUS.SUCCESS;
         } catch (error) {
           console.error(error);

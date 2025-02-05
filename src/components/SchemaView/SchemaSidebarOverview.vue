@@ -154,83 +154,6 @@
       </table>
       <br>
     </div>
-
-    <div>
-      <div class="d-flex justify-content-between">
-        <h5>Relationship Groups</h5>
-        <button
-          v-if="modeStore.isReadWrite"
-          class="btn btn-sm btn-primary"
-          @click="$emit('addRelGroup')"
-        >
-          Add
-        </button>
-      </div>
-      <hr>
-      <table
-        v-if="schema"
-        class="table table-sm table-bordered schema_side-panel__overview-table"
-      >
-        <tbody>
-          <tr
-            v-for="relGroup in schema.relGroups"
-            :key="relGroup.name"
-          >
-            <td scope="row">
-              <small>{{ relGroup.name }} ({{ relGroup.rels.length }}
-                {{ relGroup.rels.length <= 1 ? "relationship" : "relationships" }})
-              </small>
-              <br>
-              <ul>
-                <li
-                  v-for="relTableName in relGroup.rels"
-                  :key="relTableName"
-                >
-                  <span
-                    class="badge bg-primary"
-                    :style="{
-                      backgroundColor: `${getColor(relTableName)} !important`,
-                      color: '#000000',
-                      marginRight: '4px',
-                    }"
-                  >
-                    {{ relTableName }}
-                  </span>
-                </li>
-              </ul>
-            </td>
-            <td
-              v-if="modeStore.isReadWrite"
-              class="schema_side-panel__overview-table-buttons-container schema_side-panel__overview-rel-groups-buttons-container"
-            >
-              <div>
-                <button
-                  class="btn btn-sm btn-outline-danger"
-                  @click="$emit('dropTable', relGroup.name)"
-                >
-                  <i class="fa-solid fa-trash-can" />
-                </button>
-              </div>
-            </td>
-          </tr>
-          <tr v-if="schema.relGroups.length === 0">
-            <td
-              v-if="modeStore.isReadWrite"
-              colspan="2"
-            >
-              There are no relationship groups in this schema. Click "Add" to add one.
-            </td>
-            <td
-              v-else
-              colspan="2"
-            >
-              There are no relationship groups in this schema.
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <br>
-    </div>
   </div>
 </template>
 
@@ -246,7 +169,7 @@ export default {
       required: true,
     },
   },
-  emits: ["dropTable", "editTable", "addNodeTable", "addRelTable", "addRelGroup", ],
+  emits: ["dropTable", "editTable", "addNodeTable", "addRelTable", ],
   computed: {
     ...mapStores(useSettingsStore, useModeStore)
   },

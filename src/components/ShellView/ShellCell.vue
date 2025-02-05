@@ -29,15 +29,12 @@
       v-if="isLoading"
       class="d-flex align-items-center"
     >
-      <strong
-        class="text-secondary"
-      >{{
+      <strong class="text-secondary">{{
         loadingText ? loadingText : "Loading..."
       }}</strong>
       <div
         class="spinner-border text-secondary ms-auto"
         role="status"
-        aria-hidden="true"
       />
     </div>
   </div>
@@ -50,6 +47,8 @@ import Axios from "axios";
 import { useModeStore } from "../../store/ModeStore";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from "pinia";
+import Kuzu from "@/utils/KuzuWasm";
+import { LOADING_STATUS } from "@/utils/Constants";
 
 export default {
   name: "ShellCell",
@@ -110,86 +109,97 @@ export default {
       return `resultContainer_${index}`;
     },
     evaluateCypher(query) {
-      const LoadingStatus = Object.freeze({
-        EVAL: "Evaluating query...",
-        PROCESS: "Processing results...",
-      });
       this.queryResults = [];
       this.errorMessage = "";
       this.isLoading = true;
-      this.loadingText = LoadingStatus.EVAL;
-      let intervalId = setInterval(() => {
-          Axios.get(`/api/cypher/progress/${this.cellId}`).then((res) => {
-              this.loadingText = `Pipelines Finished: ${res.data.numPipelinesFinished}/${res.data.numPipelines}
-            Current Pipeline Progress: ${Math.round(res.data.pipelineProgress * 100)}%`;
-          }).catch((error) => {
-              if (error.response && error.response.status === 404 && this.loadingText !== LoadingStatus.EVAL) {
-                  this.loadingText = LoadingStatus.PROCESS;
-              }
-          });
-      }, 500);
-      Axios.post("/api/cypher",
-        {
-          query,
-          uuid: this.cellId,
-          isQueryGenerationMode: this.$refs.editor.isQueryGenerationMode,
-          updateHistory: true,
-          progress: true
-        })
-        .then((res) => {
-          this.loadingText = LoadingStatus.PROCESS;
-          this.queryResults = res.data.isMultiStatement ? res.data.results : [res.data];
-          if (this.queryResults.length > 1) {
-            this.minimize();
-          }
-          this.queryString = query;
+      this.loadingText = LOADING_STATUS.EVAL;
+
+      // TODO: Refactor
+      if (this.modeStore.isWasm) {
+        Kuzu.query(query).then(data => {
+          this.handleEvaluationDataChange(data, query);
+        }).catch(error => {
+          this.errorMessage = error.message;
           this.$nextTick(() => {
-            for (let i = 0; i < this.queryResults.length; ++i) {
-              const resultContainer =
-                this.$refs[
-                this.getRefName(i)
-                ][0];
-              resultContainer.handleDataChange(this.schema, this.queryResults[i], "");
-            }
+            const errorContainer = this.$refs.resultErrorContainer;
+            errorContainer.handleDataChange(this.schema, null, this.errorMessage);
           });
-          const isSchemaChanged = res.data && res.data.isSchemaChanged;
-          if (isSchemaChanged) {
-            this.$emit("reloadSchema");
-          }
-        })
-        .catch((error) => {
-          if (!error.response) {
-            if (this.modeStore.isDemo) {
-              this.errorMessage = "The application is disconnected from the server. Please try to refresh the page and execute the query again.";
-            } else {
-              this.errorMessage = "The application is disconnected from the server. Please try to restart the server.";
-            }
-          }
-          else {
-            try {
-              this.errorMessage = error.response.data.error.trim();
-              console.error(error.response.data.error.trim());
-            } catch (e) {
-              const httpStatus = error.response.status;
-              this.errorMessage = `The request failed with HTTP status code ${httpStatus}.`;
-              console.error(this.errorMessage);
-            }
-          }
-          if (this.errorMessage) {
-            this.$nextTick(() => {
-              const errorContainer = this.$refs.resultErrorContainer;
-              console.log(errorContainer);
-              errorContainer.handleDataChange(this.schema, null, this.errorMessage);
-            });
-          }
         }).finally(() => {
-          clearInterval(intervalId);
           this.isLoading = false;
         });
-      if (!this.isEvaluated) {
-        this.$emit("addCell");
+      }
+      else {
+        let intervalId = setInterval(() => {
+          Axios.get(`/api/cypher/progress/${this.cellId}`).then((res) => {
+            this.loadingText = `Pipelines Finished: ${res.data.numPipelinesFinished}/${res.data.numPipelines}
+            Current Pipeline Progress: ${Math.round(res.data.pipelineProgress * 100)}%`;
+          }).catch((error) => {
+            if (error.response && error.response.status === 404 && this.loadingText !== LOADING_STATUS.EVAL) {
+              this.loadingText = LOADING_STATUS.PROCESS;
+            }
+          });
+        }, 500);
+        Axios.post("/api/cypher",
+          {
+            query,
+            uuid: this.cellId,
+            isQueryGenerationMode: this.$refs.editor.isQueryGenerationMode,
+            updateHistory: true,
+            progress: true
+          })
+          .then((res) => {
+            this.handleEvaluationDataChange(res.data, query);
+          })
+          .catch((error) => {
+            if (!error.response) {
+              this.errorMessage = "The application is disconnected from the server. Please try to restart the server.";
+            }
+            else {
+              try {
+                this.errorMessage = error.response.data.error.trim();
+                console.error(error.response.data.error.trim());
+              } catch (e) {
+                const httpStatus = error.response.status;
+                this.errorMessage = `The request failed with HTTP status code ${httpStatus}.`;
+                console.error(this.errorMessage);
+              }
+            }
+            if (this.errorMessage) {
+              this.$nextTick(() => {
+                const errorContainer = this.$refs.resultErrorContainer;
+                errorContainer.handleDataChange(this.schema, null, this.errorMessage);
+              });
+            }
+          }).finally(() => {
+            clearInterval(intervalId);
+            this.isLoading = false;
+          });
+        if (!this.isEvaluated) {
+          this.$emit("addCell");
+        }
       }
       this.isEvaluated = true;
+    },
+    handleEvaluationDataChange(data, query) {
+      this.loadingText = LOADING_STATUS.PROCESS;
+      this.queryResults = data.isMultiStatement ? data.results : [data];
+      if (this.queryResults.length > 1) {
+        this.minimize();
+      }
+      this.queryString = query;
+      this.$nextTick(() => {
+        for (let i = 0; i < this.queryResults.length; ++i) {
+          const resultContainer =
+            this.$refs[
+            this.getRefName(i)
+            ][0];
+          resultContainer.handleDataChange(this.schema, this.queryResults[i], "");
+        }
+      });
+      const isSchemaChanged = data && data.isSchemaChanged;
+      if (isSchemaChanged) {
+        this.$emit("reloadSchema");
+      }
     },
     generateAndEvaluateQuery(question) {
       this.queryResults = null;
@@ -206,7 +216,6 @@ export default {
       if (this.errorMessage) {
         this.$nextTick(() => {
           const errorContainer = this.$refs.resultErrorContainer;
-          console.log(errorContainer);
           errorContainer.handleDataChange(this.schema, null, this.errorMessage);
         });
         return;
@@ -230,11 +239,7 @@ export default {
         .catch((error) => {
           this.isLoading = false;
           if (!error.response) {
-            if (this.modeStore.isDemo) {
-              this.errorMessage = "The application is disconnected from the server. Please try to refresh the page and execute the query again.";
-            } else {
-              this.errorMessage = "The application is disconnected from the server. Please try to restart the server.";
-            }
+            this.errorMessage = "The application is disconnected from the server. Please try to restart the server.";
           }
           else {
             try {
@@ -249,7 +254,6 @@ export default {
           if (this.errorMessage) {
             this.$nextTick(() => {
               const errorContainer = this.$refs.resultErrorContainer;
-              console.log(errorContainer);
               errorContainer.handleDataChange(this.schema, null, this.errorMessage);
             });
           }

@@ -85,7 +85,7 @@
             </li>
 
             <li
-              v-if="!modeStore.isDemo && !modeStore.isReadOnly"
+              v-if="!modeStore.isReadOnly"
               :class="['nav-item', {
                 active: showImporter || showLoader
               }]"
@@ -145,6 +145,7 @@
       />
       <ShellMainView
         v-show="showShell"
+        ref="shellView"
         :schema="schema"
         :navbar-height="navbarHeight"
         @reload-schema="reloadSchema"
@@ -186,19 +187,37 @@
             </h5>
           </div>
           <div class="modal-body">
-            <p v-if="modeStore.isDemo">
-              This is a demo of <a href="https://kuzudb.com/">Kùzu</a> on the
-              <a href="https://ldbcouncil.org/benchmarks/snb/">
-                LDBC Social Network Benchmark
-              </a>
-              scale factor 0.1 dataset. Please run Kùzu Explorer locally to load a
-              different dataset (see the
-              <a href="https://kuzudb.com/docusaurus/kuzuexplorer/"> documentation here</a>).
-              <br>
-              <br>
-              You can visualize the schema of LDBC SNB in the Schema tab and execute
-              interactive Cypher queries in the Shell tab.
-            </p>
+            <div v-if="modeStore.isDemo">
+              <p>
+                This is a demo of <a href="https://kuzudb.com/">Kùzu</a> powered by WebAssembly. You can go to the
+                "Import
+                data" tab to import sample data
+                or your own data to explore it as a graph via the Cypher query language. Note that <b>no data is
+                  persisted</b>
+                between sessions in demo mode.
+              </p>
+              <hr>
+              <div
+                v-if="!isKuzuWasmInitialized"
+                class="d-flex align-items-center"
+              >
+                <strong class="text-primary">
+                  Initializing WebAssembly module...
+                </strong>
+                <div
+                  class="spinner-border text-primary ms-auto"
+                  role="status"
+                />
+              </div>
+              <div
+                v-else
+                class="d-flex align-items-center"
+              >
+                <strong class="text-success">
+                  <i class="fa-solid fa-check" />&nbsp; WebAssembly module initialized! You can now start exploring
+                  your data. </strong>
+              </div>
+            </div>
             <p v-if="modeStore.isReadOnly">
               Kùzu Explorer is running in read-only mode. In this mode, you cannot load a
               dataset, modify the schema, or execute write queries. If you want to make
@@ -233,6 +252,7 @@ import { useModeStore } from "../store/ModeStore";
 import { mapActions, mapStores } from 'pinia'
 import { Modal } from 'bootstrap';
 import DuckDB from '../utils/DuckDB';
+import Kuzu from '../utils/KuzuWasm';
 
 export default {
   name: "MainLayout",
@@ -252,6 +272,7 @@ export default {
     showSettings: false,
     navbarHeight: 0,
     schema: null,
+    isKuzuWasmInitialized: false,
   }),
   computed: {
     ...mapStores(useModeStore)
@@ -261,40 +282,39 @@ export default {
     this.accessModeModal = new Modal(this.$refs.modal);
     window.addEventListener("resize", this.updateNavbarHeight);
     window.setTimeout(() => {
-        DuckDB.init();
-      }, 500);
+      DuckDB.init();
+    }, 500);
   },
   beforeUnmount() {
     this.accessModeModal.dispose();
     window.removeEventListener("resize", this.updateNavbarHeight);
   },
-  created() {
-    this.getMode();
-    Promise.all([this.getSchema(), this.getStoredSettings()]).then((res) => {
-      let storedSettings = res[1];
-      if (!storedSettings || Object.keys(storedSettings).length === 0) {
-        storedSettings = this.loadSettingsFromLocalStorage();
-      }
-      this.initSettings(this.schema, storedSettings);
-      this.$refs.schemaView.drawGraph();
-    });
+  async created() {
+    await this.getMode();
+    if (this.modeStore.isWasm) {
+      this.isKuzuWasmInitialized = false;
+      await Kuzu.init();
+      this.isKuzuWasmInitialized = true;
+    }
+    const res = await Promise.all([this.getSchema(), this.getStoredSettings()])
+    let storedSettings = res[1];
+    if (!storedSettings || Object.keys(storedSettings).length === 0) {
+      storedSettings = this.loadSettingsFromLocalStorage();
+    }
+    this.initSettings(this.schema, storedSettings);
+    this.$refs.schemaView.drawGraph();
   },
   methods: {
     async getSchema() {
-      const response = await Axios.get("/api/schema");
-      const schema = response.data;
+      let schema;
+      if (this.modeStore.isWasm) {
+        schema = await Kuzu.getSchema();
+      }
+      else {
+        const response = await Axios.get("/api/schema");
+        schema = response.data;
+      }
       this.schema = schema;
-      const relGroupsMap = {};
-      this.schema.relGroups.forEach((g) => {
-        g.rels.forEach((r) => {
-          relGroupsMap[r] = g.name
-        });
-      });
-      this.schema.relTables.forEach((r) => {
-        if (relGroupsMap[r.name]) {
-          r.group = relGroupsMap[r.name];
-        }
-      });
     },
     async getMode() {
       const response = await Axios.get("/api/mode");
@@ -307,6 +327,9 @@ export default {
       });
     },
     async getStoredSettings() {
+      if (this.modeStore.isWasm) {
+        return {};
+      }
       return (await Axios.get("/api/session/settings")).data;
     },
     async reloadSchema() {
@@ -324,8 +347,7 @@ export default {
     addPlaceholderRelTable(tableName) {
       this.schema.relTables.push({
         name: tableName,
-        src: "",
-        dst: "",
+        connectivity: [],
         properties: [],
         isPlaceholder: true,
       });
@@ -336,9 +358,12 @@ export default {
     },
     updatePlaceholderRelTable(newTable) {
       const table = this.schema.relTables.find((t) => t.isPlaceholder);
-      table.name = newTable.name;
-      table.src = newTable.src;
-      table.dst = newTable.dst;
+      if (newTable.name) {
+        table.name = newTable.name;
+      }
+      if (newTable.connectivity) {
+        table.connectivity = newTable.connectivity;
+      }
     },
     setPlaceholder(name) {
       let table = this.schema.nodeTables.find((t) => t.name === name);
@@ -392,10 +417,7 @@ export default {
     },
     toggleLoader() {
       this.hideAll();
-
-     
-        this.showLoader = true;
-      
+      this.showLoader = true;
     },
     toggleImporter(force = false) {
       if (force || !this.showLoader) {
@@ -460,5 +482,10 @@ nav.navbar {
       color: $gray-300;
     }
   }
+}
+
+.d-flex.align-items-center{
+  padding-left: 20px;
+  padding-right: 20px;
 }
 </style>

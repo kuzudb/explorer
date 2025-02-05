@@ -15,14 +15,17 @@
       <hr>
 
       <div v-if="!isNode">
-        <h6>
+        <h6
+          v-for="conn in connectivity"
+          :key="conn"
+        >
           <span
             class="badge bg-primary"
             :style="{
-              backgroundColor: ` ${getColor(source)} !important`,
+              backgroundColor: ` ${getColor(conn.src)} !important`,
             }"
           >
-            {{ source }}
+            {{ conn.src }}
           </span>
           &nbsp;
           <i class="fa-solid fa-arrow-right" />
@@ -30,10 +33,10 @@
           <span
             class="badge bg-primary"
             :style="{
-              backgroundColor: ` ${getColor(destination)} !important`,
+              backgroundColor: ` ${getColor(conn.dst)} !important`,
             }"
           >
-            {{ destination }}
+            {{ conn.dst }}
           </span>
         </h6>
         <br>
@@ -102,18 +105,11 @@ export default {
   computed: {
     ...mapStores(useSettingsStore),
 
-    source() {
+    connectivity() {
       if (!this.schema || !this.label || this.isNode) {
         return null;
       }
-      return this.schema.relTables.find(t => t.name === this.label).src;
-    },
-
-    destination() {
-      if (!this.schema || !this.label || this.isNode) {
-        return null;
-      }
-      return this.schema.relTables.find(t => t.name === this.label).dst;
+      return this.schema.relTables.find(t => t.name === this.label).connectivity;
     },
 
     tableProperties() {

@@ -35,6 +35,7 @@
 import ShellCell from "./ShellCell.vue";
 import { v4 as uuidv4 } from 'uuid';
 import Axios from "axios";
+import { MODES } from "@/utils/Constants";
 export default {
   name: "ShellMainView",
   components: {
@@ -60,11 +61,18 @@ export default {
       },
     ],
     isCellAddedToTheEnd: false,
+    isWasm: false,
     maximizedCellIndex: -1,
     containerHeight: 0,
   }),
 
-  mounted() {
+  async mounted() {
+    try {
+      const response = await Axios.get("/api/mode");
+      this.isWasm = response.data.mode === MODES.WASM || response.data.mode === MODES.DEMO;
+    } catch (e) {
+      // Ignore
+    }
     this.$nextTick(() => {
       this.updateContainerHeight();
     });
@@ -105,12 +113,18 @@ export default {
       }
     },
     removeCellFromHistory(uuid) {
+      if (this.isWasm) {
+        return;
+      }
       return Axios.delete(`/api/session/history/${uuid}`);
     },
     loadCellHistoryFromServer() {
       return Axios.get("/api/session/history").then(res => res.data);
     },
     async loadCellsFromHistory() {
+      if (this.isWasm) {
+        return;
+      }
       const history = await this.loadCellHistoryFromServer();
       history.map(cell => {
         return {

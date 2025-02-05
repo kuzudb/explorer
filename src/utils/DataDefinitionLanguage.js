@@ -80,12 +80,14 @@ class DataDefinitionLanguage {
     return result;
   }
 
-  addRelTable(tableName, properties, src, dst) {
+  addRelTable(tableName, properties, connectivity) {
     tableName = this._escapeName(tableName);
-    src = this._escapeName(src);
-    dst = this._escapeName(dst);
     let result = `CREATE REL TABLE ${tableName} (\n`;
-    result += `  FROM ${src} TO ${dst},\n`;
+    for (const conn of connectivity) {
+      const src = this._escapeName(conn.src);
+      const dst = this._escapeName(conn.dst);
+      result += `  FROM ${src} TO ${dst},\n`;
+    }
     if (properties.length === 0) {
       result = result.slice(0, -2);
       result += "\n";
@@ -103,20 +105,12 @@ class DataDefinitionLanguage {
     return result;
   }
 
-  addRelGroup(groupName, properties, rels) {
-    groupName = this._escapeName(groupName);
-    let result = `CREATE REL TABLE GROUP ${groupName} (\n`;
-    const relsSet = new Set();
-    rels.forEach((rel) => {
-      const src = this._escapeName(rel.src);
-      const dst = this._escapeName(rel.dst);
-      const relDef = `  FROM ${src} TO ${dst},\n`;
-      if (relsSet.has(relDef)) {
-        return;
-      }
-      relsSet.add(relDef);
-      result += `  FROM ${src} TO ${dst},\n`;
-    });
+  addRelTableWithSingleConnection(tableName, properties, src, dst) {
+    tableName = this._escapeName(tableName);
+    src = this._escapeName(src);
+    dst = this._escapeName(dst);
+    let result = `CREATE REL TABLE ${tableName} (\n`;
+    result += `  FROM ${src} TO ${dst},\n`;
     if (properties.length === 0) {
       result = result.slice(0, -2);
       result += "\n";
@@ -157,6 +151,7 @@ class DataDefinitionLanguage {
 
   copyTableSimple(name, path, csvFormatOptions) {
     name = this._escapeName(name);
+    path = path.replaceAll("\\", "/");
     let statement = `COPY ${name} FROM '${path}'`;
     if (csvFormatOptions) {
       const csvOptionsString = this.getCsvOptionsSubquery(csvFormatOptions);
@@ -169,6 +164,7 @@ class DataDefinitionLanguage {
 
   copyTableComplex(name, path, csvFormatOptions, columnMapping) {
     let statement = `COPY ${name} FROM `;
+    path = path.replaceAll("\\", "/");
     let loadStatement = `LOAD FROM '${path}'`;
     if (csvFormatOptions) {
       const csvOptionsString = this.getCsvOptionsSubquery(csvFormatOptions);

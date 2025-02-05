@@ -5,7 +5,6 @@ const fs = require("fs");
 const TABLE_TYPES = {
   NODE: "NODE",
   REL: "REL",
-  REL_GROUP: "REL_GROUP",
 };
 const CONSTANTS = require("./Constants");
 const MODES = CONSTANTS.MODES;
@@ -31,7 +30,14 @@ const os = require("os");
 
 class Database {
   constructor() {
-    const isInMemory = process.env.KUZU_IN_MEMORY && process.env.KUZU_IN_MEMORY.toLowerCase() === "true";
+    const isWasmMode = process.env.KUZU_WASM &&
+      process.env.KUZU_WASM.toLowerCase() === "true";
+    if (isWasmMode) {
+      return;
+    }
+    const isInMemory = (process.env.KUZU_IN_MEMORY &&
+      process.env.KUZU_IN_MEMORY.toLowerCase() === "true") ||
+      !process.env.KUZU_PATH;
     const mode = this.getAccessModeString();
     const isReadOnlyMode = mode !== READ_WRITE_MODE;
     const dbPath = isInMemory ? ":memory:" : process.env.KUZU_PATH;
@@ -168,14 +174,6 @@ class Database {
   }
 
   async getSchema() {
-    const isBelongToGroup = (relTable, relGroupName) => {
-      const src = relTable.src;
-      const dst = relTable.dst;
-      const expectedRelName = `${relGroupName}_${src}_${dst}`;
-      const result = relTable.name === expectedRelName;
-      return result;
-    };
-
     const conn = this.getConnection();
     try {
       const result = await conn.query("CALL show_tables() RETURN *;");
@@ -183,7 +181,6 @@ class Database {
       result.close();
       const nodeTables = [];
       const relTables = [];
-      const relGroups = [];
       for (const table of tables) {
         const properties = (
           await conn
@@ -207,25 +204,19 @@ class Database {
           const connectivity = await conn
             .query(`CALL SHOW_CONNECTION('${table.name}') RETURN *;`)
             .then((res) => res.getAll());
-          const src = connectivity[0]["source table name"];
-          const dst = connectivity[0]["destination table name"];
-          table.src = src;
-          table.dst = dst;
+          table.connectivity = [];
+          connectivity.forEach(c => {
+            table.connectivity.push({
+              src: c["source table name"],
+              dst: c["destination table name"],
+            });
+          });
           relTables.push(table);
-        } else if (table.type === TABLE_TYPES.REL_GROUP) {
-          const name = table.name;
-          relGroups.push({ name });
         }
       }
-      relGroups.forEach((relGroup) => {
-        relGroup.rels = relTables
-          .filter((relTable) => isBelongToGroup(relTable, relGroup.name))
-          .map((relTable) => relTable.name);
-      });
       nodeTables.sort((a, b) => a.name.localeCompare(b.name));
       relTables.sort((a, b) => a.name.localeCompare(b.name));
-      relGroups.sort((a, b) => a.name.localeCompare(b.name));
-      return { nodeTables, relTables, relGroups };
+      return { nodeTables, relTables};
     } finally {
       this.releaseConnection(conn);
     }

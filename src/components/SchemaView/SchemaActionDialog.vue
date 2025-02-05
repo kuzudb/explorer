@@ -92,6 +92,10 @@ import { Modal } from 'bootstrap';
 import DataDefinitionLanguage from "../../utils/DataDefinitionLanguage";
 import { SCHEMA_ACTION_TYPES } from "../../utils/Constants";
 import Axios from 'axios';
+import { useModeStore } from "../../store/ModeStore";
+import { mapStores } from "pinia";
+import Kuzu from "@/utils/KuzuWasm";
+
 export default {
   name: "SchemaActionDialog",
   emits: ["reloadSchema", "actionCompleted"],
@@ -103,6 +107,9 @@ export default {
     remainingSeconds: 0,
     currentAction: null,
   }),
+  computed: {
+    ...mapStores(useModeStore),
+  },
   mounted() {
     this.modal = new Modal(this.$refs.modal);
   },
@@ -117,24 +124,31 @@ export default {
       this.isExecuted = true;
     },
     async evaluateCypher(query) {
-      Axios.post("/api/cypher", { query })
-        .then(() => {
-          this.isExecuting = false;
-          this.errorMessage = "";
-          this.reloadSchema();
-          this.remainingSeconds = 2;
-          const interval = setInterval(() => {
-            this.remainingSeconds -= 1;
-            if (this.remainingSeconds <= 0) {
-              clearInterval(interval);
-              this.hideModal();
-            }
-          }, 1000);
-          if (this.currentAction) {
-            this.$emit("actionCompleted", this.currentAction);
+      const promise = this.modeStore.isWasm ?
+        Kuzu.query(query) :
+        Axios.post("/api/cypher", { query });
+      promise.then(() => {
+        this.isExecuting = false;
+        this.errorMessage = "";
+        this.reloadSchema();
+        this.remainingSeconds = 2;
+        const interval = setInterval(() => {
+          this.remainingSeconds -= 1;
+          if (this.remainingSeconds <= 0) {
+            clearInterval(interval);
+            this.hideModal();
           }
-        }).catch((error) => {
+        }, 1000);
+        if (this.currentAction) {
+          this.$emit("actionCompleted", this.currentAction);
+        }
+      })
+        .catch((error) => {
           this.isExecuting = false;
+          if (this.modeStore.isWasm) {
+            this.errorMessage = error.message;
+            return;
+          }
           if (!error.response) {
             this.errorMessage = "The application is disconnected from the server. Please try to restart the server.";
             return;
@@ -212,7 +226,7 @@ export default {
       this.statement = statement;
       this.showModal();
     },
-    addNewTable(table, properties, isNodeTable, isRelGroup, src, dst, relGroupRels) {
+    addNewTable(table, properties, isNodeTable, connectivity) {
       this.reset();
       if (isNodeTable) {
         const pk = properties.find(p => p.isPrimaryKey);
@@ -221,11 +235,6 @@ export default {
           primaryKey: pk ? pk.name : null,
           table,
         };
-      } else if (isRelGroup) {
-        this.currentAction = {
-          type: SCHEMA_ACTION_TYPES.ADD_REL_GROUP,
-          group: table,
-        };
       } else {
         this.currentAction = {
           type: SCHEMA_ACTION_TYPES.ADD_REL_TABLE,
@@ -233,11 +242,9 @@ export default {
         };
       }
       const statement =
-        isRelGroup ?
-          DataDefinitionLanguage.addRelGroup(table, properties, relGroupRels) :
-          isNodeTable ?
-            DataDefinitionLanguage.addNodeTable(table, properties) :
-            DataDefinitionLanguage.addRelTable(table, properties, src, dst);
+        isNodeTable ?
+          DataDefinitionLanguage.addNodeTable(table, properties) :
+          DataDefinitionLanguage.addRelTable(table, properties, connectivity);
       this.statement = statement;
       this.showModal();
     },

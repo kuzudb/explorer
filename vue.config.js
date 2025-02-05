@@ -1,6 +1,7 @@
 const { defineConfig } = require("@vue/cli-service");
 const path = require("path");
 const DUCKDB_DIST = path.dirname(require.resolve("@duckdb/duckdb-wasm"));
+const KUZUDB_WASM_DIST = path.dirname(require.resolve("kuzu-wasm"));
 const configureAPI = require("./src/server/Configure");
 const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
@@ -35,6 +36,17 @@ module.exports = defineConfig({
         patterns: [
           {
             from: DUCKDB_DIST,
+            to: "js",
+          },
+        ],
+        options: {
+          concurrency: 100,
+        },
+      }),
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: KUZUDB_WASM_DIST,
             to: "js",
           },
         ],

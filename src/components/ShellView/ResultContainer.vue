@@ -135,6 +135,9 @@ import ResultTable from "./ResultTable.vue";
 import ResultCode from "./ResultCode.vue";
 import ResultError from "./ResultError.vue";
 import { UI_SIZE } from "../../utils/Constants";
+import { mapStores } from "pinia";
+import { useModeStore } from "../../store/ModeStore";
+
 export default {
   name: "ResultContainer",
   components: {
@@ -169,6 +172,9 @@ export default {
     emptyResultMessage: "The query executed successfully but the result is empty.",
     containerHeight: "auto",
   }),
+  computed: {
+    ...mapStores(useModeStore),
+  },
   watch: {
     isMaximized() {
       if (!this.$refs.resultGraph) {
@@ -193,10 +199,16 @@ export default {
   },
   methods: {
     handleDataChange(schema, queryResult, errorMessage) {
+      const int128Replacer = (_, value) => {
+        if (typeof value === "bigint") {
+          return value.toString();
+        }
+        return value;
+      };
       this.isGraphEmpty = false;
       this.schema = schema;
       this.queryResult = queryResult;
-      this.queryResultString = JSON.stringify(queryResult, null, 2);
+      this.queryResultString = JSON.stringify(queryResult, int128Replacer, 2);
       this.errorMessage = errorMessage;
       if (this.queryResult && this.queryResult.rows.length === 0) {
         this.queryResult = null;
