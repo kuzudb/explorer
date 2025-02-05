@@ -186,54 +186,56 @@
             >
           </div>
 
-          <br>
-          <h4>Query Generation Options</h4>
-          <hr>
-          <div class="input-group flex-nowrap">
-            <span class="input-group-text">OpenAI model</span>
-            <select
-              v-model="currentSettings.gpt.model"
-              class="form-select"
-            >
-              <option
-                v-for="option in gptModelOptions"
-                :key="option"
-                :value="option"
+          <div v-if="!modeStore.isWasm">
+            <br>
+            <h4>Query Generation Options</h4>
+            <hr>
+            <div class="input-group flex-nowrap">
+              <span class="input-group-text">OpenAI model</span>
+              <select
+                v-model="currentSettings.gpt.model"
+                class="form-select"
               >
-                {{ option }}
-              </option>
-            </select>
+                <option
+                  v-for="option in gptModelOptions"
+                  :key="option"
+                  :value="option"
+                >
+                  {{ option }}
+                </option>
+              </select>
+            </div>
+            <div class="input-group flex-nowrap">
+              <span class="input-group-text">OpenAI API Key</span>
+              <input
+                v-model="currentSettings.gpt.apiToken"
+                :type="showPassword ? 'text' : 'password'"
+                class="form-control"
+                title="Enter your OpenAI API key"
+              >
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                @click="togglePasswordVisibility"
+              >
+                <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'" />
+              </button>
+            </div>
+            <small class="form-text text-muted">
+              The OpenAI API key is used to generate Cypher queries from natural language using the specified model.
+              It can be obtained from
+              <a
+                href="https://platform.openai.com/"
+                target="_blank"
+              >OpenAI</a>. We only
+              store the API key in your browser. Click
+              <a
+                href="#"
+                @click="clearGptToken()"
+              >here</a> to clear the API key from the
+              browser.
+            </small>
           </div>
-          <div class="input-group flex-nowrap">
-            <span class="input-group-text">OpenAI API Key</span>
-            <input
-              v-model="currentSettings.gpt.apiToken"
-              :type="showPassword ? 'text' : 'password'"
-              class="form-control"
-              title="Enter your OpenAI API key"
-            >
-            <button
-              type="button"
-              class="btn btn-outline-secondary"
-              @click="togglePasswordVisibility"
-            >
-              <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'" />
-            </button>
-          </div>
-          <small class="form-text text-muted">
-            The OpenAI API key is used to generate Cypher queries from natural language using the specified model.
-            It can be obtained from
-            <a
-              href="https://platform.openai.com/"
-              target="_blank"
-            >OpenAI</a>. We only
-            store the API key in your browser. Click
-            <a
-              href="#"
-              @click="clearGptToken()"
-            >here</a> to clear the API key from the
-            browser.
-          </small>
         </div>
 
         <div class="modal-footer">
