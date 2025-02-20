@@ -456,7 +456,7 @@ nav.navbar {
 
 .navbar {
   .navbar__logo {
-    width: 120px;
+    height: 34px;
     image-rendering: crisp-edges;
   }
 
