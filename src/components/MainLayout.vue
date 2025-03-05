@@ -183,13 +183,13 @@
             class="modal-header"
           >
             <h5 class="modal-title">
-              Welcome to Kùzu Explorer!
+              Welcome to Kuzu Explorer!
             </h5>
           </div>
           <div class="modal-body">
             <div v-if="modeStore.isDemo">
               <p>
-                This is a demo of <a href="https://kuzudb.com/">Kùzu</a> powered by WebAssembly. You can go to the
+                This is a demo of <a href="https://kuzudb.com/">Kuzu</a> powered by WebAssembly. You can go to the
                 "Import
                 data" tab to import sample data
                 or your own data to explore it as a graph via the Cypher query language. Note that <b>no data is
@@ -219,9 +219,9 @@
               </div>
             </div>
             <p v-if="modeStore.isReadOnly">
-              Kùzu Explorer is running in read-only mode. In this mode, you cannot load a
+              Kuzu Explorer is running in read-only mode. In this mode, you cannot load a
               dataset, modify the schema, or execute write queries. If you want to make
-              changes to the database, please restart your Kùzu Explorer Docker image in
+              changes to the database, please restart your Kuzu Explorer Docker image in
               read-write mode.
             </p>
           </div>

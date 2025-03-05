@@ -159,7 +159,7 @@ class Database {
       (conn) => conn.useCount === 0
     );
     if (!isAllConnectionsReleased) {
-      throw new Error("Please make sure no queries are running before resetting Kùzu.");
+      throw new Error("Please make sure no queries are running before resetting Kuzu.");
     }
     const oldConnectionPool = this.connectionPool;
     const oldDb = this.db;
