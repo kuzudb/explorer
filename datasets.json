@@ -4,7 +4,7 @@
   "datasetsRoot": "dataset",
   "datasets": [
     {
-      "name": "Kùzu Demo",
+      "name": "Kuzu Demo",
       "path": "demo-db/csv",
       "isProduction": true,
       "description": ""

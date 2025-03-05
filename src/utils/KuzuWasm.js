@@ -19,15 +19,15 @@ class Kuzu {
       delete this.initializationPromise;
       return;
     }
-    console.time("Kùzu init");
+    console.time("Kuzu init");
     const db = new kuzu.Database(":memory:", 2147483648, 0, true, false, true, 16777216);
     const conn = new kuzu.Connection(db);
     const versionResult = await conn.query(`CALL db_version() RETURN *;`);
     const version = (await versionResult.getAllRows())[0][0];
-    console.log("Kùzu WebAssembly module version:", version);
+    console.log("Kuzu WebAssembly module version:", version);
     await conn.close();
     this.db = db;
-    console.timeEnd("Kùzu init");
+    console.timeEnd("Kuzu init");
     this._schema = await this.getSchema();
   }
 
