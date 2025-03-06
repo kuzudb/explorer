@@ -45,7 +45,7 @@
               <span
                 class="badge bg-primary"
                 @click="accessModeModal.show()"
-              >Demo Mode</span>
+              >Instructions</span>
             </li>
           </ul>
           <ul class="navbar-nav ms-auto">
@@ -161,6 +161,7 @@
         :navbar-height="navbarHeight"
         @reload-schema="reloadSchema"
         @back="toggleImporter(true)"
+        @jump-to-shell-view="toggleShell(true)"
       />
       <ImporterMainView
         v-show="showImporter"
@@ -192,13 +193,27 @@
                 This is a demo of <a href="https://kuzudb.com/">Kuzu</a> powered by WebAssembly. You can go to the
                 "Import
                 data" tab to import sample data
-                or your own data to explore it as a graph via the Cypher query language. Note that <b>no data is
+                or your own data to explore it as a graph via the Cypher query language.
+                <br><br>
+
+                For more information on how to use Kuzu Explorer, please refer to the
+                <a
+                  href="https://docs.kuzudb.com/visualization/"
+                  target="_blank"
+                >documentation</a> or the
+                <a
+                  href="https://www.youtube.com/watch?v=yKcVV_bhBTo"
+                  target="_blank"
+                >video tutorial</a>.
+
+                <br><br>
+                Note that <b>no data is
                   persisted</b>
                 between sessions in demo mode.
               </p>
               <hr>
               <div
-                v-if="!isKuzuWasmInitialized"
+                v-if=" !isKuzuWasmInitialized"
                 class="d-flex align-items-center"
               >
                 <strong class="text-primary">
@@ -323,6 +338,7 @@ export default {
       this.$nextTick(() => {
         if (this.modeStore.isDemo) {
           this.accessModeModal.show();
+          this.toggleImporter(true);
         }
       });
     },

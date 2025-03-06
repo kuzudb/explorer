@@ -74,7 +74,10 @@ router.get("/:dataset", async (req, res) => {
       (file) => file !== SCHEMA_FILE && file !== COPY_FILE
     );
     let schemaContent = await fs.readFile(schema, "utf-8");
-    return res.send({ dataset, schema: schemaContent, copy: copyContent, files: filesToShow });
+    const description = DATASETS_CONFIG.datasets.find(
+      (d) => d.name === dataset
+    ).description;
+    return res.send({ dataset, schema: schemaContent, copy: copyContent, files: filesToShow, description });
   } catch (err) {
     return res.sendStatus(400);
   }

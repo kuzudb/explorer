@@ -1,33 +1,14 @@
 <template>
-  <div
-    class="shell-main-view__wrapper"
-    :style="{ height: `${containerHeight}px` }"
-  >
-    <div
-      v-if="maximizedCellIndex < 0"
-      class="shell-main-view__placeholder"
-    >
-      <a
-        href="#"
-        @click="addCell"
-      >
+  <div class="shell-main-view__wrapper" :style="{ height: `${containerHeight}px` }">
+    <div v-if="maximizedCellIndex < 0" class="shell-main-view__placeholder">
+      <a href="#" @click="addCell">
         <i class="fa-lg fa-solid fa-plus" />
         Click here to add a new cell</a>
     </div>
-    <ShellCell
-      v-for="(cell, index) in shellCell"
-      v-show="index === maximizedCellIndex || maximizedCellIndex < 0"
-      :ref="getCellRef(index)"
-      :key="cell.cellId"
-      :schema="schema"
-      :navbar-height="navbarHeight"
-      :cell-id="cell.cellId"
-      @remove="removeCell(index)"
-      @add-cell="addCell()"
-      @maximize="maximize(index)"
-      @minimize="minimize()"
-      @reload-schema="reloadSchema()"
-    />
+    <ShellCell v-for="(cell, index) in shellCell" v-show="index === maximizedCellIndex || maximizedCellIndex < 0"
+      :ref="getCellRef(index)" :key="cell.cellId" :schema="schema" :navbar-height="navbarHeight" :cell-id="cell.cellId"
+      @remove="removeCell(index)" @add-cell="addCell()" @maximize="maximize(index)" @minimize="minimize()"
+      @reload-schema="reloadSchema()" />
   </div>
 </template>
 
@@ -62,6 +43,7 @@ export default {
     ],
     isCellAddedToTheEnd: false,
     isWasm: false,
+    isDemo: false,
     maximizedCellIndex: -1,
     containerHeight: 0,
   }),
@@ -70,10 +52,14 @@ export default {
     try {
       const response = await Axios.get("/api/mode");
       this.isWasm = response.data.mode === MODES.WASM || response.data.mode === MODES.DEMO;
+      this.isDemo = response.data.mode === MODES.DEMO;
     } catch (e) {
       // Ignore
     }
     this.$nextTick(() => {
+      if (this.isDemo) {
+        this.loadDemoCell();
+      }
       this.updateContainerHeight();
     });
     window.addEventListener("resize", this.updateContainerHeight);
@@ -154,6 +140,18 @@ export default {
       else {
         this.shellCell.unshift(cell);
       }
+    },
+    loadDemoCell() {
+      this.$nextTick(() => {
+        const cell = this.$refs[this.getCellRef(0)][0]
+        cell.loadEditorFromHistory({
+          cypherQuery: `// This is a sample Cypher query which randomly sample 5 relationships from the graph.
+// You can click the green play button or press Shift + Enter to execute the query.
+MATCH (a)-[r]->(b) RETURN * LIMIT 5;`,
+          isQueryGenerationMode: false,
+          gptQuestion: "",
+        });
+      });
     },
     maximize(index) {
       this.maximizedCellIndex = index;
