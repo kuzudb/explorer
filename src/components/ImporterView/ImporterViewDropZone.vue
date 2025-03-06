@@ -29,7 +29,7 @@
               >
                 <i class="fa-solid fa-database" />
                 &nbsp;
-                Load Bundled Dataset
+                Load Sample Dataset
               </button>
             </div>
           </label>

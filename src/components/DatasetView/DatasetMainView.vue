@@ -16,14 +16,28 @@
       </button>
 
       <div
-        v-if="!isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite"
+        v-if="!isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite && !modeStore.isWasm"
         class="alert alert-warning"
         role="alert"
       >
         <i class="fa-solid fa-info-circle" />
-        You have already loaded a database. You can still review the schema of the bundled
+        You have already loaded a database. You can still review the schema of the sample
         datasets. If you want to load a different dataset, please restart your Kuzu Explorer
         Docker image with an empty database or drop all tables in the current database.
+      </div>
+
+      <div
+        v-if="!isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isWasm"
+        class="alert alert-warning"
+        role="alert"
+      >
+        <i class="fa-solid fa-info-circle" />
+        You have already loaded a database. If you want to load a different dataset, please <a
+          href="#"
+          @click="refreshPage"
+        > 
+          refresh the page
+        </a> and choose a different dataset.
       </div>
 
       <div
@@ -53,7 +67,7 @@
       >
         <i class="fa-solid fa-info-circle" />
         Kuzu Explorer is running in read-only mode. You can still review the schema of the
-        bundled datasets. If you want to load a dataset, please restart your Kuzu Explorer
+        sample datasets. If you want to load a dataset, please restart your Kuzu Explorer
         Docker image in read-write mode with an empty database.
       </div>
     </div>
@@ -81,6 +95,15 @@
       </select>
     </div>
     <br>
+    <div
+      v-if="selectedDatasetSchema"
+      class="alert alert-info"
+      role="alert"
+    >
+      <i class="fa-solid fa-info-circle" />
+      &nbsp;
+      <span v-text="selectedDatasetDescription" />
+    </div>
     <code v-if="selectedDatasetSchema || datasetLoadingLog">
       <pre v-text="datasetLoadingLog ? datasetLoadingLog : selectedDatasetSchema" />
     </code>
@@ -127,13 +150,14 @@ export default {
       default: null,
     },
   },
-  emits: ["reloadSchema", "back"],
+  emits: ["reloadSchema", "back", "jumpToShellView"],
   data: () => ({
     selectedDataset: null,
     selectedDatasetSchema: null,
+    selectedDatasetDescription: null,
     datasetLoadingLog: null,
     datasetLoadingEnded: false,
-    databaseSchemaHash: {},
+    databaseCache: {},
     allDatasets: [],
     isProduction: true,
   }),
@@ -152,6 +176,9 @@ export default {
     this.fetchDatasets();
   },
   methods: {
+    refreshPage() {
+      window.location.reload();
+    },
     fetchDatasets() {
       Axios.get('/api/mode').then((response) => {
         const isProduction = response.data.isProduction;
@@ -175,17 +202,22 @@ export default {
       if (!this.selectedDataset) {
         return;
       }
-      if (this.databaseSchemaHash[this.selectedDataset]) {
-        this.selectedDatasetSchema = this.databaseSchemaHash[this.selectedDataset];
-        return;
+      if (!this.databaseCache[this.selectedDataset]) {
+        try {
+          const response = await Axios.get(`/api/datasets/${this.selectedDataset}`);
+          this.databaseCache[this.selectedDataset] = response.data;
+        } catch (error) {
+          console.error(error);
+          this.databaseCache[this.selectedDataset] = {
+            schema: "Error: Failed to fetch dataset metadata.",
+            description: "",
+          };
+        }
       }
-      try {
-        const response = await Axios.get(`/api/datasets/${this.selectedDataset}`);
-        this.selectedDatasetSchema = response.data.schema;
-        this.databaseSchemaHash[this.selectedDataset] = this.selectedDatasetSchema;
-      } catch (error) {
-        console.error(error);
-      }
+      this.selectedDatasetSchema = this.databaseCache[this.selectedDataset].schema;
+      this.selectedDatasetDescription = this.databaseCache[this.selectedDataset].description;
+      return;
+
     },
     copyDataset() {
       if (this.modeStore.isWasm) {
@@ -271,6 +303,7 @@ export default {
     confirmDatasetLoading() {
       this.datasetLoadingLog = null;
       this.datasetLoadingEnded = false;
+      this.$emit("jumpToShellView");
     },
   },
 }

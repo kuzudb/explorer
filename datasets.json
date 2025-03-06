@@ -7,31 +7,31 @@
       "name": "Kuzu Demo",
       "path": "demo-db/csv",
       "isProduction": true,
-      "description": ""
+      "description": "The Kuzu Demo dataset is a small dataset used in the \"Create your first graph\" tutorial. It contains 7 nodes and 8 relationships."
     },
     {
       "name": "TinySNB",
       "path": "tinysnb",
       "isProduction": false,
-      "description": ""
+      "description": "Internal dataset used for testing. Covers most data types but is very small."
     },
     {
       "name": "LDBC SNB Scale Factor 0.1",
       "path": "ldbc-sf01",
       "isProduction": true,
-      "description": ""
+      "description": "The standard LDBC SNB dataset with a scale factor of 0.1 (visit https://ldbcouncil.org/benchmarks/snb/ for more information)."
     },
     {
       "name": "SNAP Amazon",
       "path": "snap/amazon0601/csv",
       "isProduction": false,
-      "description": ""
+      "description": "Amazon product co-purchasing network dataset (visit https://snap.stanford.edu/data/com-Amazon.html for more information)."
     },
     {
       "name": "SNAP Twitter",
       "path": "snap/twitter/csv",
       "isProduction": true,
-      "description": ""
+      "description": "Twitter social circles dataset (visit https://snap.stanford.edu/data/ego-Twitter.html for more information)."
     }
   ]
 }
