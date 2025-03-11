@@ -89,6 +89,17 @@ docker run -p 8000:8000 \
 
 In in-memory mode, the database is stored in memory and all changes are lost when the server is shut down even if a database directory is mounted. Also, read-only access mode is not supported in in-memory mode.
 
+#### WebAssembly mode
+
+In WebAssembly mode, Kuzu Explorer is launched with `kuzu-wasm`, which runs all the queries directly in browser. If you want to launch Kuzu Explorer in WebAssembly mode, you can do so by setting the `KUZU_WASM` environment variable to `true` as follows.
+
+```bash
+docker run -p 8000:8000 \
+           -e KUZU_IN_MEMORY=true \
+           --rm kuzudb/explorer:latest
+```
+
+In WebAssembly mode, the database is stored in the current browser session and all changes are lost when the browser tab is closed or when the tab is refreshed. All other configuration parameters are ignored in WebAssembly mode.
 
 #### Dev builds
 
