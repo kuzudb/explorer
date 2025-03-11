@@ -95,7 +95,7 @@ In WebAssembly mode, Kuzu Explorer is launched with `kuzu-wasm`, which runs all 
 
 ```bash
 docker run -p 8000:8000 \
-           -e KUZU_IN_MEMORY=true \
+           -e KUZU_WASM=true \
            --rm kuzudb/explorer:latest
 ```
 
