@@ -32,12 +32,12 @@
         role="alert"
       >
         <i class="fa-solid fa-info-circle" />
-        You have already loaded a database. If you want to load a different dataset, please <a
+        You've already loaded a database. If you want to load a different dataset, please <a
           href="#"
           @click="refreshPage"
-        > 
+        >
           refresh the page
-        </a> and choose a different dataset.
+        </a>.
       </div>
 
       <div
@@ -46,8 +46,7 @@
         role="alert"
       >
         <i class="fa-solid fa-info-circle" />
-        The schema of the current database is empty. You can load a dataset into the
-        database.
+        No schema found. Load a dataset to begin."
       </div>
 
       <div
@@ -78,7 +77,7 @@
       class="form-group"
     >
       <label for="dataset-select">
-        <h6>Select a dataset from the list below to review its schema.</h6>
+        <h6>Pick a dataset:</h6>
       </label>
       <select
         id="dataset-select"

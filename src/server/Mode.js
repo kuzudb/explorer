@@ -7,7 +7,7 @@ const isWasmMode = process.env.KUZU_WASM &&
   process.env.KUZU_WASM.toLowerCase() === "true";
 
 router.get("/", async (_, res) => {
-  const isProduction = process.env.NODE_ENV === "production";
+  const isProduction = true;
   try {
     const mode = database.getAccessModeString();
     if (isWasmMode && mode !== MODES.DEMO) {

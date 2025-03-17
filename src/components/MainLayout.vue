@@ -190,26 +190,18 @@
           <div class="modal-body">
             <div v-if="modeStore.isDemo">
               <p>
-                This is a demo of <a href="https://kuzudb.com/">Kuzu</a> powered by WebAssembly. You can go to the
-                "Import
-                data" tab to import sample data
-                or your own data to explore it as a graph via the Cypher query language.
-                <br><br>
-
-                For more information on how to use Kuzu Explorer, please refer to the
-                <a
+                This WebAssembly-powered demo of <a href="https://kuzudb.com/">Kuzu</a> lets you import and explore
+                graph
+                data with Cypher queries.
+                Go to "Import Data" to get started. See the <a
                   href="https://docs.kuzudb.com/visualization/"
                   target="_blank"
-                >documentation</a> or the
-                <a
+                >docs</a> or <a
                   href="https://www.youtube.com/watch?v=yKcVV_bhBTo"
                   target="_blank"
-                >video tutorial</a>.
-
+                >video tutorial</a> for help.
                 <br><br>
-                Note that <b>no data is
-                  persisted</b>
-                between sessions in demo mode.
+                Note: Data is not saved between sessions.
               </p>
               <hr>
               <div
@@ -229,8 +221,7 @@
                 class="d-flex align-items-center"
               >
                 <strong class="text-success">
-                  <i class="fa-solid fa-check" />&nbsp; WebAssembly module initialized! You can now start exploring
-                  your data. </strong>
+                  <i class="fa-solid fa-check" />&nbsp; WebAssembly is ready—start exploring! </strong>
               </div>
             </div>
             <p v-if="modeStore.isReadOnly">

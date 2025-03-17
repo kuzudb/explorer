@@ -11,16 +11,16 @@
           >
             <div class="file-icon"><i class="fa-solid fa-file-circle-plus text-primary" /></div>
             <div class="text-center pt-3 px-5">
-              <p class="w-80 h5 text-dark fw-bold">Drag your CSV or Parquet files here to get started.
+              <p class="w-80 h5 text-dark fw-bold">Drag & drop CSV or Parquet files to get started.
               </p>
-              <div class="hr-sect">or</div>
+              <br>
               <button
                 class="btn btn-primary mb-2"
                 @click="selectFiles"
               >
                 <i class="fa-solid fa-folder-open" />
                 &nbsp;
-                Browse Files
+                Select Files
               </button>
               <div class="hr-sect">or</div>
               <button
@@ -29,7 +29,7 @@
               >
                 <i class="fa-solid fa-database" />
                 &nbsp;
-                Load Sample Dataset
+                Try a Sample Dataset
               </button>
             </div>
           </label>
