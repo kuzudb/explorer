@@ -1,70 +1,42 @@
 <template>
-  <div
-    v-if="schema"
-    ref="wrapper"
-    class="dataset-view__wrapper"
-  >
+  <div v-if="schema" ref="wrapper" class="dataset-view__wrapper">
     <div class="alert-and-button-wrapper">
-      <button
-        class="btn btn-lg btn-secondary"
-        title="Back"
-        @click="$emit('back')"
-      >
+      <button class="btn btn-lg btn-secondary" title="Back" @click="$emit('back')">
         <i class="fa-solid  fa-arrow-left" />
         &nbsp;
         Back
       </button>
 
-      <div
-        v-if="!isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite && !modeStore.isWasm"
-        class="alert alert-warning"
-        role="alert"
-      >
+      <div v-if="!isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite && !modeStore.isWasm"
+        class="alert alert-warning" role="alert">
         <i class="fa-solid fa-info-circle" />
         You have already loaded a database. You can still review the schema of the sample
         datasets. If you want to load a different dataset, please restart your Kuzu Explorer
         Docker image with an empty database or drop all tables in the current database.
       </div>
 
-      <div
-        v-if="!isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isWasm"
-        class="alert alert-warning"
-        role="alert"
-      >
+      <div v-if="!isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isWasm" class="alert alert-warning"
+        role="alert">
         <i class="fa-solid fa-info-circle" />
-        You have already loaded a database. If you want to load a different dataset, please <a
-          href="#"
-          @click="refreshPage"
-        > 
+        You've already loaded a database. If you want to load a different dataset, please <a href="#"
+          @click="refreshPage">
           refresh the page
-        </a> and choose a different dataset.
+        </a>.
       </div>
 
-      <div
-        v-if="isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite"
-        class="alert alert-info"
-        role="alert"
-      >
+      <div v-if="isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite" class="alert alert-info"
+        role="alert">
         <i class="fa-solid fa-info-circle" />
-        The schema of the current database is empty. You can load a dataset into the
-        database.
+        No schema found. Load a dataset to begin."
       </div>
 
-      <div
-        v-if="!isProduction && modeStore.isReadWrite"
-        class="alert alert-warning"
-        role="alert"
-      >
+      <div v-if="!isProduction && modeStore.isReadWrite" class="alert alert-warning" role="alert">
         <i class="fa-solid fa-info-circle" />
         You are running Kuzu Explorer in development mode. You can load any dataset into the
         database. However, please make sure there is no conflict with the existing schema.
       </div>
 
-      <div
-        v-if="modeStore.isReadOnly"
-        class="alert alert-warning"
-        role="alert"
-      >
+      <div v-if="modeStore.isReadOnly" class="alert alert-warning" role="alert">
         <i class="fa-solid fa-info-circle" />
         Kuzu Explorer is running in read-only mode. You can still review the schema of the
         sample datasets. If you want to load a dataset, please restart your Kuzu Explorer
@@ -73,33 +45,18 @@
     </div>
 
 
-    <div
-      v-if="!datasetLoadingLog"
-      class="form-group"
-    >
+    <div v-if="!datasetLoadingLog" class="form-group">
       <label for="dataset-select">
-        <h6>Select a dataset from the list below to review its schema.</h6>
+        <h6>Pick a dataset:</h6>
       </label>
-      <select
-        id="dataset-select"
-        v-model="selectedDataset"
-        class="form-select"
-      >
-        <option
-          v-for="dataset in allDatasets"
-          :key="dataset"
-          :value="dataset"
-        >
+      <select id="dataset-select" v-model="selectedDataset" class="form-select">
+        <option v-for="dataset in allDatasets" :key="dataset" :value="dataset">
           {{ dataset }}
         </option>
       </select>
     </div>
     <br>
-    <div
-      v-if="selectedDatasetSchema"
-      class="alert alert-info"
-      role="alert"
-    >
+    <div v-if="selectedDatasetSchema" class="alert alert-info" role="alert">
       <i class="fa-solid fa-info-circle" />
       &nbsp;
       <span v-text="selectedDatasetDescription" />
@@ -109,27 +66,16 @@
     </code>
     <br>
     <div>
-      <button
-        v-if="!datasetLoadingEnded"
-        class="btn btn-lg btn-primary"
-        title="Load Dataset"
-        :disabled="(!isSchemaEmpty && isProduction) ||
+      <button v-if="!datasetLoadingEnded" class="btn btn-lg btn-primary" title="Load Dataset" :disabled="(!isSchemaEmpty && isProduction) ||
           !selectedDatasetSchema ||
           datasetLoadingLog ||
           !modeStore.isReadWrite
-        "
-        @click="copyDataset"
-      >
+        " @click="copyDataset">
         <i class="fa-solid fa-download" />
         Load Dataset
       </button>
 
-      <button
-        v-if="datasetLoadingEnded"
-        class="btn btn-lg btn-primary"
-        title="OK"
-        @click="confirmDatasetLoading"
-      >
+      <button v-if="datasetLoadingEnded" class="btn btn-lg btn-primary" title="OK" @click="confirmDatasetLoading">
         <i class="fa-solid fa-check" />
         OK
       </button>

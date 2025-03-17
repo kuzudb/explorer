@@ -1,122 +1,64 @@
 <template>
   <div>
-    <nav
-      ref="navbar"
-      class="navbar navbar-expand-lg navbar-dark bg-dark"
-    >
+    <nav ref="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container">
-        <a
-          class="navbar-brand"
-          href="https://kuzudb.com"
-          target="_blank"
-        >
-          <img
-            src="/img/kuzu-logo-inverse.png"
-            alt="Kuzu Logo"
-            class="navbar__logo"
-          >
+        <a class="navbar-brand" href="https://kuzudb.com" target="_blank">
+          <img src="/img/kuzu-logo-inverse.png" alt="Kuzu Logo" class="navbar__logo">
         </a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target=".navbar__buttons"
-          aria-label="Toggle navigation"
-        >
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar__buttons"
+          aria-label="Toggle navigation">
           <span class="navbar-toggler-icon" />
         </button>
         <div class="collapse navbar-collapse navbar__buttons">
-          <ul
-            v-if="modeStore.isReadOnly"
-            class="navbar-nav me-auto"
-          >
+          <ul v-if="modeStore.isReadOnly" class="navbar-nav me-auto">
             <li class="nav-item">
-              <span
-                class="badge bg-primary"
-                @click="accessModeModal.show()"
-              >Read-only Mode</span>
+              <span class="badge bg-primary" @click="accessModeModal.show()">Read-only Mode</span>
             </li>
           </ul>
-          <ul
-            v-if="modeStore.isDemo"
-            class="navbar-nav me-auto"
-          >
+          <ul v-if="modeStore.isDemo" class="navbar-nav me-auto">
             <li class="nav-item">
-              <span
-                class="badge bg-primary"
-                @click="accessModeModal.show()"
-              >Instructions</span>
+              <span class="badge bg-primary" @click="accessModeModal.show()">Instructions</span>
             </li>
           </ul>
           <ul class="navbar-nav ms-auto">
             <li :class="['nav-item', { active: showShell }]">
-              <a
-                class="nav-link"
-                href="#"
-                @click="toggleShell()"
-              >
+              <a class="nav-link" href="#" @click="toggleShell()">
                 <i class="fa-solid fa-terminal" />
                 Shell
               </a>
             </li>
             <li :class="['nav-item', { active: showSchema }]">
-              <a
-                class="nav-link"
-                href="#"
-                @click="toggleSchema()"
-              >
+              <a class="nav-link" href="#" @click="toggleSchema()">
                 <i class="fa-solid fa-circle-nodes" />
                 Schema
               </a>
             </li>
 
-            <li
-              :class="['nav-item', { active: showLoader }]"
-              hidden
-            >
-              <a
-                class="nav-link"
-                href="#"
-                @click="toggleLoader()"
-              >
+            <li :class="['nav-item', { active: showLoader }]" hidden>
+              <a class="nav-link" href="#" @click="toggleLoader()">
                 <i class="fa-solid fa-database" />
                 Datasets
               </a>
             </li>
 
-            <li
-              v-if="!modeStore.isReadOnly"
-              :class="['nav-item', {
+            <li v-if="!modeStore.isReadOnly" :class="['nav-item', {
                 active: showImporter || showLoader
-              }]"
-            >
-              <a
-                class="nav-link"
-                href="#"
-                @click="toggleImporter()"
-              >
+              }]">
+              <a class="nav-link" href="#" @click="toggleImporter()">
                 <i class="fa-solid fa-upload" />
                 Import Data
               </a>
             </li>
 
             <li class="nav-item">
-              <a
-                class="nav-link"
-                href="#"
-                @click="showSettingsModal()"
-              >
+              <a class="nav-link" href="#" @click="showSettingsModal()">
                 <i class="fa-solid fa-cog" />
                 Settings
               </a>
             </li>
 
             <li class="nav-item">
-              <a
-                class="nav-link"
-                href="https://docs.kuzudb.com"
-                target="_blank"
-              >
+              <a class="nav-link" href="https://docs.kuzudb.com" target="_blank">
                 <i class="fa-solid fa-book" />
                 Docs
               </a>
@@ -126,63 +68,26 @@
       </div>
     </nav>
 
-    <div
-      class="layout__main-content"
-      :style="{ height: `calc(100vh - ${navbarHeight}px)` }"
-    >
-      <SchemaViewMain
-        v-show="showSchema"
-        ref="schemaView"
-        :schema="schema"
-        :navbar-height="navbarHeight"
-        @reload-schema="reloadSchema"
-        @add-placeholder-node-table="addPlaceholderNodeTable"
+    <div class="layout__main-content" :style="{ height: `calc(100vh - ${navbarHeight}px)` }">
+      <SchemaViewMain v-show="showSchema" ref="schemaView" :schema="schema" :navbar-height="navbarHeight"
+        @reload-schema="reloadSchema" @add-placeholder-node-table="addPlaceholderNodeTable"
         @add-placeholder-rel-table="addPlaceholderRelTable"
         @update-placeholder-node-table-label="updatePlaceholderNodeTable"
-        @update-placeholder-rel-table="updatePlaceholderRelTable"
-        @set-placeholder="setPlaceholder"
-        @unset-placeholder="unsetPlaceholder"
-      />
-      <ShellMainView
-        v-show="showShell"
-        ref="shellView"
-        :schema="schema"
-        :navbar-height="navbarHeight"
-        @reload-schema="reloadSchema"
-      />
-      <SettingsMainView
-        v-if="showSettings"
-        ref="settings"
-        :schema="schema"
-      />
-      <DatasetMainView
-        v-show="showLoader"
-        :schema="schema"
-        :navbar-height="navbarHeight"
-        @reload-schema="reloadSchema"
-        @back="toggleImporter(true)"
-        @jump-to-shell-view="toggleShell(true)"
-      />
-      <ImporterMainView
-        v-show="showImporter"
-        :schema="schema"
-        :navbar-height="navbarHeight"
-        @reload-schema="reloadSchema"
-        @load-bundled-dataset="toggleLoader"
-      />
+        @update-placeholder-rel-table="updatePlaceholderRelTable" @set-placeholder="setPlaceholder"
+        @unset-placeholder="unsetPlaceholder" />
+      <ShellMainView v-show="showShell" ref="shellView" :schema="schema" :navbar-height="navbarHeight"
+        @reload-schema="reloadSchema" />
+      <SettingsMainView v-if="showSettings" ref="settings" :schema="schema" />
+      <DatasetMainView v-show="showLoader" :schema="schema" :navbar-height="navbarHeight" @reload-schema="reloadSchema"
+        @back="toggleImporter(true)" @jump-to-shell-view="toggleShell(true)" />
+      <ImporterMainView v-show="showImporter" :schema="schema" :navbar-height="navbarHeight"
+        @reload-schema="reloadSchema" @load-bundled-dataset="toggleLoader" />
     </div>
 
-    <div
-      ref="modal"
-      class="modal"
-      tabindex="-1"
-    >
+    <div ref="modal" class="modal" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
-          <div
-            v-if="modeStore.isDemo"
-            class="modal-header"
-          >
+          <div v-if="modeStore.isDemo" class="modal-header">
             <h5 class="modal-title">
               Welcome to Kuzu Explorer!
             </h5>
@@ -190,47 +95,25 @@
           <div class="modal-body">
             <div v-if="modeStore.isDemo">
               <p>
-                This is a demo of <a href="https://kuzudb.com/">Kuzu</a> powered by WebAssembly. You can go to the
-                "Import
-                data" tab to import sample data
-                or your own data to explore it as a graph via the Cypher query language.
+                This WebAssembly-powered demo of <a href="https://kuzudb.com/">Kuzu</a> lets you import and explore
+                graph
+                data with Cypher queries.
+                Go to "Import Data" to get started. See the <a href="https://docs.kuzudb.com/visualization/"
+                  target="_blank">docs</a> or <a href="https://www.youtube.com/watch?v=yKcVV_bhBTo"
+                  target="_blank">video tutorial</a> for help.
                 <br><br>
-
-                For more information on how to use Kuzu Explorer, please refer to the
-                <a
-                  href="https://docs.kuzudb.com/visualization/"
-                  target="_blank"
-                >documentation</a> or the
-                <a
-                  href="https://www.youtube.com/watch?v=yKcVV_bhBTo"
-                  target="_blank"
-                >video tutorial</a>.
-
-                <br><br>
-                Note that <b>no data is
-                  persisted</b>
-                between sessions in demo mode.
+                Note: Data is not saved between sessions.
               </p>
               <hr>
-              <div
-                v-if=" !isKuzuWasmInitialized"
-                class="d-flex align-items-center"
-              >
+              <div v-if=" !isKuzuWasmInitialized" class="d-flex align-items-center">
                 <strong class="text-primary">
                   Initializing WebAssembly module...
                 </strong>
-                <div
-                  class="spinner-border text-primary ms-auto"
-                  role="status"
-                />
+                <div class="spinner-border text-primary ms-auto" role="status" />
               </div>
-              <div
-                v-else
-                class="d-flex align-items-center"
-              >
+              <div v-else class="d-flex align-items-center">
                 <strong class="text-success">
-                  <i class="fa-solid fa-check" />&nbsp; WebAssembly module initialized! You can now start exploring
-                  your data. </strong>
+                  <i class="fa-solid fa-check" />&nbsp; WebAssembly is ready—start exploring! </strong>
               </div>
             </div>
             <p v-if="modeStore.isReadOnly">
@@ -241,11 +124,7 @@
             </p>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-primary"
-              @click="accessModeModal.hide()"
-            >
+            <button type="button" class="btn btn-primary" @click="accessModeModal.hide()">
               OK
             </button>
           </div>

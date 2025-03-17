@@ -4,10 +4,10 @@
   "datasetsRoot": "dataset",
   "datasets": [
     {
-      "name": "Kuzu Demo",
+      "name": "Tutorial Dataset",
       "path": "demo-db/csv",
       "isProduction": true,
-      "description": "The Kuzu Demo dataset is a small dataset used in the \"Create your first graph\" tutorial. It contains 7 nodes and 8 relationships."
+      "description": "Data used in Create Your First Graph (https://docs.kuzudb.com/get-started/) tutorial."
     },
     {
       "name": "TinySNB",
@@ -19,7 +19,7 @@
       "name": "LDBC SNB Scale Factor 0.1",
       "path": "ldbc-sf01",
       "isProduction": true,
-      "description": "The standard LDBC SNB dataset with a scale factor of 0.1 (visit https://ldbcouncil.org/benchmarks/snb/ for more information)."
+      "description": "A standard benchmark dataset for social network analysis. Learn more at https://ldbcouncil.org/benchmarks/snb/"
     },
     {
       "name": "SNAP Amazon",
@@ -28,10 +28,10 @@
       "description": "Amazon product co-purchasing network dataset (visit https://snap.stanford.edu/data/com-Amazon.html for more information)."
     },
     {
-      "name": "SNAP Twitter",
+      "name": "Twitter Social Circles",
       "path": "snap/twitter/csv",
       "isProduction": true,
-      "description": "Twitter social circles dataset (visit https://snap.stanford.edu/data/ego-Twitter.html for more information)."
+      "description": "Anonymized real-world social network dataset from Twitter. Learn more at https://snap.stanford.edu/data/ego-Twitter.html"
     }
   ]
 }

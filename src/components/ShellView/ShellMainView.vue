@@ -164,8 +164,8 @@ export default {
       this.$nextTick(() => {
         const cell = this.$refs[this.getCellRef(0)][0]
         cell.loadEditorFromHistory({
-          cypherQuery: `// This is a sample Cypher query which randomly sample 5 relationships from the graph.
-// You can click the green play button or press Shift + Enter to execute the query.
+          cypherQuery: `// Query to retrieve 5 relationships from the graph.
+// ▶️ Run this query by clicking the green play button or pressing Shift + Enter.
 MATCH (a)-[r]->(b) RETURN * LIMIT 5;`,
           isQueryGenerationMode: false,
           gptQuestion: "",
