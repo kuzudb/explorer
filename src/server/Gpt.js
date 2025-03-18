@@ -30,6 +30,7 @@ router.post("/", async (req, res) => {
   const question = req.body.question;
   const apiToken = req.body.token;
   const model = req.body.model ? req.body.model : "gpt-4o";
+  const baseUrl = req.body.baseUrl;
   if (!apiToken || !typeof apiToken === "string" || apiToken.length === 0) {
     return res.status(400).send({ error: "The API token is missing." });
   }
@@ -49,7 +50,11 @@ router.post("/", async (req, res) => {
   let chatCompletion, prompt;
   try {
     prompt = getPrompt(question, schema);
-    const gpt = new openai({ apiKey: apiToken });
+    const gptSettings = { apiKey: apiToken };
+    if (baseUrl) {
+      gptSettings.baseURL = baseUrl;
+    }
+    const gpt = new openai(gptSettings);
     chatCompletion = await gpt.chat.completions.create({
       model,
       messages: [{ role: "user", content: prompt }],
