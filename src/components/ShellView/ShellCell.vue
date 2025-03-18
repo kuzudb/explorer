@@ -48,7 +48,7 @@ import { useModeStore } from "../../store/ModeStore";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from "pinia";
 import Kuzu from "@/utils/KuzuWasm";
-import { LOADING_STATUS } from "@/utils/Constants";
+import { LOADING_STATUS, LLM_PROVIDERS } from "@/utils/Constants";
 
 export default {
   name: "ShellCell",
@@ -205,10 +205,16 @@ export default {
       this.queryResults = null;
       this.errorMessage = "";
       question = question.trim();
-      const token = this.settingsStore.gpt.apiToken;
+      const isOpenAI = this.settingsStore.gpt.llmProvider === LLM_PROVIDERS.OPENAI.key;
+      let token = this.settingsStore.gpt.apiToken;
       const model = this.settingsStore.gpt.model;
+      const baseUrl = this.settingsStore.gpt.url;
       if (!token) {
-        this.errorMessage = "OpenAI API token is not set. Please set the token in the settings and try again.";
+        if (isOpenAI) {
+          this.errorMessage = "OpenAI API token is not set. Please set the token in the settings and try again.";
+        } else {
+          token = "IGNORED";
+        }
       }
       else if (!question) {
         this.errorMessage = "The question cannot be empty. Please type a question and try again.";
@@ -230,6 +236,9 @@ export default {
         uuid: this.cellId,
         isQueryGenerationMode: this.$refs.editor.isQueryGenerationMode
       };
+      if(!isOpenAI) {
+        data.baseUrl = baseUrl;
+      }
       Axios.post(url, data)
         .then((res) => {
           const query = res.data.query;

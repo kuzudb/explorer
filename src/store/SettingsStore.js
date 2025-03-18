@@ -6,6 +6,7 @@ import {
   PLACEHOLDER_NODE_TABLE,
   PLACEHOLDER_REL_TABLE,
   GPT_MODELS,
+  LLM_PROVIDERS,
 } from "../utils/Constants";
 import G6Utils from "../utils/G6Utils";
 import G6 from "@antv/g6";
@@ -92,6 +93,8 @@ export const useSettingsStore = defineStore("settings", {
     gpt: {
       apiToken: null,
       model: GPT_MODELS[0],
+      llmProvider: LLM_PROVIDERS.OPENAI.key,
+      url: "",
     },
   }),
 
@@ -210,6 +213,17 @@ export const useSettingsStore = defineStore("settings", {
           storedSettingsCopy.gpt.model = "gpt-4o";
         }
         this.gpt.model = storedSettingsCopy.gpt.model;
+        // Migrate old settings
+        if (!storedSettingsCopy.gpt.llmProvider) {
+          storedSettingsCopy.gpt.llmProvider = LLM_PROVIDERS.OPENAI.key;
+        } else {
+          this.gpt.llmProvider = storedSettingsCopy.gpt.llmProvider;
+        }
+        if (!storedSettingsCopy.gpt.url) {
+          storedSettingsCopy.gpt.url = "";
+        } else {
+          this.gpt.url = storedSettingsCopy.gpt.url;
+        }
       }
       if (storedSettingsCopy.colors) {
         this.colors = storedSettingsCopy.colors;

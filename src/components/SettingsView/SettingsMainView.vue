@@ -191,6 +191,25 @@
             <h4>Query Generation Options</h4>
             <hr>
             <div class="input-group flex-nowrap">
+              <span class="input-group-text">LLM provider</span>
+              <select
+                v-model="currentSettings.gpt.llmProvider"
+                class="form-select"
+                @change="handleLlmProviderChange"
+              >
+                <option
+                  v-for="(value, key) in llmProviderOptions"
+                  :key="key"
+                  :value="key"
+                >
+                  {{ value.text }}
+                </option>
+              </select>
+            </div>
+            <div
+              v-if="isOpenAIApi"
+              class="input-group flex-nowrap"
+            >
               <span class="input-group-text">OpenAI model</span>
               <select
                 v-model="currentSettings.gpt.model"
@@ -205,13 +224,40 @@
                 </option>
               </select>
             </div>
+            <div
+              v-else
+              class="input-group flex-nowrap"
+            >
+              <span class="input-group-text">Model name</span>
+              <input
+                v-model="currentSettings.gpt.model"
+                type="text"
+                class="form-control"
+                title="Enter the custom model name"
+              >
+            </div>
+            <div
+              v-if="!isOpenAIApi"
+              class="input-group flex-nowrap"
+            >
+              <span class="input-group-text">API endpoint</span>
+              <input
+                v-model="currentSettings.gpt.url"
+                type="text"
+                class="form-control"
+                title="Enter the API endpoint"
+              >
+            </div>
             <div class="input-group flex-nowrap">
-              <span class="input-group-text">OpenAI API Key</span>
+              <span class="input-group-text">
+
+                {{ isOpenAIApi ? 'OpenAI' : 'API' }} key
+              </span>
               <input
                 v-model="currentSettings.gpt.apiToken"
                 :type="showPassword ? 'text' : 'password'"
                 class="form-control"
-                title="Enter your OpenAI API key"
+                :title="isOpenAIApi ? 'Enter the OpenAI API key' : 'Enter API key'"
               >
               <button
                 type="button"
@@ -221,13 +267,32 @@
                 <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'" />
               </button>
             </div>
-            <small class="form-text text-muted">
+            <small
+              v-if="isOpenAIApi"
+              class="form-text text-muted"
+            >
               The OpenAI API key is used to generate Cypher queries from natural language using the specified model.
               It can be obtained from
               <a
                 href="https://platform.openai.com/"
                 target="_blank"
               >OpenAI</a>. We only
+              store the API key in your browser. Click
+              <a
+                href="#"
+                @click="clearGptToken()"
+              >here</a> to clear the API key from the
+              browser.
+            </small>
+            <small
+              v-else
+              class="form-text text-muted"
+            >
+              The API key may not be required for some deployments, such as the locally hosted version of Ollama.
+              Please refer to the documentation for your model
+              provider.
+              If not required, leave this field empty and we automatically fill it with "IGNORED".
+              We only
               store the API key in your browser. Click
               <a
                 href="#"
@@ -268,9 +333,9 @@ import {
   SHOW_REL_LABELS_OPTIONS,
   PLACEHOLDER_NODE_TABLE,
   PLACEHOLDER_REL_TABLE,
-  GPT_MODELS
+  GPT_MODELS,
+  LLM_PROVIDERS
 } from "../../utils/Constants";
-import Axios from "axios";
 
 export default {
   name: "SettingsMainView",
@@ -288,12 +353,16 @@ export default {
     placeholderNodeTable: PLACEHOLDER_NODE_TABLE,
     placeholderRelTable: PLACEHOLDER_REL_TABLE,
     gptModelOptions: GPT_MODELS,
+    llmProviderOptions: LLM_PROVIDERS,
     databaseResetStateText: "",
     databaseResetStateClass: "primary",
-    showPassword: false, 
+    showPassword: false,
   }),
   computed: {
     ...mapStores(useSettingsStore, useModeStore),
+    isOpenAIApi() {
+      return this.currentSettings.gpt.llmProvider === LLM_PROVIDERS.OPENAI.key;
+    },
   },
   mounted() {
     this.modal = new Modal(this.$refs.modal);
@@ -327,6 +396,15 @@ export default {
       this.$nextTick(() => {
         this.hideModal();
       });
+    },
+    handleLlmProviderChange() {
+      if (this.currentSettings.gpt.llmProvider === LLM_PROVIDERS.OPENAI.key) {
+        this.currentSettings.gpt.model = GPT_MODELS[0];
+        this.currentSettings.gpt.url = "";
+      } else {
+        this.currentSettings.gpt.model = "";
+        this.currentSettings.gpt.apiToken = "";
+      }
     },
     getCaptionOptions(entity, isNode) {
       const name = entity.name === this.placeholderNodeTable ? this.getPlaceholderNodeLabel() :
