@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/kuzudb/kuzu",
-  "commitHash": "83e28e4eba40594835156903f0a2826fcd2e865c",
+  "commitHash": "f664b086dc9470a010a2ea0de73cd0dcc69a6ac5",
   "datasetsRoot": "dataset",
   "datasets": [
     {
@@ -32,6 +32,12 @@
       "path": "snap/twitter/csv",
       "isProduction": true,
       "description": "Anonymized real-world social network dataset from Twitter. Learn more at https://snap.stanford.edu/data/ego-Twitter.html"
+    },
+    {
+      "name": "MNIST",
+      "path": "mnist",
+      "isProduction": true,
+      "description": "The MNIST dataset is a set of handwritten digits that is commonly used for training various image processing systems."
     }
   ]
 }
