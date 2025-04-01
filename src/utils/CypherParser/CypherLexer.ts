@@ -156,8 +156,8 @@ export class CypherLexer extends antlr.Lexer {
     public static readonly WSHORTEST = 149;
     public static readonly XOR = 150;
     public static readonly SINGLE = 151;
-    public static readonly DECIMAL = 152;
-    public static readonly YIELD = 153;
+    public static readonly YIELD = 152;
+    public static readonly DECIMAL = 153;
     public static readonly STAR = 154;
     public static readonly L_SKIP = 155;
     public static readonly INVALID_NOT_EQUAL = 156;
@@ -229,7 +229,7 @@ export class CypherLexer extends antlr.Lexer {
         "SEQUENCE", "SET", "SHORTEST", "START", "STARTS", "TABLE", "THEN", 
         "TO", "TRAIL", "TRANSACTION", "TRUE", "TYPE", "UNION", "UNWIND", 
         "USE", "WHEN", "WHERE", "WITH", "WRITE", "WSHORTEST", "XOR", "SINGLE", 
-        "DECIMAL", "YIELD", "STAR", "L_SKIP", "INVALID_NOT_EQUAL", "MINUS", 
+        "YIELD", "DECIMAL", "STAR", "L_SKIP", "INVALID_NOT_EQUAL", "MINUS", 
         "FACTORIAL", "COLON", "StringLiteral", "EscapedChar", "DecimalInteger", 
         "HexLetter", "HexDigit", "Digit", "NonZeroDigit", "NonZeroOctDigit", 
         "ZeroDigit", "ExponentDecimalReal", "RegularDecimalReal", "UnescapedSymbolicName", 
@@ -262,7 +262,7 @@ export class CypherLexer extends antlr.Lexer {
         "ROLLBACK", "ROLLBACK_SKIP_CHECKPOINT", "SEQUENCE", "SET", "SHORTEST", 
         "START", "STARTS", "TABLE", "THEN", "TO", "TRAIL", "TRANSACTION", 
         "TRUE", "TYPE", "UNION", "UNWIND", "USE", "WHEN", "WHERE", "WITH", 
-        "WRITE", "WSHORTEST", "XOR", "SINGLE", "DECIMAL", "YIELD", "STAR", 
+        "WRITE", "WSHORTEST", "XOR", "SINGLE", "YIELD", "DECIMAL", "STAR", 
         "L_SKIP", "INVALID_NOT_EQUAL", "MINUS", "FACTORIAL", "COLON", "StringLiteral", 
         "EscapedChar", "DecimalInteger", "HexLetter", "HexDigit", "Digit", 
         "NonZeroDigit", "NonZeroOctDigit", "ZeroDigit", "ExponentDecimalReal", 
@@ -392,7 +392,7 @@ export class CypherLexer extends antlr.Lexer {
         1,146,1,146,1,146,1,147,1,147,1,147,1,147,1,147,1,147,1,148,1,148,
         1,148,1,148,1,148,1,148,1,148,1,148,1,148,1,148,1,149,1,149,1,149,
         1,149,1,150,1,150,1,150,1,150,1,150,1,150,1,150,1,151,1,151,1,151,
-        1,151,1,151,1,151,1,151,1,151,1,152,1,152,1,152,1,152,1,152,1,152,
+        1,151,1,151,1,151,1,152,1,152,1,152,1,152,1,152,1,152,1,152,1,152,
         1,153,1,153,1,154,1,154,1,154,1,154,1,154,1,155,1,155,1,155,1,156,
         1,156,1,157,1,157,1,158,1,158,1,159,1,159,1,159,5,159,1225,8,159,
         10,159,12,159,1228,9,159,1,159,1,159,1,159,1,159,5,159,1234,8,159,
@@ -779,7 +779,7 @@ export class CypherLexer extends antlr.Lexer {
         1,0,0,0,281,1126,1,0,0,0,283,1131,1,0,0,0,285,1137,1,0,0,0,287,1144,
         1,0,0,0,289,1148,1,0,0,0,291,1153,1,0,0,0,293,1159,1,0,0,0,295,1164,
         1,0,0,0,297,1170,1,0,0,0,299,1180,1,0,0,0,301,1184,1,0,0,0,303,1191,
-        1,0,0,0,305,1199,1,0,0,0,307,1205,1,0,0,0,309,1207,1,0,0,0,311,1212,
+        1,0,0,0,305,1197,1,0,0,0,307,1205,1,0,0,0,309,1207,1,0,0,0,311,1212,
         1,0,0,0,313,1215,1,0,0,0,315,1217,1,0,0,0,317,1219,1,0,0,0,319,1239,
         1,0,0,0,321,1241,1,0,0,0,323,1269,1,0,0,0,325,1272,1,0,0,0,327,1276,
         1,0,0,0,329,1280,1,0,0,0,331,1284,1,0,0,0,333,1286,1,0,0,0,335,1288,
@@ -994,10 +994,10 @@ export class CypherLexer extends antlr.Lexer {
         7,7,0,0,1179,298,1,0,0,0,1180,1181,7,20,0,0,1181,1182,7,16,0,0,1182,
         1183,7,9,0,0,1183,300,1,0,0,0,1184,1185,7,10,0,0,1185,1186,7,4,0,
         0,1186,1187,7,5,0,0,1187,1188,7,11,0,0,1188,1189,7,3,0,0,1189,1190,
-        7,8,0,0,1190,302,1,0,0,0,1191,1192,7,6,0,0,1192,1193,7,8,0,0,1193,
-        1194,7,1,0,0,1194,1195,7,4,0,0,1195,1196,7,18,0,0,1196,1197,7,0,
-        0,0,1197,1198,7,3,0,0,1198,304,1,0,0,0,1199,1200,7,2,0,0,1200,1201,
-        7,4,0,0,1201,1202,7,8,0,0,1202,1203,7,3,0,0,1203,1204,7,6,0,0,1204,
+        7,8,0,0,1190,302,1,0,0,0,1191,1192,7,2,0,0,1192,1193,7,4,0,0,1193,
+        1194,7,8,0,0,1194,1195,7,3,0,0,1195,1196,7,6,0,0,1196,304,1,0,0,
+        0,1197,1198,7,6,0,0,1198,1199,7,8,0,0,1199,1200,7,1,0,0,1200,1201,
+        7,4,0,0,1201,1202,7,18,0,0,1202,1203,7,0,0,0,1203,1204,7,3,0,0,1204,
         306,1,0,0,0,1205,1206,5,42,0,0,1206,308,1,0,0,0,1207,1208,7,10,0,
         0,1208,1209,7,14,0,0,1209,1210,7,4,0,0,1210,1211,7,15,0,0,1211,310,
         1,0,0,0,1212,1213,5,33,0,0,1213,1214,5,61,0,0,1214,312,1,0,0,0,1215,
