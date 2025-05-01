@@ -53,7 +53,9 @@ class ValueFormatter {
 
   beautifyValue(value, type) {
     if (type === DATA_TYPES.DATE) {
-      return Moment(value).format("YYYY-MM-DD");
+      const moment = Moment(value);
+      moment.utc();
+      return moment.format("YYYY-MM-DD");
     } else if (type === DATA_TYPES.TIMESTAMP) {
       const moment = Moment(value);
       moment.utc();
