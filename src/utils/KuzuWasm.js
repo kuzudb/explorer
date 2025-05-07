@@ -112,10 +112,10 @@ class Kuzu {
 
   async query(statement, params = null) {
     const conn = await this.getConnection();
-    if (!statement || !typeof statement === "string") {
+    if (!statement || typeof statement !== "string") {
       throw new Error("The statement must be a string with length > 0");
     }
-    if (params && !typeof params === "object") {
+    if (params && typeof params !== "object") {
       throw new Error("Params must be an object");
     }
     let result;
