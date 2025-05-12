@@ -194,7 +194,7 @@
                 graph
                 data with Cypher queries.
                 Go to "Import Data" to get started. See the <a
-                  href="https://docs.kuzudb.com/visualization/"
+                  href="https://docs.kuzudb.com/visualization/kuzu-explorer/"
                   target="_blank"
                 >docs</a> or <a
                   href="https://www.youtube.com/watch?v=yKcVV_bhBTo"
