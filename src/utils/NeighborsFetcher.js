@@ -19,25 +19,31 @@ class NeighborsFetcher {
       `MATCH (dst) -[r] -> (src:${tableName}) WHERE src.${primaryKey} = $pk RETURN r, dst LIMIT ${sizeLimit};`,
       `MATCH (src:${tableName}) -[r]-> (dst) WHERE src.${primaryKey} = $pk RETURN r, dst LIMIT ${sizeLimit};`
     ];
+    if (primaryKeyValue instanceof Number || primaryKeyValue instanceof String) {
+      primaryKeyValue = primaryKeyValue.valueOf();
+    }
     const params = { pk: primaryKeyValue };
     let results = await Promise.all(
       queries.map(
         query => {
           if (isWasm) {
-            return Kuzu.query(query, params).catch(err => {
-              return null;
-            });
+            return Kuzu.query(query, params)
+              .catch(err => {
+                console.error("Cannot fetch neighbors", err);
+                return null;
+              });
           }
           return Axios
             .post("api/cypher", { query, params })
             .catch(err => {
-              return null
+              console.error("Cannot fetch neighbors", err);
+              return null;
             })
         }
       )
     );
     results = results.filter(result => !!result);
-    if(!isWasm) {
+    if (!isWasm) {
       results = results.map(result => result.data);
     }
     if (results.length === 0) {
