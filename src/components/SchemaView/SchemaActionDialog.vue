@@ -91,7 +91,7 @@
 import { Modal } from 'bootstrap';
 import DataDefinitionLanguage from "../../utils/DataDefinitionLanguage";
 import { SCHEMA_ACTION_TYPES } from "../../utils/Constants";
-import Axios from 'axios';
+import Axios from "@/utils/AxiosWrapper";
 import { useModeStore } from "../../store/ModeStore";
 import { mapStores } from "pinia";
 import Kuzu from "@/utils/KuzuWasm";

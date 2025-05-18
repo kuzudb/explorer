@@ -34,7 +34,7 @@
 <script lang="js">
 import ShellCell from "./ShellCell.vue";
 import { v4 as uuidv4 } from 'uuid';
-import Axios from "axios";
+import Axios from "@/utils/AxiosWrapper";
 import { MODES } from "@/utils/Constants";
 export default {
   name: "ShellMainView",
