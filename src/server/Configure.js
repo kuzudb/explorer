@@ -4,6 +4,5 @@ const baseUrl = require("./Utils/BaseURL");
 
 module.exports = (devServer) => {
   devServer.app.use(express.json({ limit: "128mb" }));
-  console.log("${baseUrl}api", `${baseUrl}api`);
   devServer.app.use(`${baseUrl}api`, api);
 };
