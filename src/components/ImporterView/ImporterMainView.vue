@@ -101,7 +101,7 @@
 </template>
 
 <script lang="js">
-import Axios from 'axios';
+import Axios from "@/utils/AxiosWrapper";
 import { v4 as uuidv4 } from 'uuid';
 import { mapStores } from 'pinia';
 import { useModeStore } from '../../store/ModeStore';

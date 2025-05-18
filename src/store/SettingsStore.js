@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import chroma, { random } from 'chroma-js';
-import Axios from "axios";
+import Axios from "@/utils/AxiosWrapper";
 import {
   SHOW_REL_LABELS_OPTIONS,
   PLACEHOLDER_NODE_TABLE,

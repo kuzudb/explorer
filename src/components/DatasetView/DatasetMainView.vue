@@ -137,7 +137,7 @@
 </template>
 
 <script lang="js">
-import Axios from 'axios';
+import Axios from "@/utils/AxiosWrapper";
 import { mapStores } from 'pinia';
 import { useModeStore } from '../../store/ModeStore';
 import Kuzu from '../../utils/KuzuWasm';
@@ -276,7 +276,7 @@ export default {
       this.datasetLoadingLog = "Loading dataset '" + this.selectedDataset + "'...";
       this.datasetLoadingLog += "\n";
       this.datasetLoadingEnded = false;
-      fetch(`/api/datasets/${this.selectedDataset}/copy`,)
+      fetch(`${process.env.BASE_URL}api/datasets/${this.selectedDataset}/copy`,)
         .then((response) => {
           if (response.ok && response.body) {
             const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();

@@ -7,11 +7,11 @@
       <div class="container">
         <a
           class="navbar-brand"
-          href="https://kuzudb.com"
+          href="//kuzudb.com"
           target="_blank"
         >
           <img
-            src="/img/kuzu-logo-inverse.png"
+            :src="logoUrl"
             alt="Kuzu Logo"
             class="navbar__logo"
           >
@@ -252,7 +252,7 @@ import ShellMainView from "./ShellView/ShellMainView.vue";
 import SettingsMainView from "./SettingsView/SettingsMainView.vue"
 import DatasetMainView from "./DatasetView/DatasetMainView.vue"
 import ImporterMainView from "./ImporterView/ImporterMainView.vue";
-import Axios from "axios";
+import Axios from "@/utils/AxiosWrapper";
 import { useSettingsStore } from "../store/SettingsStore";
 import { useModeStore } from "../store/ModeStore";
 import { mapActions, mapStores } from 'pinia'
@@ -281,7 +281,10 @@ export default {
     isKuzuWasmInitialized: false,
   }),
   computed: {
-    ...mapStores(useModeStore)
+    ...mapStores(useModeStore),
+    logoUrl() {
+      return `${process.env.BASE_URL}img/kuzu-logo-dark.png`;
+    }
   },
   mounted() {
     this.updateNavbarHeight();

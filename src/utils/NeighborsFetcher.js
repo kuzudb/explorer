@@ -1,4 +1,4 @@
-import Axios from "axios";
+import Axios from "@/utils/AxiosWrapper";
 import DataDefinitionLanguage from "./DataDefinitionLanguage";
 import Kuzu from "./KuzuWasm";
 

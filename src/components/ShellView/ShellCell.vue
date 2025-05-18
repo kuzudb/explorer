@@ -43,7 +43,7 @@
 <script lang="js">
 import CypherEditor from "./CypherEditor.vue";
 import ResultContainer from "./ResultContainer.vue";
-import Axios from "axios";
+import Axios from "@/utils/AxiosWrapper";
 import { useModeStore } from "../../store/ModeStore";
 import { useSettingsStore } from "../../store/SettingsStore";
 import { mapStores } from "pinia";
