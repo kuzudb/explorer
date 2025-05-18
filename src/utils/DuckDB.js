@@ -23,14 +23,15 @@ class DuckDB {
       delete this.initializationPromise;
       return;
     }
+    const baseUrl = process.env.BASE_URL;
     const MANUAL_BUNDLES = {
       mvp: {
-        mainModule: "/js/duckdb-mvp.wasm",
-        mainWorker: "/js/duckdb-browser-mvp.worker.js",
+        mainModule: `${baseUrl}js/duckdb-mvp.wasm`,
+        mainWorker: `${baseUrl}js/duckdb-browser-mvp.worker.js`,
       },
       eh: {
-        mainModule: "/js/duckdb-eh.wasm",
-        mainWorker: "/js/duckdb-browser-eh.worker.js",
+        mainModule: `${baseUrl}js/duckdb-eh.wasm`,
+        mainWorker: `${baseUrl}js/duckdb-browser-eh.worker.js`,
       },
     };
     console.time("DuckDB init");
@@ -43,7 +44,7 @@ class DuckDB {
     await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
     const conn = await db.connect();
     const versionResult = await conn.query(`SELECT version()`);
-    console.log("DuckDB version:", versionResult.toArray()[0].toJSON()["version()"]);
+    console.log("DuckDB version:", versionResult.toArray()[0].toJSON()['"version"()']);
     await conn.close();
     this.db = db;
     console.timeEnd("DuckDB init");
