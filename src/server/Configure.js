@@ -1,6 +1,6 @@
 const express = require("express");
 const api = require("./API");
-const baseUrl = require("./Utils/BaseURL");
+const baseUrl = require("./utils/BaseURL");
 
 module.exports = (devServer) => {
   devServer.app.use(express.json({ limit: "128mb" }));

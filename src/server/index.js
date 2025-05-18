@@ -5,7 +5,7 @@ const path = require("path");
 const process = require("process");
 const database = require("./utils/Database");
 const logger = require("./utils/Logger");
-const baseUrl = require("./Utils/BaseURL");
+const baseUrl = require("./utils/BaseURL");
 
 const CROSS_ORIGIN = process.env.CROSS_ORIGIN
   ? process.env.CROSS_ORIGIN.toLowerCase() === "true"
