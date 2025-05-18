@@ -6,10 +6,11 @@ import { TABLE_TYPES } from "./Constants";
 // CommonJS.
 class Kuzu {
   constructor() {
+    const baseUrl = process.env.BASE_URL;
     this.db = null;
     this.conn = null;
     this._schema = null;
-    kuzu.setWorkerPath("/js/kuzu_wasm_worker.js");
+    kuzu.setWorkerPath(`${baseUrl}js/kuzu_wasm_worker.js`);
     this.kuzu = kuzu;
     window.kuzu = this; // For debugging
   }
