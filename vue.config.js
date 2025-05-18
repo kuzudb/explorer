@@ -5,7 +5,7 @@ const KUZUDB_WASM_DIST = path.dirname(require.resolve("kuzu-wasm"));
 const configureAPI = require("./src/server/Configure");
 const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const BASE_URL = require("./src/server/Utils/BaseURL");
+const BASE_URL = require("./src/server/utils/BaseURL");
 
 module.exports = defineConfig({
   devServer: {
