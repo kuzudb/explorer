@@ -1,5 +1,8 @@
 <template>
-  <div ref="wrapper" class="shell-editor__wrapper">
+  <div
+    ref="wrapper"
+    class="shell-editor__wrapper"
+  >
     <!-- Topbar -->
     <header class="shell-editor__topbar">
       <div class="shell-editor__tabs-container">
@@ -33,16 +36,29 @@
       <!-- Sidebar -->
       <aside class="shell-editor__tools_container">
         <ul class="shell-editor__tool-buttons">
-          <button @click="evaluateCell"><i class="fa-solid fa-play" /></button>
-          <button @click="toggleMaximize"><i :class="maximizeButtonClass" /></button>
-          <button @click="removeCell"><i class="fa-solid fa-times" /></button>
+          <button @click="evaluateCell">
+            <i class="fa-solid fa-play" />
+          </button>
+          <button @click="toggleMaximize">
+            <i :class="maximizeButtonClass" />
+          </button>
+          <button @click="removeCell">
+            <i class="fa-solid fa-times" />
+          </button>
         </ul>
       </aside>
 
       <!-- Main Content -->
       <main class="shell-editor__container">
-        <div v-show="!isQueryGenerationMode" ref="editor" class="editor-content"></div>
-        <div v-show="isQueryGenerationMode" class="editor-content">
+        <div
+          v-show="!isQueryGenerationMode"
+          ref="editor"
+          class="editor-content"
+        />
+        <div
+          v-show="isQueryGenerationMode"
+          class="editor-content"
+        >
           <textarea
             ref="gptQuestionTextArea"
             v-model="gptQuestion"

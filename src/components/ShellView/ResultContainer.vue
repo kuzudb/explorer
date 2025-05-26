@@ -1,70 +1,100 @@
 <template>
   <div class="result-container">
-    <div ref="wrapper" class="result-container__wrapper">
+    <div
+      ref="wrapper"
+      class="result-container__wrapper"
+    >
       <!-- Left Sidebar -->
-      <aside v-show="!errorMessage" class="result-container__tools">
+      <aside
+        v-show="!errorMessage"
+        class="result-container__tools"
+      >
         <!-- Top Tool Buttons -->
         <ul class="result-container__button-group">
-          <button class="result-container__button" @click="toggleGraphView">
+          <button
+            class="result-container__button"
+            @click="toggleGraphView"
+          >
             <i class="fa-lg fa-solid fa-circle-nodes" />
           </button>
-          <button class="result-container__button" @click="toggleTableView">
+          <button
+            class="result-container__button"
+            @click="toggleTableView"
+          >
             <i class="fa-lg fa-solid fa-table" />
           </button>
-          <button class="result-container__button" @click="toggleCodeView">
+          <button
+            class="result-container__button"
+            @click="toggleCodeView"
+          >
             <i class="fa-lg fa-solid fa-code" />
           </button>
         </ul>
 
         <!-- Bottom Tool Buttons -->
-        <ul v-show="showGraph" class="result-container__button-group result-container__tools--bottom">
-          <button class="result-container__button" @click="$refs.resultGraph.zoomIn()">
+        <ul
+          v-show="showGraph"
+          class="result-container__button-group result-container__tools--bottom"
+        >
+          <button
+            class="result-container__button"
+            @click="$refs.resultGraph.zoomIn()"
+          >
             <i class="fa-lg fa-solid fa-magnifying-glass-plus" />
           </button>
-          <button class="result-container__button" @click="$refs.resultGraph.zoomOut()">
+          <button
+            class="result-container__button"
+            @click="$refs.resultGraph.zoomOut()"
+          >
             <i class="fa-lg fa-solid fa-magnifying-glass-minus" />
           </button>
-          <button class="result-container__button" @click="$refs.resultGraph.fitToView()">
+          <button
+            class="result-container__button"
+            @click="$refs.resultGraph.fitToView()"
+          >
             <i class="fa-lg fa-solid fa-compress" />
           </button>
-          <button class="result-container__button" @click="$refs.resultGraph.actualSize()">
+          <button
+            class="result-container__button"
+            @click="$refs.resultGraph.actualSize()"
+          >
             <i class="fa-lg fa-solid fa-expand" />
           </button>
         </ul>
       </aside>
   
-  <main class="result-container__main">
-    <ResultGraph
-      v-if="queryResult"
-      v-show="showGraph"
-      ref="resultGraph"
-      :query-result="queryResult"
-      :schema="schema"
-      :container-height="containerHeight"
-      @graph-empty="handleGraphEmpty"
-    />
-    <ResultTable
-      v-if="queryResult && showTable"
-      ref="resultTable"
-      :query-result="queryResult"
-      :schema="schema"
-      :container-height="containerHeight"
-    />
-    <ResultCode
-      v-if="queryResultString && showCode"
-      ref="resultCode"
-      :query-result-string="queryResultString"
-      :schema="schema"
-      :container-height="containerHeight"
-    />
-    <ResultError
-      v-if="errorMessage"
-      ref="resultError"
-      :error-message="errorMessage"
-      :is-info="errorMessage === emptyResultMessage"
-    />
-  </main>
-  </div>
+      <main class="result-container__main">
+        <ResultGraph
+          v-if="queryResult"
+          v-show="showGraph"
+          ref="resultGraph"
+          :query-result="queryResult"
+          :schema="schema"
+          :container-height="containerHeight"
+          @graph-empty="handleGraphEmpty"
+        />
+        <ResultTable
+          v-if="queryResult && showTable"
+          ref="resultTable"
+          :query-result="queryResult"
+          :schema="schema"
+          :container-height="containerHeight"
+        />
+        <ResultCode
+          v-if="queryResultString && showCode"
+          ref="resultCode"
+          :query-result-string="queryResultString"
+          :schema="schema"
+          :container-height="containerHeight"
+        />
+        <ResultError
+          v-if="errorMessage"
+          ref="resultError"
+          :error-message="errorMessage"
+          :is-info="errorMessage === emptyResultMessage"
+        />
+      </main>
+    </div>
   </div>
 </template>
 

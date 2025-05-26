@@ -6,10 +6,16 @@
     <div
       v-if="maximizedCellIndex < 0"  
     >
-        <div class="add-cell">
-          <button href="#" class="add-cell-button" @click="addCell">+ Click here to add a new cell</button>
-          <div class="add-cell-break"></div>
-        </div>
+      <div class="add-cell">
+        <button
+          href="#"
+          class="add-cell-button"
+          @click="addCell"
+        >
+          + Click here to add a new cell
+        </button>
+        <div class="add-cell-break" />
+      </div>
     </div>
     <ShellCell
       v-for="(cell, index) in shellCell"

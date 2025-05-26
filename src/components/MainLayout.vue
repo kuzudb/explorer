@@ -1,27 +1,48 @@
 <template>
   <div>
-    <nav ref="navbar" class="navbar-container">
+    <nav
+      ref="navbar"
+      class="navbar-container"
+    >
       <div class="navbar-content">
-        <a href="//kuzudb.com" target="_blank">
-          <img :src="logoUrl" alt="Kuzu Logo" class="h-8" />
+        <a
+          href="//kuzudb.com"
+          target="_blank"
+        >
+          <img
+            :src="logoUrl"
+            alt="Kuzu Logo"
+            class="h-8"
+          >
         </a>
         <!-- Toggle Button (Mobile) -->
         <button
           class="nav-toggle md:hidden"
-          @click="isNavOpen = !isNavOpen"
           aria-label="Toggle navigation"
+          @click="isNavOpen = !isNavOpen"
         >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
           </svg>
         </button>
         <!-- Nav Items -->
         <div
+          id="navbar-default"
           :class="[
             'w-full md:w-auto md:flex md:items-center',
             isNavOpen ? 'block' : 'hidden'
           ]"
-          id="navbar-default"
         >
           <ul class="nav-items">
             <li v-if="modeStore.isReadOnly">
@@ -38,32 +59,55 @@
               >Instructions</span>
             </li>
             <li :class="{ 'font-bold': showShell }">
-              <a href="#" class="nav-hover" @click="toggleShell()">
-                <i class="fa-solid focus:text-[var(--bs-body-text)] fa-terminal"></i>
+              <a
+                href="#"
+                class="nav-hover"
+                @click="toggleShell()"
+              >
+                <i class="fa-solid focus:text-[var(--bs-body-text)] fa-terminal" />
                 Shell
               </a>
             </li>
             <li :class="{ 'font-bold': showSchema }">
-              <a href="#" class="nav-hover" @click="toggleSchema()">
-                <i class="fa-solid focus:text-[var(--bs-body-text)] fa-circle-nodes"></i>
+              <a
+                href="#"
+                class="nav-hover"
+                @click="toggleSchema()"
+              >
+                <i class="fa-solid focus:text-[var(--bs-body-text)] fa-circle-nodes" />
                 Schema
               </a>
             </li>
-            <li v-if="!modeStore.isReadOnly" :class="{ 'font-bold': showImporter || showLoader }">
-              <a href="#" class="nav-hover" @click="toggleImporter()">
-                <i class="fa-solid focus:text-[var(--bs-body-text)] fa-upload"></i>
+            <li
+              v-if="!modeStore.isReadOnly"
+              :class="{ 'font-bold': showImporter || showLoader }"
+            >
+              <a
+                href="#"
+                class="nav-hover"
+                @click="toggleImporter()"
+              >
+                <i class="fa-solid focus:text-[var(--bs-body-text)] fa-upload" />
                 Import Data
               </a>
             </li>
             <li>
-              <a href="#" class="hover:underline" @click="showSettingsModal()">
-                <i class="fa-solid fa-cog"></i>
+              <a
+                href="#"
+                class="hover:underline"
+                @click="showSettingsModal()"
+              >
+                <i class="fa-solid fa-cog" />
                 Settings
               </a>
             </li>
             <li>
-              <a href="https://docs.kuzudb.com" target="_blank" class="hover:underline">
-                <i class="fa-solid fa-book"></i>
+              <a
+                href="https://docs.kuzudb.com"
+                target="_blank"
+                class="hover:underline"
+              >
+                <i class="fa-solid fa-book" />
                 Docs
               </a>
             </li>
