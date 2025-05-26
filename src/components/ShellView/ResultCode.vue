@@ -55,7 +55,7 @@ export default {
       this.editor = Monaco.editor.create(this.$refs.editor, {
         value: this.queryResultString,
         language: "json",
-        theme: "vs-light",
+        theme: "vs-dark",
         readOnly: true,
         automaticLayout: true,
         minimap: {
@@ -75,8 +75,8 @@ export default {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-bottom: 2px solid $gray-300;
-
+  border-bottom: 1px solid (var(--bs-body-inactive));
+  border-radius: 10px;
   .result-code__editor {
     width: 100%;
     height: 100%;

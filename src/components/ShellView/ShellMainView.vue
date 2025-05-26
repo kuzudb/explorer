@@ -4,15 +4,12 @@
     :style="{ height: `${containerHeight}px` }"
   >
     <div
-      v-if="maximizedCellIndex < 0"
-      class="shell-main-view__placeholder"
+      v-if="maximizedCellIndex < 0"  
     >
-      <a
-        href="#"
-        @click="addCell"
-      >
-        <i class="fa-lg fa-solid fa-plus" />
-        Click here to add a new cell</a>
+        <div class="add-cell">
+          <button href="#" class="add-cell-button" @click="addCell">+ Click here to add a new cell</button>
+          <div class="add-cell-break"></div>
+        </div>
     </div>
     <ShellCell
       v-for="(cell, index) in shellCell"
@@ -213,6 +210,10 @@ MATCH (a)-[r]->(b) RETURN * LIMIT 5;`,
 </script>
 
 <style lang="scss" scoped>
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .shell-main-view__wrapper {
   width: 100%;
   overflow-y: scroll;
@@ -234,5 +235,15 @@ MATCH (a)-[r]->(b) RETURN * LIMIT 5;`,
       }
     }
   }
+}
+
+.add-cell{
+  @apply flex items-center space-x-4 m-6;
+}
+.add-cell-button{
+  @apply text-[var(--bs-body-text)] font-light;
+}
+.add-cell-break{
+  @apply flex-1 border-t border-[var(--bs-body-text)];
 }
 </style>

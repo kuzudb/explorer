@@ -1107,13 +1107,14 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border-left: 2px solid $gray-300;
-    background-color: $gray-100;
+    border-bottom-left-radius: 1rem;
+    border-top-left-radius: 1rem;
+    background-color: (var(--bs-body-bg-secondary));
   }
 
   .result-container__button {
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-top: 2px;
+    padding-bottom: 2px; 
 
     >i {
       cursor: pointer;
@@ -1138,8 +1139,8 @@ export default {
     height: 100%;
     overflow-x: hidden;
     overflow-y: scroll;
-    background-color: $gray-100;
-
+    background-color: (var(--bs-body-bg-secondary));
+    border-bottom-right-radius: 1rem;
     table {
       max-width: calc(100% - 20px);
 
@@ -1151,8 +1152,7 @@ export default {
         }
       }
 
-      &.result-container__result-table {
-        font-family: "Courier New", Courier, monospace;
+      &.result-container__result-table { 
 
         td {
           word-break: break-all;

@@ -319,11 +319,12 @@ export default {
   code {
     flex: 1;
     overflow: scroll;
-    border: 2px solid $gray-300;
+    border: 1px solid (var(--bs-body-inactive));
     padding: 10px;
-    color: $gray-900;
-    background-color: $gray-100;
+    color: (var(--bs-body-text));
+    background-color: (var(--bs-body-bg-secondary));
     font-size: 16px;
+    border-radius: 10px;
   }
 
   .alert-and-button-wrapper {

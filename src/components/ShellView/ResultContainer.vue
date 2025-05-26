@@ -1,102 +1,39 @@
 <template>
-  <div
-    ref="wrapper"
-    class="result-container__wrapper"
-    :style="{ height: containerHeight }"
-  >
-    <div
-      v-show="!errorMessage"
-      ref="toolsContainer"
-      class="result-container__tools_container"
-      :style="{ minWidth: toolbarWidth + 'px' }"
-    >
-      <div
-        v-show="!isGraphEmpty"
-        :class="
-          `result-container__button` +
-            (showGraph ? ` result-container__button--active` : ``)
-        "
-      >
-        <i
-          class="fa-lg fa-solid fa-circle-nodes"
-          data-bs-toggle="tooltip"
-          data-bs-placement="right"
-          title="Graph View"
-          @click="toggleGraphView"
-        />
-      </div>
-      <div
-        :class="
-          `result-container__button` +
-            (showTable ? ` result-container__button--active` : ``)
-        "
-      >
-        <i
-          class="fa-lg fa-solid fa-table"
-          data-bs-toggle="tooltip"
-          data-bs-placement="right"
-          title="Table View"
-          @click="toggleTableView"
-        />
-      </div>
-      <div
-        :class="
-          `result-container__button` +
-            (showCode ? ` result-container__button--active` : ``)
-        "
-      >
-        <i
-          class="fa-lg fa-solid fa-code"
-          data-bs-toggle="tooltip"
-          data-bs-placement="right"
-          title="JSON View"
-          @click="toggleCodeView"
-        />
-      </div>
+  <div class="result-container">
+    <div ref="wrapper" class="result-container__wrapper">
+      <!-- Left Sidebar -->
+      <aside v-show="!errorMessage" class="result-container__tools">
+        <!-- Top Tool Buttons -->
+        <ul class="result-container__button-group">
+          <button class="result-container__button" @click="toggleGraphView">
+            <i class="fa-lg fa-solid fa-circle-nodes" />
+          </button>
+          <button class="result-container__button" @click="toggleTableView">
+            <i class="fa-lg fa-solid fa-table" />
+          </button>
+          <button class="result-container__button" @click="toggleCodeView">
+            <i class="fa-lg fa-solid fa-code" />
+          </button>
+        </ul>
 
-      <div
-        v-show="showGraph"
-        class="result-container__tools_container--bottom"
-      >
-        <div class="result-container__button">
-          <i
-            class="fa-lg fa-solid fa-magnifying-glass-plus"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Zoom In"
-            @click="$refs.resultGraph.zoomIn()"
-          />
-        </div>
-        <div class="result-container__button">
-          <i
-            class="fa-lg fa-solid fa-magnifying-glass-minus"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Zoom Out"
-            @click="$refs.resultGraph.zoomOut()"
-          />
-        </div>
-        <div class="result-container__button">
-          <i
-            class="fa-lg fa-solid fa-compress"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Fit to View"
-            @click="$refs.resultGraph.fitToView()"
-          />
-        </div>
-        <div class="result-container__button">
-          <i
-            class="fa-lg fa-solid fa-expand"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Actual Size"
-            @click="$refs.resultGraph.actualSize()"
-          />
-        </div>
-      </div>
-    </div>
-
+        <!-- Bottom Tool Buttons -->
+        <ul v-show="showGraph" class="result-container__button-group result-container__tools--bottom">
+          <button class="result-container__button" @click="$refs.resultGraph.zoomIn()">
+            <i class="fa-lg fa-solid fa-magnifying-glass-plus" />
+          </button>
+          <button class="result-container__button" @click="$refs.resultGraph.zoomOut()">
+            <i class="fa-lg fa-solid fa-magnifying-glass-minus" />
+          </button>
+          <button class="result-container__button" @click="$refs.resultGraph.fitToView()">
+            <i class="fa-lg fa-solid fa-compress" />
+          </button>
+          <button class="result-container__button" @click="$refs.resultGraph.actualSize()">
+            <i class="fa-lg fa-solid fa-expand" />
+          </button>
+        </ul>
+      </aside>
+  
+  <main class="result-container__main">
     <ResultGraph
       v-if="queryResult"
       v-show="showGraph"
@@ -126,6 +63,8 @@
       :error-message="errorMessage"
       :is-info="errorMessage === emptyResultMessage"
     />
+  </main>
+  </div>
   </div>
 </template>
 
@@ -269,62 +208,54 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$margin: 20px;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.result-container__wrapper {
-  width: calc(100% - #{$margin * 2});
-  margin: $margin;
-  margin-top: 0;
-  margin-bottom: 0;
-  border: 2px solid $gray-300;
-  border-top: 0;
-  display: flex;
-  flex-direction: row;
-  &:last-child {
-    margin-bottom: 20px;
-  }
+.result-container {
+  @apply ml-4 mr-4 mb-4 shadow-md rounded-b-xl overflow-hidden border border-[var(--bs-body-inactive)] relative;
 }
 
-.result-container__tools_container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  background-color: $gray-100;
-  border-right: 2px solid $gray-300;
+.result-container__wrapper {
+  @apply py-2 flex min-h-[300px];
+}
 
-  .result-container__tools_container--bottom {
-    margin-top: auto;
+.result-container__tools {
+  @apply flex flex-col justify-between py-2 min-w-[48px];
+}
 
-    .result-container__button {
-      > i {
-        color: $body-tertiary-color;
-      }
-    }
-  }
+.result-container__main {
+  @apply flex-1;
+}
+
+.result-container__button-group {
+  @apply flex flex-col gap-3 text-sm font-medium items-center;
 }
 
 .result-container__button {
-  padding-top: 4px;
-  padding-bottom: 4px;
+  @apply pt-1 pb-1;
 
   i {
-    cursor: pointer;
-    color: $secondary;
+    @apply cursor-pointer text-[var(--bs-body-text)];
 
     &:hover {
-      opacity: 0.7;
+      @apply opacity-70;
     }
 
     &:active {
-      opacity: 0.5;
+      @apply opacity-50;
     }
   }
 
   &--active {
     i {
-      color: $primary;
+      @apply text-[var(--bs-body-bg-accent)];
     }
   }
 }
+
+.result-container__tools--bottom {
+  @apply mt-auto;
+}
+
 </style>

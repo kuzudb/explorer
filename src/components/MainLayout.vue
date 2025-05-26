@@ -1,123 +1,69 @@
 <template>
   <div>
-    <nav
-      ref="navbar"
-      class="navbar navbar-expand-lg navbar-dark bg-dark"
-    >
-      <div class="container">
-        <a
-          class="navbar-brand"
-          href="//kuzudb.com"
-          target="_blank"
-        >
-          <img
-            :src="logoUrl"
-            alt="Kuzu Logo"
-            class="navbar__logo"
-          >
+    <nav ref="navbar" class="navbar-container">
+      <div class="navbar-content">
+        <a href="//kuzudb.com" target="_blank">
+          <img :src="logoUrl" alt="Kuzu Logo" class="h-8" />
         </a>
+        <!-- Toggle Button (Mobile) -->
         <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target=".navbar__buttons"
+          class="nav-toggle md:hidden"
+          @click="isNavOpen = !isNavOpen"
           aria-label="Toggle navigation"
         >
-          <span class="navbar-toggler-icon" />
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
         </button>
-        <div class="collapse navbar-collapse navbar__buttons">
-          <ul
-            v-if="modeStore.isReadOnly"
-            class="navbar-nav me-auto"
-          >
-            <li class="nav-item">
+        <!-- Nav Items -->
+        <div
+          :class="[
+            'w-full md:w-auto md:flex md:items-center',
+            isNavOpen ? 'block' : 'hidden'
+          ]"
+          id="navbar-default"
+        >
+          <ul class="nav-items">
+            <li v-if="modeStore.isReadOnly">
               <span
-                class="badge bg-primary"
+                class="nav-badge"
                 @click="accessModeModal.show()"
               >Read-only Mode</span>
             </li>
-          </ul>
-          <ul
-            v-if="modeStore.isDemo"
-            class="navbar-nav me-auto"
-          >
-            <li class="nav-item">
+
+            <li v-if="modeStore.isDemo">
               <span
-                class="badge bg-primary"
+                class="nav-badge"
                 @click="accessModeModal.show()"
               >Instructions</span>
             </li>
-          </ul>
-          <ul class="navbar-nav ms-auto">
-            <li :class="['nav-item', { active: showShell }]">
-              <a
-                class="nav-link"
-                href="#"
-                @click="toggleShell()"
-              >
-                <i class="fa-solid fa-terminal" />
+            <li :class="{ 'font-bold': showShell }">
+              <a href="#" class="nav-hover" @click="toggleShell()">
+                <i class="fa-solid focus:text-[var(--bs-body-text)] fa-terminal"></i>
                 Shell
               </a>
             </li>
-            <li :class="['nav-item', { active: showSchema }]">
-              <a
-                class="nav-link"
-                href="#"
-                @click="toggleSchema()"
-              >
-                <i class="fa-solid fa-circle-nodes" />
+            <li :class="{ 'font-bold': showSchema }">
+              <a href="#" class="nav-hover" @click="toggleSchema()">
+                <i class="fa-solid focus:text-[var(--bs-body-text)] fa-circle-nodes"></i>
                 Schema
               </a>
             </li>
-
-            <li
-              :class="['nav-item', { active: showLoader }]"
-              hidden
-            >
-              <a
-                class="nav-link"
-                href="#"
-                @click="toggleLoader()"
-              >
-                <i class="fa-solid fa-database" />
-                Datasets
-              </a>
-            </li>
-
-            <li
-              v-if="!modeStore.isReadOnly"
-              :class="['nav-item', {
-                active: showImporter || showLoader
-              }]"
-            >
-              <a
-                class="nav-link"
-                href="#"
-                @click="toggleImporter()"
-              >
-                <i class="fa-solid fa-upload" />
+            <li v-if="!modeStore.isReadOnly" :class="{ 'font-bold': showImporter || showLoader }">
+              <a href="#" class="nav-hover" @click="toggleImporter()">
+                <i class="fa-solid focus:text-[var(--bs-body-text)] fa-upload"></i>
                 Import Data
               </a>
             </li>
-
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="#"
-                @click="showSettingsModal()"
-              >
-                <i class="fa-solid fa-cog" />
+            <li>
+              <a href="#" class="hover:underline" @click="showSettingsModal()">
+                <i class="fa-solid fa-cog"></i>
                 Settings
               </a>
             </li>
-
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="https://docs.kuzudb.com"
-                target="_blank"
-              >
-                <i class="fa-solid fa-book" />
+            <li>
+              <a href="https://docs.kuzudb.com" target="_blank" class="hover:underline">
+                <i class="fa-solid fa-book"></i>
                 Docs
               </a>
             </li>
@@ -458,40 +404,37 @@ export default {
 </script>
 
 <style scoped lang="scss">
-nav.navbar {
-  >div.container {
-    max-width: 100%;
-  }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.navbar-container{
+  @apply bg-[var(--bs-body-bg-secondary)] text-[var(--bs-body-text)] border-b border-[var(--bs-body-inactive)];
 }
 
-.navbar {
-  .navbar__logo {
-    height: 34px;
-    image-rendering: crisp-edges;
-  }
+.navbar-content{
+  @apply mx-4 flex flex-row items-center justify-between px-2 py-3;
+}
 
-  .nav-link {
-    i {
-      margin-right: 4px;
-    }
-  }
+.nav-items{
+  @apply text-[var(--bs-body-text)] flex flex-col md:flex-row md:items-center md:space-x-6 mt-1 md:mt-0 w-full;
+}
+
+.nav-hover{
+  @apply focus:text-[var(--bs-body-text)] hover:underline;
+}
+
+.nav-badge{
+  @apply bg-[var(--bs-body-bg-accent)] text-[var(--bs-body-text)] px-3 py-1 rounded cursor-pointer;
+}
+
+.nav-toggle{
+  @apply text-[var(--bs-body-text)] md:hidden focus:outline-none;
 }
 
 .layout__main-content {
   overflow: hidden;
   width: 100%;
-}
-
-.nav-item {
-  .badge {
-    cursor: pointer;
-  }
-
-  &.active {
-    a {
-      color: $gray-300;
-    }
-  }
 }
 
 .d-flex.align-items-center{

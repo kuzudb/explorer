@@ -881,8 +881,10 @@ export default {
     overflow-y: scroll;
     display: flex;
     flex-direction: column;
-    border-left: 2px solid $gray-300;
-    background-color: $gray-100;
+    border-left: 2px solid (var(--bs-body-inactive));
+    background-color: (var(--bs-body-bg-secondary));
+    border-bottom-left-radius: 1rem;
+    border-top-left-radius: 1rem;
   }
 }
 
@@ -891,8 +893,8 @@ export default {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  background-color: $gray-100;
-  border-right: 2px solid $gray-300;
+  padding-left: 8px;
+  padding-bottom: 8px;
 
   .schema-view__tools_container--bottom {
     margin-top: auto;
@@ -900,7 +902,7 @@ export default {
 
     .schema-view__button {
       >i {
-        color: $body-tertiary-color;
+        color: (var(--bs-body-text));
       }
     }
   }

@@ -205,7 +205,7 @@ export default {
 .sidebar {
   width: 480px;
   height: 100%;
-  background-color: $gray-100;
+  background-color: (var(--bs-body-bg-secondary));
   padding: 16px;
   display: flex;
   flex-direction: column;

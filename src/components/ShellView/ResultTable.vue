@@ -297,11 +297,11 @@ export default {
 .result-table__table__wrapper {
   flex: 1;
   overflow-y: scroll;
-  border-top: 2px solid $gray-300;
-  border-bottom: 2px solid $gray-300;
+  border-top: 1px solid (var(--bs-body-inactive));
+  border-bottom: 1px solid (var(--bs-body-inactive));
+  border-radius: 10px;
 
   table {
-    font-family: "Courier New", Courier, monospace;
 
     thead {
       position: sticky;
@@ -309,7 +309,7 @@ export default {
       top: 0;
 
       th {
-        background-color: $gray-200;
+        background-color: (var(--bs-body-bg-secondary));
         border-bottom: 0;
       }
     }
