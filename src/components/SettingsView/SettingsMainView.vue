@@ -78,7 +78,7 @@
                       title="Choose color for node"
                     >
                   </td>
-                  <td >
+                  <td>
                     <input
                       v-model="node.g6Settings.size"
                       type="number"
@@ -135,7 +135,7 @@
                   <td>
                     {{ rel.name === placeholderRelTable ? getPlaceholderRelLabel() : rel.name }}
                   </td>
-                  <td >
+                  <td>
                     <input
                       v-model="rel.g6Settings.style.stroke"
                       type="color"
@@ -176,7 +176,8 @@
           <!-- Performance Options -->
           <h3> Performance Options </h3>
           <div class="settings-row">
-            <h4 >  Max number of nodes to draw for graph visualization
+            <h4>
+              Max number of nodes to draw for graph visualization
             </h4>
             <input
               v-model="currentSettings.performance.maxNumberOfNodes"
@@ -189,7 +190,8 @@
             >
           </div>
           <div class="settings-row">
-            <h4> Max number of nodes to expand on double click
+            <h4>
+              Max number of nodes to expand on double click
             </h4>
             <input
               v-model="currentSettings.performance.maxNumberOfNodesToExpand"
@@ -204,9 +206,9 @@
           <hr>
 
           <!-- Schema View Options -->
-          <h2 > Schema View Options </h2>
+          <h2> Schema View Options </h2>
           <div class="settings-row">
-            <h4 > Show relationship labels </h4>
+            <h4> Show relationship labels </h4>
             <div>
               <button
                 :class="{
@@ -231,9 +233,9 @@
           <hr>
 
           <!-- Table View Options -->
-          <h2 > Table View Options </h2>
+          <h2> Table View Options </h2>
           <div class="settings-row">
-            <h4 > Number of rows per page </h4>
+            <h4> Number of rows per page </h4>
             <input
               v-model="currentSettings.tableView.rowsPerPage"
               type="number"
@@ -251,7 +253,7 @@
             <h2> Query Generation Options </h2>
             
             <div class="settings-row">
-              <h4 > LLM provider </h4>
+              <h4> LLM provider </h4>
               <select
                 v-model="currentSettings.gpt.llmProvider"
                 class="settings-input form-select"
