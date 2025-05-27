@@ -10,3 +10,8 @@ const app = createApp(App);
 
 app.use(pinia);
 app.mount("#app");
+
+export const getCurrentMonacoTheme = () =>
+    document.documentElement.getAttribute('data-bs-theme') === 'dark'
+      ? 'vs-dark'
+      : 'vs-light';

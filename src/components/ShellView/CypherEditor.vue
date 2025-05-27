@@ -3,24 +3,24 @@
     <!-- Topbar -->
     <header class="shell-editor__topbar">
       <div class="shell-editor__tabs-container">
-        <ul class="shell-editor__tabs">
-          <li>
+        <ul class="shell-editor__tabs nav nav-tabs border-0">
+          <li class="nav-item text-[var(--bs-body-text)]">
             <a
               href="#"
               :class="[
                 'shell-editor__tab',
                 !isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
-              ]"
+              ]" class="text-decoration-none"
               @click.prevent="isQueryGenerationMode = false"
             >Cypher Query</a>
           </li>
-          <li>
+          <li class="nav-item">
             <a
               href="#"
               :class="[
                 'shell-editor__tab',
                 isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
-              ]"
+              ]" class="text-decoration-none"
               @click.prevent="isQueryGenerationMode = true"
             >AI Query</a>
           </li>
@@ -33,9 +33,12 @@
       <!-- Sidebar -->
       <aside class="shell-editor__tools_container">
         <ul class="shell-editor__tool-buttons">
-          <button @click="evaluateCell"><i class="fa-solid fa-play" /></button>
-          <button @click="toggleMaximize"><i :class="maximizeButtonClass" /></button>
-          <button @click="removeCell"><i class="fa-solid fa-times" /></button>
+          <button class="btn p-0 bg-transparent border-0" @click="evaluateCell">
+            <i class="fa-solid fa-play" data-bs-toggle="tooltip" data-bs-placement="right" title="Run" /></button>
+          <button class="btn p-0 bg-transparent border-0" @click="toggleMaximize">
+            <i :class="maximizeButtonClass" data-bs-toggle="tooltip" data-bs-placement="right" :data-bs-original-title="maximizeButtonTitle"/></button>
+          <button class="btn p-0 bg-transparent border-0" @click="removeCell">
+            <i class="fa-solid fa-times" data-bs-toggle="tooltip" data-bs-placement="right" title="Remove cell" /></button>
         </ul>
       </aside>
 
@@ -168,6 +171,9 @@ export default {
 
   methods: {
     initMonacoEditor() {
+      const theme = document.documentElement.getAttribute('data-bs-theme') === 'dark'
+      ? 'vs-dark'
+      : 'vs-light';
       // Set the Monaco editor to the global window object to make sure it is
       // only initialized once.
       // TODO: Create a singleton class wrapper for Monaco instead.
@@ -187,7 +193,8 @@ export default {
               };
             };
           }
-        });       
+        }); 
+              
 
         Monaco.languages.registerCompletionItemProvider("cypher", {
           provideCompletionItems: (model, position) => {
@@ -205,7 +212,7 @@ export default {
       this.editor = window.Monaco.editor.create(editorContainer, {
         value: "",
         language: "cypher",
-        theme: "vs-dark",
+        theme,
         automaticLayout: true,
         minimap: {
           enabled: false,
@@ -214,6 +221,11 @@ export default {
         scrollBeyondLastLine: false,
       });     
       new PlaceholderContentWidget('Type your Cypher code here...', this.editor);
+      window.addEventListener('theme-changed', (event) => {
+        if (this.editor && window.Monaco?.editor) {
+          window.Monaco.editor.setTheme(event.detail.theme);
+        }
+      });
     },
     toggleMaximize() {
       this.$emit("toggleMaximize");
@@ -261,79 +273,117 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 $margin: 1rem;
 
+
+
 .shell-editor__wrapper {
-  @apply mt-4 mx-4 shadow-md rounded-t-xl overflow-hidden;
+  margin-top: 1rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  border-radius: 1rem 1rem 0 0;
+  overflow: hidden;
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15); // Bootstrap's shadow-md equivalent
 }
 
 .shell-editor__topbar {
-  @apply w-full px-12 py-2 border-b;
+  width: 100%;
+  padding: 0.5rem 3rem;
+  border-bottom: 1px solid var(--bs-body-inactive);
   background-color: var(--bs-body-bg-secondary);
-  border-color: var(--bs-body-inactive);
   color: var(--bs-body-text);
 }
 
 .shell-editor__tabs-container {
-  @apply flex flex-row justify-between;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .shell-editor__tabs {
-  @apply flex text-sm font-medium text-center;
+  display: flex;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
   background-color: var(--bs-body-bg-secondary);
 }
 
 .shell-editor__tab {
-  @apply p-4 rounded-t-lg;
+  padding: 1rem;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  color: var(--bs-body-inactive);
 }
 
 .active-tab {
   font-weight: bold;
   color: var(--bs-body-text);
   background-color: var(--bs-body-shell);
+  color: var(--bs-body-text);
 }
 
 .inactive-tab {
-  @apply hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300;
+  &:hover {
+    color: var(--bs-body-text);
+    background-color: var(--bs-body-inactive); 
+  }
 }
 
 .shell-editor__layout {
-  @apply flex min-h-[132px];
+  display: flex;
+  min-height: 132px;
 }
 
 .shell-editor__tools_container {
-  @apply flex flex-col items-center py-2 border-r min-w-[48px];
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 0;
+  min-width: 48px;
+  border-right: 1px solid var(--bs-body-inactive);
   background-color: var(--bs-body-bg-secondary);
-  border-color: var(--bs-body-inactive);
 }
 
 .shell-editor__tool-buttons {
-  @apply flex flex-col gap-3 py-2 items-center text-sm font-medium;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
 }
 
 .shell-editor__container {
-  @apply flex-1 bg-[var(--bs-body-shell)] p-4;
+  flex: 1;
+  background-color: var(--bs-body-shell);
+  padding: 1rem;
 }
 
 .editor-content {
-  @apply h-full w-full resize-y;
+  height: 100%;
+  width: 100%;
+  resize: vertical;
 }
 
 .shell-editor__textarea {
-  @apply w-full h-full border-0 p-2 resize-y;
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0.5rem;
+  resize: vertical;
   background-color: var(--bs-body-bg-secondary);
   color: var(--bs-body-text);
 }
 
 .shell-editor__button > i {
   cursor: pointer;
+
   &:hover {
     opacity: 0.7;
   }
+
   &:active {
     opacity: 0.5;
   }

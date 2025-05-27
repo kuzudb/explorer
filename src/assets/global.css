@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root,
 [data-bs-theme="light"] {
   --bs-body-bg: white;
@@ -22,3 +18,4 @@
   --bs-body-shell: #222429;
   --bs-body-inactive: #5E5E5E;
 }
+

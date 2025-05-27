@@ -45,6 +45,9 @@ export default {
   methods: {
     initMonacoEditor() {
       const Monaco = window.Monaco;
+      const theme = document.documentElement.getAttribute('data-bs-theme') === 'dark'
+      ? 'vs-dark'
+      : 'vs-light';
       // The query result should only be displayed after a query is executed.
       // This means the editor for Cypher query should have been initialized.
       // If not, there is something wrong with the app. The Monaco editor should
@@ -55,7 +58,7 @@ export default {
       this.editor = Monaco.editor.create(this.$refs.editor, {
         value: this.queryResultString,
         language: "json",
-        theme: "vs-dark",
+        theme,
         readOnly: true,
         automaticLayout: true,
         minimap: {
@@ -63,6 +66,11 @@ export default {
         },
         fontSize: 12,
         scrollBeyondLastLine: false,
+      });
+      window.addEventListener('theme-changed', (event) => {
+        if (this.editor && window.Monaco?.editor) {
+          window.Monaco.editor.setTheme(event.detail.theme);
+        }
       });
     },
   },

@@ -5,30 +5,30 @@
       <aside v-show="!errorMessage" class="result-container__tools">
         <!-- Top Tool Buttons -->
         <ul class="result-container__button-group">
-          <button class="result-container__button" @click="toggleGraphView">
-            <i class="fa-lg fa-solid fa-circle-nodes" />
+          <button class="result-container__button " @click="toggleGraphView">
+            <i class="fa-lg fa-solid fa-circle-nodes" data-bs-toggle="tooltip" data-bs-placement="right" title="Graph View" />
           </button>
           <button class="result-container__button" @click="toggleTableView">
-            <i class="fa-lg fa-solid fa-table" />
+            <i class="fa-lg fa-solid fa-table" data-bs-toggle="tooltip" data-bs-placement="right" title="Table View"/>
           </button>
           <button class="result-container__button" @click="toggleCodeView">
-            <i class="fa-lg fa-solid fa-code" />
+            <i class="fa-lg fa-solid fa-code" data-bs-toggle="tooltip" data-bs-placement="right" title="JSON View"/>
           </button>
         </ul>
 
         <!-- Bottom Tool Buttons -->
         <ul v-show="showGraph" class="result-container__button-group result-container__tools--bottom">
           <button class="result-container__button" @click="$refs.resultGraph.zoomIn()">
-            <i class="fa-lg fa-solid fa-magnifying-glass-plus" />
+            <i class="fa-lg fa-solid fa-magnifying-glass-plus" data-bs-toggle="tooltip" data-bs-placement="right" title="Zoom In"/>
           </button>
           <button class="result-container__button" @click="$refs.resultGraph.zoomOut()">
-            <i class="fa-lg fa-solid fa-magnifying-glass-minus" />
+            <i class="fa-lg fa-solid fa-magnifying-glass-minus" data-bs-toggle="tooltip" data-bs-placement="right" title="Zoom Out"/>
           </button>
           <button class="result-container__button" @click="$refs.resultGraph.fitToView()">
-            <i class="fa-lg fa-solid fa-compress" />
+            <i class="fa-lg fa-solid fa-compress" data-bs-toggle="tooltip" data-bs-placement="right" title="Fit to View"/>
           </button>
           <button class="result-container__button" @click="$refs.resultGraph.actualSize()">
-            <i class="fa-lg fa-solid fa-expand" />
+            <i class="fa-lg fa-solid fa-expand" data-bs-toggle="tooltip" data-bs-placement="right" title="Actual Size"/>
           </button>
         </ul>
       </aside>
@@ -208,54 +208,79 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 .result-container {
-  @apply ml-4 mr-4 mb-4 shadow-md rounded-b-xl overflow-hidden border border-[var(--bs-body-inactive)] relative;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--bs-body-inactive);
+  border-radius: 0 0 1rem 1rem; // rounded-b-xl
+  overflow: hidden;
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15); // shadow-md
+  position: relative;
 }
 
 .result-container__wrapper {
-  @apply py-2 flex min-h-[300px];
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  display: flex;
+  min-height: 300px;
 }
 
 .result-container__tools {
-  @apply flex flex-col justify-between py-2 min-w-[48px];
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  min-width: 48px;
 }
 
 .result-container__main {
-  @apply flex-1;
+  flex: 1;
 }
 
 .result-container__button-group {
-  @apply flex flex-col gap-3 text-sm font-medium items-center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; // ~Tailwind's gap-3
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding-left: 0rem;
+  align-items: first;
+}
+
+.tooltip{
+  background-color: var(--bs-body-inactive);
 }
 
 .result-container__button {
-  @apply pt-1 pb-1;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  background-color: transparent;
+  padding: 0px;
+  border: 0px;
 
   i {
-    @apply cursor-pointer text-[var(--bs-body-text)];
+    cursor: pointer;
+    color: var(--bs-body-text);
 
     &:hover {
-      @apply opacity-70;
+      opacity: 0.7;
     }
 
     &:active {
-      @apply opacity-50;
+      opacity: 0.5;
     }
   }
 
   &--active {
     i {
-      @apply text-[var(--bs-body-bg-accent)];
+      color: var(--bs-body-bg-accent);
     }
   }
 }
 
 .result-container__tools--bottom {
-  @apply mt-auto;
+  margin-top: auto;
 }
-
 </style>

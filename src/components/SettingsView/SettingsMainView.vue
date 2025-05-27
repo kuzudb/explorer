@@ -18,7 +18,7 @@
                   @click="toggleDarkMode()"
                   v-model="isDarkMode"
                   type="checkbox"
-                  class="switch-input peer"
+                  class="switch-input "
                 />
                 <label
                   for="switch-component-on"
@@ -467,26 +467,24 @@ export default {
       rel.g6Settings.style.endArrow.fill = rel.g6Settings.style.stroke;
     },
     toggleDarkMode() {
-      if (document.documentElement.getAttribute('data-bs-theme') === 'dark') {
-        document.documentElement.setAttribute('data-bs-theme', 'light');
-        Monaco.editor.setTheme('vs-light');
-        
-        
-      } else {
-        document.documentElement.setAttribute('data-bs-theme', 'dark');
-        Monaco.editor.setTheme('vs-dark');
-       
+      const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+      const newTheme = isDark ? 'light' : 'dark';
+      const monacoTheme = newTheme === 'dark' ? 'vs-dark' : 'vs-light';
+
+      document.documentElement.setAttribute('data-bs-theme', newTheme);
+
+      if (window.Monaco?.editor) {
+        window.Monaco.editor.setTheme(monacoTheme);
       }
+      window.dispatchEvent(new CustomEvent('theme-changed', {
+        detail: { theme: monacoTheme }
+      }));
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 .modal-body {
   max-height: calc(100vh - 200px);
   overflow-y: auto;
@@ -498,81 +496,154 @@ span.pull-left {
 }
 
 .settings-body {
-  @apply rounded-t-xl w-full bg-[var(--bs-body-bg-secondary)] border border-[var(--bs-body-inactive)] px-8 py-8;
+  border-radius: 1rem 1rem 0 0;
+  width: 100%;
+  background-color: var(--bs-body-bg-secondary);
+  border: 1px solid var(--bs-body-inactive);
+  padding: 2rem;
   max-height: calc(100vh - 200px);
   overflow-y: auto;
 }
 
 .section-header {
-  @apply font-medium;
+  font-weight: 500; // Bootstrap's fw-medium
 }
 
 .subsection-header {
-  @apply font-medium text-sm px-2 py-2;
+  font-weight: 500;
+  font-size: 0.875rem; // Bootstrap's .text-sm ~14px
+  padding: 0.5rem;
 }
 
 .settings-group {
-  @apply flex flex-row justify-between mt-2 rounded-xl px-4 py-2 w-full bg-[var(--bs-body-bg)];
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+  width: 100%;
+  background-color: var(--bs-body-bg);
 }
 
 .settings-label {
-  @apply font-light text-sm;
+  font-weight: 300;
+  font-size: 0.875rem;
 }
 
 .settings-toggle {
-  @apply inline-flex items-center gap-2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .toggle-label {
-  @apply text-[var(--bs-body-text)] text-sm cursor-pointer;
+  color: var(--bs-body-text);
+  font-size: 0.875rem;
+  cursor: pointer;
 }
 
 .toggle-switch {
-  @apply relative inline-block w-11 h-5;
+  position: relative;
+  display: inline-block;
+  width: 2.75rem;
+  height: 1.25rem;
 }
 
 .switch-input {
-  @apply appearance-none w-11 h-5 bg-[var(--bs-body-bg-secondary)] rounded-full checked:bg-[var(--bs-body-bg-accent)] cursor-pointer transition-colors duration-300;
+  appearance: none;
+  width: 2.75rem;
+  height: 1.25rem;
+  background-color: var(--bs-body-bg-secondary);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:checked {
+    background-color: var(--bs-body-bg-accent);
+  }
 }
 
 .switch-slider {
-  @apply absolute top-0 left-0 w-5 h-5 bg-[var(--bs-body-inactive)] rounded-full border border-[var(--bs-body-inactive)] shadow-sm transition-transform duration-300 peer-checked:translate-x-6 peer-checked:border-[var(--bs-body-inactive)] cursor-pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  background-color: var(--bs-body-inactive);
+  border: 1px solid var(--bs-body-inactive);
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: transform 0.3s;
+
+  .switch-input:checked + & {
+    transform: translateX(1.5rem);
+  }
 }
 
 .settings-divider {
-  @apply h-px my-4 bg-[var(--bs-body-inactive)] border-0;
+  height: 1px;
+  margin: 1rem 0;
+  background-color: var(--bs-body-inactive);
+  border: none;
 }
 
 .settings-table {
-  @apply table-auto w-full;
+  width: 100%;
+  table-layout: auto;
 }
 
 .table-cell {
-  @apply px-4 py-2;
+  padding: 0.5rem 1rem;
 }
 
 .settings-row {
-  @apply flex flex-row justify-between rounded-xl px-4 py-3 w-full;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  width: 100%;
 }
 
 .settings-input {
-  @apply bg-[var(--bs-body-bg)] border border-[var(--bs-body-inactive)] text-[var(--bs-body-text)] text-sm rounded-lg px-8 py-2;
+  background-color: var(--bs-body-bg);
+  border: 1px solid var(--bs-body-inactive);
+  color: var(--bs-body-text);
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 2rem;
 }
 
 .active-btn {
-  @apply bg-[var(--bs-body-bg-accent)] rounded-lg px-4 py-2 mr-4;
+  background-color: var(--bs-body-bg-accent);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  margin-right: 1rem;
+  border: 0px;
 }
 
 .inactive-btn {
-  @apply bg-[var(--bs-body-bg)] rounded-lg px-4 py-2 mr-4;
+  background-color: var(--bs-body-bg);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  margin-right: 1rem;
+  border: 0px;
 }
 
 .settings-footer {
-  @apply bg-[var(--bs-body-bg-secondary)] border-b border-l border-r rounded-b-xl border-solid border-[var(--bs-body-inactive)]  gap-3;
+  background-color: var(--bs-body-bg-secondary);
+  border: 1px solid var(--bs-body-inactive);
+  border-top: none;
+  border-radius: 0 0 1rem 1rem;
+  display: flex;
+  gap: 0.75rem;
 }
 
 .btn-save {
-  @apply bg-[var(--bs-body-bg-accent)] py-2 px-4;
+  background-color: var(--bs-body-bg-accent);
+  padding: 0.5rem 1rem;
+  border: 0px;
 }
 </style>
-

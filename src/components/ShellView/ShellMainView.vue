@@ -6,10 +6,13 @@
     <div
       v-if="maximizedCellIndex < 0"  
     >
-        <div class="add-cell">
-          <button href="#" class="add-cell-button" @click="addCell">+ Click here to add a new cell</button>
-          <div class="add-cell-break"></div>
-        </div>
+        <div class="d-flex align-items-center gap-3 m-4">
+          <button type="button" class="btn btn-link text-body p-0 text-decoration-none" @click="addCell">
+            + Click here to add a new cell
+          </button>
+        <div class="flex-grow-1 border-top border-secondary"></div>
+      </div>
+
     </div>
     <ShellCell
       v-for="(cell, index) in shellCell"
@@ -210,9 +213,6 @@ MATCH (a)-[r]->(b) RETURN * LIMIT 5;`,
 </script>
 
 <style lang="scss" scoped>
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 .shell-main-view__wrapper {
   width: 100%;
@@ -235,15 +235,5 @@ MATCH (a)-[r]->(b) RETURN * LIMIT 5;`,
       }
     }
   }
-}
-
-.add-cell{
-  @apply flex items-center space-x-4 m-6;
-}
-.add-cell-button{
-  @apply text-[var(--bs-body-text)] font-light;
-}
-.add-cell-break{
-  @apply flex-1 border-t border-[var(--bs-body-text)];
 }
 </style>
