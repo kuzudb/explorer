@@ -12,7 +12,8 @@
               href="#"
               :class="[
                 !isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
-              ]" class="text-decoration-none"
+              ]"
+              class="text-decoration-none"
               @click.prevent="isQueryGenerationMode = false"
             >Cypher Query</a>
           </li>
@@ -21,7 +22,8 @@
               href="#"
               :class="[
                 isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
-              ]" class="text-decoration-none"
+              ]"
+              class="text-decoration-none"
               @click.prevent="isQueryGenerationMode = true"
             >AI Query</a>
           </li>

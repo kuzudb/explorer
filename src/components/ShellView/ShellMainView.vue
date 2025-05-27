@@ -6,13 +6,16 @@
     <div
       v-if="maximizedCellIndex < 0"  
     >
-        <div class="d-flex align-items-center gap-3 m-4">
-          <button type="button" class="btn btn-link text-body p-0 text-decoration-none" @click="addCell">
-            + Click here to add a new cell
-          </button>
-        <div class="flex-grow-1 border-top border-secondary"></div>
+      <div class="d-flex align-items-center gap-3 m-4">
+        <button
+          type="button"
+          class="btn btn-link text-body p-0 text-decoration-none"
+          @click="addCell"
+        >
+          + Click here to add a new cell
+        </button>
+        <div class="flex-grow-1 border-top border-secondary" />
       </div>
-
     </div>
     <ShellCell
       v-for="(cell, index) in shellCell"
