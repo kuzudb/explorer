@@ -37,11 +37,24 @@
       <aside>
         <ul>
           <button @click="evaluateCell">
-            <i class="fa-solid fa-play" data-bs-toggle="tooltip" data-bs-placement="right" title="Run" /></button>
+            <i
+              class="fa-solid fa-play"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Run"
+            />
+          </button>
           <button @click="toggleMaximize">
-            <i :class="maximizeButtonClass" data-bs-toggle="tooltip" data-bs-placement="right" :data-bs-original-title="maximizeButtonTitle"/></button>
+            <i
+              :class="maximizeButtonClass"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              :data-bs-original-title="maximizeButtonTitle"
+            />
+          </button>
           <button @click="removeCell">
-            <i class="fa-solid fa-times"  /></button>
+            <i class="fa-solid fa-times" />
+          </button>
         </ul>
       </aside>
 
