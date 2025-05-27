@@ -1107,16 +1107,18 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 100%;
     border-bottom-left-radius: 1rem;
     border-top-left-radius: 1rem;
     background-color: (var(--bs-body-bg-secondary));
   }
 
   .result-container__button {
-    padding-top: 2px;
-    padding-bottom: 2px; 
     margin-right: 15px;
-
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     >i {
       cursor: pointer;
 

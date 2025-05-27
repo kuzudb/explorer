@@ -25,7 +25,7 @@
                   type="checkbox"
                   class="switch-input "
                   @click="toggleDarkMode"
-                >
+                />
                 <label
                   for="switch-component-on"
                   class="switch-slider"
@@ -423,6 +423,14 @@ export default {
     isOpenAIApi() {
       return this.currentSettings.gpt.llmProvider === LLM_PROVIDERS.OPENAI.key;
     },
+    isDarkMode: {
+      get() {
+        return this.modeStore.theme === 'vs-light';
+      },
+      set() {
+        // Toggling is handled by toggleDarkMode method
+      }
+    },
   },
   mounted() {
     this.modal = new Modal(this.$refs.modal);
@@ -514,18 +522,7 @@ export default {
       rel.g6Settings.style.endArrow.fill = rel.g6Settings.style.stroke;
     },
     toggleDarkMode() {
-      const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
-      const newTheme = isDark ? 'light' : 'dark';
-      const monacoTheme = newTheme === 'dark' ? 'vs-dark' : 'vs-light';
-
-      document.documentElement.setAttribute('data-bs-theme', newTheme);
-
-      if (window.Monaco?.editor) {
-        window.Monaco.editor.setTheme(monacoTheme);
-      }
-      window.dispatchEvent(new CustomEvent('theme-changed', {
-        detail: { theme: monacoTheme }
-      }));
+      this.modeStore.toggleTheme();
     },
   },
 }
@@ -572,6 +569,7 @@ span.pull-left {
   table {
     width: 100%;
     table-layout: auto;
+    border-collapse: collapse;
   }
   th {
     padding: 0.5rem 1rem;
@@ -625,6 +623,7 @@ span.pull-left {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-self: flex-start;
   margin-top: 0.5rem;
   border-radius: 1rem;
   padding: 0.5rem 1rem;

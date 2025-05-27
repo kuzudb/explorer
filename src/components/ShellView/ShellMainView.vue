@@ -1,6 +1,7 @@
 <template>
   <div
     class="shell-main-view__wrapper"
+    :class="{'is-maximized': maximizedCellIndex !== -1}"
     :style="{ height: `${containerHeight}px` }"
   >
     <div
@@ -219,7 +220,12 @@ MATCH (a)-[r]->(b) RETURN * LIMIT 5;`,
 
 .shell-main-view__wrapper {
   width: 100%;
-  overflow-y: scroll;
+  overflow-y: scroll; 
+  
+  &.is-maximized {
+    overflow-y: hidden; 
+    margin-bottom: 2px;
+  }
 
   .shell-main-view__placeholder {
     margin: 20px;

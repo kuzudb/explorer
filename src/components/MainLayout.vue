@@ -10,11 +10,7 @@
           href="//kuzudb.com"
           target="_blank"
         >
-          <img
-            :src="logoUrl"
-            alt="Kuzu Logo"
-            class="navbar__logo"
-          >
+        <img :src="logoUrl" :key="logoUrl" alt="Logo" class="navbar__logo" />
         </a>
         <button
           class="navbar-toggler"
@@ -260,6 +256,7 @@ import { Modal } from 'bootstrap';
 import DuckDB from '../utils/DuckDB';
 import Kuzu from '../utils/KuzuWasm';
 
+
 export default {
   name: "MainLayout",
   components: {
@@ -283,8 +280,10 @@ export default {
   computed: {
     ...mapStores(useModeStore),
     logoUrl() {
-      return `${process.env.BASE_URL}img/kuzu-logo-dark.png`;
-    }
+      return this.modeStore.theme === 'vs-dark'
+        ? '/img/kuzu-logo-dark.png'
+        : '/img/kuzu-logo-light.png';
+    },
   },
   mounted() {
     this.updateNavbarHeight();

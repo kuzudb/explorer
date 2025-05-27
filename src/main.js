@@ -11,6 +11,6 @@ const app = createApp(App);
 app.use(pinia);
 app.mount("#app");
 
-function toggleDarkMode() {
-    modeStore.toggleTheme(); 
-  }
+export function toggleDarkMode() {
+  const modeStore = useModeStore();
+}
