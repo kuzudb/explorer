@@ -67,11 +67,6 @@ export default {
         fontSize: 12,
         scrollBeyondLastLine: false,
       });
-      window.addEventListener('theme-changed', (event) => {
-        if (this.editor && window.Monaco?.editor) {
-          window.Monaco.editor.setTheme(event.detail.theme);
-        }
-      });
     },
   },
 };

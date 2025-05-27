@@ -11,29 +11,29 @@
       >
         <!-- Top Tool Buttons -->
         <ul class="result-container__button-group">
-          <button class="result-container__button " @click="toggleGraphView">
+          <button class="button " @click="toggleGraphView">
             <i class="fa-lg fa-solid fa-circle-nodes" data-bs-toggle="tooltip" data-bs-placement="right" title="Graph View" />
           </button>
-          <button class="result-container__button" @click="toggleTableView">
+          <button class="button" @click="toggleTableView">
             <i class="fa-lg fa-solid fa-table" data-bs-toggle="tooltip" data-bs-placement="right" title="Table View"/>
           </button>
-          <button class="result-container__button" @click="toggleCodeView">
+          <button class="button" @click="toggleCodeView">
             <i class="fa-lg fa-solid fa-code" data-bs-toggle="tooltip" data-bs-placement="right" title="JSON View"/>
           </button>
         </ul>
 
         <!-- Bottom Tool Buttons -->
         <ul v-show="showGraph" class="result-container__button-group result-container__tools--bottom">
-          <button class="result-container__button" @click="$refs.resultGraph.zoomIn()">
+          <button class="button" @click="$refs.resultGraph.zoomIn()">
             <i class="fa-lg fa-solid fa-magnifying-glass-plus" data-bs-toggle="tooltip" data-bs-placement="right" title="Zoom In"/>
           </button>
-          <button class="result-container__button" @click="$refs.resultGraph.zoomOut()">
+          <button class="button" @click="$refs.resultGraph.zoomOut()">
             <i class="fa-lg fa-solid fa-magnifying-glass-minus" data-bs-toggle="tooltip" data-bs-placement="right" title="Zoom Out"/>
           </button>
-          <button class="result-container__button" @click="$refs.resultGraph.fitToView()">
+          <button class="button" @click="$refs.resultGraph.fitToView()">
             <i class="fa-lg fa-solid fa-compress" data-bs-toggle="tooltip" data-bs-placement="right" title="Fit to View"/>
           </button>
-          <button class="result-container__button" @click="$refs.resultGraph.actualSize()">
+          <button class="button" @click="$refs.resultGraph.actualSize()">
             <i class="fa-lg fa-solid fa-expand" data-bs-toggle="tooltip" data-bs-placement="right" title="Actual Size"/>
           </button>
         </ul>
@@ -219,10 +219,37 @@ export default {
   margin-right: 1rem;
   margin-bottom: 1rem;
   border: 1px solid var(--bs-body-inactive);
-  border-radius: 0 0 1rem 1rem; // rounded-b-xl
+  border-radius: 0 0 1rem 1rem; 
   overflow: hidden;
-  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15); // shadow-md
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15);
   position: relative;
+
+    button {
+      padding-top: 0.25rem;
+      padding-bottom: 0.25rem;
+      background-color: transparent;
+      padding: 0px;
+      border: 0px;
+
+    i {
+      cursor: pointer;
+      color: var(--bs-body-text);
+
+      &:hover {
+        opacity: 0.7;
+      }
+
+      &:active {
+        opacity: 0.5;
+      }
+    }
+
+    &--active {
+      i {
+        color: var(--bs-body-bg-accent);
+      }
+    }
+  }
 }
 
 .result-container__wrapper {
@@ -248,43 +275,14 @@ export default {
 .result-container__button-group {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem; // ~Tailwind's gap-3
+  gap: 0.75rem;
   font-size: 0.875rem;
   font-weight: 500;
   padding-left: 0rem;
   align-items: first;
 }
 
-.tooltip{
-  background-color: var(--bs-body-inactive);
-}
 
-.result-container__button {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-  background-color: transparent;
-  padding: 0px;
-  border: 0px;
-
-  i {
-    cursor: pointer;
-    color: var(--bs-body-text);
-
-    &:hover {
-      opacity: 0.7;
-    }
-
-    &:active {
-      opacity: 0.5;
-    }
-  }
-
-  &--active {
-    i {
-      color: var(--bs-body-bg-accent);
-    }
-  }
-}
 
 .result-container__tools--bottom {
   margin-top: auto;

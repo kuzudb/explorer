@@ -5,13 +5,12 @@
   >
     <!-- Topbar -->
     <header class="shell-editor__topbar">
-      <div class="shell-editor__tabs-container">
-        <ul class="shell-editor__tabs nav nav-tabs border-0">
+      <div>
+        <ul class="nav nav-tabs border-0">
           <li class="nav-item text-[var(--bs-body-text)]">
             <a
               href="#"
               :class="[
-                'shell-editor__tab',
                 !isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
               ]" class="text-decoration-none"
               @click.prevent="isQueryGenerationMode = false"
@@ -21,7 +20,6 @@
             <a
               href="#"
               :class="[
-                'shell-editor__tab',
                 isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
               ]" class="text-decoration-none"
               @click.prevent="isQueryGenerationMode = true"
@@ -34,32 +32,29 @@
     <!-- Layout -->
     <div class="shell-editor__layout">
       <!-- Sidebar -->
-      <aside class="shell-editor__tools_container">
-        <ul class="shell-editor__tool-buttons">
-          <button class="btn p-0 bg-transparent border-0" @click="evaluateCell">
+      <aside>
+        <ul>
+          <button @click="evaluateCell">
             <i class="fa-solid fa-play" data-bs-toggle="tooltip" data-bs-placement="right" title="Run" /></button>
-          <button class="btn p-0 bg-transparent border-0" @click="toggleMaximize">
+          <button @click="toggleMaximize">
             <i :class="maximizeButtonClass" data-bs-toggle="tooltip" data-bs-placement="right" :data-bs-original-title="maximizeButtonTitle"/></button>
-          <button class="btn p-0 bg-transparent border-0" @click="removeCell">
-            <i class="fa-solid fa-times" data-bs-toggle="tooltip" data-bs-placement="right" title="Remove cell" /></button>
+          <button @click="removeCell">
+            <i class="fa-solid fa-times"  /></button>
         </ul>
       </aside>
 
       <!-- Main Content -->
-      <main class="shell-editor__container">
+      <main>
         <div
           v-show="!isQueryGenerationMode"
           ref="editor"
-          class="editor-content"
         />
         <div
           v-show="isQueryGenerationMode"
-          class="editor-content"
         >
           <textarea
             ref="gptQuestionTextArea"
             v-model="gptQuestion"
-            class="shell-editor__textarea"
             placeholder="Type your question here..."
           />
         </div>
@@ -231,11 +226,6 @@ export default {
         scrollBeyondLastLine: false,
       });     
       new PlaceholderContentWidget('Type your Cypher code here...', this.editor);
-      window.addEventListener('theme-changed', (event) => {
-        if (this.editor && window.Monaco?.editor) {
-          window.Monaco.editor.setTheme(event.detail.theme);
-        }
-      });
     },
     toggleMaximize() {
       this.$emit("toggleMaximize");
@@ -285,15 +275,13 @@ export default {
 <style lang="scss" scoped>
 $margin: 1rem;
 
-
-
 .shell-editor__wrapper {
   margin-top: 1rem;
   margin-left: 1rem;
   margin-right: 1rem;
   border-radius: 1rem 1rem 0 0;
   overflow: hidden;
-  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15); // Bootstrap's shadow-md equivalent
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15); 
 }
 
 .shell-editor__topbar {
@@ -302,100 +290,88 @@ $margin: 1rem;
   border-bottom: 1px solid var(--bs-body-inactive);
   background-color: var(--bs-body-bg-secondary);
   color: var(--bs-body-text);
-}
+  div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  ul {
+    display: flex;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+    background-color: var(--bs-body-bg-secondary);
+  }
+  a {
+    padding: 1rem;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    color: var(--bs-body-inactive);
+    &.active-tab {
+      font-weight: bold;
+      color: var(--bs-body-text);
+      background-color: var(--bs-body-shell);
+    }
 
-.shell-editor__tabs-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.shell-editor__tabs {
-  display: flex;
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-align: center;
-  background-color: var(--bs-body-bg-secondary);
-}
-
-.shell-editor__tab {
-  padding: 1rem;
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
-  color: var(--bs-body-inactive);
-}
-
-.active-tab {
-  font-weight: bold;
-  color: var(--bs-body-text);
-  background-color: var(--bs-body-shell);
-  color: var(--bs-body-text);
-}
-
-.inactive-tab {
-  &:hover {
-    color: var(--bs-body-text);
-    background-color: var(--bs-body-inactive); 
+    &.inactive-tab {
+      &:hover {
+        color: var(--bs-body-text);
+        background-color: var(--bs-body-inactive); 
+      }
+    }
   }
 }
 
 .shell-editor__layout {
   display: flex;
   min-height: 132px;
+  aside {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem 0;
+    min-width: 48px;
+    border-right: 1px solid var(--bs-body-inactive);
+    background-color: var(--bs-body-bg-secondary);
+
+    ul {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+      align-items: center;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+
+      button {
+        padding: 0px;
+        background: transparent;
+        border: 0px;
+      }
+    }  
+  }
 }
 
-.shell-editor__tools_container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0.5rem 0;
-  min-width: 48px;
-  border-right: 1px solid var(--bs-body-inactive);
-  background-color: var(--bs-body-bg-secondary);
-}
-
-.shell-editor__tool-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 0.5rem 0;
-  align-items: center;
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.shell-editor__container {
+main {
   flex: 1;
   background-color: var(--bs-body-shell);
   padding: 1rem;
-}
-
-.editor-content {
-  height: 100%;
+  div {
+    height: 100%;
   width: 100%;
   resize: vertical;
-}
 
-.shell-editor__textarea {
-  width: 100%;
-  height: 100%;
-  border: none;
-  padding: 0.5rem;
-  resize: vertical;
-  background-color: var(--bs-body-bg-secondary);
-  color: var(--bs-body-text);
-}
-
-.shell-editor__button > i {
-  cursor: pointer;
-
-  &:hover {
-    opacity: 0.7;
+  textarea {
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0.5rem;
+    resize: vertical;
+    background-color: var(--bs-body-bg-secondary);
+    color: var(--bs-body-text);
   }
-
-  &:active {
-    opacity: 0.5;
   }
 }
+
 </style>

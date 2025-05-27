@@ -1,0 +1,65 @@
+/* Lexend Font Family */
+@font-face {
+    font-family: 'Lexend';
+    src: url('./lexend/lexend-300.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Lexend';
+    src: url('./lexend/lexend-400.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Lexend';
+    src: url('./lexend/lexend-500.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Lexend';
+    src: url('./lexend/lexend-600.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Lexend';
+    src: url('./lexend/lexend-700.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Lekton Font Family */
+@font-face {
+    font-family: 'Lekton';
+    src: url('./lekton/lekton-400.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Lekton';
+    src: url('./lekton/lekton-700.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Lekton';
+    src: url('./lekton/lekton-400-italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+} 

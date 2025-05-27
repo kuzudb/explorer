@@ -1098,7 +1098,7 @@ export default {
 
     button {
       padding: 5px;
-      margin-right: 20px;
+      margin-right: 15px;
     }
   }
 
@@ -1115,6 +1115,7 @@ export default {
   .result-container__button {
     padding-top: 2px;
     padding-bottom: 2px; 
+    margin-right: 15px;
 
     >i {
       cursor: pointer;

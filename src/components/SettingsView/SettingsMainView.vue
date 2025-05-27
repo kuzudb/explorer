@@ -11,17 +11,12 @@
           class="modal-body settings-body"
         >
           <!-- Viewing Options -->
-          <h2 class="section-header">
-            Viewing Options
-          </h2>
+          <h2> Viewing Options </h2>
           <div class="settings-group">
-            <h4 class="settings-label">
-              Toggle Modes
-            </h4>
+            <h4>Toggle Modes</h4>
             <div class="settings-toggle">
               <label
                 for="switch-component-on"
-                class="toggle-label"
               >Dark Mode</label>
               <div class="toggle-switch">
                 <input
@@ -42,31 +37,27 @@
               >Light Mode</label>
             </div>
           </div>
-          <hr class="settings-divider">
+          <hr>
 
           <!-- Graph Visualization Options -->
-          <h2 class="section-header">
-            Graph Visualization Options
-          </h2>
+          <h2> Graph Visualization Options </h2>
 
           <!-- Nodes -->
-          <h2 class="subsection-header">
-            Nodes
-          </h2>
+          <h3> Nodes </h3>
           <div class="settings-group">
-            <table class="settings-table">
+            <table>
               <thead>
                 <tr>
-                  <th class="table-cell">
+                  <th>
                     Label
                   </th>
-                  <th class="table-cell">
+                  <th>
                     Color
                   </th>
-                  <th class="table-cell">
+                  <th>
                     Size (px)
                   </th>
-                  <th class="table-cell">
+                  <th>
                     Caption
                   </th>
                 </tr>
@@ -76,10 +67,10 @@
                   v-for="(node, key, index) in currentSettings.graphViz.nodes"
                   :key="index"
                 >
-                  <td class="table-cell">
+                  <td>
                     {{ node.name === placeholderNodeTable ? getPlaceholderNodeLabel() : node.name }}
                   </td>
-                  <td class="table-cell">
+                  <td>
                     <input
                       v-model="node.g6Settings.style.fill"
                       type="color"
@@ -87,7 +78,7 @@
                       title="Choose color for node"
                     >
                   </td>
-                  <td class="table-cell">
+                  <td >
                     <input
                       v-model="node.g6Settings.size"
                       type="number"
@@ -97,7 +88,7 @@
                       title="Choose size for node"
                     >
                   </td>
-                  <td class="table-cell">
+                  <td>
                     <select
                       v-model="node.label"
                       class="form-select"
@@ -117,23 +108,21 @@
           </div>
 
           <!-- Relationships -->
-          <h2 class="subsection-header">
-            Relationships
-          </h2>
+          <h3> Relationships </h3>
           <div class="settings-group">
-            <table class="settings-table">
+            <table>
               <thead>
                 <tr>
-                  <th class="table-cell">
+                  <th>
                     Label
                   </th>
-                  <th class="table-cell">
+                  <th>
                     Color
                   </th>
-                  <th class="table-cell">
+                  <th>
                     Size (px)
                   </th>
-                  <th class="table-cell">
+                  <th>
                     Caption
                   </th>
                 </tr>
@@ -143,10 +132,10 @@
                   v-for="(rel, key, index) in currentSettings.graphViz.rels"
                   :key="index"
                 >
-                  <td class="table-cell">
+                  <td>
                     {{ rel.name === placeholderRelTable ? getPlaceholderRelLabel() : rel.name }}
                   </td>
-                  <td class="table-cell">
+                  <td >
                     <input
                       v-model="rel.g6Settings.style.stroke"
                       type="color"
@@ -155,7 +144,7 @@
                       @change="syncRelFill(rel)"
                     >
                   </td>
-                  <td class="table-cell">
+                  <td>
                     <input
                       v-model="rel.g6Settings.size"
                       type="number"
@@ -165,7 +154,7 @@
                       title="Choose size for rel"
                     >
                   </td>
-                  <td class="table-cell">
+                  <td>
                     <select
                       v-model="rel.label"
                       class="form-select"
@@ -185,12 +174,9 @@
           </div>
 
           <!-- Performance Options -->
-          <h2 class="subsection-header">
-            Performance Options
-          </h2>
+          <h3> Performance Options </h3>
           <div class="settings-row">
-            <h4 class="settings-label">
-              Max number of nodes to draw for graph visualization
+            <h4 >  Max number of nodes to draw for graph visualization
             </h4>
             <input
               v-model="currentSettings.performance.maxNumberOfNodes"
@@ -203,8 +189,7 @@
             >
           </div>
           <div class="settings-row">
-            <h4 class="settings-label">
-              Max number of nodes to expand on double click
+            <h4> Max number of nodes to expand on double click
             </h4>
             <input
               v-model="currentSettings.performance.maxNumberOfNodesToExpand"
@@ -216,16 +201,12 @@
               required
             >
           </div>
-          <hr class="settings-divider">
+          <hr>
 
           <!-- Schema View Options -->
-          <h2 class="section-header">
-            Schema View Options
-          </h2>
+          <h2 > Schema View Options </h2>
           <div class="settings-row">
-            <h4 class="settings-label">
-              Show relationship labels
-            </h4>
+            <h4 > Show relationship labels </h4>
             <div>
               <button
                 :class="{
@@ -247,16 +228,12 @@
               </button>
             </div>
           </div>
-          <hr class="settings-divider">
+          <hr>
 
           <!-- Table View Options -->
-          <h2 class="section-header">
-            Table View Options
-          </h2>
+          <h2 > Table View Options </h2>
           <div class="settings-row">
-            <h4 class="settings-label">
-              Number of rows per page
-            </h4>
+            <h4 > Number of rows per page </h4>
             <input
               v-model="currentSettings.tableView.rowsPerPage"
               type="number"
@@ -267,18 +244,14 @@
               required
             >
           </div>
-          <hr class="settings-divider">
+          <hr>
 
           <!-- Query Generation Options -->
           <div v-if="!modeStore.isWasm">
-            <h2 class="section-header">
-              Query Generation Options
-            </h2>
+            <h2> Query Generation Options </h2>
             
             <div class="settings-row">
-              <h4 class="settings-label">
-                LLM provider
-              </h4>
+              <h4 > LLM provider </h4>
               <select
                 v-model="currentSettings.gpt.llmProvider"
                 class="settings-input form-select"
@@ -297,7 +270,7 @@
               v-if="isOpenAIApi"
               class="settings-row"
             >
-              <span class="settings-label">OpenAI model</span>
+              <span>OpenAI model</span>
               <select
                 v-model="currentSettings.gpt.model"
                 class="settings-input form-select"
@@ -315,7 +288,7 @@
               v-else
               class="settings-row"
             >
-              <span class="settings-label">Model name</span>
+              <span>Model name</span>
               <input
                 v-model="currentSettings.gpt.model"
                 type="text"
@@ -327,7 +300,7 @@
               v-if="!isOpenAIApi"
               class="settings-row"
             >
-              <span class="settings-label">API endpoint</span>
+              <span>API endpoint</span>
               <input
                 v-model="currentSettings.gpt.url"
                 type="text"
@@ -336,7 +309,7 @@
               >
             </div>
             <div class="settings-row">
-              <span class="settings-label">
+              <span>
 
                 {{ isOpenAIApi ? 'OpenAI' : 'API' }} key
               </span>
@@ -577,16 +550,75 @@ span.pull-left {
   padding: 2rem;
   max-height: calc(100vh - 200px);
   overflow-y: auto;
+
+  h2 {
+    font-weight: 500; 
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-weight: 500;
+    font-size: 0.875rem; 
+    padding: 0.5rem;
+  }
+  h4 {
+      font-weight: 300;
+      font-size: 0.875rem;
+  }
+  span {
+      font-weight: 300;
+      font-size: 0.875rem;
+  }
+  table {
+    width: 100%;
+    table-layout: auto;
+  }
+  th {
+    padding: 0.5rem 1rem;
+  }
+  td {
+    padding: 0.5rem 1rem;
+  }
+  hr{
+    height: 1px;
+    margin: 1rem 0;
+    background-color: var(--bs-body-inactive);
+    border: none;
+  }
+  
 }
 
-.section-header {
-  font-weight: 500; // Bootstrap's fw-medium
+.settings-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  label { 
+    color: var(--bs-body-text);
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+  input {
+    appearance: none;
+    width: 2.75rem;
+    height: 1.25rem;
+    background-color: var(--bs-body-bg-secondary);
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:checked {
+      background-color: var(--bs-body-bg-accent);
+    }
+  }
 }
 
-.subsection-header {
-  font-weight: 500;
-  font-size: 0.875rem; // Bootstrap's .text-sm ~14px
-  padding: 0.5rem;
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 2.75rem;
+  height: 1.25rem;
+  
 }
 
 .settings-group {
@@ -598,46 +630,8 @@ span.pull-left {
   padding: 0.5rem 1rem;
   width: 100%;
   background-color: var(--bs-body-bg);
-}
-
-.settings-label {
-  font-weight: 300;
-  font-size: 0.875rem;
-}
-
-.settings-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.toggle-label {
-  color: var(--bs-body-text);
-  font-size: 0.875rem;
-  cursor: pointer;
-}
-
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 2.75rem;
-  height: 1.25rem;
-}
-
-.switch-input {
-  appearance: none;
-  width: 2.75rem;
-  height: 1.25rem;
-  background-color: var(--bs-body-bg-secondary);
-  border-radius: 9999px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:checked {
-    background-color: var(--bs-body-bg-accent);
   }
-}
-
+  
 .switch-slider {
   position: absolute;
   top: 0;
@@ -656,22 +650,6 @@ span.pull-left {
   }
 }
 
-.settings-divider {
-  height: 1px;
-  margin: 1rem 0;
-  background-color: var(--bs-body-inactive);
-  border: none;
-}
-
-.settings-table {
-  width: 100%;
-  table-layout: auto;
-}
-
-.table-cell {
-  padding: 0.5rem 1rem;
-}
-
 .settings-row {
   display: flex;
   flex-direction: row;
@@ -688,6 +666,7 @@ span.pull-left {
   font-size: 0.875rem;
   border-radius: 0.5rem;
   padding: 0.5rem 2rem;
+  
 }
 
 .active-btn {
