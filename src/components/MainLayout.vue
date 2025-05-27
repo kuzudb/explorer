@@ -10,7 +10,12 @@
           href="//kuzudb.com"
           target="_blank"
         >
-        <img :src="logoUrl" :key="logoUrl" alt="Logo" class="navbar__logo" />
+          <img
+            :key="logoUrl"
+            :src="logoUrl"
+            alt="Logo"
+            class="navbar__logo"
+          >
         </a>
         <button
           class="navbar-toggler"
