@@ -1,5 +1,8 @@
 <template>
-  <div ref="wrapper" class="shell-editor__wrapper">
+  <div
+    ref="wrapper"
+    class="shell-editor__wrapper"
+  >
     <!-- Topbar -->
     <header class="shell-editor__topbar">
       <div class="shell-editor__tabs-container">
@@ -44,8 +47,15 @@
 
       <!-- Main Content -->
       <main class="shell-editor__container">
-        <div v-show="!isQueryGenerationMode" ref="editor" class="editor-content"></div>
-        <div v-show="isQueryGenerationMode" class="editor-content">
+        <div
+          v-show="!isQueryGenerationMode"
+          ref="editor"
+          class="editor-content"
+        />
+        <div
+          v-show="isQueryGenerationMode"
+          class="editor-content"
+        >
           <textarea
             ref="gptQuestionTextArea"
             v-model="gptQuestion"

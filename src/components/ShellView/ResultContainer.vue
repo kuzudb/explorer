@@ -1,8 +1,14 @@
 <template>
   <div class="result-container">
-    <div ref="wrapper" class="result-container__wrapper">
+    <div
+      ref="wrapper"
+      class="result-container__wrapper"
+    >
       <!-- Left Sidebar -->
-      <aside v-show="!errorMessage" class="result-container__tools">
+      <aside
+        v-show="!errorMessage"
+        class="result-container__tools"
+      >
         <!-- Top Tool Buttons -->
         <ul class="result-container__button-group">
           <button class="result-container__button " @click="toggleGraphView">
@@ -33,38 +39,38 @@
         </ul>
       </aside>
   
-  <main class="result-container__main">
-    <ResultGraph
-      v-if="queryResult"
-      v-show="showGraph"
-      ref="resultGraph"
-      :query-result="queryResult"
-      :schema="schema"
-      :container-height="containerHeight"
-      @graph-empty="handleGraphEmpty"
-    />
-    <ResultTable
-      v-if="queryResult && showTable"
-      ref="resultTable"
-      :query-result="queryResult"
-      :schema="schema"
-      :container-height="containerHeight"
-    />
-    <ResultCode
-      v-if="queryResultString && showCode"
-      ref="resultCode"
-      :query-result-string="queryResultString"
-      :schema="schema"
-      :container-height="containerHeight"
-    />
-    <ResultError
-      v-if="errorMessage"
-      ref="resultError"
-      :error-message="errorMessage"
-      :is-info="errorMessage === emptyResultMessage"
-    />
-  </main>
-  </div>
+      <main class="result-container__main">
+        <ResultGraph
+          v-if="queryResult"
+          v-show="showGraph"
+          ref="resultGraph"
+          :query-result="queryResult"
+          :schema="schema"
+          :container-height="containerHeight"
+          @graph-empty="handleGraphEmpty"
+        />
+        <ResultTable
+          v-if="queryResult && showTable"
+          ref="resultTable"
+          :query-result="queryResult"
+          :schema="schema"
+          :container-height="containerHeight"
+        />
+        <ResultCode
+          v-if="queryResultString && showCode"
+          ref="resultCode"
+          :query-result-string="queryResultString"
+          :schema="schema"
+          :container-height="containerHeight"
+        />
+        <ResultError
+          v-if="errorMessage"
+          ref="resultError"
+          :error-message="errorMessage"
+          :is-info="errorMessage === emptyResultMessage"
+        />
+      </main>
+    </div>
   </div>
 </template>
 

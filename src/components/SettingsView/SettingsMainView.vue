@@ -1,5 +1,9 @@
 <template>
-  <div ref="modal" class="modal" tabindex="-1">
+  <div
+    ref="modal"
+    class="modal"
+    tabindex="-1"
+  >
     <div class="modal-dialog modal-xl">
       <div class="modal-content bg-transparent border-transparent">
         <div
@@ -7,46 +11,71 @@
           class="modal-body settings-body"
         >
           <!-- Viewing Options -->
-          <h2 class="section-header">Viewing Options</h2>
+          <h2 class="section-header">
+            Viewing Options
+          </h2>
           <div class="settings-group">
-            <h4 class="settings-label">Toggle Modes</h4>
+            <h4 class="settings-label">
+              Toggle Modes
+            </h4>
             <div class="settings-toggle">
-              <label for="switch-component-on" class="toggle-label">Dark Mode</label>
+              <label
+                for="switch-component-on"
+                class="toggle-label"
+              >Dark Mode</label>
               <div class="toggle-switch">
                 <input
                   id="switch-component-on"
-                  @click="toggleDarkMode()"
                   v-model="isDarkMode"
                   type="checkbox"
                   class="switch-input "
+                  @click="toggleDarkMode"
                 />
                 <label
                   for="switch-component-on"
                   class="switch-slider"
-                ></label>
+                />
               </div>
-              <label for="switch-component-on" class="toggle-label">Light Mode</label>
+              <label
+                for="switch-component-on"
+                class="toggle-label"
+              >Light Mode</label>
             </div>
           </div>
-          <hr class="settings-divider" />
+          <hr class="settings-divider">
 
           <!-- Graph Visualization Options -->
-          <h2 class="section-header">Graph Visualization Options</h2>
+          <h2 class="section-header">
+            Graph Visualization Options
+          </h2>
 
           <!-- Nodes -->
-          <h2 class="subsection-header">Nodes</h2>
+          <h2 class="subsection-header">
+            Nodes
+          </h2>
           <div class="settings-group">
             <table class="settings-table">
               <thead>
                 <tr>
-                  <th class="table-cell">Label</th>
-                  <th class="table-cell">Color</th>
-                  <th class="table-cell">Size (px)</th>
-                  <th class="table-cell">Caption</th>
+                  <th class="table-cell">
+                    Label
+                  </th>
+                  <th class="table-cell">
+                    Color
+                  </th>
+                  <th class="table-cell">
+                    Size (px)
+                  </th>
+                  <th class="table-cell">
+                    Caption
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(node, key, index) in currentSettings.graphViz.nodes" :key="index">
+                <tr
+                  v-for="(node, key, index) in currentSettings.graphViz.nodes"
+                  :key="index"
+                >
                   <td class="table-cell">
                     {{ node.name === placeholderNodeTable ? getPlaceholderNodeLabel() : node.name }}
                   </td>
@@ -56,7 +85,7 @@
                       type="color"
                       class="form-control form-control-color"
                       title="Choose color for node"
-                    />
+                    >
                   </td>
                   <td class="table-cell">
                     <input
@@ -66,10 +95,13 @@
                       min="10"
                       max="200"
                       title="Choose size for node"
-                    />
+                    >
                   </td>
                   <td class="table-cell">
-                    <select v-model="node.label" class="form-select">
+                    <select
+                      v-model="node.label"
+                      class="form-select"
+                    >
                       <option
                         v-for="option in getCaptionOptions(node, true)"
                         :key="option.text"
@@ -85,19 +117,32 @@
           </div>
 
           <!-- Relationships -->
-          <h2 class="subsection-header">Relationships</h2>
+          <h2 class="subsection-header">
+            Relationships
+          </h2>
           <div class="settings-group">
             <table class="settings-table">
               <thead>
                 <tr>
-                  <th class="table-cell">Label</th>
-                  <th class="table-cell">Color</th>
-                  <th class="table-cell">Size (px)</th>
-                  <th class="table-cell">Caption</th>
+                  <th class="table-cell">
+                    Label
+                  </th>
+                  <th class="table-cell">
+                    Color
+                  </th>
+                  <th class="table-cell">
+                    Size (px)
+                  </th>
+                  <th class="table-cell">
+                    Caption
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(rel, key, index) in currentSettings.graphViz.rels" :key="index">
+                <tr
+                  v-for="(rel, key, index) in currentSettings.graphViz.rels"
+                  :key="index"
+                >
                   <td class="table-cell">
                     {{ rel.name === placeholderRelTable ? getPlaceholderRelLabel() : rel.name }}
                   </td>
@@ -108,7 +153,7 @@
                       class="form-control form-control-color"
                       title="Choose color for rel"
                       @change="syncRelFill(rel)"
-                    />
+                    >
                   </td>
                   <td class="table-cell">
                     <input
@@ -118,10 +163,13 @@
                       min="1"
                       max="20"
                       title="Choose size for rel"
-                    />
+                    >
                   </td>
                   <td class="table-cell">
-                    <select v-model="rel.label" class="form-select">
+                    <select
+                      v-model="rel.label"
+                      class="form-select"
+                    >
                       <option
                         v-for="option in getCaptionOptions(rel, false)"
                         :key="option.text"
@@ -137,9 +185,13 @@
           </div>
 
           <!-- Performance Options -->
-          <h2 class="subsection-header">Performance Options</h2>
+          <h2 class="subsection-header">
+            Performance Options
+          </h2>
           <div class="settings-row">
-            <h4 class="settings-label">Max number of nodes to draw for graph visualization</h4>
+            <h4 class="settings-label">
+              Max number of nodes to draw for graph visualization
+            </h4>
             <input
               v-model="currentSettings.performance.maxNumberOfNodes"
               type="number"
@@ -148,10 +200,12 @@
               class="settings-input"
               placeholder="100"
               required
-            />
+            >
           </div>
           <div class="settings-row">
-            <h4 class="settings-label">Max number of nodes to expand on double click</h4>
+            <h4 class="settings-label">
+              Max number of nodes to expand on double click
+            </h4>
             <input
               v-model="currentSettings.performance.maxNumberOfNodesToExpand"
               type="number"
@@ -160,14 +214,18 @@
               class="settings-input"
               placeholder="10"
               required
-            />
+            >
           </div>
-          <hr class="settings-divider" />
+          <hr class="settings-divider">
 
           <!-- Schema View Options -->
-          <h2 class="section-header">Schema View Options</h2>
+          <h2 class="section-header">
+            Schema View Options
+          </h2>
           <div class="settings-row">
-            <h4 class="settings-label">Show relationship labels</h4>
+            <h4 class="settings-label">
+              Show relationship labels
+            </h4>
             <div>
               <button
                 :class="{
@@ -189,12 +247,16 @@
               </button>
             </div>
           </div>
-          <hr class="settings-divider" />
+          <hr class="settings-divider">
 
           <!-- Table View Options -->
-          <h2 class="section-header">Table View Options</h2>
+          <h2 class="section-header">
+            Table View Options
+          </h2>
           <div class="settings-row">
-            <h4 class="settings-label">Number of rows per page</h4>
+            <h4 class="settings-label">
+              Number of rows per page
+            </h4>
             <input
               v-model="currentSettings.tableView.rowsPerPage"
               type="number"
@@ -203,132 +265,144 @@
               class="settings-input"
               placeholder="2"
               required
-            />
+            >
           </div>
-          <hr class="settings-divider" />
+          <hr class="settings-divider">
 
           <!-- Query Generation Options -->
           <div v-if="!modeStore.isWasm">
-            <h2 class="section-header">Query Generation Options</h2>
+            <h2 class="section-header">
+              Query Generation Options
+            </h2>
             
-              <div class="settings-row">
-                  <h4 class="settings-label">LLM provider</h4>
-                  <select
-                    v-model="currentSettings.gpt.llmProvider"
-                    class="settings-input form-select"
-                    @change="handleLlmProviderChange"
-                  >
-                    <option
-                      v-for="(value, key) in llmProviderOptions"
-                      :key="key"
-                      :value="key"
-                    >
-                      {{ value.text }}
-                    </option>
-                  </select>
-                </div>
-                <div
-                  v-if="isOpenAIApi"
-                  class="settings-row"
+            <div class="settings-row">
+              <h4 class="settings-label">
+                LLM provider
+              </h4>
+              <select
+                v-model="currentSettings.gpt.llmProvider"
+                class="settings-input form-select"
+                @change="handleLlmProviderChange"
+              >
+                <option
+                  v-for="(value, key) in llmProviderOptions"
+                  :key="key"
+                  :value="key"
                 >
-                  <span class="settings-label">OpenAI model</span>
-                  <select
-                    v-model="currentSettings.gpt.model"
-                    class="settings-input form-select"
-                  >
-                    <option
-                      v-for="option in gptModelOptions"
-                      :key="option"
-                      :value="option"
-                    >
-                      {{ option }}
-                    </option>
-                  </select>
-                </div>
-                <div
-                  v-else
-                  class="settings-row"
-                >
-                  <span class="settings-label">Model name</span>
-                  <input
-                    v-model="currentSettings.gpt.model"
-                    type="text"
-                    class="settings-input form-control"
-                    title="Enter the custom model name"
-                  >
-                </div>
-                <div
-                  v-if="!isOpenAIApi"
-                  class="settings-row"
-                >
-                  <span class="settings-label">API endpoint</span>
-                  <input
-                    v-model="currentSettings.gpt.url"
-                    type="text"
-                    class="settings-input form-control"
-                    title="Enter the API endpoint"
-                  >
-                </div>
-                <div class="settings-row">
-                  <span class="settings-label">
-
-                    {{ isOpenAIApi ? 'OpenAI' : 'API' }} key
-                  </span>
-                  <input
-                    v-model="currentSettings.gpt.apiToken"
-                    :type="showPassword ? 'text' : 'password'"
-                    class="settings-input form-control"
-                    :title="isOpenAIApi ? 'Enter the OpenAI API key' : 'Enter API key'"
-                  >
-                  <button
-                    type="button"
-                    class="btn ml-3"
-                    @click="togglePasswordVisibility"
-                  >
-                    <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'" />
-                  </button>
-                </div>
-                <small
-                  v-if="isOpenAIApi"
-                  class="form-text text-muted"
-                >
-                  The OpenAI API key is used to generate Cypher queries from natural language using the specified model.
-                  It can be obtained from
-                  <a
-                    href="https://platform.openai.com/"
-                    target="_blank"
-                  >OpenAI</a>. We only
-                  store the API key in your browser. Click
-                  <a
-                    href="#"
-                    @click="clearGptToken()"
-                  >here</a> to clear the API key from the
-                  browser.
-                </small>
-                <small
-                  v-else
-                  class="form-text text-muted"
-                >
-                  The API key may not be required for some deployments, such as the locally hosted version of Ollama.
-                  Please refer to the documentation for your model
-                  provider.
-                  If not required, leave this field empty and we automatically fill it with "IGNORED".
-                  We only
-                  store the API key in your browser. Click
-                  <a
-                    href="#"
-                    @click="clearGptToken()"
-                  >here</a> to clear the API key from the
-                  browser.
-                </small>
+                  {{ value.text }}
+                </option>
+              </select>
             </div>
+            <div
+              v-if="isOpenAIApi"
+              class="settings-row"
+            >
+              <span class="settings-label">OpenAI model</span>
+              <select
+                v-model="currentSettings.gpt.model"
+                class="settings-input form-select"
+              >
+                <option
+                  v-for="option in gptModelOptions"
+                  :key="option"
+                  :value="option"
+                >
+                  {{ option }}
+                </option>
+              </select>
+            </div>
+            <div
+              v-else
+              class="settings-row"
+            >
+              <span class="settings-label">Model name</span>
+              <input
+                v-model="currentSettings.gpt.model"
+                type="text"
+                class="settings-input form-control"
+                title="Enter the custom model name"
+              >
+            </div>
+            <div
+              v-if="!isOpenAIApi"
+              class="settings-row"
+            >
+              <span class="settings-label">API endpoint</span>
+              <input
+                v-model="currentSettings.gpt.url"
+                type="text"
+                class="settings-input form-control"
+                title="Enter the API endpoint"
+              >
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">
+
+                {{ isOpenAIApi ? 'OpenAI' : 'API' }} key
+              </span>
+              <input
+                v-model="currentSettings.gpt.apiToken"
+                :type="showPassword ? 'text' : 'password'"
+                class="settings-input form-control"
+                :title="isOpenAIApi ? 'Enter the OpenAI API key' : 'Enter API key'"
+              >
+              <button
+                type="button"
+                class="btn ml-3"
+                @click="togglePasswordVisibility"
+              >
+                <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'" />
+              </button>
+            </div>
+            <small
+              v-if="isOpenAIApi"
+              class="form-text text-muted"
+            >
+              The OpenAI API key is used to generate Cypher queries from natural language using the specified model.
+              It can be obtained from
+              <a
+                href="https://platform.openai.com/"
+                target="_blank"
+              >OpenAI</a>. We only
+              store the API key in your browser. Click
+              <a
+                href="#"
+                @click="clearGptToken()"
+              >here</a> to clear the API key from the
+              browser.
+            </small>
+            <small
+              v-else
+              class="form-text text-muted"
+            >
+              The API key may not be required for some deployments, such as the locally hosted version of Ollama.
+              Please refer to the documentation for your model
+              provider.
+              If not required, leave this field empty and we automatically fill it with "IGNORED".
+              We only
+              store the API key in your browser. Click
+              <a
+                href="#"
+                @click="clearGptToken()"
+              >here</a> to clear the API key from the
+              browser.
+            </small>
+          </div>
         </div>
 
         <div class="modal-footer settings-footer d-flex justify-content-end">
-          <button type="button" class="btn btn-outline-secondary rounded-pill px-4 py-2" @click="hideModal()">
+          <button
+            type="button"
+            class="btn btn-outline-secondary rounded-pill px-4 py-2"
+            @click="hideModal()"
+          >
             Close
           </button>
-          <button type="button" class="btn-save rounded-pill" @click="saveAndHideModal()">
+          <button
+            type="button"
+            class="btn-save rounded-pill"
+            @click="saveAndHideModal()"
+          >
             Save
           </button>
         </div>
