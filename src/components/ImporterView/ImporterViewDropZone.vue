@@ -11,28 +11,28 @@
           >
             <div class="file-icon"><i class="fa-solid fa-file-circle-plus text-primary" /></div>
             <div class="d-flex flex-column align-items-center text-center pt-3 px-5">
-                <p class="w-80 h5 fw-bold text-[var(--bs-body-text)] mx-auto">
-                  Drag & drop CSV or Parquet files to get started.
-                </p>
-                <br />
-                <button
-                  class="btn btn-primary mb-2 "
-                  @click="selectFiles"
-                >
-                  <i class="fa-solid fa-folder-open" />
-                  &nbsp;
-                  Select Files
-                </button>
-                <div class="hr-sect w-full"> or </div>
-                <button
-                  class="btn btn-primary mb-2"
-                  @click="$emit('loadBundledDataset')"
-                >
-                  <i class="fa-solid fa-database" />
-                  &nbsp;
-                  Try a Sample Dataset
-                </button>
-              </div> 
+              <p class="w-80 h5 fw-bold text-[var(--bs-body-text)] mx-auto">
+                Drag & drop CSV or Parquet files to get started.
+              </p>
+              <br>
+              <button
+                class="btn btn-primary mb-2 "
+                @click="selectFiles"
+              >
+                <i class="fa-solid fa-folder-open" />
+                &nbsp;
+                Select Files
+              </button>
+              <div class="hr-sect w-full"> or </div>
+              <button
+                class="btn btn-primary mb-2"
+                @click="$emit('loadBundledDataset')"
+              >
+                <i class="fa-solid fa-database" />
+                &nbsp;
+                Try a Sample Dataset
+              </button>
+            </div> 
           </label>
           <input
             ref="fileInput"

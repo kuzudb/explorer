@@ -13,7 +13,8 @@
               :class="[
                 'shell-editor__tab',
                 !isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
-              ]" class="text-decoration-none"
+              ]"
+              class="text-decoration-none"
               @click.prevent="isQueryGenerationMode = false"
             >Cypher Query</a>
           </li>
@@ -23,7 +24,8 @@
               :class="[
                 'shell-editor__tab',
                 isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
-              ]" class="text-decoration-none"
+              ]"
+              class="text-decoration-none"
               @click.prevent="isQueryGenerationMode = true"
             >AI Query</a>
           </li>
@@ -36,12 +38,39 @@
       <!-- Sidebar -->
       <aside class="shell-editor__tools_container">
         <ul class="shell-editor__tool-buttons">
-          <button class="btn p-0 bg-transparent border-0" @click="evaluateCell">
-            <i class="fa-solid fa-play" data-bs-toggle="tooltip" data-bs-placement="right" title="Run" /></button>
-          <button class="btn p-0 bg-transparent border-0" @click="toggleMaximize">
-            <i :class="maximizeButtonClass" data-bs-toggle="tooltip" data-bs-placement="right" :data-bs-original-title="maximizeButtonTitle"/></button>
-          <button class="btn p-0 bg-transparent border-0" @click="removeCell">
-            <i class="fa-solid fa-times" data-bs-toggle="tooltip" data-bs-placement="right" title="Remove cell" /></button>
+          <button
+            class="btn p-0 bg-transparent border-0"
+            @click="evaluateCell"
+          >
+            <i
+              class="fa-solid fa-play"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Run"
+            />
+          </button>
+          <button
+            class="btn p-0 bg-transparent border-0"
+            @click="toggleMaximize"
+          >
+            <i
+              :class="maximizeButtonClass"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              :data-bs-original-title="maximizeButtonTitle"
+            />
+          </button>
+          <button
+            class="btn p-0 bg-transparent border-0"
+            @click="removeCell"
+          >
+            <i
+              class="fa-solid fa-times"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Remove cell"
+            />
+          </button>
         </ul>
       </aside>
 

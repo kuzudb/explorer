@@ -30,7 +30,7 @@
                   type="checkbox"
                   class="switch-input "
                   @click="toggleDarkMode"
-                />
+                >
                 <label
                   for="switch-component-on"
                   class="switch-slider"
