@@ -24,7 +24,9 @@
           data-bs-target=".navbar__buttons"
           aria-label="Toggle navigation"
         >
-          <span class="navbar-toggler-icon" />
+          <span>
+          <i class="fa fa-navicon" style="color:var(--bs-body-text); font-size:28px;"></i>
+        </span>
         </button>
         <div class="collapse navbar-collapse navbar__buttons">
           <ul
@@ -33,7 +35,7 @@
           >
             <li class="nav-item">
               <span
-                class="badge bg-primary"
+                class="badge"
                 @click="accessModeModal.show()"
               >Read-only Mode</span>
             </li>
@@ -53,7 +55,7 @@
             <li :class="['nav-item', { active: showShell }]">
               <a
                 class="nav-link"
-                href="#"
+                href="#shell"
                 @click="toggleShell()"
               >
                 <i class="fa-solid fa-terminal" />
@@ -63,7 +65,7 @@
             <li :class="['nav-item', { active: showSchema }]">
               <a
                 class="nav-link"
-                href="#"
+                href="#schema"
                 @click="toggleSchema()"
               >
                 <i class="fa-solid fa-circle-nodes" />
@@ -77,7 +79,7 @@
             >
               <a
                 class="nav-link"
-                href="#"
+                href="#datasets"
                 @click="toggleLoader()"
               >
                 <i class="fa-solid fa-database" />
@@ -93,7 +95,7 @@
             >
               <a
                 class="nav-link"
-                href="#"
+                href="#importer"
                 @click="toggleImporter()"
               >
                 <i class="fa-solid fa-upload" />
@@ -104,7 +106,7 @@
             <li class="nav-item">
               <a
                 class="nav-link"
-                href="#"
+                href="#settings"
                 @click="showSettingsModal()"
               >
                 <i class="fa-solid fa-cog" />
@@ -495,6 +497,7 @@ nav.navbar {
 .nav-item {
   .badge {
     cursor: pointer;
+    color: var(--bs-body-bg-accent);
   }
   i {
       color: var(--bs-body-text);

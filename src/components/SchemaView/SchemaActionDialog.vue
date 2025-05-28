@@ -255,7 +255,7 @@ export default {
 <style scoped lang="scss">
 .modal-body {
   pre {
-    background-color: $gray-300;
+    background-color: var(--bs-body-bg-secondary);
     border-radius: 5px;
     padding: 10px;
   }

@@ -277,7 +277,9 @@ export default {
   margin-left: 1rem;
   margin-right: 1rem;
   margin-bottom: 1rem;
-  border: 1px solid var(--bs-body-inactive);
+  border-bottom: 1px solid var(--bs-body-inactive);
+  border-left: 1px solid var(--bs-body-inactive);
+  border-right: 1px solid var(--bs-body-inactive);
   border-radius: 0 0 1rem 1rem; 
   overflow: hidden;
   box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15);
@@ -315,7 +317,8 @@ export default {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   display: flex;
-  min-height: 300px;
+  flex-direction: row;
+  
 }
 
 .result-container__tools {
@@ -325,6 +328,7 @@ export default {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   min-width: 48px;
+  background-color: transparent;
 }
 
 .result-container__main {
@@ -340,8 +344,6 @@ export default {
   padding-left: 0rem;
   align-items: first;
 }
-
-
 
 .result-container__tools--bottom {
   margin-top: auto;

@@ -5,7 +5,7 @@
     tabindex="-1"
   >
     <div class="modal-dialog modal-xl">
-      <div class="modal-content bg-transparent border-transparent">
+      <div class="modal-content bg-transparent border-0 border-transparent">
         <div
           v-if="Object.keys(currentSettings).length > 0"
           class="modal-body settings-body"
@@ -534,6 +534,8 @@ export default {
 .modal-body {
   max-height: calc(100vh - 200px);
   overflow-y: auto;
+  border: 0px;
+  border-color: transparent;
 }
 
 span.pull-left {

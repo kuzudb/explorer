@@ -2,6 +2,7 @@
   <div
     ref="wrapper"
     class="shell-editor__wrapper"
+    :style="{ maxHeight: isMaximized ? '550px' : '100%' }"
   >
     <!-- Topbar -->
     <header class="shell-editor__topbar">
@@ -34,7 +35,7 @@
     <!-- Layout -->
     <div class="shell-editor__layout">
       <!-- Sidebar -->
-      <aside>
+      <aside :style="{ width: toolbarWidth + 'px' }">
         <ul>
           <button @click="evaluateCell">
             <i
@@ -62,9 +63,9 @@
       <main>
         <div
           v-show="!isQueryGenerationMode"
-          ref="editor"
+          ref="editor"        
         />
-        <div
+        <div v-if="!modeStore.isWasm"
           v-show="isQueryGenerationMode"
         >
           <textarea
@@ -155,17 +156,6 @@ export default {
         this.editorResizeDebounce = null;
       }, 200);
     },
-    isQueryGenerationMode(newVal) {
-    if (!newVal) {
-      // Wait for DOM to render
-      this.$nextTick(() => {
-        if (this.editor && this.$refs.editor) {
-          this.editor.layout();  // Resize Monaco
-          this.editor.focus();   // Optional: put cursor back in
-        }
-      });
-    }
-  },
   },
 
   mounted() {
@@ -230,7 +220,7 @@ export default {
       
       const editorContainer = this.$refs.editor;
       this.editor = window.Monaco.editor.create(editorContainer, {
-        value: "",
+        value: "// Query to retrieve 5 relationships from the graph. \n// ▶️ Run this query by clicking the green play button or pressing Shift + Enter. \nMATCH (a)-[r]->(b) RETURN * LIMIT 5;",
         language: "cypher",
         theme,
         automaticLayout: true,
@@ -240,7 +230,6 @@ export default {
         fontSize: 16,
         scrollBeyondLastLine: false,
       });     
-      new PlaceholderContentWidget('Type your Cypher code here...', this.editor);
     },
     toggleMaximize() {
       this.$emit("toggleMaximize");
@@ -346,7 +335,6 @@ $margin: 1rem;
     align-items: center;
     padding: 0.5rem 0;
     min-width: 48px;
-    border-right: 1px solid var(--bs-body-inactive);
     background-color: var(--bs-body-bg-secondary);
 
     ul {
@@ -374,18 +362,20 @@ main {
   padding: 1rem;
   div {
     height: 100%;
-  width: 100%;
-  resize: vertical;
-
-  textarea {
     width: 100%;
-    height: 100%;
-    border: none;
-    padding: 0.5rem;
     resize: vertical;
-    background-color: var(--bs-body-bg-secondary);
-    color: var(--bs-body-text);
-  }
+    overflow: auto;
+    min-height: 48px;
+
+    textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      padding: 0.5rem;
+      resize: vertical;
+      background-color: var(--bs-body-bg);
+      color: var(--bs-body-text);
+    }
   }
 }
 
