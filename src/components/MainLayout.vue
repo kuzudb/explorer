@@ -25,8 +25,11 @@
           aria-label="Toggle navigation"
         >
           <span>
-          <i class="fa fa-navicon" style="color:var(--bs-body-text); font-size:28px;"></i>
-        </span>
+            <i
+              class="fa fa-navicon"
+              style="color:var(--bs-body-text); font-size:28px;"
+            />
+          </span>
         </button>
         <div class="collapse navbar-collapse navbar__buttons">
           <ul

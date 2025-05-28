@@ -65,7 +65,8 @@
           v-show="!isQueryGenerationMode"
           ref="editor"        
         />
-        <div v-if="!modeStore.isWasm"
+        <div
+          v-if="!modeStore.isWasm"
           v-show="isQueryGenerationMode"
         >
           <textarea

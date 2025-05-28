@@ -214,7 +214,9 @@
             v-for="property in hoveredProperties"
             :key="property.name"
           >
-            <th scope="row">{{ property.name }}</th>
+            <th scope="row">
+              {{ property.name }}
+            </th>
             <td>{{ property.value }}</td>
           </tr>
         </tbody>
