@@ -129,6 +129,14 @@
           :is-info="errorMessage === emptyResultMessage"
         />
       </main>
+
+      <!-- Resize Handle -->
+      <div 
+        v-if="!isMaximized"
+        ref="resizeHandle"
+        class="result-container__resize-handle"
+        @mousedown="startResize"
+      />
     </div>
   </div>
 </template>
@@ -175,6 +183,9 @@ export default {
     errorMessage: "",
     emptyResultMessage: "The query executed successfully but the result is empty.",
     containerHeight: "auto",
+    isResizing: false,
+    startHeight: 0,
+    startY: 0,
   }),
   computed: {
     ...mapStores(useModeStore),
@@ -198,8 +209,12 @@ export default {
     },
   },
   mounted() {
+    window.addEventListener('mousemove', this.handleResize);
+    window.addEventListener('mouseup', this.stopResize);
   },
   beforeUnmount() {
+    window.removeEventListener('mousemove', this.handleResize);
+    window.removeEventListener('mouseup', this.stopResize);
   },
   methods: {
     handleDataChange(schema, queryResult, errorMessage) {
@@ -268,6 +283,43 @@ export default {
         }
       }
     },
+    startResize(e) {
+      this.isResizing = true;
+      this.startHeight = this.$refs.wrapper.offsetHeight;
+      this.startY = e.clientY;
+      document.body.style.cursor = 'ns-resize';
+      document.body.style.userSelect = 'none';
+      document.body.style.overflow = 'hidden';
+    },
+    handleResize(e) {
+      if (!this.isResizing) return;
+      
+      const deltaY = e.clientY - this.startY;
+      const newHeight = Math.max(this.queryResultDefaultHeight, this.startHeight + deltaY);
+      
+      requestAnimationFrame(() => {
+        this.containerHeight = `${newHeight}px`;
+        this.$refs.wrapper.style.height = this.containerHeight;
+        
+        if (this.$refs.resultGraph) {
+          this.$refs.resultGraph.handleResize();
+        }
+      });
+    },
+    stopResize() {
+      if (!this.isResizing) return;
+      
+      this.isResizing = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      document.body.style.overflow = '';
+  
+      this.$nextTick(() => {
+        if (this.$refs.resultGraph) {
+          this.$refs.resultGraph.handleResize();
+        }
+      });
+    },
   },
 };
 </script>
@@ -282,35 +334,11 @@ export default {
   border-right: 1px solid var(--bs-body-inactive);
   border-radius: 0 0 1rem 1rem; 
   overflow: hidden;
-  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15);
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.10);
   position: relative;
-
-    button {
-      padding-top: 0.25rem;
-      padding-bottom: 0.25rem;
-      background-color: transparent;
-      padding: 0px;
-      border: 0px;
-
-    i {
-      cursor: pointer;
-      color: var(--bs-body-text);
-
-      &:hover {
-        opacity: 0.7;
-      }
-
-      &:active {
-        opacity: 0.5;
-      }
-    }
-
-    &--active {
-      i {
-        color: var(--bs-body-bg-accent);
-      }
-    }
-  }
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
 }
 
 .result-container__wrapper {
@@ -318,7 +346,10 @@ export default {
   padding-bottom: 0.5rem;
   display: flex;
   flex-direction: row;
-  
+  height: v-bind(containerHeight);
+  transition: height 0.1s ease;
+  flex: 1;
+  position: relative;
 }
 
 .result-container__tools {
@@ -329,10 +360,52 @@ export default {
   padding-bottom: 0.5rem;
   min-width: 48px;
   background-color: transparent;
+  z-index: 1;
 }
 
 .result-container__main {
   flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.result-container__resize-handle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  cursor: ns-resize;
+  background: transparent;
+  transition: background-color 0.2s ease;
+  z-index: 2;
+  pointer-events: auto;
+
+  &:hover {
+    background-color: var(--bs-body-bg-accent);
+  }
+
+  &:active {
+    background-color: var(--bs-body-bg-accent);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 4px;
+    background-color: var(--bs-body-inactive);
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &:hover::after {
+    opacity: 1;
+  }
 }
 
 .result-container__button-group {
@@ -347,5 +420,32 @@ export default {
 
 .result-container__tools--bottom {
   margin-top: auto;
+}
+
+button {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  background-color: transparent;
+  padding: 0px;
+  border: 0px;
+
+  i {
+    cursor: pointer;
+    color: var(--bs-body-text);
+
+    &:hover {
+      opacity: 0.7;
+    }
+
+    &:active {
+      opacity: 0.5;
+    }
+  }
+
+  &--active {
+    i {
+      color: var(--bs-body-bg-accent);
+    }
+  }
 }
 </style>

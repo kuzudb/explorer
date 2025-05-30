@@ -1,178 +1,111 @@
 <template>
-  <div>
-    <nav
-      ref="navbar"
-      class="navbar navbar-expand-lg navbar-dark "
-    >
-      <div class="container">
-        <a
-          class="navbar-brand"
-          href="//kuzudb.com"
-          target="_blank"
-        >
-          <img
-            :key="logoUrl"
-            :src="logoUrl"
-            alt="Logo"
-            class="navbar__logo"
-          >
-        </a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target=".navbar__buttons"
-          aria-label="Toggle navigation"
-        >
-          <span>
-          <i class="fa fa-navicon" style="color:var(--bs-body-text); font-size:28px;"></i>
-        </span>
-        </button>
-        <div class="collapse navbar-collapse navbar__buttons">
-          <ul
-            v-if="modeStore.isReadOnly"
-            class="navbar-nav me-auto"
-          >
-            <li class="nav-item">
-              <span
-                class="badge"
-                @click="accessModeModal.show()"
-              >Read-only Mode</span>
-            </li>
-          </ul>
-          <ul
-            v-if="modeStore.isDemo"
-            class="navbar-nav me-auto"
-          >
-            <li class="nav-item">
-              <span
-                class="badge bg-primary"
-                @click="accessModeModal.show()"
-              >Instructions</span>
-            </li>
-          </ul>
-          <ul class="navbar-nav ms-auto">
-            <li :class="['nav-item', { active: showShell }]">
-              <a
-                class="nav-link"
-                href="#shell"
-                @click="toggleShell()"
-              >
-                <i class="fa-solid fa-terminal" />
-                Shell
+  <div class="main-layout">
+    <div class="wrapper" :class="{ 'toggled': isSidebarCollapsed }">
+      <div class="sidebar-wrapper">
+        <ul class="sidebar-nav">
+          <li>
+            <ul v-if="modeStore.isReadOnly" class="navbar-nav hide-on-collapse">
+                <li class="nav-item">
+                  <span class="badge" @click="accessModeModal.show()">Read-only Mode</span>
+                </li>
+              </ul>
+            <ul v-if="modeStore.isDemo" class="navbar-nav hide-on-collapse">
+              <li class="nav-item">
+                <span class="badge bg-primary" @click="accessModeModal.show()">Instructions</span>
+              </li>
+            </ul> 
+            <div class="sidebar__header flex justify-between items-center">
+              <a class="navbar-brand hide-on-collapse" href="//kuzudb.com" target="_blank">
+                <img :key="logoUrl" :src="logoUrl" alt="Logo" class="sidebar__logo">
               </a>
-            </li>
-            <li :class="['nav-item', { active: showSchema }]">
-              <a
-                class="nav-link"
-                href="#schema"
-                @click="toggleSchema()"
-              >
-                <i class="fa-solid fa-circle-nodes" />
-                Schema
-              </a>
-            </li>
+              
+              <a class="menu-toggle" @click="toggleSidebar">
+                <button class="fa fa-bars items-center!" aria-hidden="true"></button>
+              </a>           
+            </div>             
+            <hr>
+          </li>
 
-            <li
-              :class="['nav-item', { active: showLoader }]"
-              hidden
-            >
-              <a
-                class="nav-link"
-                href="#datasets"
-                @click="toggleLoader()"
-              >
-                <i class="fa-solid fa-database" />
-                Datasets
-              </a>
-            </li>
-
-            <li
-              v-if="!modeStore.isReadOnly"
-              :class="['nav-item', {
-                active: showImporter || showLoader
-              }]"
-            >
-              <a
-                class="nav-link"
-                href="#importer"
-                @click="toggleImporter()"
-              >
-                <i class="fa-solid fa-upload" />
-                Import Data
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="#settings"
-                @click="showSettingsModal()"
-              >
-                <i class="fa-solid fa-cog" />
-                Settings
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="https://docs.kuzudb.com"
-                target="_blank"
-              >
-                <i class="fa-solid fa-book" />
-                Docs
-              </a>
-            </li>
-          </ul>
+          <li :class="['nav-item', { active: showShell }]">
+            <a aria-hidden="true" href="#shell" @click="toggleShell()">
+              <i class="fa-solid fa-terminal" />
+              <span class="hide-on-collapse">Shell</span>
+            </a>
+          </li>
+          <li :class="['nav-item', { active: showSchema }]">
+            <a aria-hidden="true" href="#schema" @click="toggleSchema()">
+              <i class="fa-solid fa-circle-nodes" />
+              <span class="hide-on-collapse">Schema</span>
+            </a>
+          </li>
+          <li :class="['nav-item', { active: showLoader }]" hidden>
+            <a aria-hidden="true" href="#datasets" @click="toggleLoader()">
+              <i class="fa-solid fa-database" />
+              <span class="hide-on-collapse">Datasets</span>
+            </a>
+          </li>
+          <li v-if="!modeStore.isReadOnly" :class="['nav-item', { active: showImporter || showLoader }]">
+            <a aria-hidden="true" href="#importer" @click="toggleImporter()">
+              <i class="fa-solid fa-upload" />
+              <span class="hide-on-collapse">Import Data</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a aria-hidden="true" href="#settings" @click="showSettingsModal()">
+              <i class="fa-solid fa-cog" />
+              <span class="hide-on-collapse">Settings</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a aria-hidden="true" href="https://docs.kuzudb.com" target="_blank">
+              <i class="fa-solid fa-book" />
+              <span class="hide-on-collapse">Docs</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="main-layout__main-container">
+        <div class="container-fluid">
+          <SchemaViewMain
+            v-show="showSchema"
+            ref="schemaView"
+            :schema="schema"
+            :navbar-height="0"
+            @reload-schema="reloadSchema"
+            @add-placeholder-node-table="addPlaceholderNodeTable"
+            @add-placeholder-rel-table="addPlaceholderRelTable"
+            @update-placeholder-node-table-label="updatePlaceholderNodeTable"
+            @update-placeholder-rel-table="updatePlaceholderRelTable"
+            @set-placeholder="setPlaceholder"
+            @unset-placeholder="unsetPlaceholder"
+          />
+          <ShellMainView
+            v-show="showShell"
+            ref="shellView"
+            :schema="schema"
+            @reload-schema="reloadSchema"
+          />
+          <SettingsMainView
+            v-if="showSettings"
+            ref="settings"
+            :schema="schema"
+          />
+          <DatasetMainView
+            v-show="showLoader"
+            :schema="schema"
+            :navbar-height="0"
+            @reload-schema="reloadSchema"
+            @back="toggleImporter(true)"
+            @jump-to-shell-view="toggleShell(true)"
+          />
+          <ImporterMainView
+            v-show="showImporter"
+            :schema="schema"
+            @reload-schema="reloadSchema"
+            @load-bundled-dataset="toggleLoader"
+          />
         </div>
       </div>
-    </nav>
-
-    <div
-      class="layout__main-content"
-      :style="{ height: `calc(100vh - ${navbarHeight}px)` }"
-    >
-      <SchemaViewMain
-        v-show="showSchema"
-        ref="schemaView"
-        :schema="schema"
-        :navbar-height="navbarHeight"
-        @reload-schema="reloadSchema"
-        @add-placeholder-node-table="addPlaceholderNodeTable"
-        @add-placeholder-rel-table="addPlaceholderRelTable"
-        @update-placeholder-node-table-label="updatePlaceholderNodeTable"
-        @update-placeholder-rel-table="updatePlaceholderRelTable"
-        @set-placeholder="setPlaceholder"
-        @unset-placeholder="unsetPlaceholder"
-      />
-      <ShellMainView
-        v-show="showShell"
-        ref="shellView"
-        :schema="schema"
-        :navbar-height="navbarHeight"
-        @reload-schema="reloadSchema"
-      />
-      <SettingsMainView
-        v-if="showSettings"
-        ref="settings"
-        :schema="schema"
-      />
-      <DatasetMainView
-        v-show="showLoader"
-        :schema="schema"
-        :navbar-height="navbarHeight"
-        @reload-schema="reloadSchema"
-        @back="toggleImporter(true)"
-        @jump-to-shell-view="toggleShell(true)"
-      />
-      <ImporterMainView
-        v-show="showImporter"
-        :schema="schema"
-        :navbar-height="navbarHeight"
-        @reload-schema="reloadSchema"
-        @load-bundled-dataset="toggleLoader"
-      />
     </div>
 
     <div
@@ -182,13 +115,8 @@
     >
       <div class="modal-dialog">
         <div class="modal-content">
-          <div
-            v-if="modeStore.isDemo"
-            class="modal-header"
-          >
-            <h5 class="modal-title">
-              Welcome to Kuzu Explorer!
-            </h5>
+          <div v-if="modeStore.isDemo" class="modal-header">
+            <h5 class="modal-title">Welcome to Kuzu Explorer!</h5>
           </div>
           <div class="modal-body">
             <div v-if="modeStore.isDemo">
@@ -207,24 +135,14 @@
                 Note: Data is not saved between sessions.
               </p>
               <hr>
-              <div
-                v-if=" !isKuzuWasmInitialized"
-                class="d-flex align-items-center"
-              >
-                <strong class="text-primary">
-                  Initializing WebAssembly module...
-                </strong>
-                <div
-                  class="spinner-border text-primary ms-auto"
-                  role="status"
-                />
+              <div v-if="!isKuzuWasmInitialized" class="d-flex align-items-center">
+                <strong class="text-primary">Initializing WebAssembly module...</strong>
+                <div class="spinner-border text-primary ms-auto" role="status" />
               </div>
-              <div
-                v-else
-                class="d-flex align-items-center"
-              >
+              <div v-else class="d-flex align-items-center">
                 <strong class="text-success">
-                  <i class="fa-solid fa-check" />&nbsp; WebAssembly is ready—start exploring! </strong>
+                  <i class="fa-solid fa-check" />&nbsp; WebAssembly is ready—start exploring!
+                </strong>
               </div>
             </div>
             <p v-if="modeStore.isReadOnly">
@@ -235,13 +153,7 @@
             </p>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-primary"
-              @click="accessModeModal.hide()"
-            >
-              OK
-            </button>
+            <button type="button" class="btn btn-primary" @click="accessModeModal.hide()">OK</button>
           </div>
         </div>
       </div>
@@ -280,9 +192,9 @@ export default {
     showShell: true,
     showLoader: false,
     showSettings: false,
-    navbarHeight: 0,
     schema: null,
     isKuzuWasmInitialized: false,
+    isSidebarCollapsed: false,
   }),
   computed: {
     ...mapStores(useModeStore),
@@ -293,7 +205,6 @@ export default {
     },
   },
   mounted() {
-    this.updateNavbarHeight();
     this.accessModeModal = new Modal(this.$refs.modal);
     window.addEventListener("resize", this.updateNavbarHeight);
     window.setTimeout(() => {
@@ -447,8 +358,9 @@ export default {
         this.$refs.settings.showModal();
       });
     },
-    updateNavbarHeight() {
-      this.navbarHeight = this.$refs.navbar.clientHeight;
+    toggleSidebar() {
+      this.isSidebarCollapsed = !this.isSidebarCollapsed;
+      window.dispatchEvent(new Event('resize'));
     },
     ...mapActions(useSettingsStore, [
       'initSettings',
@@ -463,56 +375,150 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-nav.navbar {
-  >div.container {
-    max-width: 100%;
-  }
+<style>
+:root {
+  --sidebar-width: 180px;
+  --sidebar-collapsed-width: 60px;
 }
 
-.navbar {
-  background-color: var(--bs-body-bg-secondary);
-  border-bottom: 1px solid var(--bs-body-inactive);
-
-  .navbar__logo {
-    height: 34px;
+body {
+  overflow-x: hidden;
+}
+.sidebar__logo {
+    height: 28px;
     image-rendering: crisp-edges;
-    
-  }
-
-  .nav-link {
-    color: var(--bs-body-text);
-    i {
-      margin-right: 4px;
-      
-    }
-  }
 }
 
-.layout__main-content {
-  overflow: hidden;
+.wrapper {
+  padding-left: var(--sidebar-width);
+  transition: all 0.6s ease;
+}
+
+.wrapper.toggled {
+  padding-left: var(--sidebar-collapsed-width);
+}
+
+.sidebar-wrapper {
+  z-index: 1000;
+  position: fixed;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100%;
+  margin-left: 0;
+  overflow-y: auto;
+  background-color: var(--bs-body-bg-secondary);
+  transition: all 0.5s ease;
+}
+
+.wrapper.toggled .sidebar-wrapper {
+  width: var(--sidebar-collapsed-width);
+}
+
+.main-layout__main-container {
   width: 100%;
+  position: relative;
+  transition: all 0.6s ease;
 }
 
-.nav-item {
-  .badge {
-    cursor: pointer;
-    color: var(--bs-body-bg-accent);
-  }
-  i {
-      color: var(--bs-body-text);
-    }
+.sidebar-nav {
+  top: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 
-  &.active {
+  li {
+    line-height: 1.5;
+
     a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: var(--bs-body-text);
+      padding: 8px 10px;
+      gap: 8px;
+
+      &.hover {
+        text-decoration: none;
+      }
+    }
+
+    hr {
+      margin: 10px;
+      background-color: var(--bs-body-inactive);
+    }
+
+    span {
       color: var(--bs-body-text);
     }
-    
   }
 }
 
-.d-flex.align-items-center{
-  padding-left: 20px;
-  padding-right: 20px;
+.wrapper.toggled .hide-on-collapse {
+  opacity: 0;
+  visibility: hidden;
+  width: 0;
+  overflow: hidden;
+}
+
+.wrapper.toggled .sidebar__header {
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.wrapper.toggled .sidebar-nav li a {
+    justify-content: center;
+    padding: 8px 0;
+}
+
+.wrapper.toggled .sidebar-nav li i {
+    margin-right: 0;
+}
+
+.wrapper.toggled .menu-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.wrapper.toggled .sidebar__header .navbar-brand {
+    display: none;
+}
+
+.badge { 
+  margin-left: 4px;
+  margin-top: 4px;
+}
+
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem ;
+  gap: 1rem;
+
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+  }
+
+  .menu-toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    
+    
+    button {
+      background: none;
+      border: none;
+      color: var(--bs-body-text);
+      padding: 0;
+      
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
 }
 </style>

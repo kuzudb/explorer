@@ -8,6 +8,12 @@
       class="result_container__graph"
       :style="{ width: graphWidth + 'px' }"
     />
+    <HoverContainer
+      v-if="g6Graph"
+      :g6-graph="g6Graph"
+      :schema="schema"
+      ref="hoverContainer"
+    />
     <div
       ref="toolsContainer"
       class="result-container__tools_container"
@@ -190,36 +196,6 @@
         </div>
       </div>
     </div>
-    <!-- TOOLTIP HOVER -->
-    <div
-      v-show="tooltipVisible"
-      class="result-graph__graph-tooltip"
-      :style="{ left: tooltipX + 'px', top: tooltipY + 'px' }"
-    >
-      <div class="result-graph__tooltip-header">
-        <span
-          class="badge bg-primary"
-          :style="{
-            backgroundColor: `${getColor(hoveredLabel)} !important`,
-            color: `${getTextColor(hoveredLabel)} !important`,
-          }"
-        >
-          {{ hoveredLabel }}</span>
-      </div>
-      <p>{{ hoveredIsNode ? 'Node' : 'Rel' }}</p>
-      <hr>
-      <table class="table table-sm table-borderless">
-        <tbody>
-          <tr
-            v-for="property in hoveredProperties"
-            :key="property.name"
-          >
-            <th scope="row">{{ property.name }}</th>
-            <td>{{ property.value }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
   </div>
 </template>
 
@@ -234,9 +210,13 @@ import { useSettingsStore } from "../../store/SettingsStore";
 import { useModeStore } from "../../store/ModeStore";
 import { mapStores } from 'pinia'
 import ValueFormatter from "../../utils/ValueFormatter";
+import HoverContainer from "./HoverContainer.vue";
 
 export default {
   name: "ResultGraph",
+  components: {
+    HoverContainer
+  },
   props: {
     queryResult: {
       type: Object,
@@ -262,14 +242,11 @@ export default {
     isHighlightedMode: false,
     margin: UI_SIZE.DEFAULT_MARGIN,
     toolbarContainerWidth: UI_SIZE.SHELL_TOOL_BAR_WIDTH,
-    sidebarWidth: 500,
+    sidebarWidth: 350,
     graphWidth: 0,
     borderWidth: UI_SIZE.DEFAULT_BORDER_WIDTH,
     numHiddenNodes: 0,
     numHiddenRels: 0,
-    hoveredProperties: [],
-    hoveredLabel: "",
-    hoveredIsNode: false,
     clickedProperties: [],
     clickedLabel: "",
     clickedIsNode: false,
@@ -288,10 +265,6 @@ export default {
     },
     draggedNodeDebounceTimer: null,
     expansions: [],
-    tooltipVisible: false,
-    tooltipX: 0,
-    tooltipY: 0,
-    currentHoveredModel: null,
   }),
   computed: {
     graphVizSettings() {
@@ -448,18 +421,18 @@ export default {
       this.g6Graph.on('node:mouseenter', (e) => {
         const nodeItem = e.item;
         this.g6Graph.setItemState(nodeItem, 'hover', true);
-        this.handleHover(nodeItem.getModel(), e);
+        this.$refs.hoverContainer.handleHover(nodeItem.getModel(), e);
       });
 
       this.g6Graph.on('node:mouseleave', (e) => {
         const nodeItem = e.item;
         this.g6Graph.setItemState(nodeItem, 'hover', false);
-        this.resetHover();
+        this.$refs.hoverContainer.resetHover();
       });
 
       this.g6Graph.on('node:mousemove', (e) => {
-        if (this.currentHoveredModel) {
-          this.updateTooltipPosition(e);
+        if (this.$refs.hoverContainer.currentHoveredModel) {
+          this.$refs.hoverContainer.updateTooltipPosition(e);
         }
       });
 
@@ -503,18 +476,18 @@ export default {
       this.g6Graph.on('edge:mouseenter', (e) => {
         const edgeItem = e.item;
         this.g6Graph.setItemState(edgeItem, 'hover', true);
-        this.handleHover(edgeItem.getModel(), e);
+        this.$refs.hoverContainer.handleHover(edgeItem.getModel(), e);
       });
 
       this.g6Graph.on('edge:mouseleave', (e) => {
         const edgeItem = e.item;
         this.g6Graph.setItemState(edgeItem, 'hover', false);
-        this.resetHover();
+        this.$refs.hoverContainer.resetHover();
       });
 
       this.g6Graph.on('edge:mousemove', (e) => {
-        if (this.currentHoveredModel) {
-          this.updateTooltipPosition(e);
+        if (this.$refs.hoverContainer.currentHoveredModel) {
+          this.$refs.hoverContainer.updateTooltipPosition(e);
         }
       });
 
@@ -548,19 +521,44 @@ export default {
     },
 
     hideNode() {
+      if (!this.g6Graph) {
+        console.error('Graph not initialized');
+        return;
+      }
+
       const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
-      const nodeId = currentSelectedNode.getModel().id;
-      this.numHiddenNodes += 1;
-      currentSelectedNode.hide();
-      this.deselectAll();
-      const relatedEdges = this.g6Graph.getEdges().filter((edge) => {
-        const edgeModel = edge.getModel();
-        return edgeModel.source === nodeId || edgeModel.target === nodeId;
-      });
-      relatedEdges.forEach((edge) => {
-        this.numHiddenRels += 1;
-        edge.hide();
-      });
+      if (!currentSelectedNode) {
+        console.error('No node selected');
+        return;
+      }
+
+      try {
+        const nodeId = currentSelectedNode.getModel().id;
+        this.numHiddenNodes += 1;
+        currentSelectedNode.hide();
+        this.deselectAll();
+
+        const relatedEdges = this.g6Graph.getEdges().filter((edge) => {
+          try {
+            const edgeModel = edge.getModel();
+            return edgeModel.source === nodeId || edgeModel.target === nodeId;
+          } catch (e) {
+            console.error('Error processing edge:', e);
+            return false;
+          }
+        });
+
+        relatedEdges.forEach((edge) => {
+          try {
+            this.numHiddenRels += 1;
+            edge.hide();
+          } catch (e) {
+            console.error('Error hiding edge:', e);
+          }
+        });
+      } catch (e) {
+        console.error('Error hiding node:', e);
+      }
     },
 
     enableHighlightMode() {
@@ -826,18 +824,6 @@ export default {
       });
     },
 
-    handleHover(model, event) {
-      const label = model.properties._label;
-      this.hoveredLabel = label;
-      this.hoveredProperties = ValueFormatter.filterAndBeautifyProperties(model.properties, this.schema);
-      this.hoveredIsNode = !(model.properties._src && model.properties._dst);
-      if (this.hoveredIsNode) {
-         this.isCurrentNodeExpanded = this.isNeighborExpanded(model);
-      }
-      this.currentHoveredModel = model;
-      this.showTooltip(model, event);
-    },
-
     handleClick(model) {
       const label = model.properties._label;
       this.clickedLabel = label;
@@ -1042,22 +1028,6 @@ export default {
       this.clickedIsNode = false;
     },
 
-    resetHover() {
-      this.hoveredLabel = "";
-      this.hoveredProperties = [];
-      this.hoveredIsNode = false;
-      this.currentHoveredModel = null;
-      // If there is still a node selected, we need to check if it is expanded
-      // and update the state accordingly
-      if (this.clickedLabel) {
-        const currentSelectedNode = this.g6Graph.findAllByState('node', 'click');
-        if (currentSelectedNode && currentSelectedNode.length > 0) {
-          this.isCurrentNodeExpanded = this.isNeighborExpanded(currentSelectedNode[0].getModel());
-        }
-      }
-      this.hideTooltip();
-    },
-
     toggleSidePanel() {
       this.isSidePanelOpen = !this.isSidePanelOpen;
       this.$nextTick(() => {
@@ -1111,7 +1081,6 @@ export default {
       }, this.toolbarDebounceTimeout);
     },
 
-
     handleSettingsChange() {
       const { nodes, edges, counters } = this.extractGraphFromQueryResult(this.queryResult);
       if (!this.g6Graph) {
@@ -1120,24 +1089,6 @@ export default {
       this.g6Graph.changeData({ nodes, edges });
       this.counters = counters;
       this.expansions.forEach(e => this.addDataWithQueryResult(e.neighbors));
-    },
-    showTooltip(model, event) {
-      const mousePos = this.g6Graph.getPointByClient(event.clientX, event.clientY);
-      const point = this.g6Graph.getCanvasByPoint(mousePos.x, mousePos.y);
-      this.tooltipX = point.x + 50;
-      this.tooltipY = point.y + 20;
-      this.tooltipVisible = true;
-    },
-    hideTooltip() {
-      this.tooltipVisible = false;
-      this.tooltipX = 0;
-      this.tooltipY = 0;
-    },
-    updateTooltipPosition(event) {
-      const mousePos = this.g6Graph.getPointByClient(event.clientX, event.clientY);
-      const point = this.g6Graph.getCanvasByPoint(mousePos.x, mousePos.y);
-      this.tooltipX = point.x + 50;
-      this.tooltipY = point.y + 20;
     },
   },
 };
@@ -1149,33 +1100,23 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: row;
+  position: relative;
 
   .result_container__graph {
     height: 100%;
-  }
-
-  .result-container__summary-section {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 100%;
-
-    p {
-      display: inline-block;
-      margin: 0;
-    }
-
-    button {
-      padding: 5px;
-      margin-right: 15px;
-    }
+    flex: 1;
+    min-width: 0;
+    padding: 1rem;
   }
 
   .result-container__tools_container {
     min-height: 406px;
     border-bottom-left-radius: 1rem;
     border-top-left-radius: 1rem;
-    background-color: (var(--bs-body-bg-secondary)); 
+    background-color: (var(--bs-body-bg-secondary));
+    flex-shrink: 0;
+    z-index: 1;
+    padding: 1rem 0.5rem;
   }
 
   .result-container__button {
@@ -1202,90 +1143,33 @@ export default {
   }
 
   .result-container__side-panel {
-    width: 500px;
+    width: 350px;
     height: 100%;
     overflow-x: hidden;
     overflow-y: scroll;
     background-color: (var(--bs-body-bg-secondary));
     border-bottom-right-radius: 1rem;
-    table {
-      max-width: calc(100% - 20px);
+    flex-shrink: 0;
+    padding: 1rem;
 
-      &.result-container__overview-table {
-        table-layout: fixed;
-
-        td {
-          width: 120px;
-        }
-      }
-
-      &.result-container__result-table {
-        td {
-          word-break: break-all;
-        }
-      }
-    } 
-  }
-}
-
-.result-graph__graph-tooltip {
-  position: absolute;
-  z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.8);
-  border: 1px solid var(--bs-body-inactive);
-  border-radius: 0.5rem;
-  padding: 10px;
-  pointer-events: none;
-  max-width: 300px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: var(--bs-body-color);
-
-  .result-graph__tooltip-header {
-    margin-bottom: 5px;
-    .badge {
-        font-size: 1em;
-        padding: 0.4em 0.6em;
-    }
-  }
-
-  p {
-      font-size: 0.9em;
-      margin-top: 0;
-      margin-bottom: 5px;
-      color: var(--bs-secondary-color);
-  }
-
-  hr {
-      margin-top: 5px;
-      margin-bottom: 5px;
-      border-color: var(--bs-body-inactive);
-  }
-
-  table {
-    width: 100%;
-    margin-bottom: 0;
-    th,
-    td {
-      padding: 5px;
-      border: none;
-      color: var(--bs-body-color);
+    .result-container__summary-section {
+      padding: 0.5rem 0;
     }
 
-    th {
-        font-weight: normal;
-        padding-left: 10px;
-        padding-right: 10px;
+    .result-container__overview-table,
+    .result-container__result-table {
+      margin: 0.5rem 0;
     }
 
-    td {
-        padding-right: 10px;
+    h5 {
+      margin-bottom: 1rem;
+    }
+
+    hr {
+      margin: 1rem 0;
     }
   }
 }
-
-
 
 .result-graph__toggle {
   display: inline-flex;

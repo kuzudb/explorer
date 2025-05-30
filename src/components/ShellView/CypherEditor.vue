@@ -84,7 +84,6 @@ import CypherLanguage from "../../utils/CypherLanguage";
 import MonacoCypherLanguage from "../../utils/MonacoCypherLanguage";
 import * as Monaco from "monaco-editor";
 import { UI_SIZE } from "../../utils/Constants";
-import PlaceholderContentWidget from "../../utils/MonacoPlaceholderContentWidget";
 import { useModeStore } from "../../store/ModeStore";
 import { mapStores } from "pinia";
 
@@ -285,7 +284,7 @@ $margin: 1rem;
   margin-right: 1rem;
   border-radius: 1rem 1rem 0 0;
   overflow: hidden;
-  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.15); 
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.10); 
 }
 
 .shell-editor__topbar {
@@ -365,7 +364,7 @@ main {
     width: 100%;
     resize: vertical;
     overflow: auto;
-    min-height: 48px;
+    min-height: 100px;
 
     textarea {
       width: 100%;
@@ -375,6 +374,7 @@ main {
       resize: vertical;
       background-color: var(--bs-body-bg);
       color: var(--bs-body-text);
+      min-height: 100px;
     }
   }
 }
