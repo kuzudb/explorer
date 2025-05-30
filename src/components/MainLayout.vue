@@ -1,63 +1,123 @@
 <template>
   <div class="main-layout">
-    <div class="wrapper" :class="{ 'toggled': isSidebarCollapsed }">
+    <div
+      class="wrapper"
+      :class="{ 'toggled': isSidebarCollapsed }"
+    >
       <div class="sidebar-wrapper">
         <ul class="sidebar-nav">
           <li>
-            <ul v-if="modeStore.isReadOnly" class="navbar-nav hide-on-collapse">
-                <li class="nav-item">
-                  <span class="badge" @click="accessModeModal.show()">Read-only Mode</span>
-                </li>
-              </ul>
-            <ul v-if="modeStore.isDemo" class="navbar-nav hide-on-collapse">
+            <ul
+              v-if="modeStore.isReadOnly"
+              class="navbar-nav hide-on-collapse"
+            >
               <li class="nav-item">
-                <span class="badge bg-primary" @click="accessModeModal.show()">Instructions</span>
+                <span
+                  class="badge"
+                  @click="accessModeModal.show()"
+                >Read-only Mode</span>
+              </li>
+            </ul>
+            <ul
+              v-if="modeStore.isDemo"
+              class="navbar-nav hide-on-collapse"
+            >
+              <li class="nav-item">
+                <span
+                  class="badge bg-primary"
+                  @click="accessModeModal.show()"
+                >Instructions</span>
               </li>
             </ul> 
             <div class="sidebar__header flex justify-between items-center">
-              <a class="navbar-brand hide-on-collapse" href="//kuzudb.com" target="_blank">
-                <img :key="logoUrl" :src="logoUrl" alt="Logo" class="sidebar__logo">
+              <a
+                class="navbar-brand hide-on-collapse"
+                href="//kuzudb.com"
+                target="_blank"
+              >
+                <img
+                  :key="logoUrl"
+                  :src="logoUrl"
+                  alt="Logo"
+                  class="sidebar__logo"
+                >
               </a>
               
-              <a class="menu-toggle" @click="toggleSidebar">
-                <button class="fa fa-bars items-center!" aria-hidden="true"></button>
+              <a
+                class="menu-toggle"
+                @click="toggleSidebar"
+              >
+                <button
+                  class="fa fa-bars items-center!"
+                  aria-hidden="true"
+                />
               </a>           
             </div>             
             <hr>
           </li>
 
           <li :class="['nav-item', { active: showShell }]">
-            <a aria-hidden="true" href="#shell" @click="toggleShell()">
+            <a
+              aria-hidden="true"
+              href="#shell"
+              @click="toggleShell()"
+            >
               <i class="fa-solid fa-terminal" />
               <span class="hide-on-collapse">Shell</span>
             </a>
           </li>
           <li :class="['nav-item', { active: showSchema }]">
-            <a aria-hidden="true" href="#schema" @click="toggleSchema()">
+            <a
+              aria-hidden="true"
+              href="#schema"
+              @click="toggleSchema()"
+            >
               <i class="fa-solid fa-circle-nodes" />
               <span class="hide-on-collapse">Schema</span>
             </a>
           </li>
-          <li :class="['nav-item', { active: showLoader }]" hidden>
-            <a aria-hidden="true" href="#datasets" @click="toggleLoader()">
+          <li
+            :class="['nav-item', { active: showLoader }]"
+            hidden
+          >
+            <a
+              aria-hidden="true"
+              href="#datasets"
+              @click="toggleLoader()"
+            >
               <i class="fa-solid fa-database" />
               <span class="hide-on-collapse">Datasets</span>
             </a>
           </li>
-          <li v-if="!modeStore.isReadOnly" :class="['nav-item', { active: showImporter || showLoader }]">
-            <a aria-hidden="true" href="#importer" @click="toggleImporter()">
+          <li
+            v-if="!modeStore.isReadOnly"
+            :class="['nav-item', { active: showImporter || showLoader }]"
+          >
+            <a
+              aria-hidden="true"
+              href="#importer"
+              @click="toggleImporter()"
+            >
               <i class="fa-solid fa-upload" />
               <span class="hide-on-collapse">Import Data</span>
             </a>
           </li>
           <li class="nav-item">
-            <a aria-hidden="true" href="#settings" @click="showSettingsModal()">
+            <a
+              aria-hidden="true"
+              href="#settings"
+              @click="showSettingsModal()"
+            >
               <i class="fa-solid fa-cog" />
               <span class="hide-on-collapse">Settings</span>
             </a>
           </li>
           <li class="nav-item">
-            <a aria-hidden="true" href="https://docs.kuzudb.com" target="_blank">
+            <a
+              aria-hidden="true"
+              href="https://docs.kuzudb.com"
+              target="_blank"
+            >
               <i class="fa-solid fa-book" />
               <span class="hide-on-collapse">Docs</span>
             </a>
@@ -115,8 +175,13 @@
     >
       <div class="modal-dialog">
         <div class="modal-content">
-          <div v-if="modeStore.isDemo" class="modal-header">
-            <h5 class="modal-title">Welcome to Kuzu Explorer!</h5>
+          <div
+            v-if="modeStore.isDemo"
+            class="modal-header"
+          >
+            <h5 class="modal-title">
+              Welcome to Kuzu Explorer!
+            </h5>
           </div>
           <div class="modal-body">
             <div v-if="modeStore.isDemo">
@@ -135,11 +200,20 @@
                 Note: Data is not saved between sessions.
               </p>
               <hr>
-              <div v-if="!isKuzuWasmInitialized" class="d-flex align-items-center">
+              <div
+                v-if="!isKuzuWasmInitialized"
+                class="d-flex align-items-center"
+              >
                 <strong class="text-primary">Initializing WebAssembly module...</strong>
-                <div class="spinner-border text-primary ms-auto" role="status" />
+                <div
+                  class="spinner-border text-primary ms-auto"
+                  role="status"
+                />
               </div>
-              <div v-else class="d-flex align-items-center">
+              <div
+                v-else
+                class="d-flex align-items-center"
+              >
                 <strong class="text-success">
                   <i class="fa-solid fa-check" />&nbsp; WebAssembly is ready—start exploring!
                 </strong>
@@ -153,7 +227,13 @@
             </p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" @click="accessModeModal.hide()">OK</button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              @click="accessModeModal.hide()"
+            >
+              OK
+            </button>
           </div>
         </div>
       </div>

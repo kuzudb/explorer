@@ -10,9 +10,9 @@
     />
     <HoverContainer
       v-if="g6Graph"
+      ref="hoverContainer"
       :g6-graph="g6Graph"
       :schema="schema"
-      ref="hoverContainer"
     />
     <div
       ref="toolsContainer"
