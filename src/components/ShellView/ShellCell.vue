@@ -174,9 +174,7 @@ export default {
             clearInterval(intervalId);
             this.isLoading = false;
           });
-        if (!this.isEvaluated) {
-          this.$emit("addCell");
-        }
+        
       }
       this.isEvaluated = true;
     },
@@ -309,7 +307,6 @@ export default {
 <style lang="scss" scoped>
 .shell-cell__wrapper {
   display: block;
-
   &:last-child {
     padding-bottom: 10px;
   }

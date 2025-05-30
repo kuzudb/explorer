@@ -1,18 +1,22 @@
 <template>
   <div
     class="shell-main-view__wrapper"
+    :class="{'is-maximized': maximizedCellIndex !== -1}"
     :style="{ height: `${containerHeight}px` }"
   >
     <div
-      v-if="maximizedCellIndex < 0"
-      class="shell-main-view__placeholder"
+      v-if="maximizedCellIndex < 0"  
     >
-      <a
-        href="#"
-        @click="addCell"
-      >
-        <i class="fa-lg fa-solid fa-plus" />
-        Click here to add a new cell</a>
+      <div class="d-flex align-items-center gap-3 m-4">
+        <button
+          type="button"
+          class="btn btn-link text-body p-0 text-decoration-none"
+          @click="addCell"
+        >
+          + Click here to add a new cell
+        </button>
+        <div class="flex-grow-1 border-top border-secondary" />
+      </div>
     </div>
     <ShellCell
       v-for="(cell, index) in shellCell"
@@ -213,9 +217,15 @@ MATCH (a)-[r]->(b) RETURN * LIMIT 5;`,
 </script>
 
 <style lang="scss" scoped>
+
 .shell-main-view__wrapper {
   width: 100%;
-  overflow-y: scroll;
+  overflow-y: scroll; 
+  
+  &.is-maximized {
+    overflow-y: hidden; 
+    margin-bottom: 2px;
+  }
 
   .shell-main-view__placeholder {
     margin: 20px;

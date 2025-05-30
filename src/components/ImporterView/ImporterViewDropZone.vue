@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-md-2" />
     <div class="col-md-8 mt-5">
-      <div class="bg-white p-5 rounded shadow-sm border">
+      <div class="bg-[var(--bs-body-bg-secondary)] border-[var(--bs-body-inactive)] p-5 rounded shadow-sm border">
         <div class="dropzone d-block">
           <label
             ref="dropzone"
@@ -10,19 +10,20 @@
             class="dropzone-container"
           >
             <div class="file-icon"><i class="fa-solid fa-file-circle-plus text-primary" /></div>
-            <div class="text-center pt-3 px-5">
-              <p class="w-80 h5 text-dark fw-bold">Drag & drop CSV or Parquet files to get started.
+            <div class="d-flex flex-column align-items-center text-center pt-3 px-5">
+              <p class="w-80 h5 fw-bold text-[var(--bs-body-text)] mx-auto">
+                Drag & drop CSV or Parquet files to get started.
               </p>
               <br>
               <button
-                class="btn btn-primary mb-2"
+                class="btn btn-primary mb-2 "
                 @click="selectFiles"
               >
                 <i class="fa-solid fa-folder-open" />
                 &nbsp;
                 Select Files
               </button>
-              <div class="hr-sect">or</div>
+              <div class="hr-sect w-full"> or </div>
               <button
                 class="btn btn-primary mb-2"
                 @click="$emit('loadBundledDataset')"
@@ -31,7 +32,7 @@
                 &nbsp;
                 Try a Sample Dataset
               </button>
-            </div>
+            </div> 
           </label>
           <input
             ref="fileInput"
@@ -93,8 +94,8 @@ export default {
 
 <style lang="scss" scoped>
 .dropzone {
-  border: dashed 4px #ddd !important;
-  background-color: #f2f6fc;
+  border: dashed 4px (var(--bs-body-inactive)) !important;
+  background-color: (var(--bs-body-bg-secondary));
   border-radius: 15px;
 
   .dropzone-container {
