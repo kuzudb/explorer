@@ -56,6 +56,7 @@
       ref="sidePanel"
       class="schema_side-panel__wrapper"
     >
+    <div class="sidebar-content">
       <br>
       <SchemaSidebarOverview
         v-if="schema"
@@ -111,6 +112,7 @@
         @update-placeholder-rel-table="updatePlaceholderRelTable"
       />
     </div>
+  </div>
     <SchemaActionDialog
       ref="actionDialog"
       @reload-schema="reloadSchema"
@@ -306,7 +308,7 @@ export default {
           labelCfg: {
             style: {
               fontSize: 12,
-              fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+              fontFamily: "Lexend,Helvetica Neue, Helvetica, Arial, sans-serif",
               fontWeight: 350,
               background: {
                 fill: "#ffffff",
@@ -875,10 +877,10 @@ export default {
 
   .schema_side-panel__wrapper {
     width: 500px;
+    height: 100%;
     padding-left: 12px;
     padding-right: 12px;
-    overflow-x: hidden;
-    overflow-y: scroll;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     border-left: 2px solid (var(--bs-body-inactive));
@@ -886,19 +888,27 @@ export default {
     border-bottom-left-radius: 1rem;
     border-top-left-radius: 1rem;
   }
+
+  .sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+  }
 }
 
 .schema-view__tools_container {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  padding-left: 4px;
   align-items: center;
-  padding-left: 8px;
   padding-bottom: 8px;
 
   .schema-view__tools_container--bottom {
     margin-top: auto;
     padding-bottom: 8px;
+  
 
     .schema-view__button {
       >i {
@@ -927,7 +937,7 @@ export default {
 
   &--active {
     i {
-      color: $primary;
+      color: var(--bs-body-accent);
     }
   }
 }

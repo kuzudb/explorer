@@ -19,7 +19,7 @@
             >Cypher Query</a>
           </li>
           <li class="nav-item">
-            <a
+            <a v-if="!modeStore.isWasm"
               href="#"
               :class="[
                 isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
@@ -220,7 +220,7 @@ export default {
       
       const editorContainer = this.$refs.editor;
       this.editor = window.Monaco.editor.create(editorContainer, {
-        value: "// Query to retrieve 5 relationships from the graph. \n// ▶️ Run this query by clicking the green play button or pressing Shift + Enter. \nMATCH (a)-[r]->(b) RETURN * LIMIT 5;",
+        value: "// Query to retrieve 5 relationships from the graph. \n// ▶️ Run this query by clicking the play button or pressing Shift + Enter. \nMATCH (a)-[r]->(b) RETURN * LIMIT 5;",
         language: "cypher",
         theme,
         automaticLayout: true,
@@ -285,7 +285,7 @@ $margin: 1rem;
   margin-right: 1rem;
   border-radius: 1rem 1rem 0 0;
   overflow: hidden;
-  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.10); 
+  
 }
 
 .shell-editor__topbar {
@@ -305,6 +305,10 @@ $margin: 1rem;
     font-weight: 500;
     text-align: center;
     background-color: var(--bs-body-bg-secondary);
+    .nav-item {
+      margin: 0;
+      padding: 0;
+    }
   }
   a {
     padding: 1rem;
@@ -367,15 +371,21 @@ main {
     overflow: auto;
     min-height: 100px;
 
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
     textarea {
       width: 100%;
       height: 100%;
       border: none;
       padding: 0.5rem;
-      resize: vertical;
       background-color: var(--bs-body-bg);
       color: var(--bs-body-text);
       min-height: 100px;
+      resize: none;
     }
   }
 }

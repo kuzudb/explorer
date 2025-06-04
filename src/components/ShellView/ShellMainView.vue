@@ -169,7 +169,7 @@ export default {
         const cell = this.$refs[this.getCellRef(0)][0]
         cell.loadEditorFromHistory({
           cypherQuery: `// Query to retrieve 5 relationships from the graph.
-// ▶️ Run this query by clicking the green play button or pressing Shift + Enter.
+// ▶️ Run this query by clicking the play button or pressing Shift + Enter.
 MATCH (a)-[r]->(b) RETURN * LIMIT 5;`,
           isQueryGenerationMode: false,
           gptQuestion: "",

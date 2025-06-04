@@ -24,7 +24,7 @@
             >
               <li class="nav-item">
                 <span
-                  class="badge bg-primary"
+                  class="badge"
                   @click="accessModeModal.show()"
                 >Instructions</span>
               </li>
@@ -48,7 +48,7 @@
                 @click="toggleSidebar"
               >
                 <button
-                  class="fa fa-bars items-center!"
+                  :class="['fa-solid', isSidebarCollapsed ? 'fa-angle-right' : 'fa-angle-left']"
                   aria-hidden="true"
                 />
               </a>           
@@ -99,19 +99,10 @@
               @click="toggleImporter()"
             >
               <i class="fa-solid fa-upload" />
-              <span class="hide-on-collapse">Import Data</span>
+              <span class="hide-on-collapse">Import</span>
             </a>
           </li>
-          <li class="nav-item">
-            <a
-              aria-hidden="true"
-              href="#settings"
-              @click="showSettingsModal()"
-            >
-              <i class="fa-solid fa-cog" />
-              <span class="hide-on-collapse">Settings</span>
-            </a>
-          </li>
+          
           <li class="nav-item">
             <a
               aria-hidden="true"
@@ -122,6 +113,28 @@
               <span class="hide-on-collapse">Docs</span>
             </a>
           </li>
+          <div class="sidebar__bottom-items">
+            <li class="nav-item">
+              <a
+                aria-hidden="true"
+                href="#settings"
+                @click="showSettingsModal()"
+              >
+                <i class="fa-solid fa-cog" />
+                <span class="hide-on-collapse">Settings</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                aria-hidden="true"
+                href="#"
+                @click.prevent="modeStore.toggleTheme()"
+              >
+                <i :class="['fa-solid', modeStore.theme === 'vs-dark' ? 'fa-sun' : 'fa-moon']" />
+                <span class="hide-on-collapse">{{ modeStore.theme === 'vs-dark' ? 'Light' : 'Dark' }}</span>
+              </a>
+            </li>
+          </div>
         </ul>
       </div>
       <div class="main-layout__main-container">
@@ -287,6 +300,9 @@ export default {
   mounted() {
     this.accessModeModal = new Modal(this.$refs.modal);
     window.addEventListener("resize", this.updateNavbarHeight);
+    window.addEventListener("hashchange", this.handleHashChange);
+    // Handle initial hash on page load
+    this.handleHashChange();
     window.setTimeout(() => {
       DuckDB.init();
     }, 500);
@@ -294,6 +310,7 @@ export default {
   beforeUnmount() {
     this.accessModeModal.dispose();
     window.removeEventListener("resize", this.updateNavbarHeight);
+    window.removeEventListener("hashchange", this.handleHashChange);
   },
   async created() {
     await this.getMode();
@@ -311,6 +328,33 @@ export default {
     this.$refs.schemaView.drawGraph();
   },
   methods: {
+    handleHashChange() {
+      const hash = window.location.hash.substring(1);
+      switch (hash) {
+        case 'shell':
+          this.toggleShell();
+          break;
+        case 'schema':
+          this.toggleSchema();
+          break;
+        case 'datasets':
+          this.toggleLoader();
+          break;
+        case 'importer':
+          this.toggleImporter(true);
+          break;
+        // Settings modal is handled separately as it's a modal, not a view in the main container
+        // case 'settings':
+        //   this.showSettingsModal();
+        //   break;
+        default:
+          // If no valid hash, default to shell view
+          if (!this.showSchema && !this.showImporter && !this.showLoader && !this.showSettings) {
+             this.toggleShell();
+          }
+          break;
+      }
+    },
     async getSchema() {
       let schema;
       if (this.modeStore.isWasm) {
@@ -461,6 +505,33 @@ export default {
   --sidebar-collapsed-width: 60px;
 }
 
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bs-body-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bs-body-inactive);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bs-body-bg-accent);
+}
+
+/* Ensure scrollable elements have no right padding */
+.sidebar-wrapper,
+.result-container__side-panel,
+.schema_side-panel__wrapper,
+.code-block {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
+
 body {
   overflow-x: hidden;
 }
@@ -486,6 +557,7 @@ body {
   height: 100%;
   margin-left: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   background-color: var(--bs-body-bg-secondary);
   transition: all 0.5s ease;
 }
@@ -498,14 +570,29 @@ body {
   width: 100%;
   position: relative;
   transition: all 0.6s ease;
+  height: 100vh;
+  overflow: hidden;
+
+  .container-fluid {
+    height: 100%;
+    padding: 0;
+  }
+}
+
+.nav-item{
+  padding-left: 10px;
+  padding-top: 4px;
 }
 
 .sidebar-nav {
   top: 0;
   width: 100%;
+  height: 100%;
   margin: 0;
-  padding: 0;
+  padding-left: 4px;
   list-style: none;
+  position: relative;
+  padding-bottom: 100px;
 
   li {
     line-height: 1.5;
@@ -531,6 +618,31 @@ body {
     span {
       color: var(--bs-body-text);
     }
+  }
+
+  .sidebar__bottom-items {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+
+    .nav-item {
+       padding-left: 14px;
+    }
+  }
+
+  .bottom-fixed-item {
+    /* position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--bs-body-bg-secondary);
+    z-index: 1;
+    padding-left: 14px; */
   }
 }
 
@@ -569,13 +681,15 @@ body {
 .badge { 
   margin-left: 4px;
   margin-top: 4px;
+  background-color: var(--bs-body-bg-accent);
+  color: white !important;
 }
 
 .sidebar__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem ;
+  padding: 0.5rem;
   gap: 1rem;
 
   .navbar-brand {
@@ -588,12 +702,12 @@ body {
     align-items: center;
     cursor: pointer;
     
-    
     button {
       background: none;
       border: none;
       color: var(--bs-body-text);
       padding: 0;
+      transition: transform 0.3s ease;
       
       &:hover {
         opacity: 0.7;

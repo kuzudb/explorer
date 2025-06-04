@@ -12,31 +12,6 @@
         >
           <!-- Viewing Options -->
           <h2> Viewing Options </h2>
-          <div class="settings-group">
-            <h4>Toggle Modes</h4>
-            <div class="settings-toggle">
-              <label
-                for="switch-component-on"
-              >Dark Mode</label>
-              <div class="toggle-switch">
-                <input
-                  id="switch-component-on"
-                  v-model="isDarkMode"
-                  type="checkbox"
-                  class="switch-input "
-                  @click="toggleDarkMode"
-                >
-                <label
-                  for="switch-component-on"
-                  class="switch-slider"
-                />
-              </div>
-              <label
-                for="switch-component-on"
-                class="toggle-label"
-              >Light Mode</label>
-            </div>
-          </div>
           <hr>
 
           <!-- Graph Visualization Options -->

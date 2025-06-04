@@ -1,5 +1,8 @@
 <template>
-  <div class="result-container">
+  <div 
+    class="result-container"
+    :class="{ maximized: isMaximized }"
+  >
     <div
       ref="wrapper"
       class="result-container__wrapper"
@@ -9,6 +12,23 @@
         v-show="!errorMessage"
         class="result-container__tools"
       >
+        <!-- Removed button to close sidebar when open in graph view -->
+        <!--
+        <ul v-if="showGraph && graphSidebarOpen" class="result-container__button-group">
+          <button
+            class="button"
+            @click="toggleGraphSidebar()"
+          >
+            <i
+              class="fa-lg fa-solid fa-angle-left"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Close Sidebar"
+            />
+          </button>
+        </ul>
+        -->
+
         <!-- Top Tool Buttons -->
         <ul class="result-container__button-group">
           <button
@@ -106,7 +126,9 @@
           :query-result="queryResult"
           :schema="schema"
           :container-height="containerHeight"
+          :is-side-panel-open="graphSidebarOpen"
           @graph-empty="handleGraphEmpty"
+          @request-sidebar-toggle="toggleGraphSidebar"
         />
         <ResultTable
           v-if="queryResult && showTable"
@@ -186,6 +208,7 @@ export default {
     isResizing: false,
     startHeight: 0,
     startY: 0,
+    graphSidebarOpen: false,
   }),
   computed: {
     ...mapStores(useModeStore),
@@ -253,14 +276,17 @@ export default {
     toggleGraphView() {
       this.hideAll();
       this.showGraph = true;
+      this.graphSidebarOpen = false;
     },
     toggleTableView() {
       this.hideAll();
       this.showTable = true;
+      this.graphSidebarOpen = false;
     },
     toggleCodeView() {
       this.hideAll();
       this.showCode = true;
+      this.graphSidebarOpen = false;
     },
     handleGraphEmpty() {
       this.isGraphEmpty = true;
@@ -276,7 +302,7 @@ export default {
       else if (this.queryResult) {
         const editorHeight = this.$parent.getEditorHeight();
         if (this.isMaximized) {
-          this.containerHeight = window.innerHeight - this.navbarHeight - editorHeight - 2 * UI_SIZE.DEFAULT_MARGIN + 'px';
+          this.containerHeight = window.innerHeight - this.navbarHeight - editorHeight - 2 * UI_SIZE.DEFAULT_MARGIN - 50+ 'px';
         }
         else {
           this.containerHeight = this.queryResultDefaultHeight + 'px';
@@ -320,6 +346,9 @@ export default {
         }
       });
     },
+    toggleGraphSidebar() {
+      this.graphSidebarOpen = !this.graphSidebarOpen;
+    },
   },
 };
 </script>
@@ -329,12 +358,15 @@ export default {
   margin-left: 1rem;
   margin-right: 1rem;
   margin-bottom: 1rem;
-  border-bottom: 1px solid var(--bs-body-inactive);
-  border-left: 1px solid var(--bs-body-inactive);
-  border-right: 1px solid var(--bs-body-inactive);
+  &.maximized {
+    margin-bottom: 14px;
+  }
+  border-bottom: 1px solid var(--bs-body-shell);
+  border-left: 1px solid var(--bs-body-shell);
+  border-right: 1px solid var(--bs-body-shell);
   border-radius: 0 0 1rem 1rem; 
   overflow: hidden;
-  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.10);
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.05);
   position: relative;
   min-height: 200px;
   display: flex;

@@ -316,7 +316,7 @@ div.d-flex.align-items-center {
   margin: 20px;
   margin-top: 0;
   padding: 16px;
-  border: 2px solid $gray-300;
+  border: 2px solid var(--bs-body-bg-secondary);
   border-top: 0;
 }
 

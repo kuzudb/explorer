@@ -34,7 +34,11 @@
       ref="sidePanel"
       class="result-container__side-panel"
     >
-      <div v-if="clickedIsNode">
+      <button class="close-sidebar-button" @click="toggleSidePanel">
+        <i class="fa-solid fa-times"></i>
+      </button>
+
+      <div v-if="isNodeSelectedOrHovered">
         <br>
 
         <h5>Actions</h5>
@@ -162,7 +166,7 @@
             Showing
             <span v-if="numHiddenRels > 0">
               {{ counters.total.rel - numHiddenRels }}/</span>{{ counters.total.rel }} rels
-            <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
+          <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
           </p>
           <hr>
           <table class="table table-sm table-bordered result-container__overview-table">
@@ -196,6 +200,16 @@
         </div>
       </div>
     </div>
+    <button
+      v-show="!isSidePanelOpen"
+      class="open-sidebar-button"
+      @click="toggleSidePanel"
+      data-bs-toggle="tooltip"
+      data-bs-placement="right"
+      data-bs-original-title="Open Sidebar"
+    >
+      <i class="fa-lg fa-solid fa-angle-left"></i>
+    </button>
   </div>
 </template>
 
@@ -331,6 +345,11 @@ export default {
       this.handleSettingsChange();
     },
 
+    isSidePanelOpen(newVal) {
+      this.$nextTick(() => {
+        this.handleResize();
+      });
+    },
   },
   mounted() {
     this.computeGraphWidth();
@@ -510,6 +529,17 @@ export default {
 
       this.g6Graph.render();
       this.graphCreated = true;
+
+      // Fit the graph to view after rendering
+      this.g6Graph.once('afterrender', () => {
+        this.fitToView();
+      });
+
+      this.g6Graph.on('node:mouseenter', (e) => {
+        const nodeItem = e.item;
+        this.g6Graph.setItemState(nodeItem, 'hover', true);
+        this.$refs.hoverContainer.handleHover(nodeItem.getModel(), e);
+      });
     },
 
     refreshDraggedNodePosition(e) {
@@ -817,7 +847,7 @@ export default {
     handleResize() {
       this.$nextTick(() => {
         if (this.g6Graph) {
-          const width = this.computeGraphWidth();
+          const width = this.$refs.graph.offsetWidth;
           this.g6Graph.changeSize(width, parseInt(this.containerHeight));
           this.g6Graph.fitCenter();
         }
@@ -832,6 +862,15 @@ export default {
       this.highlightNode(model);
       if (this.clickedIsNode) {
          this.isCurrentNodeExpanded = this.isNeighborExpanded(model);
+      }
+      if (!this.isSidePanelOpen) {
+        // Add a small delay to avoid conflicting with double click
+        window.setTimeout(() => {
+          this.isSidePanelOpen = true;
+          this.$nextTick(() => {
+            this.handleResize();
+          });
+        }, 200);
       }
     },
 
@@ -1039,7 +1078,6 @@ export default {
       let width = document.documentElement.clientWidth || document.body.clientWidth;
       width -= this.margin * 2;
       width -= this.toolbarContainerWidth * 2;
-      width -= this.isSidePanelOpen ? this.sidebarWidth : 0;
       width -= 2 * this.borderWidth;
       this.graphWidth = width;
       return width;
@@ -1104,26 +1142,43 @@ export default {
 
   .result_container__graph {
     height: 100%;
-    flex: 1;
+    flex: 1 1 0%;
     min-width: 0;
     padding: 1rem;
   }
 
+  .result-container__summary-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    p {
+      display: inline-block;
+      margin: 0;
+    }
+
+    button {
+      padding: 5px;
+      margin-right: 20px;
+    }
+  }
+
   .result-container__tools_container {
-    min-height: 406px;
-    border-bottom-left-radius: 1rem;
-    border-top-left-radius: 1rem;
-    background-color: (var(--bs-body-bg-secondary));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-left: 2px solid var(--bs-body-shell);
+    background-color: var(--bs-body-bg-secondary);
     flex-shrink: 0;
     z-index: 1;
     padding: 1rem 0.5rem;
   }
 
   .result-container__button {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding-top: 4px;
+    padding-bottom: 4px;
+
     >i {
       cursor: pointer;
 
@@ -1143,30 +1198,120 @@ export default {
   }
 
   .result-container__side-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
     width: 350px;
-    height: 100%;
     overflow-x: hidden;
-    overflow-y: scroll;
-    background-color: (var(--bs-body-bg-secondary));
-    border-bottom-right-radius: 1rem;
-    flex-shrink: 0;
+    overflow-y: auto;
+    background-color: var(--bs-body-bg-secondary);
     padding: 1rem;
+    z-index: 2;
 
-    .result-container__summary-section {
-      padding: 0.5rem 0;
+    .close-sidebar-button {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--bs-body-text);
+      z-index: 3;
+
+      &:hover {
+        opacity: 0.7;
+      }
     }
 
-    .result-container__overview-table,
-    .result-container__result-table {
-      margin: 0.5rem 0;
+    table {
+      max-width: calc(100% - 20px);
+
+      &.result-container__overview-table {
+        table-layout: fixed;
+
+        td {
+          width: 120px;
+        }
+      }
+
+      &.result-container__result-table {
+        font-family: "Courier New", Courier, monospace;
+
+        td {
+          word-break: break-all;
+        }
+      }
     }
 
     h5 {
       margin-bottom: 1rem;
+      color: var(--bs-body-text);
     }
 
     hr {
       margin: 1rem 0;
+      border-top: 1px solid var(--bs-body-inactive);
+    }
+
+    .badge {
+      background-color: #f08080 !important;
+      color: #fff !important;
+      border-radius: 0.5rem;
+      padding: 0.35em 0.65em;
+      font-size: 0.875em;
+      font-weight: 600;
+    }
+
+    button.btn-outline-secondary,
+    button.btn-outline-primary {
+      width: 100%;
+      text-align: left;
+      background-color: var(--bs-body-bg);
+      color: var(--bs-body-text);
+      border-color: transparent;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+
+      &:hover {
+        background-color: var(--bs-body-bg-hover);
+      }
+
+      i {
+        margin-right: 0.5rem;
+      }
+    }
+
+    button.btn-outline-primary {
+      background-color: var(--bs-body-bg-accent);
+      color: var(--bs-body-bg);
+    }
+  }
+
+  .open-sidebar-button {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--bs-body-bg-secondary);
+    border: 2px solid var(--bs-body-shell);
+    border-radius: 0.5rem 0 0 0.5rem;
+    padding: 0.5rem 0.25rem;
+    cursor: pointer;
+    color: var(--bs-body-text);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 3rem;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    i {
+      font-size: 1.2rem;
     }
   }
 }
@@ -1175,11 +1320,13 @@ export default {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  label { 
+
+  label {
     color: var(--bs-body-text);
     font-size: 0.875rem;
     cursor: pointer;
   }
+
   input {
     appearance: none;
     width: 2.75rem;
@@ -1195,13 +1342,11 @@ export default {
   }
 }
 
-
 .toggle-switch {
   position: relative;
   display: inline-block;
   width: 2.75rem;
   height: 1.25rem;
-  
 }
 
 .result-graph__group {
@@ -1214,8 +1359,8 @@ export default {
   padding: 0.5rem 1rem;
   width: 100%;
   background-color: var(--bs-body-bg);
-  }
-  
+}
+
 .switch-slider {
   position: absolute;
   top: 0;
@@ -1225,7 +1370,7 @@ export default {
   background-color: var(--bs-body-inactive);
   border: 1px solid var(--bs-body-inactive);
   border-radius: 9999px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   cursor: pointer;
   transition: transform 0.3s;
 

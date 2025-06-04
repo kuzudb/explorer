@@ -9,7 +9,7 @@
             for="files"
             class="dropzone-container"
           >
-            <div class="file-icon"><i class="fa-solid fa-file-circle-plus text-primary" /></div>
+            <div class="file-icon"><i class="fa-solid fa-file-circle-plus text-[(var(--bs-body-bg-accent))]" /></div>
             <div class="d-flex flex-column align-items-center text-center pt-3 px-5">
               <p class="w-80 h5 fw-bold text-[var(--bs-body-text)] mx-auto">
                 Drag & drop CSV or Parquet files to get started.
@@ -107,7 +107,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: #8c96a8;
+    color: var(--bs-body-text);
     z-index: 20;
   }
 
@@ -146,5 +146,8 @@ export default {
 }
 .btn.btn-primary.mb-2 {
   width: 400px;
+  background: var(--bs-body-bg-accent);
+  border: 0;
+
 }
 </style>

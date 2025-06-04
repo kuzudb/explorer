@@ -103,7 +103,11 @@
       &nbsp;
       <span v-text="selectedDatasetDescription" />
     </div>
-    <code v-if="selectedDatasetSchema || datasetLoadingLog">
+    <code 
+      v-if="selectedDatasetSchema || datasetLoadingLog"
+      ref="codeBlock"
+      class="code-block"
+    >
       <pre v-text="datasetLoadingLog ? datasetLoadingLog : selectedDatasetSchema" />
     </code>
     <br>
@@ -170,6 +174,11 @@ export default {
     selectedDataset() {
       this.fetchDatasetSchema();
     },
+    datasetLoadingLog() {
+      this.$nextTick(() => {
+        this.scrollToBottom();
+      });
+    }
   },
   mounted() {
     this.fetchDatasets();
@@ -304,6 +313,11 @@ export default {
       this.datasetLoadingEnded = false;
       this.$emit("jumpToShellView");
     },
+    scrollToBottom() {
+      if (this.$refs.codeBlock) {
+        this.$refs.codeBlock.scrollTop = this.$refs.codeBlock.scrollHeight;
+      }
+    },
   },
 }
 </script>
@@ -315,16 +329,24 @@ export default {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
-  code {
-    flex: 1;
-    overflow: scroll;
+  .code-block {
+    height: 400px;
+    overflow: auto;
     border: 1px solid (var(--bs-body-inactive));
     padding: 10px;
     color: (var(--bs-body-text));
     background-color: (var(--bs-body-bg-secondary));
     font-size: 16px;
     border-radius: 10px;
+    display: block;
+    
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
   }
 
   .alert-and-button-wrapper {

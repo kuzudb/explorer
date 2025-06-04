@@ -874,7 +874,7 @@ export default {
 
 .outer-wrapper {
   flex: 1;
-  overflow: hidden;
+  overflow: scroll;
   display: flex;
   flex-direction: column;
 
