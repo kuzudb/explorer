@@ -34,8 +34,11 @@
       ref="sidePanel"
       class="result-container__side-panel"
     >
-      <button class="close-sidebar-button" @click="toggleSidePanel">
-        <i class="fa-solid fa-times"></i>
+      <button
+        class="close-sidebar-button"
+        @click="toggleSidePanel"
+      >
+        <i class="fa-solid fa-times" />
       </button>
 
       <div v-if="isNodeSelectedOrHovered">
@@ -166,7 +169,7 @@
             Showing
             <span v-if="numHiddenRels > 0">
               {{ counters.total.rel - numHiddenRels }}/</span>{{ counters.total.rel }} rels
-          <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
+            <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
           </p>
           <hr>
           <table class="table table-sm table-bordered result-container__overview-table">
@@ -203,12 +206,12 @@
     <button
       v-show="!isSidePanelOpen"
       class="open-sidebar-button"
-      @click="toggleSidePanel"
       data-bs-toggle="tooltip"
       data-bs-placement="right"
       data-bs-original-title="Open Sidebar"
+      @click="toggleSidePanel"
     >
-      <i class="fa-lg fa-solid fa-angle-left"></i>
+      <i class="fa-lg fa-solid fa-angle-left" />
     </button>
   </div>
 </template>

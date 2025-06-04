@@ -19,7 +19,8 @@
             >Cypher Query</a>
           </li>
           <li class="nav-item">
-            <a v-if="!modeStore.isWasm"
+            <a
+              v-if="!modeStore.isWasm"
               href="#"
               :class="[
                 isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
