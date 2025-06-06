@@ -17,7 +17,7 @@
           />
         </div>
         <div class="modal-body">
-          <table class="table table-bordered table-striped">
+          <table class="table table-borderless table-striped">
             <thead class="table-header">
               <tr>
                 <th

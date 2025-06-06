@@ -4,6 +4,7 @@ import { MODES } from "../utils/Constants";
 export const useModeStore = defineStore("mode", {
   state: () => ({
     currentMode: "READ_WRITE",
+    theme: "vs-dark",
   }),
 
   getters: {
@@ -31,6 +32,26 @@ export const useModeStore = defineStore("mode", {
   actions: {
     setMode(mode) {
       this.currentMode = mode;
+    },
+    toggleTheme() {
+      this.theme = this.theme === 'vs-dark' ? 'vs-light' : 'vs-dark';
+      document.documentElement.setAttribute(
+        'data-bs-theme',
+        this.theme === 'vs-dark' ? 'dark' : 'light'
+      );
+      if (window.Monaco?.editor) {
+        window.Monaco.editor.setTheme(this.theme);
+      }
+    },
+    setTheme(theme) {
+      this.theme = theme;
+      document.documentElement.setAttribute(
+        'data-bs-theme',
+        theme === 'vs-dark' ? 'dark' : 'light'
+      );
+      if (window.Monaco?.editor) {
+        window.Monaco.editor.setTheme(theme);
+      }
     },
   },
 });

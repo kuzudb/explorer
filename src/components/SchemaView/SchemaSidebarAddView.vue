@@ -130,7 +130,7 @@
       <hr>
       <table
         v-if="schema && currProperties.length > 0"
-        class="table table-sm table-bordered schema_side-panel__add-table"
+        class="table table-sm table-borderless schema_side-panel__add-table"
       >
         <thead>
           <tr>

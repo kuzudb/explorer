@@ -174,9 +174,7 @@ export default {
             clearInterval(intervalId);
             this.isLoading = false;
           });
-        if (!this.isEvaluated) {
-          this.$emit("addCell");
-        }
+        
       }
       this.isEvaluated = true;
     },
@@ -309,7 +307,6 @@ export default {
 <style lang="scss" scoped>
 .shell-cell__wrapper {
   display: block;
-
   &:last-child {
     padding-bottom: 10px;
   }
@@ -319,7 +316,7 @@ div.d-flex.align-items-center {
   margin: 20px;
   margin-top: 0;
   padding: 16px;
-  border: 2px solid $gray-300;
+  border: 2px solid var(--bs-body-bg-secondary);
   border-top: 0;
 }
 

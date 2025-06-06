@@ -56,60 +56,62 @@
       ref="sidePanel"
       class="schema_side-panel__wrapper"
     >
-      <br>
-      <SchemaSidebarOverview
-        v-if="schema"
-        v-show="!hoveredLabel && clickedLabel === null"
-        ref="overview"
-        :schema="schema"
-        @drop-table="dropTable"
-        @edit-table="enterEditTableMode"
-        @add-node-table="enterAddNodeTableMode"
-        @add-rel-table="enterAddRelTableMode"
-      />
-      <!-- Read only view for hovered label -->
-      <!-- If edit view is shown, hovering over another label will not change the view -->
-      <SchemaSidebarReadOnlyView
-        v-if="hoveredLabel !== null && (clickedLabel === null || isClickedReadOnly())"
-        :schema="schema"
-        :label="hoveredLabel"
-        :is-node="hoveredIsNode"
-      />
-      <!-- Read only view for clicked label (if it cannot be edited) -->
-      <SchemaSidebarReadOnlyView
-        v-if="clickedLabel !== null && hoveredLabel === null && isClickedReadOnly()"
-        :schema="schema"
-        :label="clickedLabel"
-        :is-node="clickedIsNode"
-      />
-      <!-- Edit view for clicked label -->
-      <SchemaSidebarEditView
-        v-if="clickedLabel !== null && !clickedIsNewTable && !isClickedReadOnly()"
-        ref="editView"
-        :schema="schema"
-        :label="clickedLabel"
-        :is-node="clickedIsNode"
-        @drop-property="dropProperty"
-        @back="resetClick"
-        @drop-table="dropTable"
-        @rename-property="renameProperty"
-        @rename-table="renameTable"
-        @add-property="addProperty"
-        @set-placeholder="setPlaceholder"
-        @unset-placeholder="unsetPlaceholder"
-        @set-placeholder-label="setPlaceholderLabelForEditView"
-      />
-      <SchemaSidebarAddView
-        v-if="clickedLabel !== null && clickedIsNewTable"
-        ref="addView"
-        :schema="schema"
-        :label="clickedLabel"
-        :is-node="clickedIsNode"
-        @discard="cancelAdd"
-        @save="addNewTable"
-        @update-node-table-label="updatePlaceholderNodeTableLabel"
-        @update-placeholder-rel-table="updatePlaceholderRelTable"
-      />
+      <div class="sidebar-content">
+        <br>
+        <SchemaSidebarOverview
+          v-if="schema"
+          v-show="!hoveredLabel && clickedLabel === null"
+          ref="overview"
+          :schema="schema"
+          @drop-table="dropTable"
+          @edit-table="enterEditTableMode"
+          @add-node-table="enterAddNodeTableMode"
+          @add-rel-table="enterAddRelTableMode"
+        />
+        <!-- Read only view for hovered label -->
+        <!-- If edit view is shown, hovering over another label will not change the view -->
+        <SchemaSidebarReadOnlyView
+          v-if="hoveredLabel !== null && (clickedLabel === null || isClickedReadOnly())"
+          :schema="schema"
+          :label="hoveredLabel"
+          :is-node="hoveredIsNode"
+        />
+        <!-- Read only view for clicked label (if it cannot be edited) -->
+        <SchemaSidebarReadOnlyView
+          v-if="clickedLabel !== null && hoveredLabel === null && isClickedReadOnly()"
+          :schema="schema"
+          :label="clickedLabel"
+          :is-node="clickedIsNode"
+        />
+        <!-- Edit view for clicked label -->
+        <SchemaSidebarEditView
+          v-if="clickedLabel !== null && !clickedIsNewTable && !isClickedReadOnly()"
+          ref="editView"
+          :schema="schema"
+          :label="clickedLabel"
+          :is-node="clickedIsNode"
+          @drop-property="dropProperty"
+          @back="resetClick"
+          @drop-table="dropTable"
+          @rename-property="renameProperty"
+          @rename-table="renameTable"
+          @add-property="addProperty"
+          @set-placeholder="setPlaceholder"
+          @unset-placeholder="unsetPlaceholder"
+          @set-placeholder-label="setPlaceholderLabelForEditView"
+        />
+        <SchemaSidebarAddView
+          v-if="clickedLabel !== null && clickedIsNewTable"
+          ref="addView"
+          :schema="schema"
+          :label="clickedLabel"
+          :is-node="clickedIsNode"
+          @discard="cancelAdd"
+          @save="addNewTable"
+          @update-node-table-label="updatePlaceholderNodeTableLabel"
+          @update-placeholder-rel-table="updatePlaceholderRelTable"
+        />
+      </div>
     </div>
     <SchemaActionDialog
       ref="actionDialog"
@@ -306,7 +308,7 @@ export default {
           labelCfg: {
             style: {
               fontSize: 12,
-              fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+              fontFamily: "Lexend,Helvetica Neue, Helvetica, Arial, sans-serif",
               fontWeight: 350,
               background: {
                 fill: "#ffffff",
@@ -875,14 +877,43 @@ export default {
 
   .schema_side-panel__wrapper {
     width: 500px;
+    height: 100%;
     padding-left: 12px;
     padding-right: 12px;
-    overflow-x: hidden;
-    overflow-y: scroll;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    border-left: 2px solid $gray-300;
-    background-color: $gray-100;
+    border-left: 2px solid (var(--bs-body-inactive));
+    background-color: (var(--bs-body-bg-secondary));
+    border-bottom-left-radius: 1rem;
+    border-top-left-radius: 1rem;
+
+    .sidebar-content {
+      height: 100%;
+      width: calc(100% - 1rem);
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 1rem;
+
+      :deep(table) {
+        border-radius: 0.5rem;
+        overflow: hidden;
+        background-color: var(--bs-body-bg);
+        
+        th {
+        padding: 10px;
+        max-width: 120px;
+        word-break: break-word;
+      }
+
+      td {
+        padding-left: 10px;
+        padding-right: 5px;
+        max-width: 200px;
+        word-break: break-word;
+      }
+      }
+    }
   }
 }
 
@@ -890,17 +921,18 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  padding-left: 4px;
   align-items: center;
-  background-color: $gray-100;
-  border-right: 2px solid $gray-300;
+  padding-bottom: 8px;
 
   .schema-view__tools_container--bottom {
     margin-top: auto;
     padding-bottom: 8px;
+  
 
     .schema-view__button {
       >i {
-        color: $body-tertiary-color;
+        color: (var(--bs-body-text));
       }
     }
   }
@@ -925,7 +957,7 @@ export default {
 
   &--active {
     i {
-      color: $primary;
+      color: var(--bs-body-accent);
     }
   }
 }

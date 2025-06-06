@@ -14,7 +14,7 @@
       <hr>
       <table
         v-if="schema"
-        class="table table-sm table-bordered schema_side-panel__overview-table"
+        class="table table-sm table-borderless schema_side-panel__overview-table"
       >
         <tbody>
           <tr
@@ -87,7 +87,7 @@
       <hr>
       <table
         v-if="schema"
-        class="table table-sm table-bordered schema_side-panel__overview-table"
+        class="table table-sm table-borderless schema_side-panel__overview-table"
       >
         <tbody>
           <tr
@@ -196,6 +196,15 @@ export default {
   &.schema_side-panel__overview-rel-groups-buttons-container {
     width: 50px;
   }
+}
+.schema_side-panel__overview-table {
+
+  border-radius: 1rem;
+  padding: 2px;
+}
+
+small {
+  padding-left: 6px;
 }
 
 ul {
