@@ -44,7 +44,7 @@
 
       <table
         v-if="schema"
-        class="table table-sm table-bordered schema_side-panel__overview-table"
+        class="table table-sm table-borderless schema_side-panel__overview-table"
       >
         <thead>
           <tr v-if="tableProperties.length > 0">

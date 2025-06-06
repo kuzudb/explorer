@@ -96,7 +96,7 @@
 
       <table
         v-if="schema && (tableProperties.length > 0 || addingProperty)"
-        class="table table-sm table-bordered schema_side-panel__edit-table"
+        class="table table-sm table-borderless schema_side-panel__edit-table"
       >
         <thead>
           <tr>

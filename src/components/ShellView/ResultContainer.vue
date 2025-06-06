@@ -1,11 +1,13 @@
 <template>
   <div 
     class="result-container"
-    :class="{ maximized: isMaximized }"
+    :class="{ maximized: isMaximized, 'is-error-container': errorMessage }"
   >
     <div
       ref="wrapper"
       class="result-container__wrapper"
+      :class="{'is-error': errorMessage}"
+      :style="errorMessage ? { height: 'auto', flex: 'unset' } : { height: containerHeight }"
     >
       <!-- Left Sidebar -->
       <aside
@@ -126,6 +128,7 @@
           :query-result="queryResult"
           :schema="schema"
           :container-height="containerHeight"
+          :is-maximized="isMaximized"
           :is-side-panel-open="graphSidebarOpen"
           @graph-empty="handleGraphEmpty"
           @request-sidebar-toggle="toggleGraphSidebar"
@@ -364,13 +367,17 @@ export default {
   border-bottom: 1px solid var(--bs-body-shell);
   border-left: 1px solid var(--bs-body-shell);
   border-right: 1px solid var(--bs-body-shell);
-  border-radius: 0 0 1rem 1rem; 
+  border-radius: 0 0 1rem 1rem;
   overflow: hidden;
   box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.05);
   position: relative;
-  min-height: 200px;
+  min-height: 400px;
   display: flex;
   flex-direction: column;
+
+  &.is-error-container {
+    min-height: 0;
+  }
 }
 
 .result-container__wrapper {
@@ -378,7 +385,6 @@ export default {
   padding-bottom: 0.5rem;
   display: flex;
   flex-direction: row;
-  height: v-bind(containerHeight);
   transition: height 0.1s ease;
   flex: 1;
   position: relative;

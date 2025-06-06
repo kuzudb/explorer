@@ -8,195 +8,193 @@
       class="result_container__graph"
       :style="{ width: graphWidth + 'px' }"
     />
+    <!-- Loading Overlay -->
+    <div v-if="isGraphLoading" class="graph-loading-overlay">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <div class="loading-text">Rendering Graph...</div>
+    </div>
+    
     <HoverContainer
       v-if="g6Graph"
       ref="hoverContainer"
       :g6-graph="g6Graph"
       :schema="schema"
     />
-    <div
-      ref="toolsContainer"
-      class="result-container__tools_container"
-      :style="{ width: toolbarContainerWidth + 'px' }"
-    >
-      <div class="result-container__button">
-        <i
-          :class="sidePanelButtonClass"
-          data-bs-toggle="tooltip"
-          data-bs-placement="right"
-          :data-bs-original-title="sidePanelButtonTitle"
-          @click="toggleSidePanel"
-        />
-      </div>
-    </div>
+    
     <div
       v-show="isSidePanelOpen"
       ref="sidePanel"
       class="result-container__side-panel"
+      :style="{ width: sidebarWidth + 'px' }"
     >
-      <button class="close-sidebar-button" @click="toggleSidePanel">
-        <i class="fa-solid fa-times"></i>
-      </button>
-
-      <div v-if="isNodeSelectedOrHovered">
-        <br>
-
-        <h5>Actions</h5>
-        <button
-          class="btn btn-sm btn-outline-secondary"
-          @click="hideNode()"
-        >
-          <i class="fa-solid fa-eye-slash" /> Hide Node
+      <div class="resize-handle" @mousedown="startResize"></div>
+      <div class="result-container__side-panel-content">
+        <button class="close-sidebar-button" @click="toggleSidePanel">
+          <i class="fa-solid fa-times"></i>
         </button>
 
-        &nbsp;
+        <div v-if="clickedIsNode" class="sidebar-actions">
+          <br>
 
-        <button
-          v-if="!isHighlightedMode"
-          class="btn btn-sm btn-outline-secondary"
-          @click="enableHighlightMode()"
-        >
-          <i class="fa-solid fa-arrows-to-circle" /> Highlight Mode
-        </button>
+          <h5>Actions</h5>
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            @click="hideNode()"
+          >
+            <i class="fa-solid fa-eye-slash" /> Hide Node
+          </button>
 
-        <button
-          v-else
-          class="btn btn-sm btn-outline-primary"
-          @click="disableHighlightMode()"
-        >
-          <i class="fa-solid fa-arrows-to-circle" />
-          Disable Highlight Mode
-        </button>
+          &nbsp;
 
-        &nbsp;
+          <button
+            v-if="!isHighlightedMode"
+            class="btn btn-sm btn-outline-secondary"
+            @click="enableHighlightMode()"
+          >
+            <i class="fa-solid fa-arrows-to-circle" /> Highlight Mode
+          </button>
 
-        <button
-          v-if="!isCurrentNodeExpanded"
-          class="btn btn-sm btn-outline-secondary"
-          @click="expandSelectedNode()"
-        >
-          <i class="fa-solid fa-up-down-left-right" />
-          Expand Neighbors
-        </button>
+          <button
+            v-else
+            class="btn btn-sm btn-outline-primary"
+            @click="disableHighlightMode()"
+          >
+            <i class="fa-solid fa-arrows-to-circle" />
+            Disable Highlight Mode
+          </button>
 
-        <button
-          v-else
-          class="btn btn-sm btn-outline-primary"
-          @click="collapseSelectedNode()"
-        >
-          <i class="fa-solid fa-up-down-left-right" />
-          Collapse Neighbors
-        </button>
-      </div>
+          &nbsp;
 
-      <br>
-      <div v-if="displayLabel">
-        <div class="result-container__summary-section">
-          <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
+          <button
+            v-if="!isCurrentNodeExpanded"
+            class="btn btn-sm btn-outline-secondary"
+            @click="expandSelectedNode()"
+          >
+            <i class="fa-solid fa-up-down-left-right" />
+            Expand Neighbors
+          </button>
+
+          <button
+            v-else
+            class="btn btn-sm btn-outline-primary"
+            @click="collapseSelectedNode()"
+          >
+            <i class="fa-solid fa-up-down-left-right" />
+            Collapse Neighbors
+          </button>
         </div>
-        <span
-          class="badge bg-primary"
-          :style="{
-            backgroundColor: `${getColor(displayLabel)} !important`,
-            color: `${getTextColor(displayLabel)} !important`,
-          }"
-        >
-          {{ displayLabel }}</span>
-        <hr>
-        <table class="table table-sm table-bordered result-container__result-table">
-          <tbody>
-            <tr
-              v-for="property in displayProperties"
-              :key="property.name"
-            >
-              <th scope="row">
-                {{ property.name }}
-                <span
-                  v-if="property.isPrimaryKey"
-                  class="badge bg-primary"
-                >PK</span>
-              </th>
-              <td>{{ property.value }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div v-else>
-        <h5>Overview</h5>
-        <div v-if="counters.total.node > 0">
+
+        <br>
+        <div v-if="displayLabel">
           <div class="result-container__summary-section">
+            <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
+          </div>
+          <span
+            class="badge bg-primary"
+            :style="{
+              backgroundColor: `${getColor(displayLabel)} !important`,
+              color: `${getTextColor(displayLabel)} !important`,
+            }"
+          >
+            {{ displayLabel }}</span>
+          <hr>
+          <table class="table table-sm table-borderless result-container__result-table">
+            <tbody>
+              <tr
+                v-for="property in displayProperties"
+                :key="property.name"
+              >
+                <th scope="row">
+                  {{ property.name }}
+                  <span
+                    v-if="property.isPrimaryKey"
+                    class="badge bg-primary"
+                  >PK</span>
+                </th>
+                <td>{{ property.value }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div v-else>
+          <h5>Overview</h5>
+          <div v-if="counters.total.node > 0">
+            <div class="result-container__summary-section">
+              <p>
+                Showing
+                <span v-if="numHiddenNodes > 0">
+                  {{ counters.total.node - numHiddenNodes }}/</span>{{ counters.total.node }} nodes
+                <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
+              </p>
+              <button
+                v-if="numHiddenNodes > 0"
+                class="btn btn-sm btn-outline-secondary"
+                @click="showAllNodesRels()"
+              >
+                <i class="fa-solid fa-eye" />
+                Show All
+              </button>
+            </div>
+            <hr>
+            <table class="table table-sm table-borderless result-container__overview-table">
+              <tbody>
+                <tr
+                  v-for="label in Object.keys(counters.node)"
+                  :key="label"
+                >
+                  <th scope="row">
+                    <span
+                      class="badge bg-primary"
+                      :style="{ backgroundColor: ` ${getColor(label)} !important` }"
+                    >{{ label
+                    }}</span>
+                  </th>
+                  <td>{{ counters.node[label] }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <br>
+          </div>
+
+          <div v-if="counters.total.rel > 0">
             <p>
               Showing
-              <span v-if="numHiddenNodes > 0">
-                {{ counters.total.node - numHiddenNodes }}/</span>{{ counters.total.node }} nodes
-              <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
+              <span v-if="numHiddenRels > 0">
+                {{ counters.total.rel - numHiddenRels }}/</span>{{ counters.total.rel }} rels
+            <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
             </p>
-            <button
-              v-if="numHiddenNodes > 0"
-              class="btn btn-sm btn-outline-secondary"
-              @click="showAllNodesRels()"
-            >
-              <i class="fa-solid fa-eye" />
-              Show All
-            </button>
+            <hr>
+            <table class="table table-sm table-borderless result-container__overview-table">
+              <tbody>
+                <tr
+                  v-for="label in Object.keys(counters.rel)"
+                  :key="label"
+                >
+                  <th scope="row">
+                    <span
+                      class="badge bg-primary"
+                      :style="{
+                        backgroundColor: ` ${getColor(label)} !important`,
+                        color: `black !important`,
+                      }"
+                    >
+                      {{ label }}
+                    </span>
+                  </th>
+                  <td>{{ counters.rel[label] }}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <hr>
-          <table class="table table-sm table-bordered result-container__overview-table">
-            <tbody>
-              <tr
-                v-for="label in Object.keys(counters.node)"
-                :key="label"
-              >
-                <th scope="row">
-                  <span
-                    class="badge bg-primary"
-                    :style="{ backgroundColor: ` ${getColor(label)} !important` }"
-                  >{{ label
-                  }}</span>
-                </th>
-                <td>{{ counters.node[label] }}</td>
-              </tr>
-            </tbody>
-          </table>
-          <br>
-        </div>
 
-        <div v-if="counters.total.rel > 0">
-          <p>
-            Showing
-            <span v-if="numHiddenRels > 0">
-              {{ counters.total.rel - numHiddenRels }}/</span>{{ counters.total.rel }} rels
-          <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
-          </p>
-          <hr>
-          <table class="table table-sm table-bordered result-container__overview-table">
-            <tbody>
-              <tr
-                v-for="label in Object.keys(counters.rel)"
-                :key="label"
-              >
-                <th scope="row">
-                  <span
-                    class="badge bg-primary"
-                    :style="{
-                      backgroundColor: ` ${getColor(label)} !important`,
-                      color: `black !important`,
-                    }"
-                  >
-                    {{ label }}
-                  </span>
-                </th>
-                <td>{{ counters.rel[label] }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div v-if="counters.total.node === 0 && counters.total.rel === 0">
-          <p>
-            <i class="fa-solid fa-circle-info" />
-            No nodes or rels to show.
-          </p>
+          <div v-if="counters.total.node === 0 && counters.total.rel === 0">
+            <p>
+              <i class="fa-solid fa-circle-info" />
+              No nodes or rels to show.
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -247,11 +245,15 @@ export default {
       required: false,
       default: "auto",
     },
+    isMaximized: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   emits: ["graphEmpty"],
   data: () => ({
     graphCreated: false,
-    isMaximized: false,
     isSidePanelOpen: false,
     isHighlightedMode: false,
     margin: UI_SIZE.DEFAULT_MARGIN,
@@ -279,6 +281,10 @@ export default {
     },
     draggedNodeDebounceTimer: null,
     expansions: [],
+    isResizing: false,
+    minSidebarWidth: 350,
+    maxSidebarWidth: 800,
+    isGraphLoading: false, // Added loading state
   }),
   computed: {
     graphVizSettings() {
@@ -354,12 +360,21 @@ export default {
   mounted() {
     this.computeGraphWidth();
     window.addEventListener("resize", this.handleResize);
+    window.addEventListener("mousemove", this.handleResizeMove);
+    window.addEventListener("mouseup", this.stopResize);
+    if (this.isMaximized) {
+      this.$nextTick(() => {
+        this.handleResize();
+      });
+    }
   },
   beforeUnmount() {
     if (this.g6Graph) {
       this.g6Graph.destroy();
     }
     window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("mousemove", this.handleResizeMove);
+    window.removeEventListener("mouseup", this.stopResize);
   },
   methods: {
     getColor(label) {
@@ -370,6 +385,7 @@ export default {
       return isNode ? "#ffffff" : "#000000";
     },
     drawGraph() {
+      this.isGraphLoading = true; // Show loading overlay
       if (this.graphCreated && this.g6Graph) {
         this.g6Graph.destroy();
       }
@@ -533,6 +549,7 @@ export default {
       // Fit the graph to view after rendering
       this.g6Graph.once('afterrender', () => {
         this.fitToView();
+        this.isGraphLoading = false; // Hide loading overlay after fit to view
       });
 
       this.g6Graph.on('node:mouseenter', (e) => {
@@ -1128,6 +1145,27 @@ export default {
       this.counters = counters;
       this.expansions.forEach(e => this.addDataWithQueryResult(e.neighbors));
     },
+
+    startResize(e) {
+      this.isResizing = true;
+      e.preventDefault();
+    },
+
+    handleResizeMove(e) {
+      if (!this.isResizing) return;
+      
+      const newWidth = window.innerWidth - e.clientX;
+      if (newWidth >= this.minSidebarWidth && newWidth <= this.maxSidebarWidth) {
+        this.sidebarWidth = newWidth;
+        this.$nextTick(() => {
+          this.handleResize();
+        });
+      }
+    },
+
+    stopResize() {
+      this.isResizing = false;
+    },
   },
 };
 </script>
@@ -1147,6 +1185,26 @@ export default {
     padding: 1rem;
   }
 
+  .graph-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bs-body-bg); /* Semi-transparent white background */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10; /* Ensure it's above the graph */
+    color: var(--bs-body-text);
+
+    .spinner-border {
+      margin-bottom: 10px;
+      color: var(--bs-body-bg-accent);
+    }
+  }
+
   .result-container__summary-section {
     display: flex;
     align-items: center;
@@ -1163,51 +1221,58 @@ export default {
     }
   }
 
-  .result-container__tools_container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-left: 2px solid var(--bs-body-shell);
-    background-color: var(--bs-body-bg-secondary);
-    flex-shrink: 0;
-    z-index: 1;
-    padding: 1rem 0.5rem;
-  }
-
-  .result-container__button {
-    padding-top: 4px;
-    padding-bottom: 4px;
-
-    >i {
-      cursor: pointer;
-
-      &:hover {
-        opacity: 0.7;
-      }
-
-      &:active {
-        opacity: 0.5;
-      }
-    }
-
-    >i.fa-maximize,
-    >i.fa-minimize {
-      color: $gray-500;
-    }
-  }
-
   .result-container__side-panel {
     position: absolute;
     right: 0;
     top: 0;
     bottom: 0;
+    border-top-left-radius: 1rem;
+    border-bottom-left-radius: 1rem;
     width: 350px;
-    overflow-x: hidden;
-    overflow-y: auto;
     background-color: var(--bs-body-bg-secondary);
-    padding: 1rem;
     z-index: 2;
+
+    .resize-handle {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+      cursor: col-resize;
+      background-color: transparent;
+      transition: background-color 0.2s;
+      z-index: 3;
+      pointer-events: auto;
+
+      &:hover, &:active {
+        background-color: var(--bs-body-bg-accent);
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 2px;
+        height: 30px;
+        background-color: var(--bs-body-bg-accent);
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      &:hover::after, &:active::after {
+        opacity: 1;
+      }
+    }
+
+    .result-container__side-panel-content {
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 1rem;
+      padding-left: 1.5rem;
+    }
 
     .close-sidebar-button {
       position: absolute;
@@ -1225,8 +1290,31 @@ export default {
       }
     }
 
+    .sidebar-actions{
+      width: calc(100% - 1rem);
+      gap: 3px;
+    }
+
     table {
-      max-width: calc(100% - 20px);
+      width: calc(100% - 1rem);
+      table-layout: auto;
+      border-collapse: collapse;
+      border-radius: 1rem;
+      overflow: hidden;
+      background-color: var(--bs-body-bg);
+      margin-bottom: 1rem;
+
+      th {
+        padding: 0.5rem 1rem;
+        max-width: 120px;
+        word-break: break-word;
+      }
+
+      td {
+        padding: 0.5rem 1rem;
+        max-width: 200px;
+        word-break: break-word;
+      }
 
       &.result-container__overview-table {
         table-layout: fixed;
@@ -1237,7 +1325,7 @@ export default {
       }
 
       &.result-container__result-table {
-        font-family: "Courier New", Courier, monospace;
+        font-family: "Lexend", Lexend, sans-serif;
 
         td {
           word-break: break-all;
@@ -1272,7 +1360,6 @@ export default {
       color: var(--bs-body-text);
       border-color: transparent;
       border-radius: 0.5rem;
-      margin-bottom: 0.5rem;
 
       &:hover {
         background-color: var(--bs-body-bg-hover);
@@ -1313,69 +1400,6 @@ export default {
     i {
       font-size: 1.2rem;
     }
-  }
-}
-
-.result-graph__toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-
-  label {
-    color: var(--bs-body-text);
-    font-size: 0.875rem;
-    cursor: pointer;
-  }
-
-  input {
-    appearance: none;
-    width: 2.75rem;
-    height: 1.25rem;
-    background-color: var(--bs-body-bg-secondary);
-    border-radius: 9999px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-
-    &:checked {
-      background-color: var(--bs-body-bg-accent);
-    }
-  }
-}
-
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 2.75rem;
-  height: 1.25rem;
-}
-
-.result-graph__group {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-self: flex-start;
-  margin-top: 0.5rem;
-  border-radius: 1rem;
-  padding: 0.5rem 1rem;
-  width: 100%;
-  background-color: var(--bs-body-bg);
-}
-
-.switch-slider {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1.25rem;
-  height: 1.25rem;
-  background-color: var(--bs-body-inactive);
-  border: 1px solid var(--bs-body-inactive);
-  border-radius: 9999px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  cursor: pointer;
-  transition: transform 0.3s;
-
-  .switch-input:checked + & {
-    transform: translateX(1.5rem);
   }
 }
 </style>

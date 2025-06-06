@@ -53,7 +53,7 @@
               :data-bs-original-title="maximizeButtonTitle"
             />
           </button>
-          <button @click="removeCell">
+          <button v-if="!isMaximized" @click="removeCell">
             <i class="fa-solid fa-times" />
           </button>
         </ul>
@@ -364,12 +364,19 @@ main {
   flex: 1;
   background-color: var(--bs-body-shell);
   padding: 1rem;
+  /* Ensure main takes up available space and handles overflow */
+  overflow: hidden; /* Prevent content overflow from affecting layout */
+  display: flex; /* Use flexbox for inner layout */
+  flex-direction: column; /* Stack inner divs vertically */
+
   div {
     height: 100%;
     width: 100%;
     resize: vertical;
     overflow: auto;
     min-height: 100px;
+    /* Add flex-grow to make the editor div fill the available space */
+    flex-grow: 1;
 
     &::-webkit-scrollbar {
       display: none;

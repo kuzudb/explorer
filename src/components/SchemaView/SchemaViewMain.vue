@@ -887,13 +887,33 @@ export default {
     background-color: (var(--bs-body-bg-secondary));
     border-bottom-left-radius: 1rem;
     border-top-left-radius: 1rem;
-  }
 
-  .sidebar-content {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 100%;
+    .sidebar-content {
+      height: 100%;
+      width: calc(100% - 1rem);
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 1rem;
+
+      :deep(table) {
+        border-radius: 0.5rem;
+        overflow: hidden;
+        background-color: var(--bs-body-bg);
+        
+        th {
+        padding: 10px;
+        max-width: 120px;
+        word-break: break-word;
+      }
+
+      td {
+        padding-left: 10px;
+        padding-right: 5px;
+        max-width: 200px;
+        word-break: break-word;
+      }
+      }
+    }
   }
 }
 

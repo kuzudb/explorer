@@ -158,13 +158,18 @@ export default {
   }
 
   table {
-    width: 100%;
+    max-width: 280px;
     margin-bottom: 0;
+    table-layout: fixed;
+    
     th,
     td {
       padding: 5px;
       border: none;
       color: var(--bs-body-color);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     th {

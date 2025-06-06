@@ -128,7 +128,7 @@
               <a
                 aria-hidden="true"
                 href="#"
-                @click.prevent="modeStore.toggleTheme()"
+                @click.prevent="handleThemeToggle()"
               >
                 <i :class="['fa-solid', modeStore.theme === 'vs-dark' ? 'fa-sun' : 'fa-moon']" />
                 <span class="hide-on-collapse">{{ modeStore.theme === 'vs-dark' ? 'Light' : 'Dark' }}</span>
@@ -314,11 +314,18 @@ export default {
   },
   async created() {
     await this.getMode();
+    // Read theme preference from cookie and apply it
+    const savedTheme = this.getCookie('themePreference');
+    if (savedTheme) {
+      this.modeStore.setTheme(savedTheme); // Assuming a setTheme action/mutation exists
+    }
+
     if (this.modeStore.isWasm) {
       this.isKuzuWasmInitialized = false;
       await Kuzu.init();
       this.isKuzuWasmInitialized = true;
     }
+
     const res = await Promise.all([this.getSchema(), this.getStoredSettings()])
     let storedSettings = res[1];
     if (!storedSettings || Object.keys(storedSettings).length === 0) {
@@ -371,9 +378,16 @@ export default {
       const mode = response.data.mode;
       this.modeStore.setMode(mode);
       this.$nextTick(() => {
-        if (this.modeStore.isDemo) {
-          this.accessModeModal.show();
-          this.toggleImporter(true);
+        // Check if WASM modal has been seen. If in demo mode and not seen,
+        // show the modal and set the cookie.
+        const wasmModalSeen = this.getCookie('wasmModalSeen');
+        if (this.modeStore.isDemo && !wasmModalSeen) {
+           this.accessModeModal.show();
+           this.setCookie('wasmModalSeen', 'true', 365); // Set cookie for 365 days
+           this.toggleImporter(true);
+        } else if (this.modeStore.isDemo) {
+          // If in demo mode but WASM modal has been seen, still go to importer view
+           this.toggleImporter(true);
         }
       });
     },
@@ -409,6 +423,10 @@ export default {
     },
     updatePlaceholderRelTable(newTable) {
       const table = this.schema.relTables.find((t) => t.isPlaceholder);
+      if (!table) {
+        console.error("Placeholder relationship table not found in schema.");
+        return;
+      }
       if (newTable.name) {
         table.name = newTable.name;
       }
@@ -494,7 +512,34 @@ export default {
       'setPlaceholderRelTable',
       'unsetPlaceholderNodeTable',
       'unsetPlaceholderRelTable',
-    ])
+    ]),
+    // Manual cookie handling methods
+    setCookie(name, value, days) {
+      let expires = "";
+      if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    },
+    getCookie(name) {
+      const nameEQ = name + "=";
+      const ca = document.cookie.split(';');
+      for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    },
+    // Handle theme toggle, save to cookie, then update store
+    handleThemeToggle() {
+      const currentTheme = this.modeStore.theme;
+      const nextTheme = currentTheme === 'vs-dark' ? 'vs-light' : 'vs-dark';
+      this.setCookie('themePreference', nextTheme, 365); // Save preference for 365 days
+      this.modeStore.toggleTheme(); // Let the store handle the actual theme change
+    },
   },
 };
 </script>
@@ -633,16 +678,6 @@ body {
     .nav-item {
        padding-left: 14px;
     }
-  }
-
-  .bottom-fixed-item {
-    /* position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: var(--bs-body-bg-secondary);
-    z-index: 1;
-    padding-left: 14px; */
   }
 }
 
