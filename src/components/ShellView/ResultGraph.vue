@@ -201,12 +201,12 @@
     <button
       v-show="!isSidePanelOpen"
       class="open-sidebar-button"
-      @click="toggleSidePanel"
       data-bs-toggle="tooltip"
       data-bs-placement="right"
       data-bs-original-title="Open Sidebar"
+      @click="toggleSidePanel"
     >
-      <i class="fa-lg fa-solid fa-angle-left"></i>
+      <i class="fa-lg fa-solid fa-angle-left" />
     </button>
   </div>
 </template>

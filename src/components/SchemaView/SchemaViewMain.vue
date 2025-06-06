@@ -56,63 +56,63 @@
       ref="sidePanel"
       class="schema_side-panel__wrapper"
     >
-    <div class="sidebar-content">
-      <br>
-      <SchemaSidebarOverview
-        v-if="schema"
-        v-show="!hoveredLabel && clickedLabel === null"
-        ref="overview"
-        :schema="schema"
-        @drop-table="dropTable"
-        @edit-table="enterEditTableMode"
-        @add-node-table="enterAddNodeTableMode"
-        @add-rel-table="enterAddRelTableMode"
-      />
-      <!-- Read only view for hovered label -->
-      <!-- If edit view is shown, hovering over another label will not change the view -->
-      <SchemaSidebarReadOnlyView
-        v-if="hoveredLabel !== null && (clickedLabel === null || isClickedReadOnly())"
-        :schema="schema"
-        :label="hoveredLabel"
-        :is-node="hoveredIsNode"
-      />
-      <!-- Read only view for clicked label (if it cannot be edited) -->
-      <SchemaSidebarReadOnlyView
-        v-if="clickedLabel !== null && hoveredLabel === null && isClickedReadOnly()"
-        :schema="schema"
-        :label="clickedLabel"
-        :is-node="clickedIsNode"
-      />
-      <!-- Edit view for clicked label -->
-      <SchemaSidebarEditView
-        v-if="clickedLabel !== null && !clickedIsNewTable && !isClickedReadOnly()"
-        ref="editView"
-        :schema="schema"
-        :label="clickedLabel"
-        :is-node="clickedIsNode"
-        @drop-property="dropProperty"
-        @back="resetClick"
-        @drop-table="dropTable"
-        @rename-property="renameProperty"
-        @rename-table="renameTable"
-        @add-property="addProperty"
-        @set-placeholder="setPlaceholder"
-        @unset-placeholder="unsetPlaceholder"
-        @set-placeholder-label="setPlaceholderLabelForEditView"
-      />
-      <SchemaSidebarAddView
-        v-if="clickedLabel !== null && clickedIsNewTable"
-        ref="addView"
-        :schema="schema"
-        :label="clickedLabel"
-        :is-node="clickedIsNode"
-        @discard="cancelAdd"
-        @save="addNewTable"
-        @update-node-table-label="updatePlaceholderNodeTableLabel"
-        @update-placeholder-rel-table="updatePlaceholderRelTable"
-      />
+      <div class="sidebar-content">
+        <br>
+        <SchemaSidebarOverview
+          v-if="schema"
+          v-show="!hoveredLabel && clickedLabel === null"
+          ref="overview"
+          :schema="schema"
+          @drop-table="dropTable"
+          @edit-table="enterEditTableMode"
+          @add-node-table="enterAddNodeTableMode"
+          @add-rel-table="enterAddRelTableMode"
+        />
+        <!-- Read only view for hovered label -->
+        <!-- If edit view is shown, hovering over another label will not change the view -->
+        <SchemaSidebarReadOnlyView
+          v-if="hoveredLabel !== null && (clickedLabel === null || isClickedReadOnly())"
+          :schema="schema"
+          :label="hoveredLabel"
+          :is-node="hoveredIsNode"
+        />
+        <!-- Read only view for clicked label (if it cannot be edited) -->
+        <SchemaSidebarReadOnlyView
+          v-if="clickedLabel !== null && hoveredLabel === null && isClickedReadOnly()"
+          :schema="schema"
+          :label="clickedLabel"
+          :is-node="clickedIsNode"
+        />
+        <!-- Edit view for clicked label -->
+        <SchemaSidebarEditView
+          v-if="clickedLabel !== null && !clickedIsNewTable && !isClickedReadOnly()"
+          ref="editView"
+          :schema="schema"
+          :label="clickedLabel"
+          :is-node="clickedIsNode"
+          @drop-property="dropProperty"
+          @back="resetClick"
+          @drop-table="dropTable"
+          @rename-property="renameProperty"
+          @rename-table="renameTable"
+          @add-property="addProperty"
+          @set-placeholder="setPlaceholder"
+          @unset-placeholder="unsetPlaceholder"
+          @set-placeholder-label="setPlaceholderLabelForEditView"
+        />
+        <SchemaSidebarAddView
+          v-if="clickedLabel !== null && clickedIsNewTable"
+          ref="addView"
+          :schema="schema"
+          :label="clickedLabel"
+          :is-node="clickedIsNode"
+          @discard="cancelAdd"
+          @save="addNewTable"
+          @update-node-table-label="updatePlaceholderNodeTableLabel"
+          @update-placeholder-rel-table="updatePlaceholderRelTable"
+        />
+      </div>
     </div>
-  </div>
     <SchemaActionDialog
       ref="actionDialog"
       @reload-schema="reloadSchema"
