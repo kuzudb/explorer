@@ -4,7 +4,7 @@
     class="importer-sidebar"
   >
     <button
-      class="importer-sidebar__btn importer-sidebar__btn--primary btn btn-primary"
+      class="importer-sidebar__btn"
       @click="$emit('addFiles')"
     >
       <i class="fa-solid fa-plus" />
@@ -210,6 +210,10 @@ export default {
   display: flex;
   flex-direction: column;
 
+  button { 
+    background-color: var(--bs-body-accent);
+  }
+
   .importer-sidebar__alert {
     margin-bottom: 10px;
     margin-top: 10px;
@@ -222,9 +226,10 @@ export default {
   }
 
   .importer-sidebar__btn {
-    &--primary {
-      width: 100%;
-    }
+    background-color: var(--bs-body-accent);
+    border: 0;
+    width: 100%;
+    
   }
 
   .importer-sidebar__actions {

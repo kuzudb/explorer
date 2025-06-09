@@ -3,10 +3,11 @@
     <div>
       <h5>
         <span
-          class="badge bg-primary"
+          class="badge bg-[var(--bs-body-accent)]"
           :style="{
             backgroundColor: ` ${getColor(label)} !important`,
             color: isNode ? '#ffffff' : '#000000',
+            textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
           }"
         >
           {{ label }}
@@ -20,9 +21,10 @@
           :key="conn"
         >
           <span
-            class="badge bg-primary"
+            class="badge bg-[var(--bs-body-accent)]"
             :style="{
               backgroundColor: ` ${getColor(conn.src)} !important`,
+              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
             }"
           >
             {{ conn.src }}
@@ -31,9 +33,10 @@
           <i class="fa-solid fa-arrow-right" />
           &nbsp;
           <span
-            class="badge bg-primary"
+            class="badge bg-[var(--bs-body-accent)]"
             :style="{
               backgroundColor: ` ${getColor(conn.dst)} !important`,
+              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
             }"
           >
             {{ conn.dst }}
@@ -70,7 +73,8 @@
               {{ property.name }}
               <span
                 v-if="property.isPrimaryKey"
-                class="badge bg-primary"
+                class="badge bg-[var(--bs-body-accent)]"
+                :style="{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }"
               > PK </span>
             </td>
             <td>

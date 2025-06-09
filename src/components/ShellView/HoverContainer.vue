@@ -1,34 +1,38 @@
 <template>
-  <div
-    v-show="tooltipVisible"
-    class="result-graph__graph-tooltip"
-    :style="{ left: tooltipX + 'px', top: tooltipY + 'px' }"
-  >
-    <div class="result-graph__tooltip-header">
-      <span
-        class="badge bg-primary"
-        :style="{
-          backgroundColor: `${getColor(hoveredLabel)} !important`,
-          color: `${getTextColor(hoveredLabel)} !important`,
-        }"
-      >
-        {{ hoveredLabel }}</span>
-    </div>
-    <p>{{ hoveredIsNode ? 'Node' : 'Rel' }}</p>
-    <hr>
-    <table class="table table-sm table-borderless">
-      <tbody>
-        <tr
-          v-for="property in hoveredProperties"
-          :key="property.name"
+  <div>
+    <div
+      v-show="tooltipVisible"
+      class="result-graph__graph-tooltip"
+      :style="{ left: tooltipX + 'px', top: tooltipY + 'px' }"
+    >
+      <div class="result-graph__tooltip-header">
+        <span
+          class="badge bg-primary"
+          :style="{
+            backgroundColor: `${getColor(hoveredLabel)} !important`,
+            color: `${getTextColor(hoveredLabel)} !important`,
+            textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+            fill: '#FFFFFF'
+          }"
         >
-          <th scope="row">
-            {{ property.name }}
-          </th>
-          <td>{{ property.value }}</td>
-        </tr>
-      </tbody>
-    </table>
+          {{ hoveredLabel }}</span>
+      </div>
+      <p>{{ hoveredIsNode ? 'Node' : 'Rel' }}</p>
+      <hr>
+      <table class="table table-sm table-borderless">
+        <tbody>
+          <tr
+            v-for="property in hoveredProperties"
+            :key="property.name"
+          >
+            <th scope="row">
+              {{ property.name }}
+            </th>
+            <td>{{ property.value }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -66,8 +70,7 @@ export default {
             return this.settingsStore.colorForLabel(label);
         },
         getTextColor(label) {
-            const isNode = this.schema.nodeTables.find((table) => table.name === label);
-            return isNode ? "#ffffff" : "#000000";
+            return "#ffffff";
         },
         
         handleHover(model, event) {
@@ -141,6 +144,7 @@ export default {
     .badge {
         font-size: 1em;
         padding: 0.4em 0.6em;
+        color: #ffffff;
     }
   }
 

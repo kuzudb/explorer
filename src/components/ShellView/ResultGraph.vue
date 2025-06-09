@@ -95,7 +95,8 @@
             class="badge bg-primary"
             :style="{
               backgroundColor: `${getColor(displayLabel)} !important`,
-              color: `${getTextColor(displayLabel)} !important`,
+              color: `white !important`,
+              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
             }"
           >
             {{ displayLabel }}</span>
@@ -111,6 +112,7 @@
                   <span
                     v-if="property.isPrimaryKey"
                     class="badge bg-primary"
+                    style="text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; color: white !important;"
                   >PK</span>
                 </th>
                 <td>{{ property.value }}</td>
@@ -147,7 +149,7 @@
                   <th scope="row">
                     <span
                       class="badge bg-primary"
-                      :style="{ backgroundColor: ` ${getColor(label)} !important` }"
+                      :style="{ backgroundColor: ` ${getColor(label)} !important`, textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: 'white !important' }"
                     >{{ label
                     }}</span>
                   </th>
@@ -177,7 +179,8 @@
                       class="badge bg-primary"
                       :style="{
                         backgroundColor: ` ${getColor(label)} !important`,
-                        color: `black !important`,
+                        color: 'white !important',
+                        textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
                       }"
                     >
                       {{ label }}
@@ -319,6 +322,12 @@ export default {
       return this.clickedProperties;
     },
     ...mapStores(useSettingsStore, useModeStore),
+    getTextColor() {
+      return (label) => {
+        const isNode = this.schema.nodeTables.find((table) => table.name === label);
+        return isNode ? "#ffffff" : "#ffffff";
+      };
+    },
   },
   watch: {
     performanceSettings: {
@@ -380,10 +389,6 @@ export default {
     getColor(label) {
       return this.settingsStore.colorForLabel(label);
     },
-    getTextColor(label) {
-      const isNode = this.schema.nodeTables.find((table) => table.name === label);
-      return isNode ? "#ffffff" : "#000000";
-    },
     drawGraph() {
       this.isGraphLoading = true; // Show loading overlay
       if (this.graphCreated && this.g6Graph) {
@@ -397,6 +402,8 @@ export default {
       if (nodes.length === 0) {
         this.$emit("graphEmpty");
       }
+      console.log("Nodes data sent to G6:", nodes);
+      console.log("Edges data sent to G6:", edges);
       const container = this.$refs.graph;
       const width = container.offsetWidth;
       const height = container.offsetHeight;
@@ -426,13 +433,19 @@ export default {
             opacity: 0.2,
           },
         },
-        defaultEdge: this.settingsStore.defaultRel,
+        defaultEdge: {
+          ...this.settingsStore.defaultRel,
+          style: {
+            ...this.settingsStore.defaultRel.style,
+            startArrow: false,
+          },
+        },
         edgeStateStyles: {
           hover: {
-            stroke: '#1848FF',
+            stroke: '#1890FF',
             endArrow: {
               path: G6.Arrow.triangle(),
-              fill: '#1848FF',
+              fill: '#1890FF',
             },
           },
           click: {
@@ -678,9 +691,18 @@ export default {
         nodeLabels[rawNode._id.table] = rawNode._label;
         const nodeSettings = this.settingsStore.settingsForLabel(rawNode._label);
         const g6Node = {
-          ...nodeSettings.g6Settings,
           id: nodeId,
           properties: rawNode,
+          ...nodeSettings.g6Settings,
+          labelCfg: {
+            ...nodeSettings.g6Settings.labelCfg,
+            style: {
+              ...nodeSettings.g6Settings.labelCfg.style,
+              fill: "#ffffff",
+              stroke: "#000000",
+              lineWidth: 2,
+            }
+          }
         }
         if (nodes[nodeId]) {
           return;
@@ -703,19 +725,37 @@ export default {
           const fontSize = nodeSettings.g6Settings.labelCfg.style.fontSize;
           g6Node.label = G6Utils.fittingString(g6Node.label, nodeSize - 6, fontSize);
         }
+        g6Node.style.stroke = G6Utils.shadeColor(g6Node.style.fill);
         nodes[nodeId] = g6Node;
-      }
+      };
 
       const processRel = (rawRel) => {
         const relSettings = this.settingsStore.settingsForLabel(rawRel._label);
         const relId = this.encodeId(rawRel._id);
         const numberOfOverlappingRels = increaseRelCounter(rawRel._src, rawRel._dst);
         const g6Rel = {
-          ...relSettings.g6Settings,
           id: relId,
           properties: rawRel,
           source: this.encodeId(rawRel._src),
           target: this.encodeId(rawRel._dst),
+          ...relSettings.g6Settings,
+          labelCfg: {
+            ...relSettings.g6Settings.labelCfg,
+            style: {
+              ...relSettings.g6Settings.labelCfg.style,
+              fill: "#ffffff",
+              stroke: "#000000",
+              lineWidth: 2,
+            }
+          },
+          style: {
+            ...relSettings.g6Settings.style,
+            endArrow: {
+              path: G6.Arrow.triangle(),
+              fill: '#E2E2E2',
+            },
+            startArrow: false,
+          },
         }
         if (g6Rel.source === g6Rel.target) {
           g6Rel.type = "loop";
@@ -1308,12 +1348,15 @@ export default {
         padding: 0.5rem 1rem;
         max-width: 120px;
         word-break: break-word;
+        
       }
 
       td {
         padding: 0.5rem 1rem;
         max-width: 200px;
         word-break: break-word;
+        
+        
       }
 
       &.result-container__overview-table {
@@ -1329,6 +1372,7 @@ export default {
 
         td {
           word-break: break-all;
+          
         }
       }
     }
@@ -1344,7 +1388,7 @@ export default {
     }
 
     .badge {
-      background-color: #f08080 !important;
+      background-color: var(--bs-body-bg-accent) !important;
       color: #fff !important;
       border-radius: 0.5rem;
       padding: 0.35em 0.65em;
@@ -1373,6 +1417,10 @@ export default {
     button.btn-outline-primary {
       background-color: var(--bs-body-bg-accent);
       color: var(--bs-body-bg);
+    }
+
+    .badge.bg-primary {
+      color: white !important;
     }
   }
 

@@ -167,7 +167,7 @@ export default {
   data: () => ({
     graphCreated: false,
     toolbarWidth: UI_SIZE.SHELL_TOOL_BAR_WIDTH,
-    sidebarWidth: 500,
+    sidebarWidth: 510,
     graphWidth: 0,
     graphHeight: 0,
     borderWidth: UI_SIZE.DEFAULT_BORDER_WIDTH,
@@ -267,30 +267,15 @@ export default {
         linkCenter: false,
         groupByTypes: false,
         layout: this.getLayoutConfig(edges),
-        defaultNode: {
-          shape: "circle",
-          labelCfg: {
-            style: {
-              fontSize: 14,
-              fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
-              fontWeight: 500,
-              fill: "#ffffff",
-            },
-          },
-          size: 100,
-          style: {
-            lineWidth: 0,
-            fill: "#FF0000",
-          },
-        },
+        defaultNode: this.settingsStore.defaultNode,
         nodeStateStyles: {
           hover: {
-            lineWidth: 4,
+            lineWidth: 3,
             stroke: '#1890FF',
           },
           click: {
-            lineWidth: 4,
-            stroke: '#1848FF',
+            lineWidth: 3,
+            stroke: '#1890FF',
           },
         },
         defaultEdge: {
@@ -444,19 +429,26 @@ export default {
     extractGraphFromSchema(schema) {
       const overlapEdgeHash = {};
       const nodes = schema.nodeTables.map(n => {
+        const fillColor = n.isPlaceholder ? this.getColor(PLACEHOLDER_NODE_TABLE) : this.getColor(n.name);
         const returnVal = {
           id: n.name,
           label: n.name,
           _label: n.name,
           isPlaceholder: Boolean(n.isPlaceholder),
           style: {
-            fill:
-              n.isPlaceholder ? this.getColor(PLACEHOLDER_NODE_TABLE) : this.getColor(n.name),
+            fill: fillColor,
             lineWidth: 4,
-
+            stroke: G6Utils.shadeColor(fillColor),
+          },
+          labelCfg: {
+            style: {
+              ...this.settingsStore.defaultNode.labelCfg.style,
+              fill: "#ffffff",
+              stroke: '#000000',
+              lineWidth: 2,
+            },
           },
         };
-        returnVal.style.stroke = G6Utils.shadeColor(returnVal.style.fill);
         return returnVal;
       });
 
@@ -486,6 +478,7 @@ export default {
           continue;
         }
         for (const conn of r.connectivity) {
+          const strokeColor = r.isPlaceholder ? this.getColor(PLACEHOLDER_REL_TABLE) : this.getColor(r.name);
           const edge = {
             id: this.getEdgeId(conn.src, conn.dst, r.name),
             source: conn.src,
@@ -494,8 +487,16 @@ export default {
             _label: r.name,
             isPlaceholder: Boolean(r.isPlaceholder),
             style: {
-              stroke: r.isPlaceholder ? this.getColor(PLACEHOLDER_REL_TABLE) : this.getColor(r.name),
-            }
+              stroke: strokeColor,
+            },
+            labelCfg: {
+              style: {
+                ...this.settingsStore.defaultRel.labelCfg.style,
+                fill: "#ffffff",
+                stroke: '#000000',
+                lineWidth: 2,
+              },
+            },
           };
           if (!edge.source || !edge.target) {
             continue;

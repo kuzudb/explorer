@@ -121,7 +121,7 @@
     <div class="dataset-view__footer">
       <button
         v-if="!datasetLoadingEnded"
-        class="btn btn-lg btn-primary"
+        class="accent-btn"
         title="Load Dataset"
         :disabled="(!isSchemaEmpty && isProduction) ||
           !selectedDatasetSchema ||
@@ -136,7 +136,7 @@
 
       <button
         v-if="datasetLoadingEnded"
-        class="btn btn-lg btn-primary"
+        class="accent-btn"
         title="OK"
         @click="confirmDatasetLoading"
       >
@@ -371,7 +371,27 @@ export default {
   .dataset-view__footer {
     margin-top: 20px;
     text-align: left;
+    
   }
+
+  button.accent-btn {
+  color: var(--bs-body-text);
+  background-color: var(--bs-body-accent);
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(255, 87, 34, 0.85); /* fallback or slightly darker tone */
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
 
   .alert-and-button-wrapper {
     display: flex;

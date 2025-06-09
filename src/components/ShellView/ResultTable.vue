@@ -58,7 +58,7 @@
               :key="header.text"
             >
               {{ header.text }}
-              <span class="badge bg-primary">{{ header.type }}</span>
+              <span class="badge bg-[var(--bs-body-accent)]">{{ header.type }}</span>
             </th>
           </tr>
         </thead>
