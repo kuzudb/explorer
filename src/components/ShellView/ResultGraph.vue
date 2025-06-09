@@ -9,11 +9,19 @@
       :style="{ width: graphWidth + 'px' }"
     />
     <!-- Loading Overlay -->
-    <div v-if="isGraphLoading" class="graph-loading-overlay">
-      <div class="spinner-border" role="status">
+    <div
+      v-if="isGraphLoading"
+      class="graph-loading-overlay"
+    >
+      <div
+        class="spinner-border"
+        role="status"
+      >
         <span class="visually-hidden">Loading...</span>
       </div>
-      <div class="loading-text">Rendering Graph...</div>
+      <div class="loading-text">
+        Rendering Graph...
+      </div>
     </div>
     
     <HoverContainer
@@ -29,13 +37,22 @@
       class="result-container__side-panel"
       :style="{ width: sidebarWidth + 'px' }"
     >
-      <div class="resize-handle" @mousedown="startResize"></div>
+      <div
+        class="resize-handle"
+        @mousedown="startResize"
+      />
       <div class="result-container__side-panel-content">
-        <button class="close-sidebar-button" @click="toggleSidePanel">
-          <i class="fa-solid fa-times"></i>
+        <button
+          class="close-sidebar-button"
+          @click="toggleSidePanel"
+        >
+          <i class="fa-solid fa-times" />
         </button>
 
-        <div v-if="clickedIsNode" class="sidebar-actions">
+        <div
+          v-if="clickedIsNode"
+          class="sidebar-actions"
+        >
           <br>
 
           <h5>Actions</h5>
@@ -165,7 +182,7 @@
               Showing
               <span v-if="numHiddenRels > 0">
                 {{ counters.total.rel - numHiddenRels }}/</span>{{ counters.total.rel }} rels
-            <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
+              <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
             </p>
             <hr>
             <table class="table table-sm table-borderless result-container__overview-table">

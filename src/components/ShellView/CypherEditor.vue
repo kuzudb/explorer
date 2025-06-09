@@ -54,7 +54,10 @@
               :data-bs-original-title="maximizeButtonTitle"
             />
           </button>
-          <button v-if="!isMaximized" @click="removeCell">
+          <button
+            v-if="!isMaximized"
+            @click="removeCell"
+          >
             <i class="fa-solid fa-times" />
           </button>
         </ul>
