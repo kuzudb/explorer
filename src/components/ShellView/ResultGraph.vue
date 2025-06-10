@@ -5,13 +5,13 @@
   >
     <div
       ref="graph"
-      class="result_container__graph"
+      class="result-graph__container"
       :style="{ width: graphWidth + 'px' }"
     />
     <!-- Loading Overlay -->
     <div
       v-if="isGraphLoading"
-      class="graph-loading-overlay"
+      class="result-graph__loading-overlay"
     >
       <div
         class="spinner-border"
@@ -19,7 +19,7 @@
       >
         <span class="visually-hidden">Loading...</span>
       </div>
-      <div class="loading-text">
+      <div class="result-graph__loading-text">
         Rendering Graph...
       </div>
     </div>
@@ -34,16 +34,16 @@
     <div
       v-show="isSidePanelOpen"
       ref="sidePanel"
-      class="result-container__side-panel"
+      class="result-graph__side-panel"
       :style="{ width: sidebarWidth + 'px' }"
     >
       <div
         class="resize-handle"
         @mousedown="startResize"
       />
-      <div class="result-container__side-panel-content">
+      <div class="result-graph__side-panel-content">
         <button
-          class="close-sidebar-button"
+          class="result-graph__sidebar-button--close"
           @click="toggleSidePanel"
         >
           <i class="fa-solid fa-times" />
@@ -51,7 +51,7 @@
 
         <div
           v-if="clickedIsNode"
-          class="sidebar-actions"
+          class="result-graph__actions"
         >
           <br>
 
@@ -105,7 +105,7 @@
 
         <br>
         <div v-if="displayLabel">
-          <div class="result-container__summary-section">
+          <div class="result-graph__summary-section">
             <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
           </div>
           <span
@@ -118,7 +118,7 @@
           >
             {{ displayLabel }}</span>
           <hr>
-          <table class="table table-sm table-borderless result-container__result-table">
+          <table class="table table-sm table-borderless result-graph__result-table">
             <tbody>
               <tr
                 v-for="property in displayProperties"
@@ -140,7 +140,7 @@
         <div v-else>
           <h5>Overview</h5>
           <div v-if="counters.total.node > 0">
-            <div class="result-container__summary-section">
+            <div class="result-graph__summary-section">
               <p>
                 Showing
                 <span v-if="numHiddenNodes > 0">
@@ -157,7 +157,7 @@
               </button>
             </div>
             <hr>
-            <table class="table table-sm table-borderless result-container__overview-table">
+            <table class="table table-sm table-borderless result-graph__overview-table">
               <tbody>
                 <tr
                   v-for="label in Object.keys(counters.node)"
@@ -185,7 +185,7 @@
               <span v-if="numHiddenRels > 0"> ({{ numHiddenRels }} hidden) </span>
             </p>
             <hr>
-            <table class="table table-sm table-borderless result-container__overview-table">
+            <table class="table table-sm table-borderless result-graph__overview-table">
               <tbody>
                 <tr
                   v-for="label in Object.keys(counters.rel)"
@@ -220,7 +220,7 @@
     </div>
     <button
       v-show="!isSidePanelOpen"
-      class="open-sidebar-button"
+      class="result-graph__sidebar-button--open"
       data-bs-toggle="tooltip"
       data-bs-placement="right"
       data-bs-original-title="Open Sidebar"
@@ -772,6 +772,7 @@ export default {
               fill: '#E2E2E2',
             },
             startArrow: false,
+           
           },
         }
         if (g6Rel.source === g6Rel.target) {
@@ -1235,20 +1236,20 @@ export default {
   flex-direction: row;
   position: relative;
 
-  .result_container__graph {
+  .result-graph__container {
     height: 100%;
     flex: 1 1 0%;
     min-width: 0;
     padding: 1rem;
   }
 
-  .graph-loading-overlay {
+  .result-graph__loading-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--bs-body-bg); /* Semi-transparent white background */
+    background-color: var(--bs-body-bg);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1262,7 +1263,7 @@ export default {
     }
   }
 
-  .result-container__summary-section {
+  .result-graph__summary-section {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1278,7 +1279,7 @@ export default {
     }
   }
 
-  .result-container__side-panel {
+  .result-graph__side-panel {
     position: absolute;
     right: 0;
     top: 0;
@@ -1323,7 +1324,7 @@ export default {
       }
     }
 
-    .result-container__side-panel-content {
+    .result-graph__side-panel-content {
       height: 100%;
       overflow-x: hidden;
       overflow-y: auto;
@@ -1331,7 +1332,7 @@ export default {
       padding-left: 1.5rem;
     }
 
-    .close-sidebar-button {
+    .result-graph__sidebar-button--close {
       position: absolute;
       top: 1rem;
       right: 1rem;
@@ -1347,7 +1348,7 @@ export default {
       }
     }
 
-    .sidebar-actions{
+    .result-graph__actions{
       width: calc(100% - 1rem);
       gap: 3px;
     }
@@ -1376,7 +1377,7 @@ export default {
         
       }
 
-      &.result-container__overview-table {
+      &.result-graph__overview-table {
         table-layout: fixed;
 
         td {
@@ -1384,7 +1385,7 @@ export default {
         }
       }
 
-      &.result-container__result-table {
+      &.result-graph__result-table {
         font-family: "Lexend", Lexend, sans-serif;
 
         td {
@@ -1441,7 +1442,7 @@ export default {
     }
   }
 
-  .open-sidebar-button {
+  .result-graph__sidebar-button--open {
     position: absolute;
     right: 0;
     top: 50%;

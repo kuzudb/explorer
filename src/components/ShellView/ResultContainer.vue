@@ -378,6 +378,34 @@ export default {
   &.is-error-container {
     min-height: 0;
   }
+
+  :deep(.badge) {
+    position: relative;
+    display: inline-block;
+    margin-right: 4px;
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    padding-bottom: 4px;
+  }
+
+  :deep(table) {
+    td, th {
+      position: relative;
+      padding-right: 8px;
+      padding-bottom: 8px;
+      
+      .badge {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        max-width: calc(100% - 8px);
+        word-break: break-word;
+        padding-bottom: 4px;
+      }
+    }
+  }
 }
 
 .result-container__wrapper {

@@ -6,7 +6,7 @@
           class="badge bg-[var(--bs-body-accent)]"
           :style="{
             backgroundColor: ` ${getColor(label)} !important`,
-            color: isNode ? '#ffffff' : '#000000',
+            color:'#ffffff',
             textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
           }"
         >
@@ -24,6 +24,7 @@
             class="badge bg-[var(--bs-body-accent)]"
             :style="{
               backgroundColor: ` ${getColor(conn.src)} !important`,
+              color: '#FFFFFF',
               textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
             }"
           >
@@ -36,6 +37,7 @@
             class="badge bg-[var(--bs-body-accent)]"
             :style="{
               backgroundColor: ` ${getColor(conn.dst)} !important`,
+              color: '#FFFFFF',
               textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
             }"
           >
@@ -74,7 +76,7 @@
               <span
                 v-if="property.isPrimaryKey"
                 class="badge bg-[var(--bs-body-accent)]"
-                :style="{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }"
+                :style="{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: '#FFFFFF', }"
               > PK </span>
             </td>
             <td>

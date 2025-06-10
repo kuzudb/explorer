@@ -26,7 +26,7 @@
             >
               <span
                 class="badge bg-[var(--bs-body-accent)]"
-                :style="{ backgroundColor: `${getColor(nodeTable.name)} !important`, textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }"
+                :style="{ backgroundColor: `${getColor(nodeTable.name)} !important`, textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' , color: '#FFFFFF',}"
               >{{ nodeTable.name }}</span>
               <br>
               <small>
@@ -102,7 +102,7 @@
                 class="badge bg-[var(--bs-body-accent)]"
                 :style="{
                   backgroundColor: ` ${getColor(relTable.name)} !important`,
-                  color: '#000000',
+                  color: '#FFFFFF',
                   textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
                 }"
               >

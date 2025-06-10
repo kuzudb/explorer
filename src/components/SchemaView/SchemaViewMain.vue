@@ -877,14 +877,14 @@ export default {
   }
 
   .schema_side-panel__wrapper {
-    width: 500px;
+    width: 510px;
     height: 100%;
     padding-left: 12px;
     padding-right: 12px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    border-left: 2px solid (var(--bs-body-inactive));
+    
     background-color: (var(--bs-body-bg-secondary));
     border-bottom-left-radius: 1rem;
     border-top-left-radius: 1rem;

@@ -10,7 +10,7 @@
             class="form-control"
             :style="{
               backgroundColor: `${getColor()} !important`,
-              color: isNode ? '#ffffff' : '#000000',
+              color: '#FFFFFF',
               textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
             }"
           >
@@ -441,7 +441,7 @@ export default {
 <style scoped lang="scss">
 .schema_side-panel__add-table-actions-container {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.25rem;
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: center;

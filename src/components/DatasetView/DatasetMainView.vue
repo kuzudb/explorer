@@ -107,7 +107,7 @@
     </div>
 
     <!-- Main content area (code block) -->
-    <div class="dataset-view__main-content">
+    <div class="dataset-view__content">
       <code 
         v-if="selectedDatasetSchema || datasetLoadingLog"
         ref="codeBlock"
@@ -338,7 +338,7 @@ export default {
   flex-direction: column;
   overflow: hidden;
 
-  .dataset-view__main-content {
+  .dataset-view__content {
     flex-grow: 1;
     overflow-y: auto;
     display: flex;
@@ -384,7 +384,7 @@ export default {
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: rgba(255, 87, 34, 0.85); /* fallback or slightly darker tone */
+    background-color: rgba(255, 87, 34, 0.85); 
   }
 
   &:disabled {

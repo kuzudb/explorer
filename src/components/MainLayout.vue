@@ -4,8 +4,8 @@
       class="wrapper"
       :class="{ 'toggled': isSidebarCollapsed }"
     >
-      <div class="sidebar-wrapper">
-        <ul class="sidebar-nav">
+      <div class="main-layout__sidebar">
+        <ul class="main-layout__sidebar-nav">
           <li>
             <ul
               v-if="modeStore.isReadOnly"
@@ -29,7 +29,7 @@
                 >Instructions</span>
               </li>
             </ul> 
-            <div class="sidebar__header flex justify-between items-center">
+            <div class="main-layout__sidebar-header flex justify-between items-center">
               <a
                 class="navbar-brand hide-on-collapse"
                 href="//kuzudb.com"
@@ -39,7 +39,7 @@
                   :key="logoUrl"
                   :src="logoUrl"
                   alt="Logo"
-                  class="sidebar__logo"
+                  class="main-layout__sidebar-logo"
                 >
               </a>
               
@@ -113,7 +113,7 @@
               <span class="hide-on-collapse">Docs</span>
             </a>
           </li>
-          <div class="sidebar__bottom-items">
+          <div class="main-layout__sidebar-bottom">
             <li class="nav-item">
               <a
                 aria-hidden="true"
@@ -568,8 +568,7 @@ export default {
   background: var(--bs-body-bg-accent);
 }
 
-/* Ensure scrollable elements have no right padding */
-.sidebar-wrapper,
+.main-layout__sidebar,
 .result-container__side-panel,
 .schema_side-panel__wrapper,
 .code-block {
@@ -580,7 +579,7 @@ export default {
 body {
   overflow-x: hidden;
 }
-.sidebar__logo {
+.main-layout__sidebar-logo {
     height: 28px;
     image-rendering: crisp-edges;
 }
@@ -594,7 +593,7 @@ body {
   padding-left: var(--sidebar-collapsed-width);
 }
 
-.sidebar-wrapper {
+.main-layout__sidebar {
   z-index: 1000;
   position: fixed;
   left: 0;
@@ -604,10 +603,13 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--bs-body-bg-secondary);
+  border-right: var(--bs-body-bg);
+  border-radius: 4px;
   transition: all 0.5s ease;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
 }
 
-.wrapper.toggled .sidebar-wrapper {
+.wrapper.toggled .main-layout__sidebar {
   width: var(--sidebar-collapsed-width);
 }
 
@@ -629,7 +631,7 @@ body {
   padding-top: 4px;
 }
 
-.sidebar-nav {
+.main-layout__sidebar-nav {
   top: 0;
   width: 100%;
   height: 100%;
@@ -665,7 +667,7 @@ body {
     }
   }
 
-  .sidebar__bottom-items {
+  .main-layout__sidebar-bottom {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -688,17 +690,17 @@ body {
   overflow: hidden;
 }
 
-.wrapper.toggled .sidebar__header {
+.wrapper.toggled .main-layout__sidebar-header {
   justify-content: center;
   padding: 0.5rem;
 }
 
-.wrapper.toggled .sidebar-nav li a {
+.wrapper.toggled .main-layout__sidebar-nav li a {
     justify-content: center;
     padding: 8px 0;
 }
 
-.wrapper.toggled .sidebar-nav li i {
+.wrapper.toggled .main-layout__sidebar-nav li i {
     margin-right: 0;
 }
 
@@ -709,7 +711,7 @@ body {
     width: 100%;
 }
 
-.wrapper.toggled .sidebar__header .navbar-brand {
+.wrapper.toggled .main-layout__sidebar-header .navbar-brand {
     display: none;
 }
 
@@ -720,7 +722,7 @@ body {
   color: white !important;
 }
 
-.sidebar__header {
+.main-layout__sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;

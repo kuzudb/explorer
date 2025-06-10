@@ -10,7 +10,7 @@
             class="form-control"
             :style="{
               backgroundColor: ` ${getBackgroundColorForEditingTable()} !important`,
-              color: isNode ? '#ffffff' : '#000000',
+              color: '#FFFFFF',
               textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
             }"
           >
@@ -47,6 +47,7 @@
             :style="{
               backgroundColor: ` ${getColor(conn.src)} !important`,
               textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+              color: '#FFFFFF',
             }"
           >
             {{ conn.src }}
@@ -59,6 +60,7 @@
             :style="{
               backgroundColor: ` ${getColor(conn.dst)} !important`,
               textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+              color: '#FFFFFF',
             }"
           >
             {{ conn.dst }}
@@ -142,7 +144,7 @@
               <span
                 v-if="property.isPrimaryKey"
                 class="badge bg-[var(--bs-body-accent)]"
-                :style="{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }"
+                :style="{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: '#FFFFFF', }"
               > PK </span>
             </td>
             <td v-if="i !== editingPropertyIndex">
