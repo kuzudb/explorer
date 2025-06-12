@@ -63,7 +63,7 @@
               @click="toggleShell()"
             >
               <i class="fa-solid fa-terminal" />
-              <span class="hide-on-collapse">Shell</span>
+              <span class="hide-on-collapse">Query</span>
             </a>
           </li>
           <li :class="['nav-item', { active: showSchema }]">
@@ -202,7 +202,7 @@
                 This WebAssembly-powered demo of <a href="https://kuzudb.com/">Kuzu</a> lets you import and explore
                 graph
                 data with Cypher queries.
-                Go to "Import Data" to get started. See the <a
+                See the <a
                   href="https://docs.kuzudb.com/visualization/kuzu-explorer/"
                   target="_blank"
                 >docs</a> or <a
