@@ -2,7 +2,7 @@
 
 Browser-based user interface for the [Kuzu](https://github.com/kuzudb/kuzu) graph database.
 
-<img src="https://github.com/user-attachments/assets/51f14fed-59bc-4e2b-946e-54acbdc094ae">
+<img src="src/assets/explorer-graph-view.png">
 
 
 ## Get started
