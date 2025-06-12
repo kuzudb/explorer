@@ -398,7 +398,7 @@ export default {
       
       .badge {
         position: absolute;
-        top: 50%;
+        top: 40%;
         transform: translateY(-50%);
         max-width: calc(100% - 8px);
         word-break: break-word;

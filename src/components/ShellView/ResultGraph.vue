@@ -760,9 +760,7 @@ export default {
             ...relSettings.g6Settings.labelCfg,
             style: {
               ...relSettings.g6Settings.labelCfg.style,
-              fill: "#ffffff",
-              stroke: "#000000",
-              lineWidth: 2,
+              fill: "#000000",
             }
           },
           style: {
@@ -1363,7 +1361,6 @@ export default {
       margin-bottom: 1rem;
 
       th {
-        padding: 0.5rem 1rem;
         max-width: 120px;
         word-break: break-word;
         

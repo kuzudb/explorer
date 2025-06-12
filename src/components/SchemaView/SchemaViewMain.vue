@@ -492,9 +492,7 @@ export default {
             labelCfg: {
               style: {
                 ...this.settingsStore.defaultRel.labelCfg.style,
-                fill: "#ffffff",
-                stroke: '#000000',
-                lineWidth: 2,
+                fill: "#000000",
               },
             },
           };
