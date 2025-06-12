@@ -3,10 +3,11 @@
     <div>
       <h5>
         <span
-          class="badge bg-primary"
+          class="badge bg-[var(--bs-body-accent)]"
           :style="{
             backgroundColor: ` ${getColor(label)} !important`,
-            color: isNode ? '#ffffff' : '#000000',
+            color:'#ffffff',
+            textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
           }"
         >
           {{ label }}
@@ -20,9 +21,11 @@
           :key="conn"
         >
           <span
-            class="badge bg-primary"
+            class="badge bg-[var(--bs-body-accent)]"
             :style="{
               backgroundColor: ` ${getColor(conn.src)} !important`,
+              color: '#FFFFFF',
+              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
             }"
           >
             {{ conn.src }}
@@ -31,9 +34,11 @@
           <i class="fa-solid fa-arrow-right" />
           &nbsp;
           <span
-            class="badge bg-primary"
+            class="badge bg-[var(--bs-body-accent)]"
             :style="{
               backgroundColor: ` ${getColor(conn.dst)} !important`,
+              color: '#FFFFFF',
+              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
             }"
           >
             {{ conn.dst }}
@@ -44,7 +49,7 @@
 
       <table
         v-if="schema"
-        class="table table-sm table-bordered schema_side-panel__overview-table"
+        class="table table-sm table-borderless schema_side-panel__overview-table"
       >
         <thead>
           <tr v-if="tableProperties.length > 0">
@@ -70,7 +75,8 @@
               {{ property.name }}
               <span
                 v-if="property.isPrimaryKey"
-                class="badge bg-primary"
+                class="badge bg-[var(--bs-body-accent)]"
+                :style="{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: '#FFFFFF', }"
               > PK </span>
             </td>
             <td>

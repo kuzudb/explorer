@@ -1,131 +1,168 @@
 <template>
-  <div
-    ref="wrapper"
-    class="result-container__wrapper"
-    :style="{ height: containerHeight }"
+  <div 
+    class="result-container"
+    :class="{ maximized: isMaximized, 'is-error-container': errorMessage }"
   >
     <div
-      v-show="!errorMessage"
-      ref="toolsContainer"
-      class="result-container__tools_container"
-      :style="{ minWidth: toolbarWidth + 'px' }"
+      ref="wrapper"
+      class="result-container__wrapper"
+      :class="{'is-error': errorMessage}"
+      :style="errorMessage ? { height: 'auto', flex: 'unset' } : { height: containerHeight }"
     >
-      <div
-        v-show="!isGraphEmpty"
-        :class="
-          `result-container__button` +
-            (showGraph ? ` result-container__button--active` : ``)
-        "
+      <!-- Left Sidebar -->
+      <aside
+        v-show="!errorMessage"
+        class="result-container__tools"
       >
-        <i
-          class="fa-lg fa-solid fa-circle-nodes"
-          data-bs-toggle="tooltip"
-          data-bs-placement="right"
-          title="Graph View"
-          @click="toggleGraphView"
-        />
-      </div>
-      <div
-        :class="
-          `result-container__button` +
-            (showTable ? ` result-container__button--active` : ``)
-        "
-      >
-        <i
-          class="fa-lg fa-solid fa-table"
-          data-bs-toggle="tooltip"
-          data-bs-placement="right"
-          title="Table View"
-          @click="toggleTableView"
-        />
-      </div>
-      <div
-        :class="
-          `result-container__button` +
-            (showCode ? ` result-container__button--active` : ``)
-        "
-      >
-        <i
-          class="fa-lg fa-solid fa-code"
-          data-bs-toggle="tooltip"
-          data-bs-placement="right"
-          title="JSON View"
-          @click="toggleCodeView"
-        />
-      </div>
+        <!-- Removed button to close sidebar when open in graph view -->
+        <!--
+        <ul v-if="showGraph && graphSidebarOpen" class="result-container__button-group">
+          <button
+            class="button"
+            @click="toggleGraphSidebar()"
+          >
+            <i
+              class="fa-lg fa-solid fa-angle-left"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Close Sidebar"
+            />
+          </button>
+        </ul>
+        -->
 
-      <div
-        v-show="showGraph"
-        class="result-container__tools_container--bottom"
-      >
-        <div class="result-container__button">
-          <i
-            class="fa-lg fa-solid fa-magnifying-glass-plus"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Zoom In"
+        <!-- Top Tool Buttons -->
+        <ul class="result-container__button-group">
+          <button
+            class="button "
+            @click="toggleGraphView"
+          >
+            <i
+              class="fa-lg fa-solid fa-circle-nodes"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Graph View"
+            />
+          </button>
+          <button
+            class="button"
+            @click="toggleTableView"
+          >
+            <i
+              class="fa-lg fa-solid fa-table"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Table View"
+            />
+          </button>
+          <button
+            class="button"
+            @click="toggleCodeView"
+          >
+            <i
+              class="fa-lg fa-solid fa-code"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="JSON View"
+            />
+          </button>
+        </ul>
+
+        <!-- Bottom Tool Buttons -->
+        <ul
+          v-show="showGraph"
+          class="result-container__button-group result-container__tools--bottom"
+        >
+          <button
+            class="button"
             @click="$refs.resultGraph.zoomIn()"
-          />
-        </div>
-        <div class="result-container__button">
-          <i
-            class="fa-lg fa-solid fa-magnifying-glass-minus"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Zoom Out"
+          >
+            <i
+              class="fa-lg fa-solid fa-magnifying-glass-plus"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Zoom In"
+            />
+          </button>
+          <button
+            class="button"
             @click="$refs.resultGraph.zoomOut()"
-          />
-        </div>
-        <div class="result-container__button">
-          <i
-            class="fa-lg fa-solid fa-compress"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Fit to View"
+          >
+            <i
+              class="fa-lg fa-solid fa-magnifying-glass-minus"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Zoom Out"
+            />
+          </button>
+          <button
+            class="button"
             @click="$refs.resultGraph.fitToView()"
-          />
-        </div>
-        <div class="result-container__button">
-          <i
-            class="fa-lg fa-solid fa-expand"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Actual Size"
+          >
+            <i
+              class="fa-lg fa-solid fa-compress"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Fit to View"
+            />
+          </button>
+          <button
+            class="button"
             @click="$refs.resultGraph.actualSize()"
-          />
-        </div>
-      </div>
-    </div>
+          >
+            <i
+              class="fa-lg fa-solid fa-expand"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Actual Size"
+            />
+          </button>
+        </ul>
+      </aside>
+  
+      <main class="result-container__main">
+        <ResultGraph
+          v-if="queryResult"
+          v-show="showGraph"
+          ref="resultGraph"
+          :query-result="queryResult"
+          :schema="schema"
+          :container-height="containerHeight"
+          :is-maximized="isMaximized"
+          :is-side-panel-open="graphSidebarOpen"
+          @graph-empty="handleGraphEmpty"
+          @request-sidebar-toggle="toggleGraphSidebar"
+        />
+        <ResultTable
+          v-if="queryResult && showTable"
+          ref="resultTable"
+          :query-result="queryResult"
+          :schema="schema"
+          :container-height="containerHeight"
+        />
+        <ResultCode
+          v-if="queryResultString && showCode"
+          ref="resultCode"
+          :query-result-string="queryResultString"
+          :schema="schema"
+          :container-height="containerHeight"
+        />
+        <ResultError
+          v-if="errorMessage"
+          ref="resultError"
+          :error-message="errorMessage"
+          :is-info="errorMessage === emptyResultMessage"
+        />
+      </main>
 
-    <ResultGraph
-      v-if="queryResult"
-      v-show="showGraph"
-      ref="resultGraph"
-      :query-result="queryResult"
-      :schema="schema"
-      :container-height="containerHeight"
-      @graph-empty="handleGraphEmpty"
-    />
-    <ResultTable
-      v-if="queryResult && showTable"
-      ref="resultTable"
-      :query-result="queryResult"
-      :schema="schema"
-      :container-height="containerHeight"
-    />
-    <ResultCode
-      v-if="queryResultString && showCode"
-      ref="resultCode"
-      :query-result-string="queryResultString"
-      :schema="schema"
-      :container-height="containerHeight"
-    />
-    <ResultError
-      v-if="errorMessage"
-      ref="resultError"
-      :error-message="errorMessage"
-      :is-info="errorMessage === emptyResultMessage"
-    />
+      <!-- Resize Handle -->
+      <div 
+        v-if="!isMaximized"
+        ref="resizeHandle"
+        class="result-container__resize-handle"
+        @mousedown="startResize"
+      />
+    </div>
   </div>
 </template>
 
@@ -171,6 +208,10 @@ export default {
     errorMessage: "",
     emptyResultMessage: "The query executed successfully but the result is empty.",
     containerHeight: "auto",
+    isResizing: false,
+    startHeight: 0,
+    startY: 0,
+    graphSidebarOpen: false,
   }),
   computed: {
     ...mapStores(useModeStore),
@@ -194,8 +235,12 @@ export default {
     },
   },
   mounted() {
+    window.addEventListener('mousemove', this.handleResize);
+    window.addEventListener('mouseup', this.stopResize);
   },
   beforeUnmount() {
+    window.removeEventListener('mousemove', this.handleResize);
+    window.removeEventListener('mouseup', this.stopResize);
   },
   methods: {
     handleDataChange(schema, queryResult, errorMessage) {
@@ -234,14 +279,17 @@ export default {
     toggleGraphView() {
       this.hideAll();
       this.showGraph = true;
+      this.graphSidebarOpen = false;
     },
     toggleTableView() {
       this.hideAll();
       this.showTable = true;
+      this.graphSidebarOpen = false;
     },
     toggleCodeView() {
       this.hideAll();
       this.showCode = true;
+      this.graphSidebarOpen = false;
     },
     handleGraphEmpty() {
       this.isGraphEmpty = true;
@@ -257,60 +305,199 @@ export default {
       else if (this.queryResult) {
         const editorHeight = this.$parent.getEditorHeight();
         if (this.isMaximized) {
-          this.containerHeight = window.innerHeight - this.navbarHeight - editorHeight - 2 * UI_SIZE.DEFAULT_MARGIN + 'px';
+          this.containerHeight = window.innerHeight - this.navbarHeight - editorHeight - 2 * UI_SIZE.DEFAULT_MARGIN - 50+ 'px';
         }
         else {
           this.containerHeight = this.queryResultDefaultHeight + 'px';
         }
       }
     },
+    startResize(e) {
+      this.isResizing = true;
+      this.startHeight = this.$refs.wrapper.offsetHeight;
+      this.startY = e.clientY;
+      document.body.style.cursor = 'ns-resize';
+      document.body.style.userSelect = 'none';
+      document.body.style.overflow = 'hidden';
+    },
+    handleResize(e) {
+      if (!this.isResizing) return;
+      
+      const deltaY = e.clientY - this.startY;
+      const newHeight = Math.max(this.queryResultDefaultHeight, this.startHeight + deltaY);
+      
+      requestAnimationFrame(() => {
+        this.containerHeight = `${newHeight}px`;
+        this.$refs.wrapper.style.height = this.containerHeight;
+        
+        if (this.$refs.resultGraph) {
+          this.$refs.resultGraph.handleResize();
+        }
+      });
+    },
+    stopResize() {
+      if (!this.isResizing) return;
+      
+      this.isResizing = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      document.body.style.overflow = '';
+  
+      this.$nextTick(() => {
+        if (this.$refs.resultGraph) {
+          this.$refs.resultGraph.handleResize();
+        }
+      });
+    },
+    toggleGraphSidebar() {
+      this.graphSidebarOpen = !this.graphSidebarOpen;
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-$margin: 20px;
-
-.result-container__wrapper {
-  width: calc(100% - #{$margin * 2});
-  margin: $margin;
-  margin-top: 0;
-  margin-bottom: 0;
-  border: 2px solid $gray-300;
-  border-top: 0;
-  display: flex;
-  flex-direction: row;
-  &:last-child {
-    margin-bottom: 20px;
+.result-container {
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  &.maximized {
+    margin-bottom: 14px;
   }
-}
-
-.result-container__tools_container {
+  border-bottom: 1px solid var(--bs-body-shell);
+  border-left: 1px solid var(--bs-body-shell);
+  border-right: 1px solid var(--bs-body-shell);
+  border-radius: 0 0 1rem 1rem;
+  overflow: hidden;
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.05);
+  position: relative;
+  min-height: 400px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  background-color: $gray-100;
-  border-right: 2px solid $gray-300;
 
-  .result-container__tools_container--bottom {
-    margin-top: auto;
+  &.is-error-container {
+    min-height: 0;
+  }
 
-    .result-container__button {
-      > i {
-        color: $body-tertiary-color;
+  :deep(.badge) {
+    position: relative;
+    display: inline-block;
+    margin-right: 4px;
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    padding-bottom: 4px;
+  }
+
+  :deep(table) {
+    td, th {
+      position: relative;
+      padding-right: 8px;
+      padding-bottom: 8px;
+      
+      .badge {
+        position: absolute;
+        top: 40%;
+        transform: translateY(-50%);
+        max-width: calc(100% - 8px);
+        word-break: break-word;
+        padding-bottom: 4px;
       }
     }
   }
 }
 
-.result-container__button {
-  padding-top: 4px;
-  padding-bottom: 4px;
+.result-container__wrapper {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  transition: height 0.1s ease;
+  flex: 1;
+  position: relative;
+}
+
+.result-container__tools {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  min-width: 48px;
+  background-color: transparent;
+  z-index: 1;
+}
+
+.result-container__main {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.result-container__resize-handle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  cursor: ns-resize;
+  background: transparent;
+  transition: background-color 0.2s ease;
+  z-index: 2;
+  pointer-events: auto;
+
+  &:hover {
+    background-color: var(--bs-body-bg-accent);
+  }
+
+  &:active {
+    background-color: var(--bs-body-bg-accent);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 4px;
+    background-color: var(--bs-body-inactive);
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &:hover::after {
+    opacity: 1;
+  }
+}
+
+.result-container__button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding-left: 0rem;
+  align-items: first;
+}
+
+.result-container__tools--bottom {
+  margin-top: auto;
+}
+
+button {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  background-color: transparent;
+  padding: 0px;
+  border: 0px;
 
   i {
     cursor: pointer;
-    color: $secondary;
+    color: var(--bs-body-text);
 
     &:hover {
       opacity: 0.7;
@@ -323,7 +510,7 @@ $margin: 20px;
 
   &--active {
     i {
-      color: $primary;
+      color: var(--bs-body-bg-accent);
     }
   }
 }

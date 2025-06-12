@@ -3,7 +3,7 @@
     <div v-if="currProperty">
       <div
         v-if="!nameValid"
-        class="alert alert-danger"
+        class="alert alert-[var(--bs-body-accent)]"
         role="alert"
       >
         <div>
@@ -174,7 +174,7 @@
     <div>
       <button
         type="button"
-        class="btn btn-sm btn-outline-primary"
+        class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
         title="Save"
         @click="save"
       >
@@ -184,7 +184,7 @@
       &nbsp;
       <button
         type="button"
-        class="btn btn-sm btn-outline-danger"
+        class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
         title="Cancel"
         @click="$emit('cancel')"
       >
@@ -455,6 +455,11 @@ td {
   > div {
     padding: 8px;
   }
+}
+
+.text-with-outline {
+  color: #ffffff;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 textarea.form-control {

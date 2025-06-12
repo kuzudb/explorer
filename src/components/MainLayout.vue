@@ -1,175 +1,184 @@
 <template>
-  <div>
-    <nav
-      ref="navbar"
-      class="navbar navbar-expand-lg navbar-dark bg-dark"
+  <div class="main-layout">
+    <div
+      class="wrapper"
+      :class="{ 'toggled': isSidebarCollapsed }"
     >
-      <div class="container">
-        <a
-          class="navbar-brand"
-          href="//kuzudb.com"
-          target="_blank"
-        >
-          <img
-            :src="logoUrl"
-            alt="Kuzu Logo"
-            class="navbar__logo"
-          >
-        </a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target=".navbar__buttons"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon" />
-        </button>
-        <div class="collapse navbar-collapse navbar__buttons">
-          <ul
-            v-if="modeStore.isReadOnly"
-            class="navbar-nav me-auto"
-          >
-            <li class="nav-item">
-              <span
-                class="badge bg-primary"
-                @click="accessModeModal.show()"
-              >Read-only Mode</span>
-            </li>
-          </ul>
-          <ul
-            v-if="modeStore.isDemo"
-            class="navbar-nav me-auto"
-          >
-            <li class="nav-item">
-              <span
-                class="badge bg-primary"
-                @click="accessModeModal.show()"
-              >Instructions</span>
-            </li>
-          </ul>
-          <ul class="navbar-nav ms-auto">
-            <li :class="['nav-item', { active: showShell }]">
-              <a
-                class="nav-link"
-                href="#"
-                @click="toggleShell()"
-              >
-                <i class="fa-solid fa-terminal" />
-                Shell
-              </a>
-            </li>
-            <li :class="['nav-item', { active: showSchema }]">
-              <a
-                class="nav-link"
-                href="#"
-                @click="toggleSchema()"
-              >
-                <i class="fa-solid fa-circle-nodes" />
-                Schema
-              </a>
-            </li>
-
-            <li
-              :class="['nav-item', { active: showLoader }]"
-              hidden
+      <div class="main-layout__sidebar">
+        <ul class="main-layout__sidebar-nav">
+          <li>
+            <ul
+              v-if="modeStore.isReadOnly"
+              class="navbar-nav hide-on-collapse"
             >
-              <a
-                class="nav-link"
-                href="#"
-                @click="toggleLoader()"
-              >
-                <i class="fa-solid fa-database" />
-                Datasets
-              </a>
-            </li>
-
-            <li
-              v-if="!modeStore.isReadOnly"
-              :class="['nav-item', {
-                active: showImporter || showLoader
-              }]"
+              <li class="nav-item">
+                <span
+                  class="badge"
+                  @click="accessModeModal.show()"
+                >Read-only Mode</span>
+              </li>
+            </ul>
+            <ul
+              v-if="modeStore.isDemo"
+              class="navbar-nav hide-on-collapse"
             >
+              <li class="nav-item">
+                <span
+                  class="badge"
+                  @click="accessModeModal.show()"
+                >Instructions</span>
+              </li>
+            </ul> 
+            <div class="main-layout__sidebar-header flex justify-between items-center">
               <a
-                class="nav-link"
-                href="#"
-                @click="toggleImporter()"
+                class="navbar-brand hide-on-collapse"
+                href="//kuzudb.com"
+                target="_blank"
               >
-                <i class="fa-solid fa-upload" />
-                Import Data
+                <img
+                  :key="logoUrl"
+                  :src="logoUrl"
+                  alt="Logo"
+                  class="main-layout__sidebar-logo"
+                >
               </a>
-            </li>
+              
+              <a
+                class="menu-toggle"
+                @click="toggleSidebar"
+              >
+                <button
+                  :class="['fa-solid', isSidebarCollapsed ? 'fa-angle-right' : 'fa-angle-left']"
+                  aria-hidden="true"
+                />
+              </a>           
+            </div>             
+            <hr>
+          </li>
 
+          <li :class="['nav-item', { active: showShell }]">
+            <a
+              aria-hidden="true"
+              href="#shell"
+              @click="toggleShell()"
+            >
+              <i class="fa-solid fa-terminal" />
+              <span class="hide-on-collapse">Query</span>
+            </a>
+          </li>
+          <li :class="['nav-item', { active: showSchema }]">
+            <a
+              aria-hidden="true"
+              href="#schema"
+              @click="toggleSchema()"
+            >
+              <i class="fa-solid fa-circle-nodes" />
+              <span class="hide-on-collapse">Schema</span>
+            </a>
+          </li>
+          <li
+            :class="['nav-item', { active: showLoader }]"
+            hidden
+          >
+            <a
+              aria-hidden="true"
+              href="#datasets"
+              @click="toggleLoader()"
+            >
+              <i class="fa-solid fa-database" />
+              <span class="hide-on-collapse">Datasets</span>
+            </a>
+          </li>
+          <li
+            v-if="!modeStore.isReadOnly"
+            :class="['nav-item', { active: showImporter || showLoader }]"
+          >
+            <a
+              aria-hidden="true"
+              href="#importer"
+              @click="toggleImporter()"
+            >
+              <i class="fa-solid fa-upload" />
+              <span class="hide-on-collapse">Import</span>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a
+              aria-hidden="true"
+              href="https://docs.kuzudb.com"
+              target="_blank"
+            >
+              <i class="fa-solid fa-book" />
+              <span class="hide-on-collapse">Docs</span>
+            </a>
+          </li>
+          <div class="main-layout__sidebar-bottom">
             <li class="nav-item">
               <a
-                class="nav-link"
-                href="#"
+                aria-hidden="true"
+                href="#settings"
                 @click="showSettingsModal()"
               >
                 <i class="fa-solid fa-cog" />
-                Settings
+                <span class="hide-on-collapse">Settings</span>
               </a>
             </li>
-
             <li class="nav-item">
               <a
-                class="nav-link"
-                href="https://docs.kuzudb.com"
-                target="_blank"
+                aria-hidden="true"
+                href="#"
+                @click.prevent="handleThemeToggle()"
               >
-                <i class="fa-solid fa-book" />
-                Docs
+                <i :class="['fa-solid', modeStore.theme === 'vs-dark' ? 'fa-sun' : 'fa-moon']" />
+                <span class="hide-on-collapse">{{ modeStore.theme === 'vs-dark' ? 'Light' : 'Dark' }}</span>
               </a>
             </li>
-          </ul>
+          </div>
+        </ul>
+      </div>
+      <div class="main-layout__main-container">
+        <div class="container-fluid">
+          <SchemaViewMain
+            v-show="showSchema"
+            ref="schemaView"
+            :schema="schema"
+            :navbar-height="0"
+            @reload-schema="reloadSchema"
+            @add-placeholder-node-table="addPlaceholderNodeTable"
+            @add-placeholder-rel-table="addPlaceholderRelTable"
+            @update-placeholder-node-table-label="updatePlaceholderNodeTable"
+            @update-placeholder-rel-table="updatePlaceholderRelTable"
+            @set-placeholder="setPlaceholder"
+            @unset-placeholder="unsetPlaceholder"
+          />
+          <ShellMainView
+            v-show="showShell"
+            ref="shellView"
+            :schema="schema"
+            @reload-schema="reloadSchema"
+          />
+          <SettingsMainView
+            v-if="showSettings"
+            ref="settings"
+            :schema="schema"
+          />
+          <DatasetMainView
+            v-show="showLoader"
+            :schema="schema"
+            :navbar-height="0"
+            @reload-schema="reloadSchema"
+            @back="toggleImporter(true)"
+            @jump-to-shell-view="toggleShell(true)"
+          />
+          <ImporterMainView
+            v-show="showImporter"
+            :schema="schema"
+            @reload-schema="reloadSchema"
+            @load-bundled-dataset="toggleLoader"
+          />
         </div>
       </div>
-    </nav>
-
-    <div
-      class="layout__main-content"
-      :style="{ height: `calc(100vh - ${navbarHeight}px)` }"
-    >
-      <SchemaViewMain
-        v-show="showSchema"
-        ref="schemaView"
-        :schema="schema"
-        :navbar-height="navbarHeight"
-        @reload-schema="reloadSchema"
-        @add-placeholder-node-table="addPlaceholderNodeTable"
-        @add-placeholder-rel-table="addPlaceholderRelTable"
-        @update-placeholder-node-table-label="updatePlaceholderNodeTable"
-        @update-placeholder-rel-table="updatePlaceholderRelTable"
-        @set-placeholder="setPlaceholder"
-        @unset-placeholder="unsetPlaceholder"
-      />
-      <ShellMainView
-        v-show="showShell"
-        ref="shellView"
-        :schema="schema"
-        :navbar-height="navbarHeight"
-        @reload-schema="reloadSchema"
-      />
-      <SettingsMainView
-        v-if="showSettings"
-        ref="settings"
-        :schema="schema"
-      />
-      <DatasetMainView
-        v-show="showLoader"
-        :schema="schema"
-        :navbar-height="navbarHeight"
-        @reload-schema="reloadSchema"
-        @back="toggleImporter(true)"
-        @jump-to-shell-view="toggleShell(true)"
-      />
-      <ImporterMainView
-        v-show="showImporter"
-        :schema="schema"
-        :navbar-height="navbarHeight"
-        @reload-schema="reloadSchema"
-        @load-bundled-dataset="toggleLoader"
-      />
     </div>
 
     <div
@@ -190,10 +199,12 @@
           <div class="modal-body">
             <div v-if="modeStore.isDemo">
               <p>
-                This WebAssembly-powered demo of <a href="https://kuzudb.com/">Kuzu</a> lets you import and explore
-                graph
-                data with Cypher queries.
-                Go to "Import Data" to get started. See the <a
+                This WebAssembly-powered demo of <a href="https://kuzudb.com/">Kuzu</a> lets you import and query graph data using 
+                <a
+                  href="https://docs.kuzudb.com/cypher/"
+                  target="_blank"
+                >openCypher.</a>
+                See the <a
                   href="https://docs.kuzudb.com/visualization/kuzu-explorer/"
                   target="_blank"
                 >docs</a> or <a
@@ -205,12 +216,10 @@
               </p>
               <hr>
               <div
-                v-if=" !isKuzuWasmInitialized"
+                v-if="!isKuzuWasmInitialized"
                 class="d-flex align-items-center"
               >
-                <strong class="text-primary">
-                  Initializing WebAssembly module...
-                </strong>
+                <strong class="text-primary">Initializing WebAssembly module...</strong>
                 <div
                   class="spinner-border text-primary ms-auto"
                   role="status"
@@ -221,7 +230,8 @@
                 class="d-flex align-items-center"
               >
                 <strong class="text-success">
-                  <i class="fa-solid fa-check" />&nbsp; WebAssembly is ready—start exploring! </strong>
+                  <i class="fa-solid fa-check" />&nbsp; WebAssembly is ready—start exploring!
+                </strong>
               </div>
             </div>
             <p v-if="modeStore.isReadOnly">
@@ -260,6 +270,7 @@ import { Modal } from 'bootstrap';
 import DuckDB from '../utils/DuckDB';
 import Kuzu from '../utils/KuzuWasm';
 
+
 export default {
   name: "MainLayout",
   components: {
@@ -276,20 +287,24 @@ export default {
     showShell: true,
     showLoader: false,
     showSettings: false,
-    navbarHeight: 0,
     schema: null,
     isKuzuWasmInitialized: false,
+    isSidebarCollapsed: false,
   }),
   computed: {
     ...mapStores(useModeStore),
     logoUrl() {
-      return `${process.env.BASE_URL}img/kuzu-logo-dark.png`;
-    }
+      return this.modeStore.theme === 'vs-dark'
+        ? '/img/kuzu-logo-dark.png'
+        : '/img/kuzu-logo-light.png';
+    },
   },
   mounted() {
-    this.updateNavbarHeight();
     this.accessModeModal = new Modal(this.$refs.modal);
     window.addEventListener("resize", this.updateNavbarHeight);
+    window.addEventListener("hashchange", this.handleHashChange);
+    // Handle initial hash on page load
+    this.handleHashChange();
     window.setTimeout(() => {
       DuckDB.init();
     }, 500);
@@ -297,14 +312,22 @@ export default {
   beforeUnmount() {
     this.accessModeModal.dispose();
     window.removeEventListener("resize", this.updateNavbarHeight);
+    window.removeEventListener("hashchange", this.handleHashChange);
   },
   async created() {
     await this.getMode();
+    // Read theme preference from cookie and apply it
+    const savedTheme = this.getCookie('themePreference');
+    if (savedTheme) {
+      this.modeStore.setTheme(savedTheme); // Assuming a setTheme action/mutation exists
+    }
+
     if (this.modeStore.isWasm) {
       this.isKuzuWasmInitialized = false;
       await Kuzu.init();
       this.isKuzuWasmInitialized = true;
     }
+
     const res = await Promise.all([this.getSchema(), this.getStoredSettings()])
     let storedSettings = res[1];
     if (!storedSettings || Object.keys(storedSettings).length === 0) {
@@ -314,6 +337,33 @@ export default {
     this.$refs.schemaView.drawGraph();
   },
   methods: {
+    handleHashChange() {
+      const hash = window.location.hash.substring(1);
+      switch (hash) {
+        case 'shell':
+          this.toggleShell();
+          break;
+        case 'schema':
+          this.toggleSchema();
+          break;
+        case 'datasets':
+          this.toggleLoader();
+          break;
+        case 'importer':
+          this.toggleImporter(true);
+          break;
+        // Settings modal is handled separately as it's a modal, not a view in the main container
+        // case 'settings':
+        //   this.showSettingsModal();
+        //   break;
+        default:
+          // If no valid hash, default to shell view
+          if (!this.showSchema && !this.showImporter && !this.showLoader && !this.showSettings) {
+             this.toggleShell();
+          }
+          break;
+      }
+    },
     async getSchema() {
       let schema;
       if (this.modeStore.isWasm) {
@@ -330,9 +380,16 @@ export default {
       const mode = response.data.mode;
       this.modeStore.setMode(mode);
       this.$nextTick(() => {
-        if (this.modeStore.isDemo) {
-          this.accessModeModal.show();
-          this.toggleImporter(true);
+        // Check if WASM modal has been seen. If in demo mode and not seen,
+        // show the modal and set the cookie.
+        const wasmModalSeen = this.getCookie('wasmModalSeen');
+        if (this.modeStore.isDemo && !wasmModalSeen) {
+           this.accessModeModal.show();
+           this.setCookie('wasmModalSeen', 'true', 365); // Set cookie for 365 days
+           this.toggleImporter(true);
+        } else if (this.modeStore.isDemo) {
+          // If in demo mode but WASM modal has been seen, still go to importer view
+           this.toggleImporter(true);
         }
       });
     },
@@ -368,6 +425,10 @@ export default {
     },
     updatePlaceholderRelTable(newTable) {
       const table = this.schema.relTables.find((t) => t.isPlaceholder);
+      if (!table) {
+        console.error("Placeholder relationship table not found in schema.");
+        return;
+      }
       if (newTable.name) {
         table.name = newTable.name;
       }
@@ -441,8 +502,9 @@ export default {
         this.$refs.settings.showModal();
       });
     },
-    updateNavbarHeight() {
-      this.navbarHeight = this.$refs.navbar.clientHeight;
+    toggleSidebar() {
+      this.isSidebarCollapsed = !this.isSidebarCollapsed;
+      window.dispatchEvent(new Event('resize'));
     },
     ...mapActions(useSettingsStore, [
       'initSettings',
@@ -452,50 +514,244 @@ export default {
       'setPlaceholderRelTable',
       'unsetPlaceholderNodeTable',
       'unsetPlaceholderRelTable',
-    ])
+    ]),
+    // Manual cookie handling methods
+    setCookie(name, value, days) {
+      let expires = "";
+      if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    },
+    getCookie(name) {
+      const nameEQ = name + "=";
+      const ca = document.cookie.split(';');
+      for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    },
+    // Handle theme toggle, save to cookie, then update store
+    handleThemeToggle() {
+      const currentTheme = this.modeStore.theme;
+      const nextTheme = currentTheme === 'vs-dark' ? 'vs-light' : 'vs-dark';
+      this.setCookie('themePreference', nextTheme, 365); // Save preference for 365 days
+      this.modeStore.toggleTheme(); // Let the store handle the actual theme change
+    },
   },
 };
 </script>
 
-<style scoped lang="scss">
-nav.navbar {
-  >div.container {
-    max-width: 100%;
-  }
+<style>
+:root {
+  --sidebar-width: 180px;
+  --sidebar-collapsed-width: 60px;
 }
 
-.navbar {
-  .navbar__logo {
-    height: 34px;
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bs-body-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bs-body-inactive);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bs-body-bg-accent);
+}
+
+.main-layout__sidebar,
+.result-container__side-panel,
+.schema_side-panel__wrapper,
+.code-block {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
+
+body {
+  overflow-x: hidden;
+}
+.main-layout__sidebar-logo {
+    height: 28px;
     image-rendering: crisp-edges;
-  }
-
-  .nav-link {
-    i {
-      margin-right: 4px;
-    }
-  }
 }
 
-.layout__main-content {
-  overflow: hidden;
+.wrapper {
+  padding-left: var(--sidebar-width);
+  transition: all 0.6s ease;
+}
+
+.wrapper.toggled {
+  padding-left: var(--sidebar-collapsed-width);
+}
+
+.main-layout__sidebar {
+  z-index: 1000;
+  position: fixed;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100%;
+  margin-left: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: var(--bs-body-bg-secondary);
+  border-right: var(--bs-body-bg);
+  border-radius: 4px;
+  transition: all 0.5s ease;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.wrapper.toggled .main-layout__sidebar {
+  width: var(--sidebar-collapsed-width);
+}
+
+.main-layout__main-container {
   width: 100%;
+  position: relative;
+  transition: all 0.6s ease;
+  height: 100vh;
+  overflow: hidden;
+
+  .container-fluid {
+    height: 100%;
+    padding: 0;
+  }
 }
 
-.nav-item {
-  .badge {
-    cursor: pointer;
+.nav-item{
+  padding-left: 10px;
+  padding-top: 4px;
+}
+
+.main-layout__sidebar-nav {
+  top: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding-left: 4px;
+  list-style: none;
+  position: relative;
+  padding-bottom: 100px;
+
+  li {
+    line-height: 1.5;
+
+    a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: var(--bs-body-text);
+      padding: 8px 10px;
+      gap: 8px;
+
+      &.hover {
+        text-decoration: none;
+      }
+    }
+
+    hr {
+      margin: 10px;
+      background-color: var(--bs-body-inactive);
+    }
+
+    span {
+      color: var(--bs-body-text);
+    }
   }
 
-  &.active {
-    a {
-      color: $gray-300;
+  .main-layout__sidebar-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+
+    .nav-item {
+       padding-left: 14px;
     }
   }
 }
 
-.d-flex.align-items-center{
-  padding-left: 20px;
-  padding-right: 20px;
+.wrapper.toggled .hide-on-collapse {
+  opacity: 0;
+  visibility: hidden;
+  width: 0;
+  overflow: hidden;
+}
+
+.wrapper.toggled .main-layout__sidebar-header {
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.wrapper.toggled .main-layout__sidebar-nav li a {
+    justify-content: center;
+    padding: 8px 0;
+}
+
+.wrapper.toggled .main-layout__sidebar-nav li i {
+    margin-right: 0;
+}
+
+.wrapper.toggled .menu-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.wrapper.toggled .main-layout__sidebar-header .navbar-brand {
+    display: none;
+}
+
+.badge { 
+  margin-left: 4px;
+  margin-top: 4px;
+  background-color: var(--bs-body-bg-accent);
+  color: white !important;
+}
+
+.main-layout__sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  gap: 1rem;
+
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+  }
+
+  .menu-toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    
+    button {
+      background: none;
+      border: none;
+      color: var(--bs-body-text);
+      padding: 0;
+      transition: transform 0.3s ease;
+      
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
 }
 </style>

@@ -9,19 +9,19 @@
         <div class="modal-header">
           <h5
             v-if="!isExecuting && !isExecuted"
-            class="modal-title"
+            class="modal-title text-with-outline"
           >
             Confirm DDL Statement
           </h5>
           <h5
             v-if="isExecuting"
-            class="modal-title"
+            class="modal-title text-with-outline"
           >
             Executing...
           </h5>
           <h5
             v-if="isExecuted"
-            class="modal-title"
+            class="modal-title text-with-outline"
           >
             Result
           </h5>
@@ -44,7 +44,7 @@
           <div v-if="isExecuted">
             <div
               v-if="errorMessage"
-              class="alert alert-danger"
+              class="alert alert-[var(--bs-body-accent)] text-with-outline"
               role="alert"
             >
               <i class="fa-solid fa-exclamation-circle" />
@@ -52,7 +52,7 @@
             </div>
             <div
               v-else
-              class="alert alert-success"
+              class="alert alert-[var(--bs-body-accent)] text-with-outline"
               role="alert"
             >
               <i class="fa-solid fa-check-circle" />
@@ -68,7 +68,7 @@
         >
           <button
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-[var(--bs-body-accent)]"
             @click="hideModal"
           >
             {{ isExecuted ? "Close" : "Cancel" }}
@@ -76,7 +76,7 @@
           <button
             v-show="!isExecuted"
             type="button"
-            class="btn btn-primary"
+            class="btn bg-[var(--bs-body-accent)]"
             @click="execute"
           >
             Execute
@@ -255,9 +255,14 @@ export default {
 <style scoped lang="scss">
 .modal-body {
   pre {
-    background-color: $gray-300;
+    background-color: var(--bs-body-bg-secondary);
     border-radius: 5px;
     padding: 10px;
   }
+}
+
+.text-with-outline {
+  color: #ffffff;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 </style>

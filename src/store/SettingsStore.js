@@ -43,6 +43,8 @@ export const useSettingsStore = defineStore("settings", {
               fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
               fontWeight: 600,
               fill: "#ffffff",
+              stroke: "#000000",
+              lineWidth: 2,
             },
           },
           size: 75,
@@ -66,11 +68,9 @@ export const useSettingsStore = defineStore("settings", {
               fontSize: 12,
               fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
               fontWeight: 300,
-              background: {
-                fill: "#ffffff",
-                padding: [2, 2, 2, 2],
-                radius: 2,
-              },
+              fill: "#ffffff",
+              stroke: "#000000",
+              lineWidth: 2,
             },
             autoRotate: true,
           },
@@ -253,14 +253,15 @@ export const useSettingsStore = defineStore("settings", {
         if (!this.graphViz.rels[rel.name].g6Settings.style.endArrow) {
           this.graphViz.rels[rel.name].g6Settings.style.endArrow = {
             path: G6.Arrow.triangle(),
-            fill: "#e2e2e2",
+            fill: "transparent",
           };
         }
+        this.graphViz.rels[rel.name].g6Settings.style.startArrow = false;
         if (
           !this.graphViz.rels[rel.name].g6Settings.labelCfg.style.background
         ) {
           this.graphViz.rels[rel.name].g6Settings.labelCfg.style.background = {
-            fill: "#ffffff",
+            fill: "var(--bs-body-bg-secondary)",
             padding: [2, 2, 2, 2],
             radius: 2,
           };

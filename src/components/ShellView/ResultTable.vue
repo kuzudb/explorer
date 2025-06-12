@@ -1,7 +1,7 @@
 <template>
   <div
     class="result-table__wrapper"
-    :style="{ height: containerHeight, width: tableWidth + 'px' }"
+    :style="{ height: containerHeight }"
   >
     <div
       v-if="totalPages > 1"
@@ -58,7 +58,7 @@
               :key="header.text"
             >
               {{ header.text }}
-              <span class="badge bg-primary">{{ header.type }}</span>
+              <span class="badge bg-[var(--bs-body-accent)]">{{ header.type }}</span>
             </th>
           </tr>
         </thead>
@@ -260,12 +260,13 @@ export default {
     },
 
     computeTableWidth() {
-      let width = document.documentElement.clientWidth || document.body.clientWidth;
-      width -= UI_SIZE.DEFAULT_MARGIN * 2;
-      width -= UI_SIZE.SHELL_TOOL_BAR_WIDTH;
-      width -= 2 * UI_SIZE.DEFAULT_BORDER_WIDTH;
-      this.tableWidth = width;
-      return width;
+      let mainContainerWidth = document.documentElement.clientWidth;
+      mainContainerWidth -= UI_SIZE.DEFAULT_MARGIN * 2; 
+      mainContainerWidth -= UI_SIZE.SHELL_TOOL_BAR_WIDTH; 
+
+      this.tableWidth = mainContainerWidth;
+
+      return mainContainerWidth;
     },
   },
 };
@@ -273,7 +274,8 @@ export default {
 
 <style lang="scss" scoped>
 .result-table__wrapper {
-  width: 100%;
+  /* Width is set by style binding from tableWidth */
+  width: v-bind(tableWidth)px; /* Use v-bind to link to the data property */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -297,19 +299,20 @@ export default {
 .result-table__table__wrapper {
   flex: 1;
   overflow-y: scroll;
-  border-top: 2px solid $gray-300;
-  border-bottom: 2px solid $gray-300;
+  overflow-x: auto; 
+  border-top: 1px solid (var(--bs-body-inactive));
+  border-bottom: 1px solid (var(--bs-body-inactive));
+  border-radius: 10px;
 
   table {
-    font-family: "Courier New", Courier, monospace;
-
+    width: 100%; 
     thead {
       position: sticky;
       border: 0;
       top: 0;
 
       th {
-        background-color: $gray-200;
+        background-color: (var(--bs-body-bg-secondary));
         border-bottom: 0;
       }
     }

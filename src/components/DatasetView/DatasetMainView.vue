@@ -4,113 +4,124 @@
     ref="wrapper"
     class="dataset-view__wrapper"
   >
-    <div class="alert-and-button-wrapper">
-      <button
-        class="btn btn-lg btn-secondary"
-        title="Back"
-        @click="$emit('back')"
-      >
-        <i class="fa-solid  fa-arrow-left" />
-        &nbsp;
-        Back
-      </button>
-
-      <div
-        v-if="!isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite && !modeStore.isWasm"
-        class="alert alert-warning"
-        role="alert"
-      >
-        <i class="fa-solid fa-info-circle" />
-        You have already loaded a database. You can still review the schema of the sample
-        datasets. If you want to load a different dataset, please restart your Kuzu Explorer
-        Docker image with an empty database or drop all tables in the current database.
-      </div>
-
-      <div
-        v-if="!isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isWasm"
-        class="alert alert-warning"
-        role="alert"
-      >
-        <i class="fa-solid fa-info-circle" />
-        You've already loaded a database. If you want to load a different dataset, please <a
-          href="#"
-          @click="refreshPage"
+    <!-- Header area (alerts and back button) -->
+    <div class="dataset-view__header">
+      <div class="alert-and-button-wrapper">
+        <button
+          class="btn btn-lg btn-secondary"
+          title="Back"
+          @click="$emit('back')"
         >
-          refresh the page
-        </a>.
+          <i class="fa-solid  fa-arrow-left" />
+          &nbsp;
+          Back
+        </button>
+
+        <div
+          v-if="!isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite && !modeStore.isWasm"
+          class="alert alert-warning"
+          role="alert"
+        >
+          <i class="fa-solid fa-info-circle" />
+          You have already loaded a database. You can still review the schema of the sample
+          datasets. If you want to load a different dataset, please restart your Kuzu Explorer
+          Docker image with an empty database or drop all tables in the current database.
+        </div>
+
+        <div
+          v-if="!isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isWasm"
+          class="alert alert-warning"
+          role="alert"
+        >
+          <i class="fa-solid fa-info-circle" />
+          You've already loaded a database. If you want to load a different dataset, please <a
+            href="#"
+            @click="refreshPage"
+          >
+            refresh the page
+          </a>.
+        </div>
+
+        <div
+          v-if="isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite"
+          class="alert alert-info"
+          role="alert"
+        >
+          <i class="fa-solid fa-info-circle" />
+          No schema found. Load a dataset to begin."
+        </div>
+
+        <div
+          v-if="!isProduction && modeStore.isReadWrite"
+          class="alert alert-warning"
+          role="alert"
+        >
+          <i class="fa-solid fa-info-circle" />
+          You are running Kuzu Explorer in development mode. You can load any dataset into the
+          database. However, please make sure there is no conflict with the existing schema.
+        </div>
+
+        <div
+          v-if="modeStore.isReadOnly"
+          class="alert alert-warning"
+          role="alert"
+        >
+          <i class="fa-solid fa-info-circle" />
+          Kuzu Explorer is running in read-only mode. You can still review the schema of the
+          sample datasets. If you want to load a dataset, please restart your Kuzu Explorer
+          Docker image in read-write mode with an empty database.
+        </div>
       </div>
 
       <div
-        v-if="isSchemaEmpty && isProduction && !datasetLoadingLog && modeStore.isReadWrite"
+        v-if="!datasetLoadingLog"
+        class="form-group dataset-select-group"
+      >
+        <label for="dataset-select">
+          <h6>Pick a dataset:</h6>
+        </label>
+        <select
+          id="dataset-select"
+          v-model="selectedDataset"
+          class="form-select"
+        >
+          <option
+            v-for="dataset in allDatasets"
+            :key="dataset"
+            :value="dataset"
+          >
+            {{ dataset }}
+          </option>
+        </select>
+      </div>
+      <br>
+      <div
+        v-if="selectedDatasetSchema"
         class="alert alert-info"
         role="alert"
       >
         <i class="fa-solid fa-info-circle" />
-        No schema found. Load a dataset to begin."
-      </div>
-
-      <div
-        v-if="!isProduction && modeStore.isReadWrite"
-        class="alert alert-warning"
-        role="alert"
-      >
-        <i class="fa-solid fa-info-circle" />
-        You are running Kuzu Explorer in development mode. You can load any dataset into the
-        database. However, please make sure there is no conflict with the existing schema.
-      </div>
-
-      <div
-        v-if="modeStore.isReadOnly"
-        class="alert alert-warning"
-        role="alert"
-      >
-        <i class="fa-solid fa-info-circle" />
-        Kuzu Explorer is running in read-only mode. You can still review the schema of the
-        sample datasets. If you want to load a dataset, please restart your Kuzu Explorer
-        Docker image in read-write mode with an empty database.
+        &nbsp;
+        <span v-text="selectedDatasetDescription" />
       </div>
     </div>
 
-
-    <div
-      v-if="!datasetLoadingLog"
-      class="form-group"
-    >
-      <label for="dataset-select">
-        <h6>Pick a dataset:</h6>
-      </label>
-      <select
-        id="dataset-select"
-        v-model="selectedDataset"
-        class="form-select"
+    <!-- Main content area (code block) -->
+    <div class="dataset-view__content">
+      <code 
+        v-if="selectedDatasetSchema || datasetLoadingLog"
+        ref="codeBlock"
+        class="code-block"
       >
-        <option
-          v-for="dataset in allDatasets"
-          :key="dataset"
-          :value="dataset"
-        >
-          {{ dataset }}
-        </option>
-      </select>
+        <pre v-text="datasetLoadingLog ? datasetLoadingLog : selectedDatasetSchema" />
+      </code>
     </div>
-    <br>
-    <div
-      v-if="selectedDatasetSchema"
-      class="alert alert-info"
-      role="alert"
-    >
-      <i class="fa-solid fa-info-circle" />
-      &nbsp;
-      <span v-text="selectedDatasetDescription" />
-    </div>
-    <code v-if="selectedDatasetSchema || datasetLoadingLog">
-      <pre v-text="datasetLoadingLog ? datasetLoadingLog : selectedDatasetSchema" />
-    </code>
-    <br>
-    <div>
+
+    <!-- Footer area (load dataset button) -->
+    <div class="dataset-view__footer">
       <button
         v-if="!datasetLoadingEnded"
-        class="btn btn-lg btn-primary"
+        class="accent-btn"
         title="Load Dataset"
         :disabled="(!isSchemaEmpty && isProduction) ||
           !selectedDatasetSchema ||
@@ -125,7 +136,7 @@
 
       <button
         v-if="datasetLoadingEnded"
-        class="btn btn-lg btn-primary"
+        class="accent-btn"
         title="OK"
         @click="confirmDatasetLoading"
       >
@@ -170,6 +181,11 @@ export default {
     selectedDataset() {
       this.fetchDatasetSchema();
     },
+    datasetLoadingLog() {
+      this.$nextTick(() => {
+        this.scrollToBottom();
+      });
+    }
   },
   mounted() {
     this.fetchDatasets();
@@ -304,6 +320,11 @@ export default {
       this.datasetLoadingEnded = false;
       this.$emit("jumpToShellView");
     },
+    scrollToBottom() {
+      if (this.$refs.codeBlock) {
+        this.$refs.codeBlock.scrollTop = this.$refs.codeBlock.scrollHeight;
+      }
+    },
   },
 }
 </script>
@@ -315,16 +336,62 @@ export default {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
-  code {
-    flex: 1;
-    overflow: scroll;
-    border: 2px solid $gray-300;
-    padding: 10px;
-    color: $gray-900;
-    background-color: $gray-100;
-    font-size: 16px;
+  .dataset-view__content {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+
+    .form-group.dataset-select-group {
+      flex-shrink: 0;
+    }
+
+    .code-block {
+      flex-grow: 1;
+      height: auto;
+      overflow: auto;
+      border: 1px solid (var(--bs-body-inactive));
+      padding: 10px;
+      color: (var(--bs-body-text));
+      background-color: (var(--bs-body-bg-secondary));
+      font-size: 16px;
+      border-radius: 10px;
+      display: block;
+      
+      pre {
+        margin: 0;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+    }
   }
+
+  .dataset-view__footer {
+    margin-top: 20px;
+    text-align: left;
+    
+  }
+
+  button.accent-btn {
+  color: var(--bs-body-text);
+  background-color: var(--bs-body-accent);
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(255, 87, 34, 0.85); 
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
 
   .alert-and-button-wrapper {
     display: flex;

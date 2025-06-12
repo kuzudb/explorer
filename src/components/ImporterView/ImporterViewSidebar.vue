@@ -1,17 +1,17 @@
 <template>
   <div
     ref="sidebar"
-    class="sidebar"
+    class="importer-sidebar"
   >
     <button
-      class="btn btn-primary"
+      class="importer-sidebar__btn"
       @click="$emit('addFiles')"
     >
       <i class="fa-solid fa-plus" />
       Add More Files
     </button>
     <div
-      class="alert alert-info"
+      class="importer-sidebar__alert alert alert-info"
       role="alert"
     >
       <i class="fa-solid fa-info-circle" />
@@ -20,16 +20,16 @@
       You can drag more files to the this panel to add them.
     </div>
 
-    <div class="table-wrapper">
+    <div class="importer-sidebar__table-wrapper">
       <table class="table border">
         <thead>
           <tr>
             <th>Name</th>
             <th>Size</th>
-            <th class="table-type-select">
+            <th class="importer-sidebar__type-select">
               Type
             </th>
-            <th class="actions">
+            <th class="importer-sidebar__actions">
               Actions
             </th>
           </tr>
@@ -39,13 +39,13 @@
             v-for=" (file, key) in files"
             :key="key"
           >
-            <td class="table-name">
+            <td class="importer-sidebar__name">
               {{ file.file.name }}
             </td>
-            <td class="table-size">
+            <td class="importer-sidebar__size">
               {{ getReadableSize(file.file.size) }}
             </td>
-            <td class="table-type-select">
+            <td class="importer-sidebar__type-select">
               <select
                 class="form-select-sm"
                 @change="handleTableTypeChange(key, $event)"
@@ -64,7 +64,7 @@
                 </option>
               </select>
             </td>
-            <td class="actions">
+            <td class="importer-sidebar__actions">
               <i
                 v-if="file.extension === 'csv'"
                 class="fa-solid fa-file-csv"
@@ -74,7 +74,7 @@
               />
               &nbsp;
               <i
-                class=" fa-solid fa-table"
+                class="fa-solid fa-table"
                 data-bs-toggle="tooltip"
                 title="Preview Table"
                 @click="previewFile(key)"
@@ -202,30 +202,37 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.sidebar {
+.importer-sidebar {
   width: 480px;
   height: 100%;
-  background-color: $gray-100;
+  background-color: (var(--bs-body-bg-secondary));
   padding: 16px;
   display: flex;
   flex-direction: column;
 
-  .alert {
+  button { 
+    background-color: var(--bs-body-accent);
+  }
+
+  .importer-sidebar__alert {
     margin-bottom: 10px;
     margin-top: 10px;
   }
 
-  .table-wrapper {
+  .importer-sidebar__table-wrapper {
     overflow-y: scroll;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
 
-  .btn-primary {
+  .importer-sidebar__btn {
+    background-color: var(--bs-body-accent);
+    border: 0;
     width: 100%;
+    
   }
 
-  .actions {
+  .importer-sidebar__actions {
     min-width: 90px;
     text-align: center;
 
@@ -238,23 +245,17 @@ export default {
     }
   }
 
-  .table-type-select {
+  .importer-sidebar__type-select {
     text-align: center;
     width: 100px;
   }
 
-  td.table-name {
+  .importer-sidebar__name {
     word-break: break-all;
   }
 
-  td.table-size {
-    min-width: 75px;
-  }
-
-  .modal-body {
-    p{
-      word-break: break-all;
-    }
+  .importer-sidebar__size {
+    white-space: nowrap;
   }
 }
 </style>

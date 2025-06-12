@@ -10,7 +10,8 @@
             class="form-control"
             :style="{
               backgroundColor: `${getColor()} !important`,
-              color: isNode ? '#ffffff' : '#000000',
+              color: '#FFFFFF',
+              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
             }"
           >
         </div>
@@ -20,7 +21,7 @@
       <div class="schema_side-panel__add-table-actions-container">
         <button
           type="button"
-          class="btn btn-sm btn-outline-success"
+          class="btn btn-sm btn-[var(--bs-body-accent)] px-2"
           title="Save Table"
           :disabled="!isValid"
           @click="saveTable"
@@ -28,27 +29,24 @@
           <i class="fa-solid fa-save" />
           Save
         </button>
-        &nbsp;
         <button
-          class="btn btn-sm btn-outline-danger"
+          class="btn btn-sm btn-outline-[var(--bs-body-accent)] px-2"
           title="Discard Table"
           @click="discardTable"
         >
           <i class="fa-solid fa-trash" />
           Discard
         </button>
-        &nbsp;
         <button
-          class="btn btn-sm btn-outline-primary"
+          class="btn btn-sm btn-outline-[var(--bs-body-accent)] px-2"
           title="Add Property"
           @click="addProperty"
         >
           <i class="fa-solid fa-plus" />
           Property
         </button>
-        &nbsp;
         <button
-          class="btn btn-sm btn-outline-primary"
+          class="btn btn-sm btn-outline-[var(--bs-body-accent)] px-2"
           title="Relationship"
           @click="addRel"
         >
@@ -103,7 +101,7 @@
               <div>
                 <button
                   type="button"
-                  class="btn btn-sm btn-outline-danger"
+                  class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
                   title="Drop"
                   @click="deleteRel(rel.id)"
                 >
@@ -116,7 +114,7 @@
         </div>
 
         <div v-if="currConnectivity.length === 0">
-          <div class="alert alert-info text-justify">
+          <div class="alert alert-[var(--bs-body-accent)] text-justify">
             <i class="fa-solid fa-info-circle" />
             There are no connections in this table yet.
             It is required to have at least one connection for a relationship table.
@@ -130,7 +128,7 @@
       <hr>
       <table
         v-if="schema && currProperties.length > 0"
-        class="table table-sm table-bordered schema_side-panel__add-table"
+        class="table table-sm table-borderless schema_side-panel__add-table"
       >
         <thead>
           <tr>
@@ -169,7 +167,8 @@
               {{ property.name }}
               <span
                 v-if="property.isPrimaryKey"
-                class="badge bg-primary"
+                class="badge bg-[var(--bs-body-accent)]"
+                :style="{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }"
               >PK</span>
             </td>
             <td v-if="!property.isEditing">
@@ -181,7 +180,7 @@
             >
               <button
                 type="button"
-                class="btn btn-sm btn-outline-primary"
+                class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
                 title="Edit"
                 @click="enterEditMode(property.id)"
               >
@@ -190,7 +189,7 @@
               &nbsp;
               <button
                 type="button"
-                class="btn btn-sm btn-outline-danger"
+                class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
                 title="Drop"
                 @click="dropProperty(property.id)"
               >
@@ -202,7 +201,7 @@
       </table>
 
       <div v-if="currProperties.length === 0">
-        <div class="alert alert-info text-justify">
+        <div class="alert alert-[var(--bs-body-accent)] text-justify">
           <i class="fa-solid fa-info-circle" />
           There are no properties in this table yet.
           You can add one by clicking the "Property" button above.
@@ -441,7 +440,12 @@ export default {
 
 <style scoped lang="scss">
 .schema_side-panel__add-table-actions-container {
-  width: 100%;
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .schema_side-panel__add-table-buttons-container {

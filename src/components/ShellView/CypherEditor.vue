@@ -4,74 +4,82 @@
     class="shell-editor__wrapper"
     :style="{ maxHeight: isMaximized ? '550px' : '100%' }"
   >
-    <div
-      v-show="!isQueryGenerationMode"
-      ref="editor"
-      class="shell-editor__container"
-      :style="{ width: editorWidth + 'px' }"
-    />
-    <div
-      v-show="isQueryGenerationMode"
-      class="shell-editor__container"
-      :style="{ width: editorWidth + 'px' }"
-    >
-      <textarea
-        ref="gptQuestionTextArea"
-        v-model="gptQuestion"
-        class="form-control"
-        placeholder="Type your question here..."
-      />
-    </div>
-    <div
-      ref="toolsContainer"
-      class="shell-editor__tools_container"
-      :style="{ width: toolbarWidth + 'px' }"
-    >
-      <div
-        v-show="!isMaximized"
-        class="shell-editor__button"
-      >
-        <i
-          class="fa-lg fa-solid fa-times"
-          @click="removeCell"
-        />
+    <!-- Topbar -->
+    <header class="shell-editor__topbar">
+      <div>
+        <ul class="nav nav-tabs border-0">
+          <li class="nav-item text-[var(--bs-body-text)]">
+            <a
+              href="#"
+              :class="[
+                !isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
+              ]"
+              class="text-decoration-none"
+              @click.prevent="isQueryGenerationMode = false"
+            >Cypher Query</a>
+          </li>
+          <li class="nav-item">
+            <a
+              v-if="!modeStore.isWasm"
+              href="#"
+              :class="[
+                isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
+              ]"
+              class="text-decoration-none"
+              @click.prevent="isQueryGenerationMode = true"
+            >AI Query</a>
+          </li>
+        </ul>
       </div>
-      <div
-        v-show="!isLoading"
-        class="shell-editor__button"
-      >
-        <i
-          class="fa-lg fa-solid fa-play"
-          data-bs-toggle="tooltip"
-          data-bs-placement="right"
-          title="Run"
-          @click="evaluateCell"
+    </header>
+
+    <!-- Layout -->
+    <div class="shell-editor__layout">
+      <!-- Sidebar -->
+      <aside :style="{ width: toolbarWidth + 'px' }">
+        <ul>
+          <button @click="evaluateCell">
+            <i
+              class="fa-solid fa-play"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Run"
+            />
+          </button>
+          <button @click="toggleMaximize">
+            <i
+              :class="maximizeButtonClass"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              :data-bs-original-title="maximizeButtonTitle"
+            />
+          </button>
+          <button
+            v-if="!isMaximized"
+            @click="removeCell"
+          >
+            <i class="fa-solid fa-times" />
+          </button>
+        </ul>
+      </aside>
+
+      <!-- Main Content -->
+      <main>
+        <div
+          v-show="!isQueryGenerationMode"
+          ref="editor"        
         />
-      </div>
-      <div
-        v-show="!isLoading && !modeStore.isWasm"
-        class="shell-editor__button"
-      >
-        <i
-          :class="gptButtonClass"
-          data-bs-toggle="tooltip"
-          data-bs-placement="right"
-          :data-bs-original-title="gptButtonTitle"
-          @click="toggleQueryGeneration"
-        />
-      </div>
-      <div
-        v-show="isMaximizable"
-        class="shell-editor__button"
-      >
-        <i
-          :class="maximizeButtonClass"
-          data-bs-toggle="tooltip"
-          data-bs-placement="right"
-          :data-bs-original-title="maximizeButtonTitle"
-          @click="toggleMaximize"
-        />
-      </div>
+        <div
+          v-if="!modeStore.isWasm"
+          v-show="isQueryGenerationMode"
+        >
+          <textarea
+            ref="gptQuestionTextArea"
+            v-model="gptQuestion"
+            placeholder="Type your question here..."
+          />
+        </div>
+      </main>
     </div>
   </div>
 </template>
@@ -81,7 +89,6 @@ import CypherLanguage from "../../utils/CypherLanguage";
 import MonacoCypherLanguage from "../../utils/MonacoCypherLanguage";
 import * as Monaco from "monaco-editor";
 import { UI_SIZE } from "../../utils/Constants";
-import PlaceholderContentWidget from "../../utils/MonacoPlaceholderContentWidget";
 import { useModeStore } from "../../store/ModeStore";
 import { mapStores } from "pinia";
 
@@ -130,7 +137,7 @@ export default {
   computed: {
     ...mapStores(useModeStore),
     maximizeButtonClass() {
-      return (this.isMaximized ? "fa-minimize" : "fa-maximize") + " fa-lg fa-solid";
+      return (this.isMaximized ? "fa-minimize" : "fa-maximize") + "  fa-solid";
     },
     maximizeButtonTitle() {
       return this.isMaximized ? "Minimize" : "Maximize";
@@ -152,7 +159,7 @@ export default {
         this.$emit("editorResize", this.editorHeight);
         this.editorResizeDebounce = null;
       }, 200);
-    }
+    },
   },
 
   mounted() {
@@ -178,6 +185,9 @@ export default {
 
   methods: {
     initMonacoEditor() {
+      const theme = document.documentElement.getAttribute('data-bs-theme') === 'dark'
+      ? 'vs-dark'
+      : 'vs-light';
       // Set the Monaco editor to the global window object to make sure it is
       // only initialized once.
       // TODO: Create a singleton class wrapper for Monaco instead.
@@ -192,12 +202,13 @@ export default {
                   callback({
                     conf: MonacoCypherLanguage.languageConfiguration,
                     language: MonacoCypherLanguage.language,
-                  });
+                  });                
                 },
               };
             };
           }
-        });
+        }); 
+              
 
         Monaco.languages.registerCompletionItemProvider("cypher", {
           provideCompletionItems: (model, position) => {
@@ -210,20 +221,19 @@ export default {
         });
         window.Monaco = Monaco;
       }
-
+      
       const editorContainer = this.$refs.editor;
       this.editor = window.Monaco.editor.create(editorContainer, {
-        value: "",
+        value: "// Query to retrieve 5 relationships from the graph. \n// ▶️ Run this query by clicking the play button or pressing Shift + Enter. \nMATCH (a)-[r]->(b) RETURN * LIMIT 5;",
         language: "cypher",
-        theme: "vs-light",
+        theme,
         automaticLayout: true,
         minimap: {
           enabled: false,
         },
         fontSize: 16,
         scrollBeyondLastLine: false,
-      });
-      new PlaceholderContentWidget('Type your Cypher code here...', this.editor);
+      });     
     },
     toggleMaximize() {
       this.$emit("toggleMaximize");
@@ -271,69 +281,124 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$margin: 20px;
+$margin: 1rem;
 
 .shell-editor__wrapper {
-  width: calc(100% - #{$margin * 2});
-  margin: $margin;
-  margin-bottom: 0;
-  border: 2px solid $gray-300;
-  display: flex;
-  flex-direction: row-reverse;
-  resize: vertical;
-  overflow: auto;
-  min-height: 132px;
+  margin-top: 1rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  border-radius: 1rem 1rem 0 0;
+  overflow: hidden;
+  
 }
 
-.shell-editor__container {
-  flex: 1;
-  resize: vertical;
-  overflow: auto;
+.shell-editor__topbar {
+  width: 100%;
+  padding: 0.5rem 3rem;
+  border-bottom: 1px solid var(--bs-body-inactive);
+  background-color: var(--bs-body-bg-secondary);
+  color: var(--bs-body-text);
+  div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  ul {
+    display: flex;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+    background-color: var(--bs-body-bg-secondary);
+    .nav-item {
+      margin: 0;
+      padding: 0;
+    }
+  }
+  a {
+    padding: 1rem;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    color: var(--bs-body-inactive);
+    &.active-tab {
+      font-weight: bold;
+      color: var(--bs-body-text);
+      background-color: var(--bs-body-shell);
+    }
 
-  textarea {
+    &.inactive-tab {
+      &:hover {
+        color: var(--bs-body-text);
+        background-color: var(--bs-body-inactive); 
+      }
+    }
+  }
+}
+
+.shell-editor__layout {
+  display: flex;
+  min-height: 132px;
+  aside {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem 0;
+    min-width: 48px;
+    background-color: var(--bs-body-bg-secondary);
+
+    ul {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+      align-items: center;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+
+      button {
+        padding: 0px;
+        background: transparent;
+        border: 0px;
+      }
+    }  
+  }
+}
+
+main {
+  flex: 1;
+  background-color: var(--bs-body-shell);
+  padding: 1rem;
+  /* Ensure main takes up available space and handles overflow */
+  overflow: hidden; /* Prevent content overflow from affecting layout */
+  display: flex; /* Use flexbox for inner layout */
+  flex-direction: column; /* Stack inner divs vertically */
+
+  div {
     height: 100%;
     width: 100%;
-    border: none;
-    resize: none;
-  }
-}
+    resize: vertical;
+    overflow: auto;
+    min-height: 100px;
+    /* Add flex-grow to make the editor div fill the available space */
+    flex-grow: 1;
 
-.shell-editor__tools_container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  background-color: $gray-100;
-  border-right: 2px solid $gray-300;
-}
-
-.shell-editor__button {
-  padding-top: 4px;
-  padding-bottom: 4px;
-
-  >i {
-    cursor: pointer;
-
-    &:hover {
-      opacity: 0.7;
+    &::-webkit-scrollbar {
+      display: none;
     }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 
-    &:active {
-      opacity: 0.5;
+    textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      padding: 0.5rem;
+      background-color: var(--bs-body-bg);
+      color: var(--bs-body-text);
+      min-height: 100px;
+      resize: none;
     }
   }
-
-  >i.fa-play {
-    color: $success;
-  }
-
-  >i.fa-times {
-    color: $red;
-  }
-
-  >i.fa-maximize,
-  >i.fa-minimize {
-    color: $info;
-  }
 }
+
 </style>

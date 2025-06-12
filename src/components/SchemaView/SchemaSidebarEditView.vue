@@ -10,7 +10,8 @@
             class="form-control"
             :style="{
               backgroundColor: ` ${getBackgroundColorForEditingTable()} !important`,
-              color: isNode ? '#ffffff' : '#000000',
+              color: '#FFFFFF',
+              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
             }"
           >
         </div>
@@ -20,14 +21,14 @@
         >
           &nbsp;
           <button
-            class="btn btn-sm btn-outline-primary"
+            class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
             @click="renameTable"
           >
             <i class="fa-solid fa-check" />
           </button>
           &nbsp;
           <button
-            class="btn btn-sm btn-outline-danger"
+            class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
             @click="cancelTableRename"
           >
             <i class="fa-solid fa-times" />
@@ -42,9 +43,11 @@
           :key="conn"
         >
           <span
-            class="badge bg-primary"
+            class="badge bg-[var(--bs-body-accent)]"
             :style="{
               backgroundColor: ` ${getColor(conn.src)} !important`,
+              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+              color: '#FFFFFF',
             }"
           >
             {{ conn.src }}
@@ -53,9 +56,11 @@
           <i class="fa-solid fa-arrow-right" />
           &nbsp;
           <span
-            class="badge bg-primary"
+            class="badge bg-[var(--bs-body-accent)]"
             :style="{
               backgroundColor: ` ${getColor(conn.dst)} !important`,
+              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+              color: '#FFFFFF',
             }"
           >
             {{ conn.dst }}
@@ -66,7 +71,7 @@
 
       <div class="schema_side-panel__edit-table-actions-container">
         <button
-          class="btn btn-sm btn-outline-primary"
+          class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
           title="Go Back to Schema View"
           @click="goBack"
         >
@@ -74,7 +79,7 @@
         </button>
         &nbsp;
         <button
-          class="btn btn-sm btn-outline-primary"
+          class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
           title="Add Property"
           @click="enterAddMode"
         >
@@ -83,7 +88,7 @@
         </button>
         &nbsp;
         <button
-          class="btn btn-sm btn-outline-danger"
+          class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
           title="Drop Table"
           @click="$emit('dropTable', label)"
         >
@@ -96,7 +101,7 @@
 
       <table
         v-if="schema && (tableProperties.length > 0 || addingProperty)"
-        class="table table-sm table-bordered schema_side-panel__edit-table"
+        class="table table-sm table-borderless schema_side-panel__edit-table"
       >
         <thead>
           <tr>
@@ -138,7 +143,8 @@
               {{ property.name }}
               <span
                 v-if="property.isPrimaryKey"
-                class="badge bg-primary"
+                class="badge bg-[var(--bs-body-accent)]"
+                :style="{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: '#FFFFFF', }"
               > PK </span>
             </td>
             <td v-if="i !== editingPropertyIndex">
@@ -150,7 +156,7 @@
             >
               <button
                 type="button"
-                class="btn btn-sm btn-outline-primary"
+                class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
                 title="Edit"
                 @click="enterEditMode(i)"
               >
@@ -159,7 +165,7 @@
               &nbsp;
               <button
                 type="button"
-                class="btn btn-sm btn-outline-danger"
+                class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
                 title="Drop"
                 @click="dropProperty(property.name)"
               >
@@ -182,7 +188,7 @@
         </tbody>
       </table>
       <div v-else>
-        <div class="alert alert-info text-justify">
+        <div class="alert alert-[var(--bs-body-accent)] text-justify">
           <i class="fa-solid fa-info-circle" />
           There are no properties in this table yet.
           You can add one by clicking the "Property" button above.

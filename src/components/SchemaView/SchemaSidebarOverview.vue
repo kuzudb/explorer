@@ -5,7 +5,7 @@
         <h5>Node Tables</h5>
         <button
           v-if="modeStore.isReadWrite"
-          class="btn btn-sm btn-primary"
+          class="btn btn-sm btn-[var(--bs-body-accent)]"
           @click="$emit('addNodeTable')"
         >
           Add
@@ -14,7 +14,7 @@
       <hr>
       <table
         v-if="schema"
-        class="table table-sm table-bordered schema_side-panel__overview-table"
+        class="table table-sm table-borderless schema_side-panel__overview-table"
       >
         <tbody>
           <tr
@@ -25,8 +25,8 @@
               scope="row"
             >
               <span
-                class="badge bg-primary"
-                :style="{ backgroundColor: `${getColor(nodeTable.name)} !important` }"
+                class="badge bg-[var(--bs-body-accent)]"
+                :style="{ backgroundColor: `${getColor(nodeTable.name)} !important`, textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' , color: '#FFFFFF',}"
               >{{ nodeTable.name }}</span>
               <br>
               <small>
@@ -39,14 +39,14 @@
             >
               <div>
                 <button
-                  class="btn btn-sm btn-outline-primary"
+                  class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
                   @click="editTable(nodeTable.name)"
                 >
                   <i class="fa-solid fa-pencil" />
                 </button>
                 &nbsp;
                 <button
-                  class="btn btn-sm btn-outline-danger"
+                  class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
                   @click="dropTable(nodeTable.name)"
                 >
                   <i class="fa-solid fa-trash-can" />
@@ -78,7 +78,7 @@
         <h5>Relationship Tables</h5>
         <button
           v-if="modeStore.isReadWrite"
-          class="btn btn-sm btn-primary"
+          class="btn btn-sm btn-[var(--bs-body-accent)]"
           @click="$emit('addRelTable')"
         >
           Add
@@ -87,7 +87,7 @@
       <hr>
       <table
         v-if="schema"
-        class="table table-sm table-bordered schema_side-panel__overview-table"
+        class="table table-sm table-borderless schema_side-panel__overview-table"
       >
         <tbody>
           <tr
@@ -99,10 +99,11 @@
               :colspan="relTable.group ? 2 : 1"
             >
               <span
-                class="badge bg-primary"
+                class="badge bg-[var(--bs-body-accent)]"
                 :style="{
                   backgroundColor: ` ${getColor(relTable.name)} !important`,
-                  color: '#000000',
+                  color: '#FFFFFF',
+                  textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
                 }"
               >
                 {{ relTable.name }}</span>
@@ -121,14 +122,14 @@
             >
               <div>
                 <button
-                  class="btn btn-sm btn-outline-primary"
+                  class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
                   @click="editTable(relTable.name)"
                 >
                   <i class="fa-solid fa-pencil" />
                 </button>
                 &nbsp;
                 <button
-                  class="btn btn-sm btn-outline-danger"
+                  class="btn btn-sm btn-outline-[var(--bs-body-accent)]"
                   @click="dropTable(relTable.name)"
                 >
                   <i class="fa-solid fa-trash-can" />
@@ -196,6 +197,19 @@ export default {
   &.schema_side-panel__overview-rel-groups-buttons-container {
     width: 50px;
   }
+}
+.schema_side-panel__overview-table {
+
+  border-radius: 1rem;
+  padding: 2px;
+}
+
+btn {
+  background: var(--bs-body-accent);
+}
+
+small {
+  padding-left: 6px;
 }
 
 ul {
