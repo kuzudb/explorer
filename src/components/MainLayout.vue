@@ -199,9 +199,11 @@
           <div class="modal-body">
             <div v-if="modeStore.isDemo">
               <p>
-                This WebAssembly-powered demo of <a href="https://kuzudb.com/">Kuzu</a> lets you import and explore
-                graph
-                data with Cypher queries.
+                This WebAssembly-powered demo of <a href="https://kuzudb.com/">Kuzu</a> lets you import and query graph data using 
+                <a
+                  href="https://docs.kuzudb.com/cypher/"
+                  target="_blank"
+                >openCypher.</a>
                 See the <a
                   href="https://docs.kuzudb.com/visualization/kuzu-explorer/"
                   target="_blank"
