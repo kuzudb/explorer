@@ -760,7 +760,8 @@ export default {
             ...relSettings.g6Settings.labelCfg,
             style: {
               ...relSettings.g6Settings.labelCfg.style,
-              fill: "#FFFFFF",
+              background: { fill: "#FFFFFF" },
+              fill: "#000000",
             }
           },
           style: {

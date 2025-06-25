@@ -491,8 +491,15 @@ export default {
             },
             labelCfg: {
               style: {
-                ...this.settingsStore.defaultRel.labelCfg.style,
-                fill: "#FFFFFF",
+                background: { 
+                  fill: "#ffffff",
+                  padding: [2, 2, 2, 2],
+                  radius: 2,
+                 },
+                fill: "#000000",
+                fontSize: 12,
+                fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                fontWeight: 300,
               },
             },
           };
@@ -878,8 +885,9 @@ export default {
     width: 360px;
     height: 100%;
     padding-left: 12px;
-    padding-right: 12px;
-    overflow: ellipse;
+    
+    overflow: hidden;
+    text-overflow: ellipsis;
     display: flex;
     flex-direction: column;
     
