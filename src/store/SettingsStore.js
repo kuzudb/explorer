@@ -30,7 +30,7 @@ function randomChromaColor() {
 }
 
 const NULL_COLOR = "#d9d9d9";
-const DEFAULT_NUMBER_OF_NODES_TO_EXPAND = 100;
+const DEFAULT_NUMBER_OF_NODES_TO_EXPAND = 50;
 
 export const useSettingsStore = defineStore("settings", {
   state: () => ({
@@ -80,7 +80,7 @@ export const useSettingsStore = defineStore("settings", {
       rels: {},
     },
     performance: {
-      maxNumberOfNodes: 300,
+      maxNumberOfNodes: 200,
       maxNumberOfNodesToExpand: DEFAULT_NUMBER_OF_NODES_TO_EXPAND,
     },
     tableView: {
@@ -261,7 +261,7 @@ export const useSettingsStore = defineStore("settings", {
           !this.graphViz.rels[rel.name].g6Settings.labelCfg.style.background
         ) {
           this.graphViz.rels[rel.name].g6Settings.labelCfg.style.background = {
-            fill: "var(--bs-body-bg-secondary)",
+            fill: "#FFFFFF",
             padding: [2, 2, 2, 2],
             radius: 2,
           };

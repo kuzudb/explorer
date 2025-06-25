@@ -760,6 +760,7 @@ export default {
             ...relSettings.g6Settings.labelCfg,
             style: {
               ...relSettings.g6Settings.labelCfg.style,
+              background: { fill: "#FFFFFF" },
               fill: "#000000",
             }
           },
@@ -1347,12 +1348,12 @@ export default {
     }
 
     .result-graph__actions{
-      width: calc(100% - 1rem);
+      
       gap: 3px;
     }
 
     table {
-      width: calc(100% - 1rem);
+      
       table-layout: auto;
       border-collapse: collapse;
       border-radius: 1rem;
@@ -1360,18 +1361,24 @@ export default {
       background-color: var(--bs-body-bg);
       margin-bottom: 1rem;
 
+      th, td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: none;
+      }
+
       th {
+        padding-left: 6px;
+        padding-top: 8px;
         max-width: 120px;
         word-break: break-word;
-        
       }
 
       td {
         padding: 0.5rem 1rem;
         max-width: 200px;
         word-break: break-word;
-        
-        
       }
 
       &.result-graph__overview-table {
@@ -1403,12 +1410,13 @@ export default {
     }
 
     .badge {
+      display: inline-block;
       background-color: var(--bs-body-bg-accent) !important;
       color: #fff !important;
-      border-radius: 0.5rem;
-      padding: 0.35em 0.65em;
-      font-size: 0.875em;
-      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
     }
 
     button.btn-outline-secondary,
