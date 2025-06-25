@@ -160,7 +160,7 @@
               min="100"
               max="2000"
               class="settings-input"
-              placeholder="100"
+              placeholder="200"
               required
             >
           </div>
@@ -174,7 +174,7 @@
               min="5"
               max="1000"
               class="settings-input"
-              placeholder="10"
+              placeholder="50"
               required
             >
           </div>
@@ -217,7 +217,7 @@
               min="1"
               max="500"
               class="settings-input"
-              placeholder="2"
+              placeholder="10"
               required
             >
           </div>

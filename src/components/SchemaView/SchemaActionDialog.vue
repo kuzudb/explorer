@@ -9,19 +9,19 @@
         <div class="modal-header">
           <h5
             v-if="!isExecuting && !isExecuted"
-            class="modal-title text-with-outline"
+            class="modal-title"
           >
             Confirm DDL Statement
           </h5>
           <h5
             v-if="isExecuting"
-            class="modal-title text-with-outline"
+            class="modal-title"
           >
             Executing...
           </h5>
           <h5
             v-if="isExecuted"
-            class="modal-title text-with-outline"
+            class="modal-title"
           >
             Result
           </h5>
@@ -44,7 +44,7 @@
           <div v-if="isExecuted">
             <div
               v-if="errorMessage"
-              class="alert alert-[var(--bs-body-accent)] text-with-outline"
+              class="alert alert-[var(--bs-body-accent)] "
               role="alert"
             >
               <i class="fa-solid fa-exclamation-circle" />
@@ -52,7 +52,7 @@
             </div>
             <div
               v-else
-              class="alert alert-[var(--bs-body-accent)] text-with-outline"
+              class="alert alert-[var(--bs-body-accent)]"
               role="alert"
             >
               <i class="fa-solid fa-check-circle" />
@@ -261,8 +261,4 @@ export default {
   }
 }
 
-.text-with-outline {
-  color: #ffffff;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-}
 </style>

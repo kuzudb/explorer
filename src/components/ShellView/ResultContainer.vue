@@ -393,6 +393,8 @@ export default {
   :deep(table) {
     td, th {
       position: relative;
+      padding-left: 4px;
+      padding-top: 4px;
       padding-right: 8px;
       padding-bottom: 8px;
       

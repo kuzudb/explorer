@@ -492,7 +492,7 @@ export default {
             labelCfg: {
               style: {
                 ...this.settingsStore.defaultRel.labelCfg.style,
-                fill: "#000000",
+                fill: "#FFFFFF",
               },
             },
           };
@@ -875,11 +875,11 @@ export default {
   }
 
   .schema_side-panel__wrapper {
-    width: 510px;
+    width: 360px;
     height: 100%;
     padding-left: 12px;
     padding-right: 12px;
-    overflow: hidden;
+    overflow: ellipse;
     display: flex;
     flex-direction: column;
     
@@ -889,7 +889,7 @@ export default {
 
     .sidebar-content {
       height: 100%;
-      width: calc(100% - 1rem);
+      width: 100%;
       overflow-y: auto;
       overflow-x: hidden;
       padding: 1rem;
@@ -898,19 +898,26 @@ export default {
         border-radius: 0.5rem;
         overflow: hidden;
         background-color: var(--bs-body-bg);
+        width: calc(100% - 1rem);
         
         th {
-        padding: 10px;
-        max-width: 120px;
-        word-break: break-word;
-      }
+          padding: 10px;
+          max-width: 120px;
+          word-break: break-word;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
 
-      td {
-        padding-left: 10px;
-        padding-right: 5px;
-        max-width: 200px;
-        word-break: break-word;
-      }
+        td {
+          padding-left: 10px;
+          padding-right: 5px;
+          max-width: 150px;
+          word-break: break-word;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
     }
   }
