@@ -759,9 +759,15 @@ export default {
           labelCfg: {
             ...relSettings.g6Settings.labelCfg,
             style: {
-              ...relSettings.g6Settings.labelCfg.style,
-              background: { fill: "#FFFFFF" },
-              fill: "#000000",
+              background: { 
+                  fill: "#ffffff",
+                  padding: [2, 2, 2, 2],
+                  radius: 2,
+                 },
+                fontSize: 12,
+                fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                fontWeight: 300,
+                fill: "#000000",
             }
           },
           style: {
