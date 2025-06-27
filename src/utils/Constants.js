@@ -92,7 +92,7 @@ export const MODES = {
   WASM: "WASM",
 };
 
-export const GPT_MODELS = ["gpt-4o", "gpt-4o-mini", "gpt-4"];
+export const GPT_MODELS = ["gpt-4.1", "gpt-4o", "gpt-4o-mini"];
 export const LLM_PROVIDERS = {
   OPENAI: {text: "OpenAI", key: "OPENAI"},
   OTHERS: {text: "Other OpenAI-compatible API", key: "OTHERS"},
