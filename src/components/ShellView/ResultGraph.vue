@@ -129,7 +129,9 @@
                   <span
                     v-if="property.isPrimaryKey"
                     class="badge bg-primary"
-                    style="text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; color: white !important;"
+                    style="
+                      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; 
+                      color: white !important;"
                   >PK</span>
                 </th>
                 <td>{{ property.value }}</td>
@@ -406,6 +408,18 @@ export default {
     getColor(label) {
       return this.settingsStore.colorForLabel(label);
     },
+    getLayoutConfig(edges) {
+      let nodeSpacing = edges.length * 8;
+      nodeSpacing = nodeSpacing < 80 ? 80 : nodeSpacing;
+      nodeSpacing = nodeSpacing > 500 ? 500 : nodeSpacing;
+      const config = {
+        nodeSpacing,
+        type: 'force',
+        preventOverlap: true,
+
+      };
+      return config;
+    },
     drawGraph() {
       this.isGraphLoading = true; // Show loading overlay
       if (this.graphCreated && this.g6Graph) {
@@ -429,55 +443,81 @@ export default {
         container,
         width,
         height,
-        layout: {
-          type: 'force2',
-          preventOverlap: true,
-          nodeStrength: 2000,
-          animate: true,
-          maxIteration: 500,
+        linkCenter: false,
+        groupByTypes: false,
+        layout: this.getLayoutConfig(edges),
+        defaultNode: {
+          shape: "circle",
+          labelCfg: {
+            style: {
+              fontSize: 14,
+              fontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
+              fontWeight: 300,
+              fill: "#ffffff",
+            },
+          },
+          size: 100,
+          style: {
+            lineWidth: 0,
+            fill: "#FF0000",
+          },
         },
-        defaultNode: this.settingsStore.defaultNode,
         nodeStateStyles: {
           hover: {
-            lineWidth: 3,
+            lineWidth: 4,
             stroke: '#1890FF',
           },
           click: {
-            lineWidth: 3,
-            stroke: '#1890FF',
-          },
-          opaque: {
-            opacity: 0.2,
+            lineWidth: 4,
+            stroke: '#1848FF',
           },
         },
         defaultEdge: {
-          ...this.settingsStore.defaultRel,
+          size: 5,
+          opacity: 1,
           style: {
-            ...this.settingsStore.defaultRel.style,
-            startArrow: false,
+            stroke: "#e2e2e2",
+            endArrow: true,
+            // TODO: investigate why the endArrow causes rendering issues
+            // endArrow: {
+            //   path: G6.Arrow.triangle(),
+            //   fill: "#e2e2e2",
+            // }
           },
+          labelCfg: {
+            style: {
+              fontSize: 12,
+              fontFamily: "Lexend,Helvetica Neue, Helvetica, Arial, sans-serif",
+              fontWeight: 350,
+              background: {
+                fill: "#ffffff",
+                padding: [2, 2, 2, 2],
+                radius: 2,
+              },
+            },
+            refY: -14,
+            autoRotate: true,
+          },
+
         },
         edgeStateStyles: {
           hover: {
             stroke: '#1890FF',
-            endArrow: {
-              path: G6.Arrow.triangle(),
-              fill: '#1890FF',
-            },
+            // endArrow: {
+            //   path: G6.Arrow.triangle(),
+            //   fill: "#1890FF",
+            // },
           },
           click: {
-            stroke: '#1890FF',
-            endArrow: {
-              path: G6.Arrow.triangle(),
-              fill: '#1890FF',
-            },
-          },
-          opaque: {
-            opacity: 0.2,
+            stroke: '#1848FF',
+            // endArrow: {
+            //   path: G6.Arrow.triangle(),
+            //   fill: "#1848FF",
+            // },
           },
         },
         modes: {
-          default: ['drag-canvas', 'zoom-canvas', 'drag-node'],
+          default: ['drag-canvas', 'zoom-canvas', 'drag-node']
         },
       });
 
@@ -703,10 +743,23 @@ export default {
         return currentMap[sortedNodeInfo[3]];
       }
 
+      function getReadableTextColor(bgColor) {
+        // Remove hash if present
+        const color = bgColor.charAt(0) === '#' ? bgColor.substring(1) : bgColor;
+        const r = parseInt(color.substring(0, 2), 16);
+        const g = parseInt(color.substring(2, 4), 16);
+        const b = parseInt(color.substring(4, 6), 16);
+        // Calculate luminance
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        return luminance > 0.6 ? '#000000' : '#ffffff';
+      }
+
       const processNode = (rawNode) => {
         const nodeId = this.encodeId(rawNode._id);
         nodeLabels[rawNode._id.table] = rawNode._label;
         const nodeSettings = this.settingsStore.settingsForLabel(rawNode._label);
+        const nodeFill = nodeSettings.g6Settings.style.fill;
+        const labelColor = getReadableTextColor(nodeFill);
         const g6Node = {
           id: nodeId,
           properties: rawNode,
@@ -715,9 +768,8 @@ export default {
             ...nodeSettings.g6Settings.labelCfg,
             style: {
               ...nodeSettings.g6Settings.labelCfg.style,
-              fill: "#ffffff",
-              stroke: "#000000",
-              lineWidth: 2,
+              fill: labelColor,
+              lineWidth: 1,
             }
           }
         }
@@ -765,19 +817,16 @@ export default {
                   radius: 2,
                  },
                 fontSize: 12,
-                fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                fontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
                 fontWeight: 300,
                 fill: "#000000",
+                
             }
           },
           style: {
             ...relSettings.g6Settings.style,
-            endArrow: {
-              path: G6.Arrow.triangle(),
-              fill: '#E2E2E2',
-            },
+            endArrow: true,
             startArrow: false,
-           
           },
         }
         if (g6Rel.source === g6Rel.target) {
@@ -810,7 +859,8 @@ export default {
           }
           g6Rel.label = String(g6Rel.label);
           const fontSize = relSettings.g6Settings.labelCfg.style.fontSize;
-          g6Rel.label = G6Utils.fittingString(g6Rel.label, linkDistance - 10, fontSize);
+          // Truncate edge label to max width 80px
+          g6Rel.label = G6Utils.fittingString(g6Rel.label, 80, fontSize);
         }
         if (edges[relId]) {
           return;

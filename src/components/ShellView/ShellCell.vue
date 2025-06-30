@@ -237,6 +237,7 @@ export default {
       if(!isOpenAI) {
         data.baseUrl = baseUrl;
       }
+      data.llmProvider = this.settingsStore.gpt.llmProvider;
       Axios.post(url, data)
         .then((res) => {
           const query = res.data.query;

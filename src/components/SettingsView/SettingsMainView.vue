@@ -243,100 +243,137 @@
                 </option>
               </select>
             </div>
-            <div
-              v-if="isOpenAIApi"
-              class="settings-row"
-            >
-              <span>OpenAI model</span>
-              <select
-                v-model="currentSettings.gpt.model"
-                class="settings-input form-select"
-              >
-                <option
-                  v-for="option in gptModelOptions"
-                  :key="option"
-                  :value="option"
-                >
-                  {{ option }}
-                </option>
-              </select>
-            </div>
-            <div
-              v-else
-              class="settings-row"
-            >
-              <span>Model name</span>
-              <input
-                v-model="currentSettings.gpt.model"
-                type="text"
-                class="settings-input form-control"
-                title="Enter the custom model name"
-              >
-            </div>
-            <div
-              v-if="!isOpenAIApi"
-              class="settings-row"
-            >
-              <span>API endpoint</span>
-              <input
-                v-model="currentSettings.gpt.url"
-                type="text"
-                class="settings-input form-control"
-                title="Enter the API endpoint"
-              >
-            </div>
-            <div class="settings-row">
-              <span>
 
-                {{ isOpenAIApi ? 'OpenAI' : 'API' }} key
-              </span>
-              <input
-                v-model="currentSettings.gpt.apiToken"
-                :type="showPassword ? 'text' : 'password'"
-                class="settings-input form-control"
-                :title="isOpenAIApi ? 'Enter the OpenAI API key' : 'Enter API key'"
+            <!-- Gemini-specific layout -->
+            <template v-if="currentSettings.gpt.llmProvider === llmProviderOptions.GEMINI.key">
+              <div class="settings-row">
+                <span>Gemini model</span>
+                <input
+                  v-model="currentSettings.gpt.model"
+                  class="settings-input form-control"
+                  value="gemini-2.0-flash"
+                  disabled
+                >
+              </div>
+              <div class="settings-row">
+                <span>Gemini API key</span>
+                <input
+                  v-model="currentSettings.gpt.apiToken"
+                  :type="showPassword ? 'text' : 'password'"
+                  class="settings-input form-control"
+                  title="Enter your Google Gemini API key"
+                >
+                <button
+                  type="button"
+                  class="btn ml-3"
+                  @click="togglePasswordVisibility"
+                >
+                  <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'" />
+                </button>
+              </div>
+              <small class="form-text text-muted">
+                The Gemini API key is used to generate Cypher queries from natural language using the selected Gemini model.<br>
+                You can obtain an API key from <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>.<br>
+                We only store the API key in your browser. Click <a href="#" @click="clearGptToken()">here</a> to clear the API key from the browser.
+              </small>
+            </template>
+
+            <!-- OpenAI and Other layouts (existing) -->
+            <template v-else>
+              <div
+                v-if="isOpenAIApi"
+                class="settings-row"
               >
-              <button
-                type="button"
-                class="btn ml-3"
-                @click="togglePasswordVisibility"
+                <span>OpenAI model</span>
+                <select
+                  v-model="currentSettings.gpt.model"
+                  class="settings-input form-select"
+                >
+                  <option
+                    v-for="option in gptModelOptions"
+                    :key="option"
+                    :value="option"
+                  >
+                    {{ option }}
+                  </option>
+                </select>
+              </div>
+              <div
+                v-else
+                class="settings-row"
               >
-                <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'" />
-              </button>
-            </div>
-            <small
-              v-if="isOpenAIApi"
-              class="form-text text-muted"
-            >
-              The OpenAI API key is used to generate Cypher queries from natural language using the specified model.
-              It can be obtained from
-              <a
-                href="https://platform.openai.com/"
-                target="_blank"
-              >OpenAI</a>. We only
-              store the API key in your browser. Click
-              <a
-                href="#"
-                @click="clearGptToken()"
-              >here</a> to clear the API key from the
-              browser.
-            </small>
-            <small
-              v-else
-              class="form-text text-muted"
-            >
-              The API key may not be required for some deployments, such as the locally hosted version of Ollama.
-              Please refer to the documentation for your model
-              provider.
-              If not required, leave this field empty and we automatically fill it with "IGNORED".
-              We only
-              store the API key in your browser. Click
-              <a
-                href="#"
-                @click="clearGptToken()"
-              >here</a> to clear the API key from the
-              browser.
-            </small>
+                <span>Model name</span>
+                <input
+                  v-model="currentSettings.gpt.model"
+                  type="text"
+                  class="settings-input form-control"
+                  title="Enter the custom model name"
+                >
+              </div>
+              <div
+                v-if="!isOpenAIApi"
+                class="settings-row"
+              >
+                <span>API endpoint</span>
+                <input
+                  v-model="currentSettings.gpt.url"
+                  type="text"
+                  class="settings-input form-control"
+                  title="Enter the API endpoint"
+                >
+              </div>
+              <div class="settings-row">
+                <span>
+                  {{ isOpenAIApi ? 'OpenAI' : 'API' }} key
+                </span>
+                <input
+                  v-model="currentSettings.gpt.apiToken"
+                  :type="showPassword ? 'text' : 'password'"
+                  class="settings-input form-control"
+                  :title="isOpenAIApi ? 'Enter the OpenAI API key' : 'Enter API key'"
+                >
+                <button
+                  type="button"
+                  class="btn ml-3"
+                  @click="togglePasswordVisibility"
+                >
+                  <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'" />
+                </button>
+              </div>
+              <small
+                v-if="isOpenAIApi"
+                class="form-text text-muted"
+              >
+                The OpenAI API key is used to generate Cypher queries from natural language using the specified model.
+                It can be obtained from
+                <a
+                  href="https://platform.openai.com/"
+                  target="_blank"
+                >OpenAI</a>. We only
+                store the API key in your browser. Click
+                <a
+                  href="#"
+                  @click="clearGptToken()"
+                >here</a> to clear the API key from the
+                browser.
+              </small>
+              <small
+                v-else
+                class="form-text text-muted"
+              >
+                The API key may not be required for some deployments, such as the locally hosted version of Ollama.
+                Please refer to the documentation for your model
+                provider.
+                If not required, leave this field empty and we automatically fill it with "IGNORED".
+                We only
+                store the API key in your browser. Click
+                <a
+                  href="#"
+                  @click="clearGptToken()"
+                >here</a> to clear the API key from the
+                browser.
+              </small>
+            </template>
           </div>
         </div>
 
@@ -446,6 +483,8 @@ export default {
       if (this.currentSettings.gpt.llmProvider === LLM_PROVIDERS.OPENAI.key) {
         this.currentSettings.gpt.model = GPT_MODELS[0];
         this.currentSettings.gpt.url = "";
+      } else if (this.currentSettings.gpt.llmProvider === LLM_PROVIDERS.GEMINI.key) {
+        this.currentSettings.gpt.model = "gemini-2.0-flash";
       } else {
         this.currentSettings.gpt.model = "";
         this.currentSettings.gpt.apiToken = "";

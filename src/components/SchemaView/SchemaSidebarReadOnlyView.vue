@@ -123,13 +123,11 @@ export default {
         return [];
       }
       if (this.isNode) {
-        return this.schema.nodeTables
-          .find(t => t.name === this.label)
-          .properties;
+        const table = this.schema.nodeTables.find(t => t.name === this.label);
+        return table ? table.properties : [];
       } else {
-        return this.schema.relTables
-          .find(t => t.name === this.label)
-          .properties;
+        const table = this.schema.relTables.find(t => t.name === this.label);
+        return table ? table.properties : [];
       }
     },
   },

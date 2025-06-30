@@ -172,8 +172,10 @@ export default {
     graphHeight: 0,
     borderWidth: UI_SIZE.DEFAULT_BORDER_WIDTH,
     hoveredLabel: null,
+    hoveredLabelDisplay: null,
     hoveredIsNode: false,
     clickedLabel: null,
+    clickedLabelDisplay: null,
     clickedIsNode: false,
     clickedIsNewTable: false,
     toolbarDebounceTimeout: 100,
@@ -267,15 +269,30 @@ export default {
         linkCenter: false,
         groupByTypes: false,
         layout: this.getLayoutConfig(edges),
-        defaultNode: this.settingsStore.defaultNode,
+        defaultNode: {
+          shape: "circle",
+          labelCfg: {
+            style: {
+              fontSize: 14,
+              fontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
+              fontWeight: 300,
+              fill: "#ffffff",
+            },
+          },
+          size: 100,
+          style: {
+            lineWidth: 0,
+            fill: "#FF0000",
+          },
+        },
         nodeStateStyles: {
           hover: {
-            lineWidth: 3,
+            lineWidth: 4,
             stroke: '#1890FF',
           },
           click: {
-            lineWidth: 3,
-            stroke: '#1890FF',
+            lineWidth: 4,
+            stroke: '#1848FF',
           },
         },
         defaultEdge: {
@@ -332,7 +349,7 @@ export default {
       this.g6Graph.on('node:mouseenter', (e) => {
         const nodeItem = e.item;
         this.g6Graph.setItemState(nodeItem, 'hover', true);
-        this.handleHover(nodeItem._cfg.model.label, true);
+        this.handleHover(nodeItem._cfg.model._label, nodeItem._cfg.model.label, true);
       });
 
       this.g6Graph.on('node:mouseleave', (e) => {
@@ -348,7 +365,8 @@ export default {
         this.resetClick();
         const nodeItem = e.item;
         this.g6Graph.setItemState(nodeItem, 'click', true);
-        this.clickedLabel = nodeItem._cfg.model.label;
+        this.clickedLabel = nodeItem._cfg.model._label;
+        this.clickedLabelDisplay = nodeItem._cfg.model.label;
         this.clickedIsNode = true;
       });
 
@@ -361,7 +379,7 @@ export default {
           });
           edgeItem.toFront();
         }
-        this.handleHover(edgeItem._cfg.model._label, false);
+        this.handleHover(edgeItem._cfg.model._label, edgeItem._cfg.model.label, false);
       });
 
       this.g6Graph.on('edge:mouseleave', (e) => {
@@ -394,6 +412,7 @@ export default {
         }
         this.clickedIsNode = false;
         this.clickedLabel = edgeItem._cfg.model._label;
+        this.clickedLabelDisplay = edgeItem._cfg.model.label;
       });
 
       this.g6Graph.on('canvas:click', () => {
@@ -428,11 +447,23 @@ export default {
 
     extractGraphFromSchema(schema) {
       const overlapEdgeHash = {};
+      function getReadableTextColor(bgColor) {
+        const color = bgColor.charAt(0) === '#' ? bgColor.substring(1) : bgColor;
+        const r = parseInt(color.substring(0, 2), 16);
+        const g = parseInt(color.substring(2, 4), 16);
+        const b = parseInt(color.substring(4, 6), 16);
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        return luminance > 0.6 ? '#000000' : '#ffffff';
+      }
       const nodes = schema.nodeTables.map(n => {
         const fillColor = n.isPlaceholder ? this.getColor(PLACEHOLDER_NODE_TABLE) : this.getColor(n.name);
+        const labelColor = getReadableTextColor(fillColor);
+        let label = n.name;
+        // Match ResultGraph: Truncate node label to max width 100px
+        label = G6Utils.fittingString(label, 80, this.settingsStore.defaultNode.labelCfg.style.fontSize);
         const returnVal = {
           id: n.name,
-          label: n.name,
+          label: label,
           _label: n.name,
           isPlaceholder: Boolean(n.isPlaceholder),
           style: {
@@ -443,8 +474,7 @@ export default {
           labelCfg: {
             style: {
               ...this.settingsStore.defaultNode.labelCfg.style,
-              fill: "#ffffff",
-              stroke: '#000000',
+              fill: labelColor,
               lineWidth: 2,
             },
           },
@@ -483,7 +513,7 @@ export default {
             id: this.getEdgeId(conn.src, conn.dst, r.name),
             source: conn.src,
             target: conn.dst,
-            label: this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.ALWAYS ? this.getRelTableDisplayLabel(r.name) : "",
+            label: this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.ALWAYS ? G6Utils.fittingString(this.getRelTableDisplayLabel(r.name), 80, 12) : "",
             _label: r.name,
             isPlaceholder: Boolean(r.isPlaceholder),
             style: {
@@ -498,7 +528,7 @@ export default {
                  },
                 fill: "#000000",
                 fontSize: 12,
-                fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
+                fontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
                 fontWeight: 300,
               },
             },
@@ -558,8 +588,9 @@ export default {
       });
     },
 
-    handleHover(label, isNode) {
+    handleHover(label, labelDisplay, isNode) {
       this.hoveredLabel = label;
+      this.hoveredLabelDisplay = labelDisplay;
       this.hoveredIsNode = isNode;
     },
 
@@ -610,6 +641,7 @@ export default {
         }
       }
       this.clickedLabel = null;
+      this.clickedLabelDisplay = null;
       this.clickedIsNode = false;
       this.clickedIsNewTable = false;
       this.$nextTick(() => {
@@ -621,6 +653,7 @@ export default {
 
     resetHover() {
       this.hoveredLabel = null;
+      this.hoveredLabelDisplay = null;
       this.hoveredIsNode = false;
     },
 
@@ -746,6 +779,7 @@ export default {
         this.handleSettingsChange();
       });
       this.clickedLabel = newTableName;
+      this.clickedLabelDisplay = newTableName;
       this.clickedIsNode = true;
       this.clickedIsNewTable = true;
     },
@@ -761,6 +795,7 @@ export default {
       this.$emit("addPlaceholderRelTable", newTableName);
       this.settingsStore.addNewRelTable(PLACEHOLDER_REL_TABLE);
       this.clickedLabel = newTableName;
+      this.clickedLabelDisplay = newTableName;
       this.clickedIsNode = false;
       this.clickedIsNewTable = true;
     },
@@ -802,6 +837,7 @@ export default {
 
     unsetPlaceholder({ originalLabel, isNode }) {
       this.clickedLabel = originalLabel;
+      this.clickedLabelDisplay = originalLabel;
       this.$emit("unsetPlaceholder", { originalLabel, isNode });
     },
 
@@ -822,6 +858,7 @@ export default {
     updatePlaceholderRelTable(newTable) {
       this.$emit("updatePlaceholderRelTable", newTable);
       this.clickedLabel = newTable.name;
+      this.clickedLabelDisplay = newTable.name;
       // Rerender the graph to update the edge
       this.$nextTick(() => {
         this.handleSettingsChange();
@@ -885,12 +922,10 @@ export default {
     width: 360px;
     height: 100%;
     padding-left: 12px;
-    
     overflow: hidden;
     text-overflow: ellipsis;
     display: flex;
     flex-direction: column;
-    
     background-color: (var(--bs-body-bg-secondary));
     border-bottom-left-radius: 1rem;
     border-top-left-radius: 1rem;
@@ -907,8 +942,7 @@ export default {
         overflow: hidden;
         background-color: var(--bs-body-bg);
         width: calc(100% - 1rem);
-        
-        th {
+        th, td {
           padding: 10px;
           max-width: 120px;
           word-break: break-word;
@@ -943,7 +977,6 @@ export default {
     margin-top: auto;
     padding-bottom: 8px;
   
-
     .schema-view__button {
       >i {
         color: (var(--bs-body-text));
