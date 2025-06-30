@@ -273,8 +273,14 @@
               </div>
               <small class="form-text text-muted">
                 The Gemini API key is used to generate Cypher queries from natural language using the selected Gemini model.<br>
-                You can obtain an API key from <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>.<br>
-                We only store the API key in your browser. Click <a href="#" @click="clearGptToken()">here</a> to clear the API key from the browser.
+                You can obtain an API key from <a
+                  href="https://aistudio.google.com/app/apikey"
+                  target="_blank"
+                >Google AI Studio</a>.<br>
+                We only store the API key in your browser. Click <a
+                  href="#"
+                  @click="clearGptToken()"
+                >here</a> to clear the API key from the browser.
               </small>
             </template>
 
