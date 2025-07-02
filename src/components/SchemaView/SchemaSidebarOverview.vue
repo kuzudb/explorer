@@ -215,4 +215,13 @@ small {
 ul {
   margin-bottom: 4px;
 }
+.badge {
+      display: inline-block;
+      max-width: 150px;
+      color: #fff !important;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
 </style>

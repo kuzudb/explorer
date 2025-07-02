@@ -59,7 +59,7 @@
           <li :class="['nav-item', { active: showShell }]">
             <a
               aria-hidden="true"
-              href="#shell"
+              href="#query"
               @click="toggleShell()"
             >
               <i class="fa-solid fa-terminal" />

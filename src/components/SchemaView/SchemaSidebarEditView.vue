@@ -105,7 +105,7 @@
       >
         <thead>
           <tr>
-            <th scope="col">
+            <th scope="col schema-side-panel__edit-table-name-container">
               Name
             </th>
             <th scope="col">
@@ -397,6 +397,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
+.schema-side-panel__edit-table-name-container {
+  max-width: 50px;
+}
 .schema_side-panel__edit-table-actions-container {
   width: 100%;
 }

@@ -123,13 +123,11 @@ export default {
         return [];
       }
       if (this.isNode) {
-        return this.schema.nodeTables
-          .find(t => t.name === this.label)
-          .properties;
+        const table = this.schema.nodeTables.find(t => t.name === this.label);
+        return table ? table.properties : [];
       } else {
-        return this.schema.relTables
-          .find(t => t.name === this.label)
-          .properties;
+        const table = this.schema.relTables.find(t => t.name === this.label);
+        return table ? table.properties : [];
       }
     },
   },
@@ -141,4 +139,13 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.badge {
+  display: inline-block;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+</style>

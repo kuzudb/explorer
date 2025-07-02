@@ -243,12 +243,15 @@
                 </option>
               </select>
             </div>
+
             <div
               v-if="isOpenAIApi"
               class="settings-row"
             >
-              <span>OpenAI model</span>
+              <span v-if="currentSettings.gpt.llmProvider === llmProviderOptions.OPENAI.key">OpenAI model</span>
+              <span v-else-if="currentSettings.gpt.llmProvider === llmProviderOptions.GEMINI.key">Gemini model</span>
               <select
+                v-if="currentSettings.gpt.llmProvider === llmProviderOptions.OPENAI.key"
                 v-model="currentSettings.gpt.model"
                 class="settings-input form-select"
               >
@@ -260,6 +263,13 @@
                   {{ option }}
                 </option>
               </select>
+              <input
+                v-else-if="currentSettings.gpt.llmProvider === llmProviderOptions.GEMINI.key"
+                v-model="currentSettings.gpt.model"
+                class="settings-input form-control"
+                type="text"
+                readonly
+              >
             </div>
             <div
               v-else
@@ -282,7 +292,8 @@
                 v-model="currentSettings.gpt.url"
                 type="text"
                 class="settings-input form-control"
-                title="Enter the API endpoint"
+                :readonly="currentSettings.gpt.llmProvider === llmProviderOptions.GEMINI.key"
+                :title="currentSettings.gpt.llmProvider === llmProviderOptions.GEMINI.key ? 'Google Gemini OpenAI-compatible endpoint' : 'Enter the API endpoint'"
               >
             </div>
             <div class="settings-row">
@@ -305,7 +316,7 @@
               </button>
             </div>
             <small
-              v-if="isOpenAIApi"
+              v-if="currentSettings.gpt.llmProvider === llmProviderOptions.OPENAI.key"
               class="form-text text-muted"
             >
               The OpenAI API key is used to generate Cypher queries from natural language using the specified model.
@@ -315,6 +326,27 @@
                 target="_blank"
               >OpenAI</a>. We only
               store the API key in your browser. Click
+              <a
+                href="#"
+                @click="clearGptToken()"
+              >here</a> to clear the API key from the
+              browser.
+            </small>
+            <small
+              v-else-if="currentSettings.gpt.llmProvider === llmProviderOptions.GEMINI.key"
+              class="form-text text-muted"
+            >
+              The Google Gemini API key is used to generate Cypher queries from natural language using the specified model.
+              You can obtain a Gemini API key from
+              <a
+                href="https://aistudio.google.com/app/apikey"
+                target="_blank"
+              >Google AI Studio</a>
+              or from the <a
+                href="https://console.cloud.google.com/apis/credentials"
+                target="_blank"
+              >Google Cloud Console</a> (ensure the Gemini API is enabled for your project).
+              We only store the API key in your browser. Click
               <a
                 href="#"
                 @click="clearGptToken()"
@@ -389,7 +421,6 @@ export default {
     showRelLabelsOptions: SHOW_REL_LABELS_OPTIONS,
     placeholderNodeTable: PLACEHOLDER_NODE_TABLE,
     placeholderRelTable: PLACEHOLDER_REL_TABLE,
-    gptModelOptions: GPT_MODELS,
     llmProviderOptions: LLM_PROVIDERS,
     databaseResetStateText: "",
     databaseResetStateClass: "primary",
@@ -398,7 +429,7 @@ export default {
   computed: {
     ...mapStores(useSettingsStore, useModeStore),
     isOpenAIApi() {
-      return this.currentSettings.gpt.llmProvider === LLM_PROVIDERS.OPENAI.key;
+      return this.currentSettings.gpt.llmProvider === LLM_PROVIDERS.OPENAI.key || this.currentSettings.gpt.llmProvider === LLM_PROVIDERS.GEMINI.key;
     },
     isDarkMode: {
       get() {
@@ -407,6 +438,18 @@ export default {
       set() {
         // Toggling is handled by toggleDarkMode method
       }
+    },
+    gptModelOptions() {
+      // Only show GPT models for OpenAI
+      if (this.currentSettings.gpt.llmProvider === LLM_PROVIDERS.OPENAI.key) {
+        return GPT_MODELS.filter(m => m.startsWith('gpt-'));
+      }
+      // Only show Gemini model for Gemini
+      if (this.currentSettings.gpt.llmProvider === LLM_PROVIDERS.GEMINI.key) {
+        return ["gemini-2.0-flash"];
+      }
+      // Allow all for others
+      return GPT_MODELS;
     },
   },
   mounted() {
@@ -446,6 +489,9 @@ export default {
       if (this.currentSettings.gpt.llmProvider === LLM_PROVIDERS.OPENAI.key) {
         this.currentSettings.gpt.model = GPT_MODELS[0];
         this.currentSettings.gpt.url = "";
+      } else if (this.currentSettings.gpt.llmProvider === LLM_PROVIDERS.GEMINI.key) {
+        this.currentSettings.gpt.model = "gemini-2.0-flash";
+        this.currentSettings.gpt.url = LLM_PROVIDERS.GEMINI.baseUrl;
       } else {
         this.currentSettings.gpt.model = "";
         this.currentSettings.gpt.apiToken = "";
