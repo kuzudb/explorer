@@ -262,6 +262,17 @@ export default {
       const width = container.offsetWidth;
       const height = container.offsetHeight;
 
+      // Add G6 Tooltip plugin for full label on hover
+      const tooltip = new G6.Tooltip({
+        offsetX: 10,
+        offsetY: 10,
+        itemTypes: ['node', 'edge'],
+        getContent: (e) => {
+          const model = e.item.getModel();
+          return `<div style="max-width:400px;white-space:normal;word-break:break-all;"><b>${model._label || model.label}</b></div>`;
+        },
+      });
+
       this.g6Graph = new G6.Graph({
         container,
         width,
@@ -269,6 +280,7 @@ export default {
         linkCenter: false,
         groupByTypes: false,
         layout: this.getLayoutConfig(edges),
+        plugins: [tooltip],
         defaultNode: {
           shape: "circle",
           labelCfg: {
@@ -917,6 +929,16 @@ export default {
   .schema_graph__wrapper {
     height: 100%;
   }
+
+  .badge {
+      display: inline-block;
+      background-color: var(--bs-body-bg-accent) !important;
+      color: #fff !important;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
 
   .schema_side-panel__wrapper {
     width: 360px;

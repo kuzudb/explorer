@@ -22,7 +22,7 @@
     <ResultContainer
       v-if="errorMessage"
       ref="resultErrorContainer"
-      is-maximized="false"
+      :is-maximized="false"
       :navbar-height="navbarHeight"
     />
     <div

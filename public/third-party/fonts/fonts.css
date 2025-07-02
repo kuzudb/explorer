@@ -1,15 +1,15 @@
 /* Lexend Font Family */
 @font-face {
     font-family: 'Lexend';
-    src: url('./lexend/lexend-300.woff2') format('woff2');
-    font-weight: 300;
     font-style: normal;
+    font-weight: 300;
+    src: url('./lexend/lexend-300.ttf') format('truetype');
     font-display: swap;
-}
+  }
 
 @font-face {
     font-family: 'Lexend';
-    src: url('./lexend/lexend-400.woff2') format('woff2');
+    src: url('./lexend/lexend-400.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -17,7 +17,7 @@
 
 @font-face {
     font-family: 'Lexend';
-    src: url('./lexend/lexend-500.woff2') format('woff2');
+    src: url('./lexend/lexend-500.ttf') format('truetype');
     font-weight: 500;
     font-style: normal;
     font-display: swap;
@@ -25,7 +25,7 @@
 
 @font-face {
     font-family: 'Lexend';
-    src: url('./lexend/lexend-600.woff2') format('woff2');
+    src: url('./lexend/lexend-600.ttf') format('truetype');
     font-weight: 600;
     font-style: normal;
     font-display: swap;
@@ -33,7 +33,7 @@
 
 @font-face {
     font-family: 'Lexend';
-    src: url('./lexend/lexend-700.woff2') format('woff2');
+    src: url('./lexend/lexend-700.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
     font-display: swap;

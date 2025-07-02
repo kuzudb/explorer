@@ -1419,8 +1419,8 @@ export default {
 
       th, td {
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        overflow-x: auto;
+        text-overflow: hidden;
         max-width: none;
       }
 
@@ -1453,6 +1453,18 @@ export default {
           
         }
       }
+
+      // Add thin scrollbar for horizontal overflow
+      &::-webkit-scrollbar {
+        height: 2px;
+        background: var(--bs-body-bg-accent);
+      }
+      &::-webkit-scrollbar-thumb {
+        background: var(--bs-body-bg-accent);
+        border-radius: 3px;
+      }
+      scrollbar-width: thin;
+      scrollbar-color: var(--bs-body-bg-accent) var(--bs-body-bg-secondary);
     }
 
     h5 {
@@ -1470,7 +1482,7 @@ export default {
       background-color: var(--bs-body-bg-accent) !important;
       color: #fff !important;
       overflow: hidden;
-      text-overflow: ellipsis;
+      text-overflow: hidden;
       white-space: nowrap;
       vertical-align: middle;
     }
