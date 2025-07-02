@@ -4,15 +4,6 @@ const router = express.Router();
 const database = require("./utils/Database");
 const sessionDb = require("./utils/SessionDatabase");
 
-// Add Gemini import
-let GoogleGenAI;
-try {
-  GoogleGenAI = require("@google/genai").GoogleGenAI;
-} catch (e) {
-  // If not installed, Gemini won't be available
-  GoogleGenAI = null;
-}
-
 const getPrompt = (question, schema) => {
   const prompt = `Task:Generate Kuzu Cypher statement to query a graph database.
 Instructions:
@@ -40,7 +31,6 @@ router.post("/", async (req, res) => {
   const apiToken = req.body.token;
   const model = req.body.model ? req.body.model : "gpt-4o";
   const baseUrl = req.body.baseUrl;
-  const llmProvider = req.body.llmProvider || "OPENAI";
   if (!apiToken || !typeof apiToken === "string" || apiToken.length === 0) {
     return res.status(400).send({ error: "The API token is missing." });
   }
@@ -60,41 +50,24 @@ router.post("/", async (req, res) => {
   let chatCompletion, prompt;
   try {
     prompt = getPrompt(question, schema);
-    if (llmProvider === "GEMINI") {
-      if (!GoogleGenAI) {
-        return res.status(500).send({ error: "@google/genai is not installed on the server." });
-      }
-      const ai = new GoogleGenAI({ apiKey: apiToken });
-      const response = await ai.models.generateContent({
-        model,
-        contents: prompt,
-      });
-      // Gemini returns response.text
-      chatCompletion = { geminiText: response.text };
-    } else {
-      const gptSettings = { apiKey: apiToken };
-      if (baseUrl) {
-        gptSettings.baseURL = baseUrl;
-      }
-      const gpt = new openai(gptSettings);
-      chatCompletion = await gpt.chat.completions.create({
-        model,
-        messages: [{ role: "user", content: prompt }],
-      });
+    const gptSettings = { apiKey: apiToken };
+    if (baseUrl) {
+      gptSettings.baseURL = baseUrl;
     }
+    const gpt = new openai(gptSettings);
+    chatCompletion = await gpt.chat.completions.create({
+      model,
+      messages: [{ role: "user", content: prompt }],
+    });
   } catch (err) {
     return res
       .status(500)
-      .send({ error: `The LLM API call failed: ${err}` });
+      .send({ error: `The OpenAI API call failed: ${err}` });
   }
   let query;
   try {
-    if (llmProvider === "GEMINI") {
-      query = chatCompletion.geminiText;
-    } else {
-      query = chatCompletion.choices[0].message.content;
-      query = query.split("\n").join(" ");
-    }
+    query = chatCompletion.choices[0].message.content;
+    query = query.split("\n").join(" ");
     try {
       await sessionDb.upsertHistoryItem({
         uuid: req.body.uuid,

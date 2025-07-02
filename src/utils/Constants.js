@@ -95,8 +95,8 @@ export const MODES = {
 export const GPT_MODELS = ["gpt-4.1", "gpt-4o", "gpt-4o-mini"];
 export const LLM_PROVIDERS = {
   OPENAI: {text: "OpenAI", key: "OPENAI"},
+  GEMINI: {text: "Google Gemini", key: "GEMINI", baseUrl: "https://generativelanguage.googleapis.com/v1beta/openai/"},
   OTHERS: {text: "Other OpenAI-compatible API", key: "OTHERS"},
-  GEMINI: {text: "Google Gemini", key: "GEMINI"},
 }
 
 export const PLACEHOLDER_NODE_TABLE = "__placeholder_node_table__";
