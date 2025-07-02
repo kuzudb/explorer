@@ -342,7 +342,10 @@
                 href="https://aistudio.google.com/app/apikey"
                 target="_blank"
               >Google AI Studio</a>
-              or from the <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Console</a> (ensure the Gemini API is enabled for your project).
+              or from the <a
+                href="https://console.cloud.google.com/apis/credentials"
+                target="_blank"
+              >Google Cloud Console</a> (ensure the Gemini API is enabled for your project).
               We only store the API key in your browser. Click
               <a
                 href="#"
