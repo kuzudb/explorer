@@ -47,7 +47,7 @@ EXPOSE 8000
 # Set environment variables
 ENV NODE_ENV=production
 ENV PORT=8000
-ENV KUZU_PATH=/database
+ENV KUZU_DIR=/database
 
 # Run app
 ENTRYPOINT ["node", "src/server/index.js"]

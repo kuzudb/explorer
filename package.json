@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "NODE_ENV=development nodemon --exec \"vue-cli-service serve\"",
     "serve-prod": "NODE_ENV=production node src/server/index.js",
-    "build": "KUZU_PATH=. vue-cli-service build",
+    "build": "KUZU_IN_MEMORY=true NODE_ENV=production vue-cli-service build",
     "lint": "vue-cli-service lint",
     "build-kuzu": "cd kuzu/tools/nodejs_api/ && npm i && cd ../.. && make nodejs NUM_THREADS=$(node -e \"console.log(require('os').cpus().length)\")",
     "fetch-datasets": "node src/server/utils/FetchDatasets.js",

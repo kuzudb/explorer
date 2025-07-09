@@ -37,10 +37,27 @@ class Database {
     }
     const isInMemory = (process.env.KUZU_IN_MEMORY &&
       process.env.KUZU_IN_MEMORY.toLowerCase() === "true") ||
-      !process.env.KUZU_PATH;
+      !process.env.KUZU_DIR;
     const mode = this.getAccessModeString();
     const isReadOnlyMode = mode !== READ_WRITE_MODE;
-    const dbPath = isInMemory ? ":memory:" : process.env.KUZU_PATH;
+    let dbPath, dbFileName;
+    if (isInMemory) {
+      logger.info("In-memory mode is enabled");
+      dbPath = ":memory:";
+    } else {
+      dbFileName = process.env.KUZU_FILE;
+      if (!dbFileName) {
+        dbFileName = "database.kz";
+        logger.warn(
+          "KUZU_FILE environment variable not set, using default database file name: database.kz"
+        );
+      } else {
+        logger.info(`Using database file: ${dbFileName}`);
+      }
+      dbPath = path.resolve(
+        path.join(dbPath, dbFileName)
+      );
+    }
     let bufferPoolSize = parseInt(process.env.KUZU_BUFFER_POOL_SIZE);
     bufferPoolSize = isNaN(bufferPoolSize) ? 0 : bufferPoolSize;
     let numberConnections = parseInt(process.env.KUZU_NUM_CONNECTIONS);
@@ -66,17 +83,11 @@ class Database {
         }`
       );
     }
-    if (!dbPath) {
-      throw new Error("KUZU_PATH environment variable not set");
-    }
     this.dbPath = dbPath;
     this.isInitialDatabaseEmpty = this.isDatabasePathEmpty();
     logger.info(
       `Access mode: ${isReadOnlyMode ? MODES.READ_ONLY : MODES.READ_WRITE}`
     );
-    if (isInMemory) {
-      logger.info("In-memory mode is enabled");
-    }
     const queryTimeout = parseInt(process.env.KUZU_QUERY_TIMEOUT);
     if (!isNaN(queryTimeout)) {
       logger.info(`Query timeout: ${queryTimeout} ms`);
@@ -216,7 +227,7 @@ class Database {
       }
       nodeTables.sort((a, b) => a.name.localeCompare(b.name));
       relTables.sort((a, b) => a.name.localeCompare(b.name));
-      return { nodeTables, relTables};
+      return { nodeTables, relTables };
     } finally {
       this.releaseConnection(conn);
     }
