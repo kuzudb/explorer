@@ -46,7 +46,7 @@ class Database {
       logger.info("In-memory mode is enabled");
       dbPath = ":memory:";
     } else {
-      const dbFileName = process.env.KUZU_FILE;
+      let dbFileName = process.env.KUZU_FILE;
       if (!dbFileName) {
         dbFileName = "database.kz";
         logger.warn(
