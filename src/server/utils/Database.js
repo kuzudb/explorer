@@ -35,17 +35,18 @@ class Database {
     if (isWasmMode) {
       return;
     }
+    const dbDir = process.env.KUZU_DIR;
     const isInMemory = (process.env.KUZU_IN_MEMORY &&
       process.env.KUZU_IN_MEMORY.toLowerCase() === "true") ||
-      !process.env.KUZU_DIR;
+      !dbDir;
     const mode = this.getAccessModeString();
     const isReadOnlyMode = mode !== READ_WRITE_MODE;
-    let dbPath, dbFileName;
+    let dbPath;
     if (isInMemory) {
       logger.info("In-memory mode is enabled");
       dbPath = ":memory:";
     } else {
-      dbFileName = process.env.KUZU_FILE;
+      const dbFileName = process.env.KUZU_FILE;
       if (!dbFileName) {
         dbFileName = "database.kz";
         logger.warn(
@@ -55,7 +56,7 @@ class Database {
         logger.info(`Using database file: ${dbFileName}`);
       }
       dbPath = path.resolve(
-        path.join(dbPath, dbFileName)
+        path.join(dbDir, dbFileName)
       );
     }
     let bufferPoolSize = parseInt(process.env.KUZU_BUFFER_POOL_SIZE);
