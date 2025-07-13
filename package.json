@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "NODE_ENV=development nodemon --exec \"vue-cli-service serve\"",
     "serve-prod": "NODE_ENV=production node src/server/index.js",
-    "build": "KUZU_PATH=. vue-cli-service build",
+    "build": "KUZU_IN_MEMORY=true NODE_ENV=production vue-cli-service build",
     "lint": "vue-cli-service lint",
     "build-kuzu": "cd kuzu/tools/nodejs_api/ && npm i && cd ../.. && make nodejs NUM_THREADS=$(node -e \"console.log(require('os').cpus().length)\")",
     "fetch-datasets": "node src/server/utils/FetchDatasets.js",
@@ -28,7 +28,7 @@
     "cors": "^2.8.5",
     "dropzone": "^6.0.0-beta.2",
     "express": "^4.18.2",
-    "kuzu": "0.10.0",
+    "kuzu": "0.11.0",
     "kuzu-wasm": "0.10.0",
     "moment": "^2.29.4",
     "monaco-editor": "^0.41.0",

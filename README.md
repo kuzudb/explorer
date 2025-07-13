@@ -25,12 +25,12 @@ To access an existing Kuzu database, you can mount its path to the `/database` d
 
 ```bash
 docker run -p 8000:8000 \
-           -v /absolute/path/to/database:/database \
+           -v {path to the directory containing the database file}:/database \
+           -e KUZU_FILE={database file name} \
            --rm kuzudb/explorer:latest
 ```
 
-By mounting local database files to Docker via `-v /absolute/path/to/database:/database`,
-the changes done in the UI will persist to the local database files after the UI is shutdown.
+By mounting local database files to Docker via `-v {path to the directory containing the database file}` and `-e KUZU_FILE={database file name}`, the changes done in the UI will persist to the local database files after the UI is shutdown. If the directory is mounted but the `KUZU_FILE` environment variable is not set, Kuzu Explorer will look for a file named `database.kz` in the mounted directory or create a new database file named `database.kz` in the mounted directory if it does not exist.
 
 The `--rm` flag tells docker that the container should automatically be removed after we close docker.
 
@@ -57,7 +57,8 @@ By default, Kuzu Explorer is launched in read-write mode, which means that you c
 
 ```bash
 docker run -p 8000:8000 \
-           -v /absolute/path/to/database:/database \
+           -v {path to the directory containing the database file}:/database \
+           -e KUZU_FILE={database file name} \
            -e MODE=READ_ONLY \
            --rm kuzudb/explorer:latest
 ```
@@ -72,7 +73,8 @@ For example, to launch Kuzu Explorer with a buffer pool size of 1GB, you can run
 
 ```bash
 docker run -p 8000:8000 \
-           -v /absolute/path/to/database:/database \
+           -v {path to the directory containing the database file}:/database \
+           -e KUZU_FILE={database file name} \
            -e KUZU_BUFFER_POOL_SIZE=1073741824 \
            --rm kuzudb/explorer:latest
 ```
@@ -107,7 +109,8 @@ If you want to launch Kuzu Explorer with the latest development build of Kuzu, y
 
 ```bash
 docker run -p 8000:8000 \
-           -v /absolute/path/to/database:/database \
+           -v {path to the directory containing the database file}:/database \
+           -e KUZU_FILE={database file name} \
            --rm kuzudb/explorer:dev
 ```
 
@@ -131,7 +134,8 @@ For example:
 
 ```bash
 podman run -p 8000:8000 \
-           -v /absolute/path/to/database:/database:U \
+           -v {path to the directory containing the database file}:/database:U \
+           -e KUZU_FILE={database file name} \
            --rm kuzudb/explorer:latest
 ```
 
@@ -139,7 +143,8 @@ or,
 
 ```bash
 podman run -p 8000:8000 \
-           -v /absolute/path/to/database:/database \
+           -v {path to the directory containing the database file}:/database \
+           -e KUZU_FILE={database file name} \
            --userns=keep-id \
            --rm kuzudb/explorer:latest
 ```
@@ -201,7 +206,7 @@ npm run fetch-datasets
 ### Run development server (with hot-reloading)
 
 ```
-env KUZU_PATH=path/to/database npm run serve
+env KUZU_DIR={directory containing kuzu database} KUZU_FILE={database file name} npm run serve
 ```
 
 ### Check code style with ESLint
@@ -222,7 +227,7 @@ npm run eslint-fix
 
 ```bash
 npm run build
-env KUZU_PATH=path/to/database npm run serve-prod
+env KUZU_DIR={directory containing kuzu database} KUZU_FILE={database file name} npm run serve-prod
 ```
 
 ### Run production server with Docker
@@ -230,7 +235,8 @@ env KUZU_PATH=path/to/database npm run serve-prod
 ```
 docker build -t kuzudb/explorer:latest .
 docker run -p 8000:8000 \
-           -v /absolute/path/to/database:/database \
+           -v {path to the directory containing the database file}:/database \
+           -e KUZU_FILE={database file name} \
            --rm kuzudb/explorer:latest
 ```
 
