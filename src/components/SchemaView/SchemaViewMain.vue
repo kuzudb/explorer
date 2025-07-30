@@ -287,14 +287,11 @@ export default {
             lineWidth: 4,
           },
           state: {
-            hover: {
-              lineWidth: 4,
+            active: {
+              lineWidth: 10,
               stroke: '#1890FF',
             },
-            click: {
-              lineWidth: 4,
-              stroke: '#1848FF',
-            },
+            
           },
         },
         edge: {
@@ -312,30 +309,39 @@ export default {
             labelAutoRotate: true,
           },
           state: {
-            hover: {
+            active: {
               stroke: '#1890FF',
+              lineWidth: 10,
             },
-            click: {
-              stroke: '#1848FF',
-            },
+
           },
         },
-        behaviors: ['drag-canvas', 'zoom-canvas', 'drag-node'],
+        behaviors: ['drag-canvas', 'zoom-canvas', 'drag-node', {
+          type: 'hover-activate',
+          animation: true,
+          enable: (e) => {
+            console.log(e);
+            return true; 
+          },
+        },
+        ],
       });
 
       this.g6Graph.setData({ nodes, edges, });
       this.g6Graph.render();
 
       // this.g6Graph.on('node:pointerenter', (e) => {
+      //   console.log(e);
       //   const { itemId } = e;
-      //   this.g6Graph.setItemState(itemId, 'hover', true);
+      //   console.log("Pointer enter on node:", itemId);
+      //   this.g6Graph.setElementState(itemId, 'hover', true);
       //   const nodeData = this.g6Graph.getNodeData(itemId);
       //   this.handleHover(nodeData.data._label, nodeData.data.label, true);
       // });
 
       // this.g6Graph.on('node:pointerleave', (e) => {
       //   const { itemId } = e;
-      //   this.g6Graph.setItemState(itemId, 'hover', false);
+      //   this.g6Graph.setElementState(itemId, 'hover', false);
       //   this.resetHover();
       // });
 
@@ -531,22 +537,6 @@ export default {
             edge.type = 'quadratic';
             edge.style.curveOffset = ARC_CURVE_OFFSETS[(overlapEdgeHash[sortedHashKey] - 1) % ARC_CURVE_OFFSETS.length];
             edge.style.curvePosition = 0.5; 
-            console.log(edge.data._label, edge.style.curveOffset);
-            // if (sortedHashKey !== hashKey) {
-            //   // There is a second edge between the same nodes, but in the opposite direction
-            //   // In this case, G6 by default draws the second edge with a slightly different start and end point
-            //   // Which looks weird, so we add a workaround
-
-            //   // Exchange source and target
-            //   const temp = edge.source;
-            //   edge.source = edge.target;
-            //   edge.target = temp;
-
-            //   // Set start arrow to true
-            //   edge.style.startArrow = true;
-            //   // Set end arrow to false
-            //   edge.style.endArrow = false;
-            // }
           }
           edges.push(edge);
         }
