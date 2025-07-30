@@ -258,7 +258,7 @@ export default {
         layout: {
           type: 'force-atlas2',
           preventOverlap: true,
-          kr: 100
+          kr: edges.length * 15, // More relaxed repulsion with more edges
         },
         plugins: [
           {
@@ -284,6 +284,7 @@ export default {
             labelFontSize: 14,
             labelFontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
             labelFontWeight: 300,
+            lineWidth: 4,
           },
           state: {
             hover: {
@@ -297,10 +298,8 @@ export default {
           },
         },
         edge: {
-          type: 'line',
           style: {
             lineWidth: 5,
-            stroke: "#e2e2e2",
             endArrow: true,
             labelText: (d) => d.data?.label || '',
             labelFontSize: 12,
@@ -461,7 +460,6 @@ export default {
           },
           style: {
             fill: fillColor,
-            lineWidth: 4,
             stroke: G6Utils.shadeColor(fillColor),
             labelText: label,
             labelFill: labelColor,
@@ -512,14 +510,6 @@ export default {
             },
             style: {
               stroke: strokeColor,
-              labelText: labelText,
-              labelFontSize: 12,
-              labelFontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
-              labelFontWeight: 300,
-              labelBackground: true,
-              labelBackgroundFill: "#ffffff",
-              labelBackgroundPadding: [2, 2, 2, 2],
-              labelBackgroundRadius: 2,
             },
           };
           if (!edge.source || !edge.target) {
@@ -538,8 +528,10 @@ export default {
             edge.style.loopDist = 100;
           }
           else {
-            edge.type = 'cubic';
+            edge.type = 'quadratic';
             edge.style.curveOffset = ARC_CURVE_OFFSETS[(overlapEdgeHash[sortedHashKey] - 1) % ARC_CURVE_OFFSETS.length];
+            edge.style.curvePosition = 0.5; 
+            console.log(edge.data._label, edge.style.curveOffset);
             // if (sortedHashKey !== hashKey) {
             //   // There is a second edge between the same nodes, but in the opposite direction
             //   // In this case, G6 by default draws the second edge with a slightly different start and end point
@@ -560,8 +552,6 @@ export default {
         }
       }
       edges = edges.filter(e => Boolean(e));
-      nodes = JSON.parse(JSON.stringify(nodes)); // Deep copy to avoid mutation issues
-      edges = JSON.parse(JSON.stringify(edges)); // Deep copy to avoid mutation issues
       return { nodes, edges };
     },
 
