@@ -9,7 +9,7 @@ import {
   LLM_PROVIDERS,
 } from "../utils/Constants";
 import G6Utils from "../utils/G6Utils";
-import G6 from "@antv/g6";
+import { Graph } from "@antv/g6";
 
 const COLOR_PALETTE = [
   "#76b7b2", // teal
@@ -56,7 +56,7 @@ export const useSettingsStore = defineStore("settings", {
           opacity: 1,
           style: {
             endArrow: {
-              path: G6.Arrow.triangle(),
+              path: 'M 0,0 L 8,4 L 8,-4 Z',
               fill: "#e2e2e2",
             },
             stroke: "#e2e2e2",
@@ -252,7 +252,7 @@ export const useSettingsStore = defineStore("settings", {
         // Migrate old settings
         if (!this.graphViz.rels[rel.name].g6Settings.style.endArrow) {
           this.graphViz.rels[rel.name].g6Settings.style.endArrow = {
-            path: G6.Arrow.triangle(),
+            path: 'M 0,0 L 8,4 L 8,-4 Z',
             fill: "transparent",
           };
         }

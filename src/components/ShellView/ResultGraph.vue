@@ -234,7 +234,7 @@
 </template>
 
 <script lang="js">
-import G6 from '@antv/g6';
+import { Graph, DragCanvas, ZoomCanvas, DragNode, ForceLayout } from '@antv/g6';
 import G6Utils from "../../utils/G6Utils";
 import {
   DATA_TYPES, UI_SIZE, LOOP_POSITIONS, ARC_CURVE_OFFSETS
@@ -439,114 +439,90 @@ export default {
       const width = container.offsetWidth;
       const height = container.offsetHeight;
 
-      this.g6Graph = new G6.Graph({
+      this.g6Graph = new Graph({
         container,
         width,
         height,
-        linkCenter: false,
-        groupByTypes: false,
         layout: this.getLayoutConfig(edges),
-        defaultNode: {
-          shape: "circle",
-          labelCfg: {
-            style: {
-              fontSize: 14,
-              fontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
-              fontWeight: 300,
-              fill: "#ffffff",
-            },
-          },
-          size: 100,
+        node: {
+          type: 'circle',
           style: {
+            size: 100,
             lineWidth: 0,
             fill: "#FF0000",
+            labelText: (d) => d.data?.label || '',
+            labelFill: "#ffffff",
+            labelFontSize: 14,
+            labelFontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
+            labelFontWeight: 300,
+          },
+          state: {
+            hover: {
+              lineWidth: 4,
+              stroke: '#1890FF',
+            },
+            click: {
+              lineWidth: 4,
+              stroke: '#1848FF',
+            },
           },
         },
-        nodeStateStyles: {
-          hover: {
-            lineWidth: 4,
-            stroke: '#1890FF',
-          },
-          click: {
-            lineWidth: 4,
-            stroke: '#1848FF',
-          },
-        },
-        defaultEdge: {
-          size: 5,
-          opacity: 1,
+        edge: {
+          type: 'line',
           style: {
+            lineWidth: 5,
             stroke: "#e2e2e2",
             endArrow: true,
-            // TODO: investigate why the endArrow causes rendering issues
-            // endArrow: {
-            //   path: G6.Arrow.triangle(),
-            //   fill: "#e2e2e2",
-            // }
+            labelText: (d) => d.data?.label || '',
+            labelFontSize: 12,
+            labelFontFamily: "Lexend,Helvetica Neue, Helvetica, Arial, sans-serif",
+            labelFontWeight: 350,
+            labelBackground: true,
+            labelBackgroundFill: "#ffffff",
+            labelBackgroundPadding: [2, 2, 2, 2],
+            labelBackgroundRadius: 2,
+            labelAutoRotate: true,
           },
-          labelCfg: {
-            style: {
-              fontSize: 12,
-              fontFamily: "Lexend,Helvetica Neue, Helvetica, Arial, sans-serif",
-              fontWeight: 350,
-              background: {
-                fill: "#ffffff",
-                padding: [2, 2, 2, 2],
-                radius: 2,
-              },
+          state: {
+            hover: {
+              stroke: '#1890FF',
             },
-            refY: -14,
-            autoRotate: true,
-          },
-
-        },
-        edgeStateStyles: {
-          hover: {
-            stroke: '#1890FF',
-            // endArrow: {
-            //   path: G6.Arrow.triangle(),
-            //   fill: "#1890FF",
-            // },
-          },
-          click: {
-            stroke: '#1848FF',
-            // endArrow: {
-            //   path: G6.Arrow.triangle(),
-            //   fill: "#1848FF",
-            // },
+            click: {
+              stroke: '#1848FF',
+            },
           },
         },
-        modes: {
-          default: ['drag-canvas', 'zoom-canvas', 'drag-node']
-        },
+        behaviors: ['drag-canvas', 'zoom-canvas', 'drag-node'],
       });
 
-      this.g6Graph.data({ nodes, edges, });
+      this.g6Graph.setData({ nodes, edges, });
+      this.g6Graph.render();
 
-      this.g6Graph.on('node:mouseenter', (e) => {
-        const nodeItem = e.item;
-        this.g6Graph.setItemState(nodeItem, 'hover', true);
-        this.$refs.hoverContainer.handleHover(nodeItem.getModel(), e);
+      this.g6Graph.on('node:pointerenter', (e) => {
+        const { itemId, itemType } = e;
+        this.g6Graph.setItemState(itemId, 'hover', true);
+        const nodeData = this.g6Graph.getNodeData(itemId);
+        this.$refs.hoverContainer.handleHover(nodeData, e);
       });
 
-      this.g6Graph.on('node:mouseleave', (e) => {
-        const nodeItem = e.item;
-        this.g6Graph.setItemState(nodeItem, 'hover', false);
+      this.g6Graph.on('node:pointerleave', (e) => {
+        const { itemId } = e;
+        this.g6Graph.setItemState(itemId, 'hover', false);
         this.$refs.hoverContainer.resetHover();
       });
 
-      this.g6Graph.on('node:mousemove', (e) => {
+      this.g6Graph.on('node:pointermove', (e) => {
         if (this.$refs.hoverContainer.currentHoveredModel) {
           this.$refs.hoverContainer.updateTooltipPosition(e);
         }
       });
 
       this.g6Graph.on('node:click', (e) => {
-        const nodeItem = e.item;
-        const nodeModel = nodeItem.getModel();
+        const { itemId } = e;
+        const nodeData = this.g6Graph.getNodeData(itemId);
         this.deselectAll();
-        this.g6Graph.setItemState(nodeItem, 'click', true);
-        this.handleClick(nodeModel);
+        this.g6Graph.setItemState(itemId, 'click', true);
+        this.handleClick(nodeData);
         if (!this.isSidePanelOpen) {
           // Add a small delay to avoid conflicting with double click
           window.setTimeout(() => {
@@ -559,50 +535,60 @@ export default {
       });
 
       this.g6Graph.on('node:dblclick', (e) => {
-        const nodeItem = e.item;
-        const nodeModel = nodeItem.getModel();
-        this.expandOnNode(nodeModel);
+        const { itemId } = e;
+        const nodeData = this.g6Graph.getNodeData(itemId);
+        this.expandOnNode(nodeData);
       });
 
       // Auto layout after drag
       this.g6Graph.on('node:dragstart', (e) => {
-        this.refreshDraggedNodePosition(e);
+        const { itemId } = e;
+        const nodeData = this.g6Graph.getNodeData(itemId);
+        nodeData.fx = e.canvas.x;
+        nodeData.fy = e.canvas.y;
       });
 
       this.g6Graph.on('node:drag', (e) => {
-        this.refreshDraggedNodePosition(e);
+        const { itemId } = e;
+        const nodeData = this.g6Graph.getNodeData(itemId);
+        nodeData.fx = e.canvas.x;
+        nodeData.fy = e.canvas.y;
       });
 
       this.g6Graph.on('node:dragend', (e) => {
-        this.refreshDraggedNodePosition(e);
+        const { itemId } = e;
+        const nodeData = this.g6Graph.getNodeData(itemId);
+        nodeData.fx = e.canvas.x;
+        nodeData.fy = e.canvas.y;
         this.g6Graph.layout();
       });
 
-      this.g6Graph.on('edge:mouseenter', (e) => {
-        const edgeItem = e.item;
-        this.g6Graph.setItemState(edgeItem, 'hover', true);
-        this.$refs.hoverContainer.handleHover(edgeItem.getModel(), e);
+      this.g6Graph.on('edge:pointerenter', (e) => {
+        const { itemId } = e;
+        this.g6Graph.setItemState(itemId, 'hover', true);
+        const edgeData = this.g6Graph.getEdgeData(itemId);
+        this.$refs.hoverContainer.handleHover(edgeData, e);
       });
 
-      this.g6Graph.on('edge:mouseleave', (e) => {
-        const edgeItem = e.item;
-        this.g6Graph.setItemState(edgeItem, 'hover', false);
+      this.g6Graph.on('edge:pointerleave', (e) => {
+        const { itemId } = e;
+        this.g6Graph.setItemState(itemId, 'hover', false);
         this.$refs.hoverContainer.resetHover();
       });
 
-      this.g6Graph.on('edge:mousemove', (e) => {
+      this.g6Graph.on('edge:pointermove', (e) => {
         if (this.$refs.hoverContainer.currentHoveredModel) {
           this.$refs.hoverContainer.updateTooltipPosition(e);
         }
       });
 
       this.g6Graph.on('edge:click', (e) => {
-        const edgeItem = e.item;
-        const edgeModel = edgeItem.getModel();
+        const { itemId } = e;
+        const edgeData = this.g6Graph.getEdgeData(itemId);
         this.deselectAll();
         this.unhighlightEverything();
-        this.g6Graph.setItemState(edgeItem, 'click', true);
-        this.handleClick(edgeModel);
+        this.g6Graph.setItemState(itemId, 'click', true);
+        this.handleClick(edgeData);
         if (!this.isSidePanelOpen) {
           this.toggleSidePanel();
         }
@@ -613,7 +599,6 @@ export default {
         this.unhighlightEverything();
       });
 
-      this.g6Graph.render();
       this.graphCreated = true;
 
       // Fit the graph to view after rendering
@@ -621,20 +606,11 @@ export default {
         this.fitToView();
         this.isGraphLoading = false; // Hide loading overlay after fit to view
       });
-
-      this.g6Graph.on('node:mouseenter', (e) => {
-        const nodeItem = e.item;
-        this.g6Graph.setItemState(nodeItem, 'hover', true);
-        this.$refs.hoverContainer.handleHover(nodeItem.getModel(), e);
-      });
     },
 
     refreshDraggedNodePosition(e) {
-      const model = e.item.get('model');
-      model.fx = e.x;
-      model.fy = e.y;
-      model.x = e.x;
-      model.y = e.y;
+      // This method is no longer needed in G6 v5
+      // Position updates are handled directly in the drag event handlers
     },
 
     hideNode() {
@@ -643,22 +619,24 @@ export default {
         return;
       }
 
-      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
+      const nodes = this.g6Graph.getNodeData();
+      const currentSelectedNode = nodes.find(node => node.states?.includes('click'));
       if (!currentSelectedNode) {
         console.error('No node selected');
         return;
       }
 
       try {
-        const nodeId = currentSelectedNode.getModel().id;
+        const nodeId = currentSelectedNode.id;
         this.numHiddenNodes += 1;
-        currentSelectedNode.hide();
+        currentSelectedNode.style = currentSelectedNode.style || {};
+        currentSelectedNode.style.visibility = 'hidden';
         this.deselectAll();
 
-        const relatedEdges = this.g6Graph.getEdges().filter((edge) => {
+        const edges = this.g6Graph.getEdgeData();
+        const relatedEdges = edges.filter((edge) => {
           try {
-            const edgeModel = edge.getModel();
-            return edgeModel.source === nodeId || edgeModel.target === nodeId;
+            return edge.source === nodeId || edge.target === nodeId;
           } catch (e) {
             console.error('Error processing edge:', e);
             return false;
@@ -668,11 +646,15 @@ export default {
         relatedEdges.forEach((edge) => {
           try {
             this.numHiddenRels += 1;
-            edge.hide();
+            edge.style = edge.style || {};
+            edge.style.visibility = 'hidden';
           } catch (e) {
             console.error('Error hiding edge:', e);
           }
         });
+        
+        this.g6Graph.setData({ nodes, edges });
+        this.g6Graph.render();
       } catch (e) {
         console.error('Error hiding node:', e);
       }
@@ -680,9 +662,10 @@ export default {
 
     enableHighlightMode() {
       this.isHighlightedMode = true;
-      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
+      const nodes = this.g6Graph.getNodeData();
+      const currentSelectedNode = nodes.find(node => node.states?.includes('click'));
       if (currentSelectedNode) {
-        this.highlightNode(currentSelectedNode.getModel());
+        this.highlightNode(currentSelectedNode);
       }
     },
 
@@ -692,16 +675,20 @@ export default {
     },
 
     showAllNodesRels() {
-      this.g6Graph.getNodes().forEach((node) => {
-        if (!node.isVisible()) {
-          node.show();
+      const nodes = this.g6Graph.getNodeData();
+      const edges = this.g6Graph.getEdgeData();
+      nodes.forEach((node) => {
+        if (node.style?.visibility === 'hidden') {
+          node.style.visibility = 'visible';
         }
       });
-      this.g6Graph.getEdges().forEach((edge) => {
-        if (!edge.isVisible()) {
-          edge.show();
+      edges.forEach((edge) => {
+        if (edge.style?.visibility === 'hidden') {
+          edge.style.visibility = 'visible';
         }
       });
+      this.g6Graph.setData({ nodes, edges });
+      this.g6Graph.render();
       this.numHiddenNodes = 0;
       this.numHiddenRels = 0;
     },
@@ -755,116 +742,146 @@ export default {
       }
 
       const processNode = (rawNode) => {
+        if (!rawNode || !rawNode._id || !rawNode._label) {
+          console.warn('Invalid node data:', rawNode);
+          return;
+        }
+        
         const nodeId = this.encodeId(rawNode._id);
         nodeLabels[rawNode._id.table] = rawNode._label;
         const nodeSettings = this.settingsStore.settingsForLabel(rawNode._label);
         const nodeFill = nodeSettings.g6Settings.style.fill;
         const labelColor = getReadableTextColor(nodeFill);
-        const g6Node = {
-          id: nodeId,
-          properties: rawNode,
-          ...nodeSettings.g6Settings,
-          labelCfg: {
-            ...nodeSettings.g6Settings.labelCfg,
-            style: {
-              ...nodeSettings.g6Settings.labelCfg.style,
-              fill: labelColor,
-              lineWidth: 1,
-            }
-          }
-        }
+        
         if (nodes[nodeId]) {
           return;
         }
+        
         const expectedPropertiesType = {};
-        const expectedProperties = this.schema.nodeTables.find((table) => table.name === rawNode._label).properties;
+        const nodeTable = this.schema.nodeTables.find((table) => table.name === rawNode._label);
+        if (!nodeTable) {
+          console.warn('Node table not found for label:', rawNode._label);
+          return;
+        }
+        const expectedProperties = nodeTable.properties;
         expectedProperties.forEach((property) => {
           expectedPropertiesType[property.name] = property.type;
         });
+        
+        let nodeLabel = "";
         const nodeLabelProp = nodeSettings.label;
-        if (!nodeLabelProp) {
-          g6Node.label = "";
-        } else {
-          g6Node.label = rawNode[nodeLabelProp];
+        if (nodeLabelProp) {
+          nodeLabel = rawNode[nodeLabelProp];
           if (nodeLabelProp in expectedPropertiesType) {
-            g6Node.label = ValueFormatter.beautifyValue(rawNode[nodeLabelProp], expectedPropertiesType[nodeLabelProp]);
+            nodeLabel = ValueFormatter.beautifyValue(rawNode[nodeLabelProp], expectedPropertiesType[nodeLabelProp]);
           }
-          g6Node.label = String(g6Node.label);
+          nodeLabel = String(nodeLabel);
           const nodeSize = nodeSettings.g6Settings.size;
           const fontSize = nodeSettings.g6Settings.labelCfg.style.fontSize;
-          g6Node.label = G6Utils.fittingString(g6Node.label, nodeSize - 6, fontSize);
+          nodeLabel = G6Utils.fittingString(nodeLabel, nodeSize - 6, fontSize);
         }
-        g6Node.style.stroke = G6Utils.shadeColor(g6Node.style.fill);
+        
+        // G6 v5 format
+        const g6Node = {
+          id: nodeId,
+          data: {
+            label: nodeLabel,
+            properties: rawNode,
+            ...nodeSettings.g6Settings,
+          },
+          style: {
+            size: nodeSettings.g6Settings.size,
+            fill: nodeFill,
+            stroke: G6Utils.shadeColor(nodeFill),
+            lineWidth: nodeSettings.g6Settings.style.lineWidth || 0,
+            labelText: nodeLabel,
+            labelFill: labelColor,
+            labelFontSize: nodeSettings.g6Settings.labelCfg.style.fontSize,
+            labelFontFamily: nodeSettings.g6Settings.labelCfg.style.fontFamily,
+            labelFontWeight: nodeSettings.g6Settings.labelCfg.style.fontWeight,
+          },
+        };
+        
         nodes[nodeId] = g6Node;
       };
 
       const processRel = (rawRel) => {
+        if (!rawRel || !rawRel._id || !rawRel._label || !rawRel._src || !rawRel._dst) {
+          console.warn('Invalid rel data:', rawRel);
+          return;
+        }
+        
         const relSettings = this.settingsStore.settingsForLabel(rawRel._label);
         const relId = this.encodeId(rawRel._id);
         const numberOfOverlappingRels = increaseRelCounter(rawRel._src, rawRel._dst);
-        const g6Rel = {
-          id: relId,
-          properties: rawRel,
-          source: this.encodeId(rawRel._src),
-          target: this.encodeId(rawRel._dst),
-          ...relSettings.g6Settings,
-          labelCfg: {
-            ...relSettings.g6Settings.labelCfg,
-            style: {
-              background: { 
-                  fill: "#ffffff",
-                  padding: [2, 2, 2, 2],
-                  radius: 2,
-                 },
-                fontSize: 12,
-                fontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
-                fontWeight: 300,
-                fill: "#000000",
-                
-            }
-          },
-          style: {
-            ...relSettings.g6Settings.style,
-            endArrow: true,
-            startArrow: false,
-          },
-        }
-        if (g6Rel.source === g6Rel.target) {
-          g6Rel.type = "loop";
-          g6Rel.loopCfg = {
-            dist: 50,
-            position: LOOP_POSITIONS[(numberOfOverlappingRels - 1) % LOOP_POSITIONS.length],
-          };
-        } else if (numberOfOverlappingRels > 1) {
-          g6Rel.type = 'quadratic';
-          g6Rel.curveOffset = ARC_CURVE_OFFSETS[(numberOfOverlappingRels - 1) % ARC_CURVE_OFFSETS.length];
-        }
-
-        const expectedPropertiesType = {};
-        const relTable = this.schema.relTables.find((table) => table.name === rawRel._label);
-        const expectedProperties = this.schema.relTables.find((table) => table.name === rawRel._label).properties;
-        expectedProperties.forEach((property) => {
-          expectedPropertiesType[property.name] = property.type;
-        });
-        const relLabelProp = relSettings.label;
-        if (!relLabelProp) {
-          g6Rel.label = "";
-        } else {
-          g6Rel.label = rawRel[relLabelProp];
-          if (relLabelProp === '_label' && relTable.group) {
-            g6Rel.label = relTable.group;
-          }
-          if (relLabelProp in expectedPropertiesType) {
-            g6Rel.label = ValueFormatter.beautifyValue(rawRel[relLabelProp], expectedPropertiesType[relLabelProp]);
-          }
-          g6Rel.label = String(g6Rel.label);
-          const fontSize = relSettings.g6Settings.labelCfg.style.fontSize;
-          // Truncate edge label to max width 80px
-          g6Rel.label = G6Utils.fittingString(g6Rel.label, 80, fontSize);
-        }
+        
         if (edges[relId]) {
           return;
         }
+        
+        const expectedPropertiesType = {};
+        const relTable = this.schema.relTables.find((table) => table.name === rawRel._label);
+        if (!relTable) {
+          console.warn('Rel table not found for label:', rawRel._label);
+          return;
+        }
+        const expectedProperties = relTable.properties;
+        expectedProperties.forEach((property) => {
+          expectedPropertiesType[property.name] = property.type;
+        });
+        
+        let relLabel = "";
+        const relLabelProp = relSettings.label;
+        if (relLabelProp) {
+          relLabel = rawRel[relLabelProp];
+          if (relLabelProp === '_label' && relTable.group) {
+            relLabel = relTable.group;
+          }
+          if (relLabelProp in expectedPropertiesType) {
+            relLabel = ValueFormatter.beautifyValue(rawRel[relLabelProp], expectedPropertiesType[relLabelProp]);
+          }
+          relLabel = String(relLabel);
+          const fontSize = relSettings.g6Settings.labelCfg.style.fontSize;
+          // Truncate edge label to max width 80px
+          relLabel = G6Utils.fittingString(relLabel, 80, fontSize);
+        }
+        
+        // G6 v5 format
+        const g6Rel = {
+          id: relId,
+          source: this.encodeId(rawRel._src),
+          target: this.encodeId(rawRel._dst),
+          data: {
+            label: relLabel,
+            properties: rawRel,
+            ...relSettings.g6Settings,
+          },
+          style: {
+            stroke: relSettings.g6Settings.style.stroke,
+            lineWidth: relSettings.g6Settings.size || 3,
+            endArrow: true,
+            labelText: relLabel,
+            labelFontSize: relSettings.g6Settings.labelCfg.style.fontSize || 12,
+            labelFontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
+            labelFontWeight: 300,
+            labelBackground: true,
+            labelBackgroundFill: "#ffffff",
+            labelBackgroundPadding: [2, 2, 2, 2],
+            labelBackgroundRadius: 2,
+            labelAutoRotate: true,
+          },
+        };
+        
+        // Handle self-loops and overlapping edges
+        if (g6Rel.source === g6Rel.target) {
+          g6Rel.type = "loop";
+          g6Rel.style.loopDist = 50;
+          g6Rel.style.loopPosition = LOOP_POSITIONS[(numberOfOverlappingRels - 1) % LOOP_POSITIONS.length];
+        } else if (numberOfOverlappingRels > 1) {
+          g6Rel.type = 'cubic';
+          g6Rel.style.curveOffset = ARC_CURVE_OFFSETS[(numberOfOverlappingRels - 1) % ARC_CURVE_OFFSETS.length];
+        }
+        
         edges[relId] = g6Rel;
       }
       // Deduplicate nodes and edges
@@ -889,32 +906,38 @@ export default {
             }
             case DATA_TYPES.RECURSIVE_REL: {
               const recursiveRel = { ...row[key] };
-              recursiveRel._nodes.forEach((node) => {
-                node = { ...node };
-                const nodeId = this.encodeId(node._id);
-                if (nodes[nodeId]) {
-                  return;
-                }
-                for (let key in node) {
-                  if (node[key] === null || node[key] === undefined) {
-                    delete node[key];
+              if (recursiveRel._nodes && Array.isArray(recursiveRel._nodes)) {
+                recursiveRel._nodes.forEach((node) => {
+                  if (!node || !node._id) return;
+                  node = { ...node };
+                  const nodeId = this.encodeId(node._id);
+                  if (nodes[nodeId]) {
+                    return;
                   }
-                }
-                processNode(node);
-              });
-              recursiveRel._rels.forEach((rel) => {
-                rel = { ...rel };
-                const relId = this.encodeId(rel._id);
-                if (edges[relId]) {
-                  return;
-                }
-                for (let key in rel) {
-                  if (rel[key] === null || rel[key] === undefined) {
-                    delete rel[key];
+                  for (let key in node) {
+                    if (node[key] === null || node[key] === undefined) {
+                      delete node[key];
+                    }
                   }
-                }
-                processRel(rel);
-              });
+                  processNode(node);
+                });
+              }
+              if (recursiveRel._rels && Array.isArray(recursiveRel._rels)) {
+                recursiveRel._rels.forEach((rel) => {
+                  if (!rel || !rel._id) return;
+                  rel = { ...rel };
+                  const relId = this.encodeId(rel._id);
+                  if (edges[relId]) {
+                    return;
+                  }
+                  for (let key in rel) {
+                    if (rel[key] === null || rel[key] === undefined) {
+                      delete rel[key];
+                    }
+                  }
+                  processRel(rel);
+                });
+              }
               break;
             }
             default:
@@ -985,10 +1008,11 @@ export default {
     },
 
     handleClick(model) {
-      const label = model.properties._label;
+      const properties = model.data?.properties || model.properties;
+      const label = properties._label;
       this.clickedLabel = label;
-      this.clickedProperties = ValueFormatter.filterAndBeautifyProperties(model.properties, this.schema);
-      this.clickedIsNode = !(model.properties._src && model.properties._dst);
+      this.clickedProperties = ValueFormatter.filterAndBeautifyProperties(properties, this.schema);
+      this.clickedIsNode = !(properties._src && properties._dst);
       this.highlightNode(model);
       if (this.clickedIsNode) {
          this.isCurrentNodeExpanded = this.isNeighborExpanded(model);
@@ -1008,67 +1032,80 @@ export default {
       if (!this.isHighlightedMode) {
         return;
       }
-      if (model.properties._src || model.properties._dst) {
+      const properties = model.data?.properties || model.properties;
+      if (properties._src || properties._dst) {
         return;
       }
       const srcDstSet = new Set();
-      this.g6Graph.getEdges().forEach((edge) => {
-        const sourceNode = edge.getModel().source;
-        const targetNode = edge.getModel().target;
-        if (!edge.getModel().labelBackup) {
-          edge.getModel().labelBackup = edge.getModel().label;
+      const edges = this.g6Graph.getEdgeData();
+      const nodes = this.g6Graph.getNodeData();
+      
+      edges.forEach((edge) => {
+        const sourceNode = edge.source;
+        const targetNode = edge.target;
+        if (!edge.data.labelBackup) {
+          edge.data.labelBackup = edge.style.labelText;
         }
         if (sourceNode !== model.id && targetNode !== model.id) {
-          this.g6Graph.setItemState(edge, 'opaque', true);
-          this.g6Graph.setItemState(edge, 'click', false);
-          edge.getModel().label = "";
-          this.g6Graph.refreshItem(edge);
+          this.g6Graph.setItemState(edge.id, 'opaque', true);
+          this.g6Graph.setItemState(edge.id, 'click', false);
+          edge.style.labelText = "";
         } else {
-          this.g6Graph.setItemState(edge, 'opaque', false);
-          this.g6Graph.setItemState(edge, 'click', true);
+          this.g6Graph.setItemState(edge.id, 'opaque', false);
+          this.g6Graph.setItemState(edge.id, 'click', true);
           srcDstSet.add(sourceNode);
           srcDstSet.add(targetNode);
-          if (edge.getModel().labelBackup) {
-            edge.getModel().label = edge.getModel().labelBackup;
-            delete edge.getModel().labelBackup;
-            this.g6Graph.refreshItem(edge);
+          if (edge.data.labelBackup) {
+            edge.style.labelText = edge.data.labelBackup;
+            delete edge.data.labelBackup;
           }
         }
       });
-      this.g6Graph.getNodes().forEach((node) => {
-        if (node.getModel().id !== model.id && !srcDstSet.has(node.getModel().id)) {
-          this.g6Graph.setItemState(node, 'opaque', true);
+      
+      nodes.forEach((node) => {
+        if (node.id !== model.id && !srcDstSet.has(node.id)) {
+          this.g6Graph.setItemState(node.id, 'opaque', true);
         } else {
-          this.g6Graph.setItemState(node, 'opaque', false);
+          this.g6Graph.setItemState(node.id, 'opaque', false);
         }
       });
+      
+      this.g6Graph.setData({ nodes, edges });
+      this.g6Graph.render();
     },
 
     unhighlightEverything() {
       if (!this.isHighlightedMode) {
         return;
       }
-      this.g6Graph.getNodes().forEach((node) => {
-        this.g6Graph.setItemState(node, 'opaque', false);
+      const nodes = this.g6Graph.getNodeData();
+      const edges = this.g6Graph.getEdgeData();
+      
+      nodes.forEach((node) => {
+        this.g6Graph.setItemState(node.id, 'opaque', false);
       });
-      this.g6Graph.getEdges().forEach((edge) => {
-        this.g6Graph.setItemState(edge, 'opaque', false);
-        this.g6Graph.setItemState(edge, 'click', false);
-        if (edge.getModel().labelBackup) {
-          edge.getModel().label = edge.getModel().labelBackup;
-          delete edge.getModel().labelBackup;
-          this.g6Graph.refreshItem(edge);
+      
+      edges.forEach((edge) => {
+        this.g6Graph.setItemState(edge.id, 'opaque', false);
+        this.g6Graph.setItemState(edge.id, 'click', false);
+        if (edge.data?.labelBackup) {
+          edge.style.labelText = edge.data.labelBackup;
+          delete edge.data.labelBackup;
         }
       });
+      
+      this.g6Graph.setData({ nodes, edges });
+      this.g6Graph.render();
     },
 
     getInfoForExpansion(model) {
-      const tableName = model.properties._label;
+      const properties = model.data?.properties || model.properties;
+      const tableName = properties._label;
       const primaryKey = this.schema.nodeTables
         .find((table) => table.name === tableName)
         .properties
         .find((prop) => prop.isPrimaryKey);
-      const primaryKeyValue = model.properties[primaryKey.name];
+      const primaryKeyValue = properties[primaryKey.name];
       const primaryKeyName = primaryKey.name;
       return { tableName, primaryKey, primaryKeyValue, primaryKeyName };
     },
@@ -1106,11 +1143,12 @@ export default {
     },
 
     expandSelectedNode() {
-      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
+      const nodes = this.g6Graph.getNodeData();
+      const currentSelectedNode = nodes.find(node => node.states?.includes('click'));
       if (!currentSelectedNode) {
         return;
       }
-      this.expandOnNode(currentSelectedNode.getModel());
+      this.expandOnNode(currentSelectedNode);
       this.deselectAll();
     },
 
@@ -1131,11 +1169,12 @@ export default {
     },
 
     collapseSelectedNode() {
-      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
+      const nodes = this.g6Graph.getNodeData();
+      const currentSelectedNode = nodes.find(node => node.states?.includes('click'));
       if (!currentSelectedNode) {
         return;
       }
-      const id = currentSelectedNode.getModel().id;
+      const id = currentSelectedNode.id;
       this.collapseNode(id);
       this.handleSettingsChange();
       this.isCurrentNodeExpanded = false;
@@ -1171,26 +1210,31 @@ export default {
         this.counters.rel[edge.properties._label] += 1;
         this.counters.total.rel += 1;
       }
-      const currentNodes = this.g6Graph.getNodes().map((node) => node.getModel());
-      const currentEdges = this.g6Graph.getEdges().map((edge) => edge.getModel());
+      const currentNodes = this.g6Graph.getNodeData() || [];
+      const currentEdges = this.g6Graph.getEdgeData() || [];
       const newData = {
         nodes: currentNodes.concat(nodesToAdd),
         edges: currentEdges.concat(edgesToAdd),
       };
-      this.g6Graph.changeData(newData);
+      this.g6Graph.setData(newData);
+      this.g6Graph.render();
     },
 
     deselectAll() {
       if (!this.g6Graph) {
         return;
       }
-      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
+      const nodes = this.g6Graph.getNodeData();
+      const edges = this.g6Graph.getEdgeData();
+      
+      const currentSelectedNode = nodes.find(node => node.states?.includes('click'));
       if (currentSelectedNode) {
-        this.g6Graph.setItemState(currentSelectedNode, 'click', false);
+        this.g6Graph.setItemState(currentSelectedNode.id, 'click', false);
       }
-      const currentSelectedEdge = this.g6Graph.findAllByState('edge', 'click')[0];
+      
+      const currentSelectedEdge = edges.find(edge => edge.states?.includes('click'));
       if (currentSelectedEdge) {
-        this.g6Graph.setItemState(currentSelectedEdge, 'click', false);
+        this.g6Graph.setItemState(currentSelectedEdge.id, 'click', false);
       }
       this.clickedLabel = "";
       this.clickedProperties = [];
@@ -1254,7 +1298,8 @@ export default {
       if (!this.g6Graph) {
         return;
       }
-      this.g6Graph.changeData({ nodes, edges });
+      this.g6Graph.setData({ nodes, edges });
+      this.g6Graph.render();
       this.counters = counters;
       this.expansions.forEach(e => this.addDataWithQueryResult(e.neighbors));
     },
