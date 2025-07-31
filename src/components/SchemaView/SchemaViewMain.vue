@@ -320,7 +320,24 @@ export default {
           type: 'hover-activate',
           animation: true,
           enable: (e) => {
-            console.log(e);
+            switch (e.targetType) {
+              case 'node':
+                const nodeData = this.g6Graph.getNodeData(e.target.id);
+                this.handleHover(nodeData.data._label, nodeData.data.label, true);
+                break;
+              case 'edge':
+                const edgeData = this.g6Graph.getEdgeData(e.target.id);
+                console.log(edgeData)
+                if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
+                  edgeData.style = edgeData.style || {};
+                  edgeData.data.label = this.getRelTableDisplayLabel(edgeData.data._label);
+                  this.g6Graph.updateEdgeData(edgeData);
+                }
+                this.handleHover(edgeData.data._label, edgeData.data.label, false);
+                break;
+              default:
+                break;
+            }
             return true; 
           },
         },
@@ -330,14 +347,6 @@ export default {
       this.g6Graph.setData({ nodes, edges, });
       this.g6Graph.render();
 
-      // this.g6Graph.on('node:pointerenter', (e) => {
-      //   console.log(e);
-      //   const { itemId } = e;
-      //   console.log("Pointer enter on node:", itemId);
-      //   this.g6Graph.setElementState(itemId, 'hover', true);
-      //   const nodeData = this.g6Graph.getNodeData(itemId);
-      //   this.handleHover(nodeData.data._label, nodeData.data.label, true);
-      // });
 
       // this.g6Graph.on('node:pointerleave', (e) => {
       //   const { itemId } = e;
