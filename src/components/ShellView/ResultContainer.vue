@@ -253,7 +253,7 @@ export default {
       this.isGraphEmpty = false;
       this.schema = schema;
       this.queryResult = queryResult;
-      this.queryResultString = JSON.stringify(queryResult, int128Replacer, 2);
+      this.queryResultString = "";
       this.errorMessage = errorMessage;
       if (this.queryResult && this.queryResult.rows.length === 0) {
         this.queryResult = null;

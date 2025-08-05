@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@antv/g6": "^5.0.49",
+    "@antv/layout-gpu": "^1.1.7",
+    "@antv/layout-wasm": "^1.4.2",
     "@duckdb/duckdb-wasm": "1.29.0",
     "@popperjs/core": "^2.11.8",
     "antlr4-c3": "3.2.3",

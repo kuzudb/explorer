@@ -246,7 +246,6 @@ export default {
         return;
       }
       const { nodes, edges } = this.extractGraphFromSchema(this.schema);
-      console.log(nodes, edges);
       const container = this.$refs.graph;
       const width = container.offsetWidth;
       const height = container.offsetHeight;
@@ -327,7 +326,6 @@ export default {
                 break;
               case 'edge':
                 const edgeData = this.g6Graph.getEdgeData(e.target.id);
-                console.log(edgeData)
                 if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
                   edgeData.style = edgeData.style || {};
                   edgeData.data.label = this.getRelTableDisplayLabel(edgeData.data._label);

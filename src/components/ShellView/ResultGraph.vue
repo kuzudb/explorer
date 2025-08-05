@@ -234,7 +234,9 @@
 </template>
 
 <script lang="js">
-import { Graph, DragCanvas, ZoomCanvas, DragNode, ForceLayout } from '@antv/g6';
+import { Graph, register, ExtensionCategory, getExtensions } from '@antv/g6';
+import { FruchtermanLayout, GForceLayout } from '@antv/layout-gpu';
+
 import G6Utils from "../../utils/G6Utils";
 import {
   DATA_TYPES, UI_SIZE, LOOP_POSITIONS, ARC_CURVE_OFFSETS
@@ -412,16 +414,17 @@ export default {
       let nodeSpacing = edges.length * 8;
       nodeSpacing = nodeSpacing < 80 ? 80 : nodeSpacing;
       nodeSpacing = nodeSpacing > 500 ? 500 : nodeSpacing;
+      register('layout', 'fruchterman-gpu', FruchtermanLayout);
+      console.log(getExtensions(ExtensionCategory.LAYOUT));
       const config = {
-        nodeSpacing,
-        type: 'force',
-        preventOverlap: true,
-
+        type: 'fruchterman-gpu',
+        workerEnabled: true,
+        gravity: 0.5,
+        speed: 10,
       };
       return config;
     },
-    drawGraph() {
-      this.isGraphLoading = true; // Show loading overlay
+    async drawGraph() {
       if (this.graphCreated && this.g6Graph) {
         this.g6Graph.destroy();
       }
@@ -435,6 +438,7 @@ export default {
       }
       console.log("Nodes data sent to G6:", nodes);
       console.log("Edges data sent to G6:", edges);
+
       const container = this.$refs.graph;
       const width = container.offsetWidth;
       const height = container.offsetHeight;
@@ -449,7 +453,6 @@ export default {
           style: {
             size: 100,
             lineWidth: 0,
-            fill: "#FF0000",
             labelText: (d) => d.data?.label || '',
             labelFill: "#ffffff",
             labelFontSize: 14,
@@ -495,109 +498,115 @@ export default {
         behaviors: ['drag-canvas', 'zoom-canvas', 'drag-node'],
       });
 
+      console.time("set data");
       this.g6Graph.setData({ nodes, edges, });
-      this.g6Graph.render();
-
-      this.g6Graph.on('node:pointerenter', (e) => {
-        const { itemId, itemType } = e;
-        this.g6Graph.setItemState(itemId, 'hover', true);
-        const nodeData = this.g6Graph.getNodeData(itemId);
-        this.$refs.hoverContainer.handleHover(nodeData, e);
+      console.timeEnd("set data");
+      console.time("render graph");
+      this.$nextTick(() => {
+        this.g6Graph.draw();
       });
+      console.timeEnd("render graph");
 
-      this.g6Graph.on('node:pointerleave', (e) => {
-        const { itemId } = e;
-        this.g6Graph.setItemState(itemId, 'hover', false);
-        this.$refs.hoverContainer.resetHover();
-      });
+      // this.g6Graph.on('node:pointerenter', (e) => {
+      //   const { itemId, itemType } = e;
+      //   this.g6Graph.setItemState(itemId, 'hover', true);
+      //   const nodeData = this.g6Graph.getNodeData(itemId);
+      //   this.$refs.hoverContainer.handleHover(nodeData, e);
+      // });
 
-      this.g6Graph.on('node:pointermove', (e) => {
-        if (this.$refs.hoverContainer.currentHoveredModel) {
-          this.$refs.hoverContainer.updateTooltipPosition(e);
-        }
-      });
+      // this.g6Graph.on('node:pointerleave', (e) => {
+      //   const { itemId } = e;
+      //   this.g6Graph.setItemState(itemId, 'hover', false);
+      //   this.$refs.hoverContainer.resetHover();
+      // });
 
-      this.g6Graph.on('node:click', (e) => {
-        const { itemId } = e;
-        const nodeData = this.g6Graph.getNodeData(itemId);
-        this.deselectAll();
-        this.g6Graph.setItemState(itemId, 'click', true);
-        this.handleClick(nodeData);
-        if (!this.isSidePanelOpen) {
-          // Add a small delay to avoid conflicting with double click
-          window.setTimeout(() => {
-            this.isSidePanelOpen = true;
-            this.$nextTick(() => {
-              this.handleResize();
-            });
-          }, 200);
-        }
-      });
+      // this.g6Graph.on('node:pointermove', (e) => {
+      //   if (this.$refs.hoverContainer.currentHoveredModel) {
+      //     this.$refs.hoverContainer.updateTooltipPosition(e);
+      //   }
+      // });
 
-      this.g6Graph.on('node:dblclick', (e) => {
-        const { itemId } = e;
-        const nodeData = this.g6Graph.getNodeData(itemId);
-        this.expandOnNode(nodeData);
-      });
+      // this.g6Graph.on('node:click', (e) => {
+      //   const { itemId } = e;
+      //   const nodeData = this.g6Graph.getNodeData(itemId);
+      //   this.deselectAll();
+      //   this.g6Graph.setItemState(itemId, 'click', true);
+      //   this.handleClick(nodeData);
+      //   if (!this.isSidePanelOpen) {
+      //     // Add a small delay to avoid conflicting with double click
+      //     window.setTimeout(() => {
+      //       this.isSidePanelOpen = true;
+      //       this.$nextTick(() => {
+      //         this.handleResize();
+      //       });
+      //     }, 200);
+      //   }
+      // });
 
-      // Auto layout after drag
-      this.g6Graph.on('node:dragstart', (e) => {
-        const { itemId } = e;
-        const nodeData = this.g6Graph.getNodeData(itemId);
-        nodeData.fx = e.canvas.x;
-        nodeData.fy = e.canvas.y;
-      });
+      // this.g6Graph.on('node:dblclick', (e) => {
+      //   const { itemId } = e;
+      //   const nodeData = this.g6Graph.getNodeData(itemId);
+      //   this.expandOnNode(nodeData);
+      // });
 
-      this.g6Graph.on('node:drag', (e) => {
-        const { itemId } = e;
-        const nodeData = this.g6Graph.getNodeData(itemId);
-        nodeData.fx = e.canvas.x;
-        nodeData.fy = e.canvas.y;
-      });
+      // // Auto layout after drag
+      // this.g6Graph.on('node:dragstart', (e) => {
+      //   const { itemId } = e;
+      //   const nodeData = this.g6Graph.getNodeData(itemId);
+      //   nodeData.fx = e.canvas.x;
+      //   nodeData.fy = e.canvas.y;
+      // });
 
-      this.g6Graph.on('node:dragend', (e) => {
-        const { itemId } = e;
-        const nodeData = this.g6Graph.getNodeData(itemId);
-        nodeData.fx = e.canvas.x;
-        nodeData.fy = e.canvas.y;
-        this.g6Graph.layout();
-      });
+      // this.g6Graph.on('node:drag', (e) => {
+      //   const { itemId } = e;
+      //   const nodeData = this.g6Graph.getNodeData(itemId);
+      //   nodeData.fx = e.canvas.x;
+      //   nodeData.fy = e.canvas.y;
+      // });
 
-      this.g6Graph.on('edge:pointerenter', (e) => {
-        const { itemId } = e;
-        this.g6Graph.setItemState(itemId, 'hover', true);
-        const edgeData = this.g6Graph.getEdgeData(itemId);
-        this.$refs.hoverContainer.handleHover(edgeData, e);
-      });
+      // this.g6Graph.on('node:dragend', (e) => {
+      //   const { itemId } = e;
+      //   const nodeData = this.g6Graph.getNodeData(itemId);
+      //   nodeData.fx = e.canvas.x;
+      //   nodeData.fy = e.canvas.y;
+      //   this.g6Graph.layout();
+      // });
 
-      this.g6Graph.on('edge:pointerleave', (e) => {
-        const { itemId } = e;
-        this.g6Graph.setItemState(itemId, 'hover', false);
-        this.$refs.hoverContainer.resetHover();
-      });
+      // this.g6Graph.on('edge:pointerenter', (e) => {
+      //   const { itemId } = e;
+      //   this.g6Graph.setItemState(itemId, 'hover', true);
+      //   const edgeData = this.g6Graph.getEdgeData(itemId);
+      //   this.$refs.hoverContainer.handleHover(edgeData, e);
+      // });
 
-      this.g6Graph.on('edge:pointermove', (e) => {
-        if (this.$refs.hoverContainer.currentHoveredModel) {
-          this.$refs.hoverContainer.updateTooltipPosition(e);
-        }
-      });
+      // this.g6Graph.on('edge:pointerleave', (e) => {
+      //   const { itemId } = e;
+      //   this.g6Graph.setItemState(itemId, 'hover', false);
+      //   this.$refs.hoverContainer.resetHover();
+      // });
 
-      this.g6Graph.on('edge:click', (e) => {
-        const { itemId } = e;
-        const edgeData = this.g6Graph.getEdgeData(itemId);
-        this.deselectAll();
-        this.unhighlightEverything();
-        this.g6Graph.setItemState(itemId, 'click', true);
-        this.handleClick(edgeData);
-        if (!this.isSidePanelOpen) {
-          this.toggleSidePanel();
-        }
-      });
+      // this.g6Graph.on('edge:pointermove', (e) => {
+      //   if (this.$refs.hoverContainer.currentHoveredModel) {
+      //     this.$refs.hoverContainer.updateTooltipPosition(e);
+      //   }
+      // });
 
-      this.g6Graph.on('canvas:click', () => {
-        this.deselectAll();
-        this.unhighlightEverything();
-      });
+      // this.g6Graph.on('edge:click', (e) => {
+      //   const { itemId } = e;
+      //   const edgeData = this.g6Graph.getEdgeData(itemId);
+      //   this.deselectAll();
+      //   this.unhighlightEverything();
+      //   this.g6Graph.setItemState(itemId, 'click', true);
+      //   this.handleClick(edgeData);
+      //   if (!this.isSidePanelOpen) {
+      //     this.toggleSidePanel();
+      //   }
+      // });
+
+      // this.g6Graph.on('canvas:click', () => {
+      //   this.deselectAll();
+      //   this.unhighlightEverything();
+      // });
 
       this.graphCreated = true;
 
@@ -960,10 +969,11 @@ export default {
           }
         }
       }
+      console.log(nodes, edges);
       const nodeCounters = {
       };
       for (let key in nodes) {
-        const label = nodes[key].properties._label;
+        const label = nodes[key]._label;
         if (!nodeCounters[label]) {
           nodeCounters[label] = 0;
         }
@@ -972,7 +982,7 @@ export default {
       const relCounters = {
       };
       for (let key in edges) {
-        const label = edges[key].properties._label;
+        const label = edges[key]._label;
         if (!relCounters[label]) {
           relCounters[label] = 0;
         }
@@ -1001,7 +1011,7 @@ export default {
       this.$nextTick(() => {
         if (this.g6Graph) {
           const width = this.$refs.graph.offsetWidth;
-          this.g6Graph.changeSize(width, parseInt(this.containerHeight));
+          this.g6Graph.resize(width, parseInt(this.containerHeight));
           this.g6Graph.fitCenter();
         }
       });
