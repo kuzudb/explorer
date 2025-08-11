@@ -1,88 +1,44 @@
 <template>
-  <div
-    ref="wrapper"
-    class="result-graph__wrapper"
-  >
-    <div
-      ref="graph"
-      class="result-graph__container"
-      :style="{ width: graphWidth + 'px' }"
-    />
+  <div ref="wrapper" class="result-graph__wrapper">
+    <div ref="graph" class="result-graph__container" :style="{ width: graphWidth + 'px' }" />
 
-    <HoverContainer
-      v-if="g6Graph"
-      ref="hoverContainer"
-      :g6-graph="g6Graph"
-      :schema="schema"
-    />
+    <HoverContainer v-if="g6Graph" ref="hoverContainer" :g6-graph="g6Graph" :schema="schema" />
 
-    <div
-      v-show="isSidePanelOpen"
-      ref="sidePanel"
-      class="result-graph__side-panel"
-      :style="{ width: sidebarWidth + 'px' }"
-    >
-      <div
-        class="resize-handle"
-        @mousedown="startResize"
-      />
+    <div v-show="isSidePanelOpen" ref="sidePanel" class="result-graph__side-panel"
+      :style="{ width: sidebarWidth + 'px' }">
+      <div class="resize-handle" @mousedown="startResize" />
       <div class="result-graph__side-panel-content">
-        <button
-          class="result-graph__sidebar-button--close"
-          @click="toggleSidePanel"
-        >
+        <button class="result-graph__sidebar-button--close" @click="toggleSidePanel">
           <i class="fa-solid fa-times" />
         </button>
 
-        <div
-          v-if="clickedIsNode"
-          class="result-graph__actions"
-        >
+        <div v-if="clickedIsNode" class="result-graph__actions">
           <br>
 
           <h5>Actions</h5>
-          <button
-            class="btn btn-sm btn-outline-secondary"
-            @click="hideNode()"
-          >
+          <button class="btn btn-sm btn-outline-secondary" @click="hideNode()">
             <i class="fa-solid fa-eye-slash" /> Hide Node
           </button>
 
           &nbsp;
 
-          <button
-            v-if="!isHighlightedMode"
-            class="btn btn-sm btn-outline-secondary"
-            @click="enableHighlightMode()"
-          >
+          <button v-if="!isHighlightedMode" class="btn btn-sm btn-outline-secondary" @click="enableHighlightMode()">
             <i class="fa-solid fa-arrows-to-circle" /> Highlight Mode
           </button>
 
-          <button
-            v-else
-            class="btn btn-sm btn-outline-primary"
-            @click="disableHighlightMode()"
-          >
+          <button v-else class="btn btn-sm btn-outline-primary" @click="disableHighlightMode()">
             <i class="fa-solid fa-arrows-to-circle" />
             Disable Highlight Mode
           </button>
 
           &nbsp;
 
-          <button
-            v-if="!isCurrentNodeExpanded"
-            class="btn btn-sm btn-outline-secondary"
-            @click="expandSelectedNode()"
-          >
+          <button v-if="!isCurrentNodeExpanded" class="btn btn-sm btn-outline-secondary" @click="expandSelectedNode()">
             <i class="fa-solid fa-up-down-left-right" />
             Expand Neighbors
           </button>
 
-          <button
-            v-else
-            class="btn btn-sm btn-outline-primary"
-            @click="collapseSelectedNode()"
-          >
+          <button v-else class="btn btn-sm btn-outline-primary" @click="collapseSelectedNode()">
             <i class="fa-solid fa-up-down-left-right" />
             Collapse Neighbors
           </button>
@@ -93,31 +49,21 @@
           <div class="result-graph__summary-section">
             <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
           </div>
-          <span
-            class="badge bg-primary"
-            :style="{
-              backgroundColor: `${getColor(displayLabel)} !important`,
-              color: `white !important`,
-              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-            }"
-          >
+          <span class="badge bg-primary" :style="{
+            backgroundColor: `${getColor(displayLabel)} !important`,
+            color: `white !important`,
+            textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+          }">
             {{ displayLabel }}</span>
           <hr>
           <table class="table table-sm table-borderless result-graph__result-table">
             <tbody>
-              <tr
-                v-for="property in displayProperties"
-                :key="property.name"
-              >
+              <tr v-for="property in displayProperties" :key="property.name">
                 <th scope="row">
                   {{ property.name }}
-                  <span
-                    v-if="property.isPrimaryKey"
-                    class="badge bg-primary"
-                    style="
+                  <span v-if="property.isPrimaryKey" class="badge bg-primary" style="
                       text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; 
-                      color: white !important;"
-                  >PK</span>
+                      color: white !important;">PK</span>
                 </th>
                 <td>{{ property.value }}</td>
               </tr>
@@ -134,11 +80,7 @@
                   {{ counters.total.node - numHiddenNodes }}/</span>{{ counters.total.node }} nodes
                 <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
               </p>
-              <button
-                v-if="numHiddenNodes > 0"
-                class="btn btn-sm btn-outline-secondary"
-                @click="showAllNodesRels()"
-              >
+              <button v-if="numHiddenNodes > 0" class="btn btn-sm btn-outline-secondary" @click="showAllNodesRels()">
                 <i class="fa-solid fa-eye" />
                 Show All
               </button>
@@ -146,17 +88,12 @@
             <hr>
             <table class="table table-sm table-borderless result-graph__overview-table">
               <tbody>
-                <tr
-                  v-for="label in Object.keys(counters.node)"
-                  :key="label"
-                >
+                <tr v-for="label in Object.keys(counters.node)" :key="label">
                   <th scope="row">
-                    <span
-                      class="badge bg-primary"
-                      :style="{ backgroundColor: ` ${getColor(label)} !important`, textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: 'white !important' }"
-                    >{{
-                      label
-                    }}</span>
+                    <span class="badge bg-primary"
+                      :style="{ backgroundColor: ` ${getColor(label)} !important`, textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: 'white !important' }">{{
+                        label
+                      }}</span>
                   </th>
                   <td>{{ counters.node[label] }}</td>
                 </tr>
@@ -175,19 +112,13 @@
             <hr>
             <table class="table table-sm table-borderless result-graph__overview-table">
               <tbody>
-                <tr
-                  v-for="label in Object.keys(counters.rel)"
-                  :key="label"
-                >
+                <tr v-for="label in Object.keys(counters.rel)" :key="label">
                   <th scope="row">
-                    <span
-                      class="badge bg-primary"
-                      :style="{
-                        backgroundColor: ` ${getColor(label)} !important`,
-                        color: 'white !important',
-                        textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-                      }"
-                    >
+                    <span class="badge bg-primary" :style="{
+                      backgroundColor: ` ${getColor(label)} !important`,
+                      color: 'white !important',
+                      textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+                    }">
                       {{ label }}
                     </span>
                   </th>
@@ -206,14 +137,8 @@
         </div>
       </div>
     </div>
-    <button
-      v-show="!isSidePanelOpen"
-      class="result-graph__sidebar-button--open"
-      data-bs-toggle="tooltip"
-      data-bs-placement="right"
-      data-bs-original-title="Open Sidebar"
-      @click="toggleSidePanel"
-    >
+    <button v-show="!isSidePanelOpen" class="result-graph__sidebar-button--open" data-bs-toggle="tooltip"
+      data-bs-placement="right" data-bs-original-title="Open Sidebar" @click="toggleSidePanel">
       <i class="fa-lg fa-solid fa-angle-left" />
     </button>
   </div>
@@ -429,22 +354,6 @@ export default {
         this.$emit("graphEmpty");
       }
 
-      nodes = nodes.map(n => {
-        return {
-          id: n.id,
-          style: n.style,
-
-        };
-      });
-      edges = edges.map(e => {
-        return {
-          id: e.id,
-          source: e.source,
-          target: e.target,
-          style: e.style,
-        };
-      });
-
       const container = this.$refs.graph;
       const width = container.offsetWidth;
       const height = container.offsetHeight;
@@ -505,9 +414,18 @@ export default {
           },
           {
             type: 'click-select',
-            degree: () => this.isHighlightedMode ? 1 : 0,
+            key: 'click-select-element',
+            degree: 0,
             state: 'active',
-            unselectedState: () => this.isHighlightedMode ? 'inactive' : 'default',
+            enable: true,
+          },
+          {
+            type: 'click-select',
+            key: 'click-highlight',
+            degree: 1,
+            state: 'active',
+            unselectedState: 'inactive',
+            enable: false,
           }
 
         ],
@@ -544,36 +462,27 @@ export default {
 
       // Click node and edge to select it and open side panel
       this.g6Graph.on('node:click', (e) => {
-        console.log(e);
-        const nodeData = e.config;
-
-
-        // const { itemId } = e;
-        // const nodeData = this.g6Graph.getNodeData(itemId);
-        // this.deselectAll();
-        // this.g6Graph.setItemState(itemId, 'click', true);
-        // this.handleClick(nodeData);
-        // if (!this.isSidePanelOpen) {
-        //   // Add a small delay to avoid conflicting with double click
-        //   window.setTimeout(() => {
-        //     this.isSidePanelOpen = true;
-        //     this.$nextTick(() => {
-        //       this.handleResize();
-        //     });
-        //   }, 200);
-        // }
+        const clickedId = e.target.config.id;
+        const nodeData = this.g6Graph.getNodeData(clickedId)?.data;
+        this.handleClick(nodeData);
+        if (!this.isSidePanelOpen) {
+          // Add a small delay to avoid conflicting with double click
+          window.setTimeout(() => {
+            this.isSidePanelOpen = true;
+            this.$nextTick(() => {
+              this.handleResize();
+            });
+          }, 200);
+        }
       });
 
       this.g6Graph.on('edge:click', (e) => {
-        // const { itemId } = e;
-        // const edgeData = this.g6Graph.getEdgeData(itemId);
-        // this.deselectAll();
-        // this.unhighlightEverything();
-        // this.g6Graph.setItemState(itemId, 'click', true);
-        // this.handleClick(edgeData);
-        // if (!this.isSidePanelOpen) {
-        //   this.toggleSidePanel();
-        // }
+        const clickedId = e.target.config.id;
+        const edgeData = this.g6Graph.getEdgeData(clickedId)?.data;
+        this.handleClick(edgeData);
+        if (!this.isSidePanelOpen) {
+          this.isSidePanelOpen = true;
+        }
       });
 
 
@@ -660,11 +569,14 @@ export default {
     },
 
     enableHighlightMode() {
+      this.g6Graph.updateBehavior({ key: 'click-select-element', enable: false });
+      this.g6Graph.updateBehavior({ key: 'click-highlight', enable: true });
       this.isHighlightedMode = true;
     },
 
     disableHighlightMode() {
-      this.unhighlightEverything();
+      this.g6Graph.updateBehavior({ key: 'click-select-element', enable: true });
+      this.g6Graph.updateBehavior({ key: 'click-highlight', enable: false });
       this.isHighlightedMode = false;
     },
 
@@ -1001,22 +913,14 @@ export default {
     },
 
     handleClick(model) {
-      const properties = model.data?.properties || model.properties;
+      console.log("Clicked model:", model);
+      const properties = model.properties;
       const label = properties._label;
       this.clickedLabel = label;
       this.clickedProperties = ValueFormatter.filterAndBeautifyProperties(properties, this.schema);
       this.clickedIsNode = !(properties._src && properties._dst);
       if (this.clickedIsNode) {
         this.isCurrentNodeExpanded = this.isNeighborExpanded(model);
-      }
-      if (!this.isSidePanelOpen) {
-        // Add a small delay to avoid conflicting with double click
-        window.setTimeout(() => {
-          this.isSidePanelOpen = true;
-          this.$nextTick(() => {
-            this.handleResize();
-          });
-        }, 200);
       }
     },
 
