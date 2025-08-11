@@ -482,6 +482,10 @@ export default {
         },
         behaviors: ['zoom-canvas', 'drag-canvas',
           {
+            type: 'optimize-viewport-transform',
+            debounce: 300,
+          },
+          {
             type: 'drag-element-force',
             fixed: true,
           },
@@ -512,13 +516,13 @@ export default {
       this.g6Graph.setData({ nodes, edges, });
       this.g6Graph.render();
 
-
       // Fit the graph to view after rendering
       this.g6Graph.on(GraphEvent.AFTER_RENDER, () => {
         g6Utils.fitToView(this.g6Graph);
       });
 
 
+      // Show hover container on node and edge hover
       this.g6Graph.on('node:pointerenter', (e) => {
         const nodeData = this.g6Graph.getNodeData(e.target.id);
         this.$refs.hoverContainer.handleHover(nodeData, e);
@@ -532,7 +536,6 @@ export default {
         this.$refs.hoverContainer.showTooltip(e); 
       });
 
-
       this.g6Graph.on('edge:pointerenter', (e) => {
         const nodeData = this.g6Graph.getEdgeData(e.target.id);
         this.$refs.hoverContainer.handleHover(nodeData, e);
@@ -545,6 +548,7 @@ export default {
       this.g6Graph.on('edge:pointermove', (e) => {
         this.$refs.hoverContainer.showTooltip(e);
       });
+      // End of hover container setup
 
       // Click node and edge to select it and open side panel
       this.g6Graph.on('node:click', (e) => {
@@ -570,7 +574,7 @@ export default {
           this.isSidePanelOpen = true;
         }
       });
-
+      // End of click to select node and edge
 
       this.g6Graph.on('node:dblclick', (e) => {
         const { itemId } = e;
