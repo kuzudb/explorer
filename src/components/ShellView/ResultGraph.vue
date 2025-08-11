@@ -553,6 +553,17 @@ export default {
       this.g6Graph.updateBehavior({ key: 'click-select-element', enable: true });
       this.g6Graph.updateBehavior({ key: 'click-highlight', enable: false });
       this.isHighlightedMode = false;
+      const inactiveNodes = this.g6Graph.getElementDataByState('node', 'inactive');
+      const inactiveEdges = this.g6Graph.getElementDataByState('edge', 'inactive');
+      const combined = {};
+      inactiveNodes.forEach((node) => {
+        combined[node.id] = [];
+      });
+      inactiveEdges.forEach((edge) => {
+        combined[edge.id] = [];
+      });
+      this.g6Graph.setElementState(combined);
+      this.deselectAll();
     },
 
     showAllNodesRels() {
