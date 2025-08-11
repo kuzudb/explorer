@@ -511,7 +511,12 @@ export default {
       // End of click to select node and edge
 
       this.g6Graph.on('node:dblclick', (e) => {
-        const { itemId } = e;
+        const itemId = e.target.id;
+        const isCurrentNodeExpanded = this.isNeighborExpanded(e.target);
+        if (isCurrentNodeExpanded) {
+          this.collapseNode(itemId);
+          return this.handleSettingsChange();
+        }
         const nodeData = this.g6Graph.getNodeData(itemId);
         this.expandOnNode(nodeData);
       });
@@ -538,7 +543,7 @@ export default {
       return this.g6Graph.setElementVisibility(combined);
     },
 
-    async enableHighlightMode() {
+    enableHighlightMode() {
       this.g6Graph.updateBehavior({ key: 'click-select-element', enable: false });
       this.g6Graph.updateBehavior({ key: 'click-highlight', enable: true });
       this.isHighlightedMode = true;
@@ -827,7 +832,6 @@ export default {
       }
       const nodeCounters = {};
       for (let key in nodes) {
-        console.log(nodes[key]);
         const label = nodes[key].data.properties._label;
         if (!nodeCounters[label]) {
           nodeCounters[label] = 0;
@@ -884,7 +888,7 @@ export default {
     },
 
     getInfoForExpansion(model) {
-      const properties = model.data?.properties || model.properties;
+      const properties = model.data.properties;
       const tableName = properties._label;
       const primaryKey = this.schema.nodeTables
         .find((table) => table.name === tableName)
@@ -910,6 +914,7 @@ export default {
       } catch (e) {
         // Ignore error for now. Just don't expand if the core does not execute the query.
         console.error(e);
+        return;
       }
       if (!neighbors) {
         return;
@@ -918,6 +923,7 @@ export default {
       this.expansions.push({
         id: model.id, neighbors
       });
+      this.deselectAll();
     },
 
     isNeighborExpanded(model) {
@@ -928,13 +934,8 @@ export default {
     },
 
     expandSelectedNode() {
-      const nodes = this.g6Graph.getNodeData();
-      const currentSelectedNode = nodes.find(node => node.states?.includes('click'));
-      if (!currentSelectedNode) {
-        return;
-      }
-      this.expandOnNode(currentSelectedNode);
-      this.deselectAll();
+      const nodeData = this.g6Graph.getNodeData(this.clickedId);
+      this.expandOnNode(nodeData);
     },
 
     collapseNode(id) {
@@ -954,13 +955,7 @@ export default {
     },
 
     collapseSelectedNode() {
-      const nodes = this.g6Graph.getNodeData();
-      const currentSelectedNode = nodes.find(node => node.states?.includes('click'));
-      if (!currentSelectedNode) {
-        return;
-      }
-      const id = currentSelectedNode.id;
-      this.collapseNode(id);
+      this.collapseNode(this.clickedId);
       this.handleSettingsChange();
       this.isCurrentNodeExpanded = false;
       this.deselectAll();
@@ -978,21 +973,29 @@ export default {
       const nodesToAdd = [];
       for (let key in nodes) {
         const node = nodes[key];
-        if (this.g6Graph.findById(node.id)) {
+        try {
+          this.g6Graph.getNodeData(node.id);
+          // Node already exists, skip it
           continue;
+        } catch (error) {
+          // Do nothing, the node does not exist, we can add it
         }
         nodesToAdd.push(node);
-        this.counters.node[node.properties._label] += 1;
+        this.counters.node[node.data.properties._label] += 1;
         this.counters.total.node += 1;
       }
       const edgesToAdd = [];
       for (let key in edges) {
         const edge = edges[key];
-        if (this.g6Graph.findById(edge.id)) {
+        try {
+          this.g6Graph.getEdgeData(edge.id);
+          // Edge already exists, skip it
           continue;
+        } catch (error) {
+          // Do nothing, the edge does not exist, we can add it
         }
         edgesToAdd.push(edge);
-        this.counters.rel[edge.properties._label] += 1;
+        this.counters.rel[edge.data.properties._label] += 1;
         this.counters.total.rel += 1;
       }
       const currentNodes = this.g6Graph.getNodeData() || [];
@@ -1006,6 +1009,16 @@ export default {
     },
 
     deselectAll() {
+      const selectedNodes = this.g6Graph.getElementDataByState('node', 'active');
+      const selectedEdges = this.g6Graph.getElementDataByState('edge', 'active');
+      const combined = {};
+      selectedNodes.forEach((node) => {
+        combined[node.id] = [];
+      });
+      selectedEdges.forEach((edge) => {
+        combined[edge.id] = [];
+      });
+      this.g6Graph.setElementState(combined);
       this.clickedLabel = "";
       this.clickedId = null;
       this.clickedProperties = [];

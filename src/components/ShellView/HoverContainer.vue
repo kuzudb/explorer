@@ -84,7 +84,6 @@ export default {
         clearTimeout(this.debounceTimeout);
       }
       this.debounceTimeout = setTimeout(() => {
-        console.log('showTooltip event:', event);
         this.tooltipX = event.viewport.x + 10;
         this.tooltipY = event.viewport.y + 20;
         this.tooltipVisible = true;
