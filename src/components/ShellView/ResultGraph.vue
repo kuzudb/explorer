@@ -1,103 +1,44 @@
 <template>
-  <div
-    ref="wrapper"
-    class="result-graph__wrapper"
-  >
-    <div
-      ref="graph"
-      class="result-graph__container"
-      :style="{ width: graphWidth + 'px' }"
-    />
-    <!-- Loading Overlay -->
-    <div
-      v-if="isGraphLoading"
-      class="result-graph__loading-overlay"
-    >
-      <div
-        class="spinner-border"
-        role="status"
-      >
-        <span class="visually-hidden">Loading...</span>
-      </div>
-      <div class="result-graph__loading-text">
-        Rendering Graph...
-      </div>
-    </div>
-    
-    <HoverContainer
-      v-if="g6Graph"
-      ref="hoverContainer"
-      :g6-graph="g6Graph"
-      :schema="schema"
-    />
-    
-    <div
-      v-show="isSidePanelOpen"
-      ref="sidePanel"
-      class="result-graph__side-panel"
-      :style="{ width: sidebarWidth + 'px' }"
-    >
-      <div
-        class="resize-handle"
-        @mousedown="startResize"
-      />
+  <div ref="wrapper" class="result-graph__wrapper">
+    <div ref="graph" class="result-graph__container" :style="{ width: graphWidth + 'px' }" />
+
+    <HoverContainer v-if="g6Graph" ref="hoverContainer" :g6-graph="g6Graph" :schema="schema" />
+
+    <div v-show="isSidePanelOpen" ref="sidePanel" class="result-graph__side-panel"
+      :style="{ width: sidebarWidth + 'px' }">
+      <div class="resize-handle" @mousedown="startResize" />
       <div class="result-graph__side-panel-content">
-        <button
-          class="result-graph__sidebar-button--close"
-          @click="toggleSidePanel"
-        >
+        <button class="result-graph__sidebar-button--close" @click="toggleSidePanel">
           <i class="fa-solid fa-times" />
         </button>
 
-        <div
-          v-if="clickedIsNode"
-          class="result-graph__actions"
-        >
+        <div v-if="clickedIsNode" class="result-graph__actions">
           <br>
 
           <h5>Actions</h5>
-          <button
-            class="btn btn-sm btn-outline-secondary"
-            @click="hideNode()"
-          >
+          <button class="btn btn-sm btn-outline-secondary" @click="hideNode()">
             <i class="fa-solid fa-eye-slash" /> Hide Node
           </button>
 
           &nbsp;
 
-          <button
-            v-if="!isHighlightedMode"
-            class="btn btn-sm btn-outline-secondary"
-            @click="enableHighlightMode()"
-          >
+          <button v-if="!isHighlightedMode" class="btn btn-sm btn-outline-secondary" @click="enableHighlightMode()">
             <i class="fa-solid fa-arrows-to-circle" /> Highlight Mode
           </button>
 
-          <button
-            v-else
-            class="btn btn-sm btn-outline-primary"
-            @click="disableHighlightMode()"
-          >
+          <button v-else class="btn btn-sm btn-outline-primary" @click="disableHighlightMode()">
             <i class="fa-solid fa-arrows-to-circle" />
             Disable Highlight Mode
           </button>
 
           &nbsp;
 
-          <button
-            v-if="!isCurrentNodeExpanded"
-            class="btn btn-sm btn-outline-secondary"
-            @click="expandSelectedNode()"
-          >
+          <button v-if="!isCurrentNodeExpanded" class="btn btn-sm btn-outline-secondary" @click="expandSelectedNode()">
             <i class="fa-solid fa-up-down-left-right" />
             Expand Neighbors
           </button>
 
-          <button
-            v-else
-            class="btn btn-sm btn-outline-primary"
-            @click="collapseSelectedNode()"
-          >
+          <button v-else class="btn btn-sm btn-outline-primary" @click="collapseSelectedNode()">
             <i class="fa-solid fa-up-down-left-right" />
             Collapse Neighbors
           </button>
@@ -108,31 +49,21 @@
           <div class="result-graph__summary-section">
             <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
           </div>
-          <span
-            class="badge bg-primary"
-            :style="{
-              backgroundColor: `${getColor(displayLabel)} !important`,
-              color: `white !important`,
-              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-            }"
-          >
+          <span class="badge bg-primary" :style="{
+            backgroundColor: `${getColor(displayLabel)} !important`,
+            color: `white !important`,
+            textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+          }">
             {{ displayLabel }}</span>
           <hr>
           <table class="table table-sm table-borderless result-graph__result-table">
             <tbody>
-              <tr
-                v-for="property in displayProperties"
-                :key="property.name"
-              >
+              <tr v-for="property in displayProperties" :key="property.name">
                 <th scope="row">
                   {{ property.name }}
-                  <span
-                    v-if="property.isPrimaryKey"
-                    class="badge bg-primary"
-                    style="
+                  <span v-if="property.isPrimaryKey" class="badge bg-primary" style="
                       text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; 
-                      color: white !important;"
-                  >PK</span>
+                      color: white !important;">PK</span>
                 </th>
                 <td>{{ property.value }}</td>
               </tr>
@@ -149,11 +80,7 @@
                   {{ counters.total.node - numHiddenNodes }}/</span>{{ counters.total.node }} nodes
                 <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
               </p>
-              <button
-                v-if="numHiddenNodes > 0"
-                class="btn btn-sm btn-outline-secondary"
-                @click="showAllNodesRels()"
-              >
+              <button v-if="numHiddenNodes > 0" class="btn btn-sm btn-outline-secondary" @click="showAllNodesRels()">
                 <i class="fa-solid fa-eye" />
                 Show All
               </button>
@@ -161,16 +88,12 @@
             <hr>
             <table class="table table-sm table-borderless result-graph__overview-table">
               <tbody>
-                <tr
-                  v-for="label in Object.keys(counters.node)"
-                  :key="label"
-                >
+                <tr v-for="label in Object.keys(counters.node)" :key="label">
                   <th scope="row">
-                    <span
-                      class="badge bg-primary"
-                      :style="{ backgroundColor: ` ${getColor(label)} !important`, textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: 'white !important' }"
-                    >{{ label
-                    }}</span>
+                    <span class="badge bg-primary"
+                      :style="{ backgroundColor: ` ${getColor(label)} !important`, textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: 'white !important' }">{{
+                        label
+                      }}</span>
                   </th>
                   <td>{{ counters.node[label] }}</td>
                 </tr>
@@ -189,19 +112,13 @@
             <hr>
             <table class="table table-sm table-borderless result-graph__overview-table">
               <tbody>
-                <tr
-                  v-for="label in Object.keys(counters.rel)"
-                  :key="label"
-                >
+                <tr v-for="label in Object.keys(counters.rel)" :key="label">
                   <th scope="row">
-                    <span
-                      class="badge bg-primary"
-                      :style="{
-                        backgroundColor: ` ${getColor(label)} !important`,
-                        color: 'white !important',
-                        textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-                      }"
-                    >
+                    <span class="badge bg-primary" :style="{
+                      backgroundColor: ` ${getColor(label)} !important`,
+                      color: 'white !important',
+                      textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+                    }">
                       {{ label }}
                     </span>
                   </th>
@@ -220,14 +137,8 @@
         </div>
       </div>
     </div>
-    <button
-      v-show="!isSidePanelOpen"
-      class="result-graph__sidebar-button--open"
-      data-bs-toggle="tooltip"
-      data-bs-placement="right"
-      data-bs-original-title="Open Sidebar"
-      @click="toggleSidePanel"
-    >
+    <button v-show="!isSidePanelOpen" class="result-graph__sidebar-button--open" data-bs-toggle="tooltip"
+      data-bs-placement="right" data-bs-original-title="Open Sidebar" @click="toggleSidePanel">
       <i class="fa-lg fa-solid fa-angle-left" />
     </button>
   </div>
@@ -235,7 +146,7 @@
 
 <script lang="js">
 import { Graph, GraphEvent } from '@antv/g6';
- 
+
 
 import G6Utils from "../../utils/G6Utils";
 import {
@@ -247,6 +158,7 @@ import { useModeStore } from "../../store/ModeStore";
 import { mapStores } from 'pinia'
 import ValueFormatter from "../../utils/ValueFormatter";
 import HoverContainer from "./HoverContainer.vue";
+import g6Utils from '../../utils/G6Utils';
 
 export default {
   name: "ResultGraph",
@@ -308,7 +220,6 @@ export default {
     isResizing: false,
     minSidebarWidth: 350,
     maxSidebarWidth: 800,
-    isGraphLoading: false, // Added loading state
   }),
   computed: {
     graphVizSettings() {
@@ -417,16 +328,17 @@ export default {
 
       const config = {
         type: 'd3-force',
-        collide: {
-          // Prevent nodes from overlapping by specifying a collision radius for each node.
-          radius: (d) => d.size / 2,
-        },
-        alphaMin: 0.3,
         link: {
           distance: 300,
-        }
+          strength: 2,
+        },
+        collide: {
+          radius: 40,
+        },
+        alphaMin: 0.2,
+        alphaDecay: 0.03,
       };
-      
+
       return config;
     },
     async drawGraph() {
@@ -441,8 +353,6 @@ export default {
       if (nodes.length === 0) {
         this.$emit("graphEmpty");
       }
-      console.log("Extracted nodes:", nodes);
-      console.log("Extracted edges:", edges);
 
       nodes = nodes.map(n => {
         return {
@@ -459,9 +369,6 @@ export default {
           style: e.style,
         };
       });
-
-      console.log("Nodes data sent to G6:", nodes);
-      console.log("Edges data sent to G6:", edges);
 
       const container = this.$refs.graph;
       const width = container.offsetWidth;
@@ -485,14 +392,11 @@ export default {
             labelFontWeight: 300,
           },
           state: {
-            hover: {
-              lineWidth: 4,
+            active: {
+              lineWidth: 10,
               stroke: '#1890FF',
             },
-            click: {
-              lineWidth: 4,
-              stroke: '#1848FF',
-            },
+
           },
         },
         edge: {
@@ -512,33 +416,41 @@ export default {
             labelAutoRotate: true,
           },
           state: {
-            hover: {
+            active: {
+              lineWidth: 10,
               stroke: '#1890FF',
             },
-            click: {
-              stroke: '#1848FF',
-            },
+
           },
         },
-        behaviors: ['drag-canvas', 'zoom-canvas', 'drag-node'],
+        behaviors: ['zoom-canvas', 'drag-canvas',
+          {
+            type: 'drag-element-force',
+            fixed: true,
+          },
+          {
+            type: 'click-select',
+            degree: () => this.isHighlightedMode ? 1 : 0,
+            state: 'active',
+            unselectedState: () => this.isHighlightedMode ? 'inactive' : 'default',
+          }
+
+        ],
       });
 
-      console.time("set data");
       this.g6Graph.setData({ nodes, edges, });
-      console.timeEnd("set data");
-      this.$nextTick(() => {
-        console.time("render graph");
-        this.g6Graph.render();
-      });
+      this.g6Graph.render();
 
-      this.g6Graph.on(GraphEvent.AFTER_DRAW, () => {
-        console.timeEnd("render graph");
+
+      // Fit the graph to view after rendering
+      this.g6Graph.on(GraphEvent.AFTER_RENDER, () => {
+        g6Utils.fitToView(this.g6Graph);
       });
 
 
       // this.g6Graph.on('node:pointerenter', (e) => {
       //   const { itemId, itemType } = e;
-      //   this.g6Graph.setItemState(itemId, 'hover', true);
+      //   // this.g6Graph.setItemState(itemId, 'hover', true);
       //   const nodeData = this.g6Graph.getNodeData(itemId);
       //   this.$refs.hoverContainer.handleHover(nodeData, e);
       // });
@@ -555,51 +467,46 @@ export default {
       //   }
       // });
 
-      // this.g6Graph.on('node:click', (e) => {
-      //   const { itemId } = e;
-      //   const nodeData = this.g6Graph.getNodeData(itemId);
-      //   this.deselectAll();
-      //   this.g6Graph.setItemState(itemId, 'click', true);
-      //   this.handleClick(nodeData);
-      //   if (!this.isSidePanelOpen) {
-      //     // Add a small delay to avoid conflicting with double click
-      //     window.setTimeout(() => {
-      //       this.isSidePanelOpen = true;
-      //       this.$nextTick(() => {
-      //         this.handleResize();
-      //       });
-      //     }, 200);
-      //   }
-      // });
+      // Click node and edge to select it and open side panel
+      this.g6Graph.on('node:click', (e) => {
+        console.log(e);
+        const nodeData = e.config;
 
-      // this.g6Graph.on('node:dblclick', (e) => {
-      //   const { itemId } = e;
-      //   const nodeData = this.g6Graph.getNodeData(itemId);
-      //   this.expandOnNode(nodeData);
-      // });
 
-      // // Auto layout after drag
-      // this.g6Graph.on('node:dragstart', (e) => {
-      //   const { itemId } = e;
-      //   const nodeData = this.g6Graph.getNodeData(itemId);
-      //   nodeData.fx = e.canvas.x;
-      //   nodeData.fy = e.canvas.y;
-      // });
+        // const { itemId } = e;
+        // const nodeData = this.g6Graph.getNodeData(itemId);
+        // this.deselectAll();
+        // this.g6Graph.setItemState(itemId, 'click', true);
+        // this.handleClick(nodeData);
+        // if (!this.isSidePanelOpen) {
+        //   // Add a small delay to avoid conflicting with double click
+        //   window.setTimeout(() => {
+        //     this.isSidePanelOpen = true;
+        //     this.$nextTick(() => {
+        //       this.handleResize();
+        //     });
+        //   }, 200);
+        // }
+      });
 
-      // this.g6Graph.on('node:drag', (e) => {
-      //   const { itemId } = e;
-      //   const nodeData = this.g6Graph.getNodeData(itemId);
-      //   nodeData.fx = e.canvas.x;
-      //   nodeData.fy = e.canvas.y;
-      // });
+      this.g6Graph.on('edge:click', (e) => {
+        // const { itemId } = e;
+        // const edgeData = this.g6Graph.getEdgeData(itemId);
+        // this.deselectAll();
+        // this.unhighlightEverything();
+        // this.g6Graph.setItemState(itemId, 'click', true);
+        // this.handleClick(edgeData);
+        // if (!this.isSidePanelOpen) {
+        //   this.toggleSidePanel();
+        // }
+      });
 
-      // this.g6Graph.on('node:dragend', (e) => {
-      //   const { itemId } = e;
-      //   const nodeData = this.g6Graph.getNodeData(itemId);
-      //   nodeData.fx = e.canvas.x;
-      //   nodeData.fy = e.canvas.y;
-      //   this.g6Graph.layout();
-      // });
+
+      this.g6Graph.on('node:dblclick', (e) => {
+        const { itemId } = e;
+        const nodeData = this.g6Graph.getNodeData(itemId);
+        this.expandOnNode(nodeData);
+      });
 
       // this.g6Graph.on('edge:pointerenter', (e) => {
       //   const { itemId } = e;
@@ -620,17 +527,6 @@ export default {
       //   }
       // });
 
-      // this.g6Graph.on('edge:click', (e) => {
-      //   const { itemId } = e;
-      //   const edgeData = this.g6Graph.getEdgeData(itemId);
-      //   this.deselectAll();
-      //   this.unhighlightEverything();
-      //   this.g6Graph.setItemState(itemId, 'click', true);
-      //   this.handleClick(edgeData);
-      //   if (!this.isSidePanelOpen) {
-      //     this.toggleSidePanel();
-      //   }
-      // });
 
       // this.g6Graph.on('canvas:click', () => {
       //   this.deselectAll();
@@ -639,12 +535,6 @@ export default {
 
       this.graphCreated = true;
 
-      // Fit the graph to view after rendering
-    },
-
-    refreshDraggedNodePosition(e) {
-      // This method is no longer needed in G6 v5
-      // Position updates are handled directly in the drag event handlers
     },
 
     hideNode() {
@@ -686,7 +576,7 @@ export default {
             console.error('Error hiding edge:', e);
           }
         });
-        
+
         this.g6Graph.setData({ nodes, edges });
         this.g6Graph.render();
       } catch (e) {
@@ -696,11 +586,6 @@ export default {
 
     enableHighlightMode() {
       this.isHighlightedMode = true;
-      const nodes = this.g6Graph.getNodeData();
-      const currentSelectedNode = nodes.find(node => node.states?.includes('click'));
-      if (currentSelectedNode) {
-        this.highlightNode(currentSelectedNode);
-      }
     },
 
     disableHighlightMode() {
@@ -731,7 +616,7 @@ export default {
       return `${id.table}_${id.offset}`;
     },
 
-    extractGraphFromQueryResult(queryResult, linkDistance = 200) {
+    extractGraphFromQueryResult(queryResult) {
       const rows = queryResult.rows;
       const dataTypes = queryResult.dataTypes;
       const nodes = {};
@@ -780,17 +665,17 @@ export default {
           console.warn('Invalid node data:', rawNode);
           return;
         }
-        
+
         const nodeId = this.encodeId(rawNode._id);
         nodeLabels[rawNode._id.table] = rawNode._label;
         const nodeSettings = this.settingsStore.settingsForLabel(rawNode._label);
         const nodeFill = nodeSettings.g6Settings.style.fill;
         const labelColor = getReadableTextColor(nodeFill);
-        
+
         if (nodes[nodeId]) {
           return;
         }
-        
+
         const expectedPropertiesType = {};
         const nodeTable = this.schema.nodeTables.find((table) => table.name === rawNode._label);
         if (!nodeTable) {
@@ -801,7 +686,7 @@ export default {
         expectedProperties.forEach((property) => {
           expectedPropertiesType[property.name] = property.type;
         });
-        
+
         let nodeLabel = "";
         const nodeLabelProp = nodeSettings.label;
         if (nodeLabelProp) {
@@ -814,7 +699,7 @@ export default {
           const fontSize = nodeSettings.g6Settings.labelCfg.style.fontSize;
           nodeLabel = G6Utils.fittingString(nodeLabel, nodeSize - 6, fontSize);
         }
-        
+
         // G6 v5 format
         const g6Node = {
           id: nodeId,
@@ -835,7 +720,7 @@ export default {
             labelFontWeight: nodeSettings.g6Settings.labelCfg.style.fontWeight,
           },
         };
-        
+
         nodes[nodeId] = g6Node;
       };
 
@@ -844,15 +729,15 @@ export default {
           console.warn('Invalid rel data:', rawRel);
           return;
         }
-        
+
         const relSettings = this.settingsStore.settingsForLabel(rawRel._label);
         const relId = this.encodeId(rawRel._id);
         const numberOfOverlappingRels = increaseRelCounter(rawRel._src, rawRel._dst);
-        
+
         if (edges[relId]) {
           return;
         }
-        
+
         const expectedPropertiesType = {};
         const relTable = this.schema.relTables.find((table) => table.name === rawRel._label);
         if (!relTable) {
@@ -863,7 +748,7 @@ export default {
         expectedProperties.forEach((property) => {
           expectedPropertiesType[property.name] = property.type;
         });
-        
+
         let relLabel = "";
         const relLabelProp = relSettings.label;
         if (relLabelProp) {
@@ -879,7 +764,7 @@ export default {
           // Truncate edge label to max width 80px
           relLabel = G6Utils.fittingString(relLabel, 80, fontSize);
         }
-        
+
         // G6 v5 format
         const g6Rel = {
           id: relId,
@@ -905,7 +790,7 @@ export default {
             labelAutoRotate: true,
           },
         };
-        
+
         // Handle self-loops and overlapping edges
         if (g6Rel.source === g6Rel.target) {
           g6Rel.type = "loop";
@@ -915,7 +800,7 @@ export default {
           g6Rel.type = 'cubic';
           g6Rel.style.curveOffset = ARC_CURVE_OFFSETS[(numberOfOverlappingRels - 1) % ARC_CURVE_OFFSETS.length];
         }
-        
+
         edges[relId] = g6Rel;
       }
       // Deduplicate nodes and edges
@@ -994,20 +879,18 @@ export default {
           }
         }
       }
-      console.log(nodes, edges);
-      const nodeCounters = {
-      };
+      const nodeCounters = {};
       for (let key in nodes) {
-        const label = nodes[key]._label;
+        console.log(nodes[key]);
+        const label = nodes[key].data.properties._label;
         if (!nodeCounters[label]) {
           nodeCounters[label] = 0;
         }
         nodeCounters[label] += 1;
       }
-      const relCounters = {
-      };
+      const relCounters = {};
       for (let key in edges) {
-        const label = edges[key]._label;
+        const label = edges[key].data.properties._label;
         if (!relCounters[label]) {
           relCounters[label] = 0;
         }
@@ -1048,9 +931,8 @@ export default {
       this.clickedLabel = label;
       this.clickedProperties = ValueFormatter.filterAndBeautifyProperties(properties, this.schema);
       this.clickedIsNode = !(properties._src && properties._dst);
-      this.highlightNode(model);
       if (this.clickedIsNode) {
-         this.isCurrentNodeExpanded = this.isNeighborExpanded(model);
+        this.isCurrentNodeExpanded = this.isNeighborExpanded(model);
       }
       if (!this.isSidePanelOpen) {
         // Add a small delay to avoid conflicting with double click
@@ -1061,76 +943,6 @@ export default {
           });
         }, 200);
       }
-    },
-
-    highlightNode(model) {
-      if (!this.isHighlightedMode) {
-        return;
-      }
-      const properties = model.data?.properties || model.properties;
-      if (properties._src || properties._dst) {
-        return;
-      }
-      const srcDstSet = new Set();
-      const edges = this.g6Graph.getEdgeData();
-      const nodes = this.g6Graph.getNodeData();
-      
-      edges.forEach((edge) => {
-        const sourceNode = edge.source;
-        const targetNode = edge.target;
-        if (!edge.data.labelBackup) {
-          edge.data.labelBackup = edge.style.labelText;
-        }
-        if (sourceNode !== model.id && targetNode !== model.id) {
-          this.g6Graph.setItemState(edge.id, 'opaque', true);
-          this.g6Graph.setItemState(edge.id, 'click', false);
-          edge.style.labelText = "";
-        } else {
-          this.g6Graph.setItemState(edge.id, 'opaque', false);
-          this.g6Graph.setItemState(edge.id, 'click', true);
-          srcDstSet.add(sourceNode);
-          srcDstSet.add(targetNode);
-          if (edge.data.labelBackup) {
-            edge.style.labelText = edge.data.labelBackup;
-            delete edge.data.labelBackup;
-          }
-        }
-      });
-      
-      nodes.forEach((node) => {
-        if (node.id !== model.id && !srcDstSet.has(node.id)) {
-          this.g6Graph.setItemState(node.id, 'opaque', true);
-        } else {
-          this.g6Graph.setItemState(node.id, 'opaque', false);
-        }
-      });
-      
-      this.g6Graph.setData({ nodes, edges });
-      this.g6Graph.render();
-    },
-
-    unhighlightEverything() {
-      if (!this.isHighlightedMode) {
-        return;
-      }
-      const nodes = this.g6Graph.getNodeData();
-      const edges = this.g6Graph.getEdgeData();
-      
-      nodes.forEach((node) => {
-        this.g6Graph.setItemState(node.id, 'opaque', false);
-      });
-      
-      edges.forEach((edge) => {
-        this.g6Graph.setItemState(edge.id, 'opaque', false);
-        this.g6Graph.setItemState(edge.id, 'click', false);
-        if (edge.data?.labelBackup) {
-          edge.style.labelText = edge.data.labelBackup;
-          delete edge.data.labelBackup;
-        }
-      });
-      
-      this.g6Graph.setData({ nodes, edges });
-      this.g6Graph.render();
     },
 
     getInfoForExpansion(model) {
@@ -1261,12 +1073,12 @@ export default {
       }
       const nodes = this.g6Graph.getNodeData();
       const edges = this.g6Graph.getEdgeData();
-      
+
       const currentSelectedNode = nodes.find(node => node.states?.includes('click'));
       if (currentSelectedNode) {
         this.g6Graph.setItemState(currentSelectedNode.id, 'click', false);
       }
-      
+
       const currentSelectedEdge = edges.find(edge => edge.states?.includes('click'));
       if (currentSelectedEdge) {
         this.g6Graph.setItemState(currentSelectedEdge.id, 'click', false);
@@ -1346,7 +1158,7 @@ export default {
 
     handleResizeMove(e) {
       if (!this.isResizing) return;
-      
+
       const newWidth = window.innerWidth - e.clientX;
       if (newWidth >= this.minSidebarWidth && newWidth <= this.maxSidebarWidth) {
         this.sidebarWidth = newWidth;
@@ -1389,7 +1201,8 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 10; /* Ensure it's above the graph */
+    z-index: 10;
+    /* Ensure it's above the graph */
     color: var(--bs-body-text);
 
     .spinner-border {
@@ -1437,7 +1250,8 @@ export default {
       z-index: 3;
       pointer-events: auto;
 
-      &:hover, &:active {
+      &:hover,
+      &:active {
         background-color: var(--bs-body-bg-accent);
       }
 
@@ -1454,7 +1268,8 @@ export default {
         transition: opacity 0.2s;
       }
 
-      &:hover::after, &:active::after {
+      &:hover::after,
+      &:active::after {
         opacity: 1;
       }
     }
@@ -1483,13 +1298,13 @@ export default {
       }
     }
 
-    .result-graph__actions{
-      
+    .result-graph__actions {
+
       gap: 3px;
     }
 
     table {
-      
+
       table-layout: auto;
       border-collapse: collapse;
       border-radius: 1rem;
@@ -1497,7 +1312,8 @@ export default {
       background-color: var(--bs-body-bg);
       margin-bottom: 1rem;
 
-      th, td {
+      th,
+      td {
         white-space: nowrap;
         overflow-x: auto;
         text-overflow: hidden;
@@ -1530,7 +1346,7 @@ export default {
 
         td {
           word-break: break-all;
-          
+
         }
       }
 
@@ -1539,10 +1355,12 @@ export default {
         height: 2px;
         background: var(--bs-body-bg-accent);
       }
+
       &::-webkit-scrollbar-thumb {
         background: var(--bs-body-bg-accent);
         border-radius: 3px;
       }
+
       scrollbar-width: thin;
       scrollbar-color: var(--bs-body-bg-accent) var(--bs-body-bg-secondary);
     }
