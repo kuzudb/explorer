@@ -501,6 +501,7 @@ export default {
             state: 'active',
             unselectedState: 'inactive',
             enable: false,
+            neighborState: 'active',
           }
 
         ],
@@ -647,12 +648,14 @@ export default {
       this.g6Graph.updateBehavior({ key: 'click-select-element', enable: false });
       this.g6Graph.updateBehavior({ key: 'click-highlight', enable: true });
       this.isHighlightedMode = true;
+      this.g6Graph.draw();
     },
 
     disableHighlightMode() {
       this.g6Graph.updateBehavior({ key: 'click-select-element', enable: true });
       this.g6Graph.updateBehavior({ key: 'click-highlight', enable: false });
       this.isHighlightedMode = false;
+      this.g6Graph.draw();
     },
 
     showAllNodesRels() {
@@ -988,7 +991,6 @@ export default {
     },
 
     handleClick(model) {
-      console.log("Clicked model:", model);
       const properties = model.properties;
       const label = properties._label;
       this.clickedLabel = label;
