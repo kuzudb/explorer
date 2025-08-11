@@ -1,30 +1,21 @@
 <template>
   <div>
-    <div
-      v-if="tooltipVisible"
-      class="result-graph__graph-tooltip"
-      :style="{ left: tooltipX + 'px', top: tooltipY + 'px' }"
-    >
+    <div v-if="tooltipVisible" class="result-graph__graph-tooltip"
+      :style="{ left: tooltipX + 'px', top: tooltipY + 'px' }">
       <div class="result-graph__tooltip-header">
-        <span
-          class="badge bg-primary"
-          :style="{
-            backgroundColor: `${getColor(hoveredLabel)} !important`,
-            color: `${getTextColor(hoveredLabel)} !important`,
-            textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-            fill: '#FFFFFF'
-          }"
-        >
+        <span class="badge bg-primary" :style="{
+          backgroundColor: `${getColor(hoveredLabel)} !important`,
+          color: `#ffffff !important`,
+          textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+          fill: '#FFFFFF'
+        }">
           {{ hoveredLabel }}</span>
       </div>
       <p>{{ hoveredIsNode ? 'Node' : 'Rel' }}</p>
       <hr>
       <table class="table table-sm table-borderless">
         <tbody>
-          <tr
-            v-for="property in hoveredProperties"
-            :key="property.name"
-          >
+          <tr v-for="property in hoveredProperties" :key="property.name">
             <th scope="row">
               {{ property.name }}
             </th>
@@ -65,42 +56,38 @@ export default {
     getColor(label) {
       return this.settingsStore.colorForLabel(label);
     },
-    getTextColor(label) {
-      return "#ffffff";
-    },
-
     handleHover(model, event) {
       const data = model.data;
-      const label = data.label;
+      const label = data.properties._label;
       this.hoveredLabel = label;
       this.hoveredProperties = ValueFormatter.filterAndBeautifyProperties(data.properties, this.schema);
       this.hoveredIsNode = !(data.properties._src && data.properties._dst);
       this.showTooltip(event);
     },
-
     resetHover() {
       this.hoveredLabel = "";
       this.hoveredProperties = [];
       this.hoveredIsNode = false;
       this.hideTooltip();
     },
-
     showTooltip(event) {
       if (this.debounceTimeout) {
         clearTimeout(this.debounceTimeout);
       }
       this.debounceTimeout = setTimeout(() => {
-        this.tooltipX = event.global.x;
-        this.tooltipY = event.global.y;
+        console.log('showTooltip event:', event);
+        this.tooltipX = event.viewport.x + 10;
+        this.tooltipY = event.viewport.y + 20;
         this.tooltipVisible = true;
       }, this.debounceDelay);
     },
-
     hideTooltip() {
+      if (this.debounceTimeout) {
+        clearTimeout(this.debounceTimeout);
+      }
       this.debounceTimeout = setTimeout(() => {
-
-      this.tooltipVisible = false;
-      this.tooltipX = 0;
+        this.tooltipVisible = false;
+        this.tooltipX = 0;
         this.tooltipY = 0;
       }, this.debounceDelay);
     },
