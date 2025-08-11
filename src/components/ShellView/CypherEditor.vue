@@ -224,7 +224,6 @@ export default {
       
       const editorContainer = this.$refs.editor;
       this.editor = window.Monaco.editor.create(editorContainer, {
-        value: "// Query to retrieve 5 relationships from the graph. \n// ▶️ Run this query by clicking the play button or pressing Shift + Enter. \nMATCH (a)-[r]->(b) RETURN * LIMIT 5;",
         language: "cypher",
         theme,
         automaticLayout: true,

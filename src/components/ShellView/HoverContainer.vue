@@ -47,7 +47,7 @@ export default {
     hoveredProperties: [],
     hoveredIsNode: false,
     debounceTimeout: null,
-    debounceDelay: 50,
+    debounceDelay: 150,
   }),
   computed: {
     ...mapStores(useSettingsStore)
@@ -85,11 +85,9 @@ export default {
       if (this.debounceTimeout) {
         clearTimeout(this.debounceTimeout);
       }
-      this.debounceTimeout = setTimeout(() => {
-        this.tooltipVisible = false;
-        this.tooltipX = 0;
-        this.tooltipY = 0;
-      }, this.debounceDelay);
+      this.tooltipVisible = false;
+      this.tooltipX = 0;
+      this.tooltipY = 0;
     },
   }
 }
