@@ -1,21 +1,30 @@
 <template>
   <div>
-    <div v-if="tooltipVisible" class="result-graph__graph-tooltip"
-      :style="{ left: tooltipX + 'px', top: tooltipY + 'px' }">
+    <div
+      v-if="tooltipVisible"
+      class="result-graph__graph-tooltip"
+      :style="{ left: tooltipX + 'px', top: tooltipY + 'px' }"
+    >
       <div class="result-graph__tooltip-header">
-        <span class="badge bg-primary" :style="{
-          backgroundColor: `${getColor(hoveredLabel)} !important`,
-          color: `#ffffff !important`,
-          textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-          fill: '#FFFFFF'
-        }">
+        <span
+          class="badge bg-primary"
+          :style="{
+            backgroundColor: `${getColor(hoveredLabel)} !important`,
+            color: `#ffffff !important`,
+            textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+            fill: '#FFFFFF'
+          }"
+        >
           {{ hoveredLabel }}</span>
       </div>
       <p>{{ hoveredIsNode ? 'Node' : 'Rel' }}</p>
       <hr>
       <table class="table table-sm table-borderless">
         <tbody>
-          <tr v-for="property in hoveredProperties" :key="property.name">
+          <tr
+            v-for="property in hoveredProperties"
+            :key="property.name"
+          >
             <th scope="row">
               {{ property.name }}
             </th>
