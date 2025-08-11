@@ -10,9 +10,7 @@
     />
 
     <HoverContainer
-      v-if="g6Graph"
       ref="hoverContainer"
-      :g6-graph="g6Graph"
       :schema="schema"
     />
 
@@ -502,6 +500,10 @@ export default {
             unselectedState: 'inactive',
             enable: false,
             neighborState: 'active',
+          },
+          {
+            type: 'hover-activate',
+            animation: true,
           }
 
         ],
@@ -517,29 +519,37 @@ export default {
       });
 
 
-      // this.g6Graph.on('node:pointerenter', (e) => {
-      //   const { itemId, itemType } = e;
-      //   // this.g6Graph.setItemState(itemId, 'hover', true);
-      //   const nodeData = this.g6Graph.getNodeData(itemId);
-      //   this.$refs.hoverContainer.handleHover(nodeData, e);
-      // });
+      this.g6Graph.on('node:pointerenter', (e) => {
+        const nodeData = this.g6Graph.getNodeData(e.target.id);
+        this.$refs.hoverContainer.handleHover(nodeData, e);
+      });
 
-      // this.g6Graph.on('node:pointerleave', (e) => {
-      //   const { itemId } = e;
-      //   this.g6Graph.setItemState(itemId, 'hover', false);
-      //   this.$refs.hoverContainer.resetHover();
-      // });
+      this.g6Graph.on('node:pointerleave', () => {
+        this.$refs.hoverContainer.resetHover();
+      });
 
-      // this.g6Graph.on('node:pointermove', (e) => {
-      //   if (this.$refs.hoverContainer.currentHoveredModel) {
-      //     this.$refs.hoverContainer.updateTooltipPosition(e);
-      //   }
-      // });
+      this.g6Graph.on('node:pointermove', (e) => {
+        this.$refs.hoverContainer.showTooltip(e); 
+      });
+
+
+      this.g6Graph.on('edge:pointerenter', (e) => {
+        const nodeData = this.g6Graph.getEdgeData(e.target.id);
+        this.$refs.hoverContainer.handleHover(nodeData, e);
+      });
+
+      this.g6Graph.on('edge:pointerleave', () => {
+        this.$refs.hoverContainer.resetHover();
+      });
+
+      this.g6Graph.on('edge:pointermove', (e) => {
+        this.$refs.hoverContainer.showTooltip(e);
+      });
 
       // Click node and edge to select it and open side panel
       this.g6Graph.on('node:click', (e) => {
         const clickedId = e.target.config.id;
-        const nodeData = this.g6Graph.getNodeData(clickedId)?.data;
+        const nodeData = this.g6Graph.getNodeData(clickedId);
         this.handleClick(nodeData);
         if (!this.isSidePanelOpen) {
           // Add a small delay to avoid conflicting with double click
@@ -554,7 +564,7 @@ export default {
 
       this.g6Graph.on('edge:click', (e) => {
         const clickedId = e.target.config.id;
-        const edgeData = this.g6Graph.getEdgeData(clickedId)?.data;
+        const edgeData = this.g6Graph.getEdgeData(clickedId);
         this.handleClick(edgeData);
         if (!this.isSidePanelOpen) {
           this.isSidePanelOpen = true;
@@ -568,30 +578,11 @@ export default {
         this.expandOnNode(nodeData);
       });
 
-      // this.g6Graph.on('edge:pointerenter', (e) => {
-      //   const { itemId } = e;
-      //   this.g6Graph.setItemState(itemId, 'hover', true);
-      //   const edgeData = this.g6Graph.getEdgeData(itemId);
-      //   this.$refs.hoverContainer.handleHover(edgeData, e);
-      // });
-
-      // this.g6Graph.on('edge:pointerleave', (e) => {
-      //   const { itemId } = e;
-      //   this.g6Graph.setItemState(itemId, 'hover', false);
-      //   this.$refs.hoverContainer.resetHover();
-      // });
-
-      // this.g6Graph.on('edge:pointermove', (e) => {
-      //   if (this.$refs.hoverContainer.currentHoveredModel) {
-      //     this.$refs.hoverContainer.updateTooltipPosition(e);
-      //   }
-      // });
-
-
-      // this.g6Graph.on('canvas:click', () => {
-      //   this.deselectAll();
-      //   this.unhighlightEverything();
-      // });
+      this.g6Graph.on('canvas:click', () => {
+        this.clickedLabel = "";
+        this.clickedProperties = [];
+        this.clickedIsNode = false;
+      });
 
       this.graphCreated = true;
 
@@ -644,18 +635,16 @@ export default {
       }
     },
 
-    enableHighlightMode() {
+    async enableHighlightMode() {
       this.g6Graph.updateBehavior({ key: 'click-select-element', enable: false });
       this.g6Graph.updateBehavior({ key: 'click-highlight', enable: true });
       this.isHighlightedMode = true;
-      this.g6Graph.draw();
     },
 
     disableHighlightMode() {
       this.g6Graph.updateBehavior({ key: 'click-select-element', enable: true });
       this.g6Graph.updateBehavior({ key: 'click-highlight', enable: false });
       this.isHighlightedMode = false;
-      this.g6Graph.draw();
     },
 
     showAllNodesRels() {
@@ -991,7 +980,7 @@ export default {
     },
 
     handleClick(model) {
-      const properties = model.properties;
+      const properties = model.data.properties;
       const label = properties._label;
       this.clickedLabel = label;
       this.clickedProperties = ValueFormatter.filterAndBeautifyProperties(properties, this.schema);
