@@ -234,8 +234,10 @@
 </template>
 
 <script lang="js">
-import { Graph, register, ExtensionCategory, getExtensions } from '@antv/g6';
-import { FruchtermanLayout, GForceLayout } from '@antv/layout-gpu';
+import { Graph, register, ExtensionCategory, getExtensions, GraphEvent } from '@antv/g6';
+import { GForceLayout, FruchtermanLayout } from '@antv/layout-gpu';
+import { ForceAtlas2Layout, initThreads, supportsThreads } from '@antv/layout-wasm';
+ 
 
 import G6Utils from "../../utils/G6Utils";
 import {
@@ -410,18 +412,31 @@ export default {
     getColor(label) {
       return this.settingsStore.colorForLabel(label);
     },
-    getLayoutConfig(edges) {
+    async getLayoutConfig(edges) {
       let nodeSpacing = edges.length * 8;
       nodeSpacing = nodeSpacing < 80 ? 80 : nodeSpacing;
       nodeSpacing = nodeSpacing > 500 ? 500 : nodeSpacing;
-      register('layout', 'fruchterman-gpu', FruchtermanLayout);
-      console.log(getExtensions(ExtensionCategory.LAYOUT));
+      register(ExtensionCategory.LAYOUT, 'force-atlas2-wasm', ForceAtlas2Layout);
+      register(ExtensionCategory.LAYOUT, 'fruchterman-gpu', FruchtermanLayout);
+      register(ExtensionCategory.LAYOUT, 'g-force-gpu', GForceLayout);
+
+
+      const supported = await supportsThreads();
+      console.log("Force Atlas 2 threads supported:", supported);
+      const threads = await initThreads(supported);
+
       const config = {
-        type: 'fruchterman-gpu',
-        workerEnabled: true,
-        gravity: 0.5,
-        speed: 10,
+        type: 'd3-force',
+        collide: {
+          // Prevent nodes from overlapping by specifying a collision radius for each node.
+          radius: (d) => d.size / 2,
+        },
+        alphaMin: 0.3,
+        link: {
+          distance: 300,
+        }
       };
+      
       return config;
     },
     async drawGraph() {
@@ -431,27 +446,47 @@ export default {
       if (!this.queryResult) {
         return;
       }
-      const { counters, nodes, edges, } = this.extractGraphFromQueryResult(this.queryResult);
+      let { counters, nodes, edges, } = this.extractGraphFromQueryResult(this.queryResult);
       this.counters = counters;
       if (nodes.length === 0) {
         this.$emit("graphEmpty");
       }
+      console.log("Extracted nodes:", nodes);
+      console.log("Extracted edges:", edges);
+
+      nodes = nodes.map(n => {
+        return {
+          id: n.id,
+          style: n.style,
+
+        };
+      });
+      edges = edges.map(e => {
+        return {
+          id: e.id,
+          source: e.source,
+          target: e.target,
+          style: e.style,
+        };
+      });
+
       console.log("Nodes data sent to G6:", nodes);
       console.log("Edges data sent to G6:", edges);
 
       const container = this.$refs.graph;
       const width = container.offsetWidth;
       const height = container.offsetHeight;
+      const layoutConfig = await this.getLayoutConfig(edges);
+
 
       this.g6Graph = new Graph({
         container,
         width,
         height,
-        layout: this.getLayoutConfig(edges),
+        layout: layoutConfig,
         node: {
           type: 'circle',
           style: {
-            size: 100,
             lineWidth: 0,
             labelText: (d) => d.data?.label || '',
             labelFill: "#ffffff",
@@ -501,11 +536,15 @@ export default {
       console.time("set data");
       this.g6Graph.setData({ nodes, edges, });
       console.timeEnd("set data");
-      console.time("render graph");
       this.$nextTick(() => {
-        this.g6Graph.draw();
+        console.time("render graph");
+        this.g6Graph.render();
       });
-      console.timeEnd("render graph");
+
+      this.g6Graph.on(GraphEvent.AFTER_DRAW, () => {
+        console.timeEnd("render graph");
+      });
+
 
       // this.g6Graph.on('node:pointerenter', (e) => {
       //   const { itemId, itemType } = e;
@@ -611,10 +650,6 @@ export default {
       this.graphCreated = true;
 
       // Fit the graph to view after rendering
-      this.g6Graph.once('afterrender', () => {
-        this.fitToView();
-        this.isGraphLoading = false; // Hide loading overlay after fit to view
-      });
     },
 
     refreshDraggedNodePosition(e) {
