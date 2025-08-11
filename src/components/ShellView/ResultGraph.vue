@@ -234,9 +234,7 @@
 </template>
 
 <script lang="js">
-import { Graph, register, ExtensionCategory, getExtensions, GraphEvent } from '@antv/g6';
-import { GForceLayout, FruchtermanLayout } from '@antv/layout-gpu';
-import { ForceAtlas2Layout, initThreads, supportsThreads } from '@antv/layout-wasm';
+import { Graph, GraphEvent } from '@antv/g6';
  
 
 import G6Utils from "../../utils/G6Utils";
@@ -416,14 +414,6 @@ export default {
       let nodeSpacing = edges.length * 8;
       nodeSpacing = nodeSpacing < 80 ? 80 : nodeSpacing;
       nodeSpacing = nodeSpacing > 500 ? 500 : nodeSpacing;
-      register(ExtensionCategory.LAYOUT, 'force-atlas2-wasm', ForceAtlas2Layout);
-      register(ExtensionCategory.LAYOUT, 'fruchterman-gpu', FruchtermanLayout);
-      register(ExtensionCategory.LAYOUT, 'g-force-gpu', GForceLayout);
-
-
-      const supported = await supportsThreads();
-      console.log("Force Atlas 2 threads supported:", supported);
-      const threads = await initThreads(supported);
 
       const config = {
         type: 'd3-force',
