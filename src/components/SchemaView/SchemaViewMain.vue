@@ -178,6 +178,7 @@ export default {
     clickedIsNewTable: false,
     toolbarDebounceTimeout: 100,
     toolbarDebounceTimer: null,
+    settingChangePromise: null,
   }),
   computed: {
     graphVizSettings() {
@@ -702,17 +703,22 @@ export default {
       }, this.toolbarDebounceTimeout);
     },
 
-    handleSettingsChange(rerender) {
+    async handleSettingsChange(rerender) {
+      if (this.settingChangePromise) {
+        await this.settingChangePromise;
+      }
       const { nodes, edges, } = this.extractGraphFromSchema(this.schema);
       if (!this.g6Graph) {
         return;
       }
       this.g6Graph.setData({ nodes, edges, });
       if (rerender) {
-        return this.g6Graph.render();
+        this.settingChangePromise = this.g6Graph.render();
       } else {
-        return this.g6Graph.draw();
+        this.settingChangePromise = this.g6Graph.draw();
       }
+      await this.settingChangePromise;
+      this.settingChangePromise = null;
     },
 
     enterEditTableMode(tableName) {
@@ -792,7 +798,7 @@ export default {
       if (this.clickedLabel === newLabel) {
         return;
       }
-
+      this.$emit("updatePlaceholderNodeTableLabel", newLabel);
       const nodes = this.g6Graph.getNodeData();
       const placeholderNode = nodes.find(node => node.data.isPlaceholder);
       if (placeholderNode) {
@@ -804,8 +810,8 @@ export default {
         }]);
       }
 
-      this.$emit("updatePlaceholderNodeTableLabel", newLabel);
       this.clickedLabel = newLabel;
+
     },
 
     updatePlaceholderRelTable(newTable) {
