@@ -179,7 +179,6 @@ export default {
       this.isEvaluated = true;
     },
     handleEvaluationDataChange(data, query) {
-
       this.loadingText = LOADING_STATUS.PROCESS;
       this.queryResults = data.isMultiStatement ? data.results : [data];
       if (this.queryResults.length > 1) {
@@ -188,15 +187,11 @@ export default {
       this.queryString = query;
       this.$nextTick(() => {
         for (let i = 0; i < this.queryResults.length; ++i) {
-          console.time("handleDataChange");
-
           const resultContainer =
             this.$refs[
             this.getRefName(i)
             ][0];
           resultContainer.handleDataChange(this.schema, this.queryResults[i], "");
-          console.timeEnd("handleDataChange");
-
         }
       });
       const isSchemaChanged = data && data.isSchemaChanged;

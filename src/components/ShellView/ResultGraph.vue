@@ -348,7 +348,10 @@ export default {
     performanceSettings: {
       handler(newVal, oldVal) {
         if (newVal.maxNumberOfNodes !== oldVal.maxNumberOfNodes) {
-          this.handleSettingsChange();
+          return this.handleSettingsChange();
+        }
+        if (newVal.maxNumberOfNodesWithLabels !== oldVal.maxNumberOfNodesWithLabels) {
+          return this.handleSettingsChange();
         }
       },
       deep: true,
@@ -519,10 +522,12 @@ export default {
       });
 
       this.g6Graph.setData({ nodes, edges, });
+      console.time("G6 graph render");
       this.g6Graph.render();
 
       // Fit the graph to view after rendering
       this.g6Graph.on(GraphEvent.AFTER_RENDER, () => {
+        console.timeEnd("G6 graph render");
         if(!this.isInitialRender) {
           return;
         }
@@ -747,7 +752,6 @@ export default {
         const g6Node = {
           id: nodeId,
           data: {
-            label: nodeLabel,
             properties: rawNode,
             ...nodeSettings.g6Settings,
           },
@@ -810,7 +814,6 @@ export default {
           source: this.encodeId(rawRel._src),
           target: this.encodeId(rawRel._dst),
           data: {
-            label: relLabel,
             properties: rawRel,
             ...relSettings.g6Settings,
           },
@@ -938,7 +941,17 @@ export default {
           rel: totalRelCount,
         },
       };
-      console.log(edges)
+      if (totalNodeCount > this.settingsStore.performance.maxNumberOfNodesWithLabels) {
+        for (let key in nodes) {
+          const node = nodes[key];
+          delete node.style.labelText;
+        }
+        for (let key in edges) {
+          const edge = edges[key];
+          delete edge.style.labelText;
+        }
+      }
+
       return {
         counters,
         nodes: Object.values(nodes),
@@ -1094,6 +1107,7 @@ export default {
         edges: currentEdges.concat(edgesToAdd),
       };
       this.g6Graph.setData(newData);
+      console.time("G6 graph render");
       this.g6Graph.render();
     },
 
@@ -1173,6 +1187,7 @@ export default {
         return;
       }
       this.g6Graph.setData({ nodes, edges });
+      console.time("G6 graph render");
       this.g6Graph.render();
       this.counters = counters;
       this.expansions.forEach(e => this.addDataWithQueryResult(e.neighbors));

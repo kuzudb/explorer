@@ -157,7 +157,21 @@
             <input
               v-model="currentSettings.performance.maxNumberOfNodes"
               type="number"
-              min="100"
+              min="1"
+              max="2000"
+              class="settings-input"
+              placeholder="500"
+              required
+            >
+          </div>
+          <div class="settings-row">
+            <h4>
+              Max number of nodes to display labels
+            </h4>
+            <input
+              v-model="currentSettings.performance.maxNumberOfNodesWithLabels"
+              type="number"
+              min="1"
               max="2000"
               class="settings-input"
               placeholder="200"

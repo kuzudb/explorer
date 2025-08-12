@@ -31,6 +31,7 @@ function randomChromaColor() {
 
 const NULL_COLOR = "#d9d9d9";
 const DEFAULT_NUMBER_OF_NODES_TO_EXPAND = 50;
+const DEFAULT_NUMBER_OF_NODES_WITH_LABELS = 200;
 
 export const useSettingsStore = defineStore("settings", {
   state: () => ({
@@ -80,7 +81,8 @@ export const useSettingsStore = defineStore("settings", {
       rels: {},
     },
     performance: {
-      maxNumberOfNodes: 200,
+      maxNumberOfNodes: 500,
+      maxNumberOfNodesWithLabels: DEFAULT_NUMBER_OF_NODES_WITH_LABELS,
       maxNumberOfNodesToExpand: DEFAULT_NUMBER_OF_NODES_TO_EXPAND,
     },
     tableView: {
@@ -198,6 +200,10 @@ export const useSettingsStore = defineStore("settings", {
           // Migrate old settings
           storedSettingsCopy.performance.maxNumberOfNodesToExpand =
             DEFAULT_NUMBER_OF_NODES_TO_EXPAND;
+        }
+        if(!storedSettingsCopy.performance.maxNumberOfNodesWithLabels) {
+          // Migrate old settings
+          storedSettingsCopy.performance.maxNumberOfNodesWithLabels = 200;
         }
         this.performance = storedSettingsCopy.performance;
       }
