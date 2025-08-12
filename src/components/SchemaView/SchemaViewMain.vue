@@ -260,9 +260,23 @@ export default {
             strength: 1,
           },
           collide: {
-            radius: 200,
+            radius: (d) => {
+              const degree = d.data.degree || 0;
+              if (degree === 0) {
+                return 10;
+              }
+              return 200;
+            }
           },
-
+          manyBody: {
+            distanceMax: (d) => {
+              const degree = d.data.degree || 0;
+              if (degree === 0) {
+                return 10;
+              }
+              return Infinity;
+            },
+          }
         },
         plugins: [
           {
@@ -442,7 +456,7 @@ export default {
       return `${src}-${dst}-${label}`;
     },
 
-    extractGraphFromSchema(schema, activeIds = null) {
+    extractGraphFromSchema(schema) {
       const overlapEdgeHash = {};
       function getReadableTextColor(bgColor) {
         const color = bgColor.charAt(0) === '#' ? bgColor.substring(1) : bgColor;
@@ -552,6 +566,9 @@ export default {
         }
       }
       edges = edges.filter(e => Boolean(e));
+      nodes.forEach(n => {
+        n.data.degree = edges.filter(e => e.source === n.id || e.target === n.id).length;
+      });
       return { nodes, edges };
     },
 
@@ -737,7 +754,7 @@ export default {
       this.clickedIsNewTable = true;
       let counter = 1;
       while (this.schema.nodeTables.find(t => t.name === newTableName)) {
-        newTableName = `NewNodeTable-${counter}`;
+        newTableName = `NewNodeTable${counter}`;
         counter += 1;
       }
       this.$emit("addPlaceholderNodeTable", newTableName);
@@ -777,8 +794,33 @@ export default {
       this.$refs.actionDialog.addNewTable(table, properties, this.clickedIsNode, connectivity);
     },
 
-    setPlaceholder(label) {
-      this.$emit("setPlaceholder", label);
+    setPlaceholder({ label, isNode }) {
+      this.$emit("setPlaceholder", { name: label, isNode });
+      if (isNode) {
+        try {
+          const node = this.g6Graph.getNodeData(label);
+          node.data.isPlaceholder = true;
+          this.g6Graph.updateNodeData({
+            id: node.id,
+            data: node.data,
+          });
+        } catch (e) {
+          console.error("Node not found in graph:", label);
+          return;
+        }
+      } else {
+        const allRels = this.g6Graph.getEdgeData().filter(e => e.data._label === label);
+        if (allRels.length === 0) {
+          return;
+        }
+        allRels.forEach(e => {
+          e.data.isPlaceholder = true;
+          this.g6Graph.updateEdgeData({
+            id: e.id,
+            data: e.data,
+          });
+        });
+      }
     },
 
     setPlaceholderLabelForEditView({ newLabel, isNode }) {
@@ -795,6 +837,7 @@ export default {
     },
 
     updatePlaceholderNodeTableLabel(newLabel) {
+      console.log("Updating placeholder node table label to:", newLabel);
       if (this.clickedLabel === newLabel) {
         return;
       }
@@ -809,9 +852,8 @@ export default {
           }
         }]);
       }
-
       this.clickedLabel = newLabel;
-
+      this.g6Graph.draw();
     },
 
     updatePlaceholderRelTable(newTable) {
