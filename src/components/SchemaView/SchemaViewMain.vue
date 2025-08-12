@@ -1,123 +1,53 @@
 <template>
-  <div
-    ref="wrapper"
-    class="schema-view__wrapper"
-  >
-    <div
-      ref="toolsContainer"
-      class="schema-view__tools_container"
-      :style="{ minWidth: toolbarWidth + 'px' }"
-    >
+  <div ref="wrapper" class="schema-view__wrapper">
+    <div ref="toolsContainer" class="schema-view__tools_container" :style="{ minWidth: toolbarWidth + 'px' }">
       <div class="schema-view__tools_container--bottom">
         <div class="schema-view__button">
-          <i
-            class="fa-lg fa-solid fa-magnifying-glass-plus"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Zoom In"
-            @click="zoomIn()"
-          />
+          <i class="fa-lg fa-solid fa-magnifying-glass-plus" data-bs-toggle="tooltip" data-bs-placement="right"
+            title="Zoom In" @click="zoomIn()" />
         </div>
         <div class="schema-view__button">
-          <i
-            class="fa-lg fa-solid fa-magnifying-glass-minus"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Zoom Out"
-            @click="zoomOut()"
-          />
+          <i class="fa-lg fa-solid fa-magnifying-glass-minus" data-bs-toggle="tooltip" data-bs-placement="right"
+            title="Zoom Out" @click="zoomOut()" />
         </div>
         <div class="schema-view__button">
-          <i
-            class="fa-lg fa-solid fa-compress"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Fit to View"
-            @click="fitToView()"
-          />
+          <i class="fa-lg fa-solid fa-compress" data-bs-toggle="tooltip" data-bs-placement="right" title="Fit to View"
+            @click="fitToView()" />
         </div>
         <div class="schema-view__button">
-          <i
-            class="fa-lg fa-solid fa-expand"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Actual Size"
-            @click="actualSize()"
-          />
+          <i class="fa-lg fa-solid fa-expand" data-bs-toggle="tooltip" data-bs-placement="right" title="Actual Size"
+            @click="actualSize()" />
         </div>
       </div>
     </div>
-    <div
-      ref="graph"
-      class="schema_graph__wrapper"
-      :style="{ width: graphWidth + 'px' }"
-    />
-    <div
-      ref="sidePanel"
-      class="schema_side-panel__wrapper"
-    >
+    <div ref="graph" class="schema_graph__wrapper" :style="{ width: graphWidth + 'px' }" />
+    <div ref="sidePanel" class="schema_side-panel__wrapper">
       <div class="sidebar-content">
         <br>
-        <SchemaSidebarOverview
-          v-if="schema"
-          v-show="!hoveredLabel && clickedLabel === null"
-          ref="overview"
-          :schema="schema"
-          @drop-table="dropTable"
-          @edit-table="enterEditTableMode"
-          @add-node-table="enterAddNodeTableMode"
-          @add-rel-table="enterAddRelTableMode"
-        />
+        <SchemaSidebarOverview v-if="schema" v-show="!hoveredLabel && clickedLabel === null" ref="overview"
+          :schema="schema" @drop-table="dropTable" @edit-table="enterEditTableMode"
+          @add-node-table="enterAddNodeTableMode" @add-rel-table="enterAddRelTableMode" />
         <!-- Read only view for hovered label -->
         <!-- If edit view is shown, hovering over another label will not change the view -->
-        <SchemaSidebarReadOnlyView
-          v-if="hoveredLabel !== null && (clickedLabel === null || isClickedReadOnly())"
-          :schema="schema"
-          :label="hoveredLabel"
-          :is-node="hoveredIsNode"
-        />
+        <SchemaSidebarReadOnlyView v-if="hoveredLabel !== null && (clickedLabel === null || isClickedReadOnly())"
+          :schema="schema" :label="hoveredLabel" :is-node="hoveredIsNode" />
         <!-- Read only view for clicked label (if it cannot be edited) -->
-        <SchemaSidebarReadOnlyView
-          v-if="clickedLabel !== null && hoveredLabel === null && isClickedReadOnly()"
-          :schema="schema"
-          :label="clickedLabel"
-          :is-node="clickedIsNode"
-        />
+        <SchemaSidebarReadOnlyView v-if="clickedLabel !== null && hoveredLabel === null && isClickedReadOnly()"
+          :schema="schema" :label="clickedLabel" :is-node="clickedIsNode" />
         <!-- Edit view for clicked label -->
-        <SchemaSidebarEditView
-          v-if="clickedLabel !== null && !clickedIsNewTable && !isClickedReadOnly()"
-          ref="editView"
-          :schema="schema"
-          :label="clickedLabel"
-          :is-node="clickedIsNode"
-          @drop-property="dropProperty"
-          @back="resetClick"
-          @drop-table="dropTable"
-          @rename-property="renameProperty"
-          @rename-table="renameTable"
-          @add-property="addProperty"
-          @set-placeholder="setPlaceholder"
-          @unset-placeholder="unsetPlaceholder"
-          @set-placeholder-label="setPlaceholderLabelForEditView"
-        />
-        <SchemaSidebarAddView
-          v-if="clickedLabel !== null && clickedIsNewTable"
-          ref="addView"
-          :schema="schema"
-          :label="clickedLabel"
-          :is-node="clickedIsNode"
-          @discard="cancelAdd"
-          @save="addNewTable"
+        <SchemaSidebarEditView v-if="clickedLabel !== null && !clickedIsNewTable && !isClickedReadOnly()" ref="editView"
+          :schema="schema" :label="clickedLabel" :is-node="clickedIsNode" @drop-property="dropProperty"
+          @back="resetClick" @drop-table="dropTable" @rename-property="renameProperty" @rename-table="renameTable"
+          @add-property="addProperty" @set-placeholder="setPlaceholder" @unset-placeholder="unsetPlaceholder"
+          @set-placeholder-label="setPlaceholderLabelForEditView" />
+        <SchemaSidebarAddView v-if="clickedLabel !== null && clickedIsNewTable" ref="addView" :schema="schema"
+          :label="clickedLabel" :is-node="clickedIsNode" @discard="cancelAdd" @save="addNewTable"
           @update-node-table-label="updatePlaceholderNodeTableLabel"
-          @update-placeholder-rel-table="updatePlaceholderRelTable"
-        />
+          @update-placeholder-rel-table="updatePlaceholderRelTable" />
       </div>
     </div>
-    <SchemaActionDialog
-      ref="actionDialog"
-      @reload-schema="reloadSchema"
-      @action-completed="handleSchemaActionCompleted"
-    />
+    <SchemaActionDialog ref="actionDialog" @reload-schema="reloadSchema"
+      @action-completed="handleSchemaActionCompleted" />
   </div>
 </template>
 
@@ -178,7 +108,8 @@ export default {
     clickedIsNewTable: false,
     toolbarDebounceTimeout: 100,
     toolbarDebounceTimer: null,
-    settingChangePromise: null,
+    drawPromise: null,
+    isRendering: false,
   }),
   computed: {
     graphVizSettings() {
@@ -194,10 +125,10 @@ export default {
   },
   watch: {
     graphVizSettings() {
-      this.handleSettingsChange();
+      this.updateVisualSettings();
     },
 
-    schema(value, oldValue) {
+    async schema(value, oldValue) {
       const oldNodes = oldValue ? oldValue.nodeTables.map(n => n.name) : [];
       const newNodes = value ? value.nodeTables.map(n => n.name) : [];
       const oldEdges = oldValue ? oldValue.relTables.map(n => n.name) : [];
@@ -210,8 +141,8 @@ export default {
       if (!this.graphCreated) {
         return;
       }
-      this.resetClick();
-      this.handleSettingsChange(true);
+      await this.resetClick();
+      this.redrawGraph(true);
     },
   },
   mounted() {
@@ -255,6 +186,8 @@ export default {
         height,
         layout: {
           type: 'd3-force',
+          alphaMin: 0.2,
+          alphaDecay: 0.03,
           link: {
             distance: edges.length * 15,
             strength: 1,
@@ -345,7 +278,6 @@ export default {
       });
 
       this.g6Graph.setData({ nodes, edges, });
-      this.g6Graph.render();
 
       // Fit the graph to view after rendering
       this.g6Graph.on(GraphEvent.AFTER_RENDER, () => {
@@ -364,16 +296,16 @@ export default {
       });
 
       // Node click events
-      this.g6Graph.on('node:click', (e) => {
+      this.g6Graph.on('node:click', async (e) => {
         if (this.clickedIsNewTable) {
           return;
         }
-        this.resetClick();
+        await this.resetClick();
         const clickedId = e.target.config.id;
         const nodeData = this.g6Graph.getNodeData(clickedId);
         this.clickedLabel = nodeData.data._label;
         this.clickedIsNode = true;
-        return this.g6Graph.setElementState({
+        return this.setItemState({
           [clickedId]: ['active'],
         });
       });
@@ -408,6 +340,7 @@ export default {
                 labelText: "",
               }
             }]);
+            this.draw();
           }
         }
       });
@@ -417,7 +350,7 @@ export default {
         if (this.clickedIsNewTable) {
           return;
         }
-        this.resetClick();
+        await this.resetClick();
         // Highlight all edges with the same label
         const clickedId = e.target.config.id;
         const clickedEdgeData = this.g6Graph.getEdgeData(clickedId);
@@ -437,7 +370,7 @@ export default {
         }
         this.clickedIsNode = false;
         this.clickedLabel = clickedLabel;
-        await this.g6Graph.setElementState(activeIds);
+        await this.setItemState(activeIds);
       });
 
       // Canvas click events
@@ -445,10 +378,11 @@ export default {
         if (this.clickedIsNewTable) {
           return;
         }
-        this.resetClick();
+        return this.resetClick();
       });
 
-      // Render is already called after setData
+
+      this.render();
       this.graphCreated = true;
     },
 
@@ -458,17 +392,9 @@ export default {
 
     extractGraphFromSchema(schema) {
       const overlapEdgeHash = {};
-      function getReadableTextColor(bgColor) {
-        const color = bgColor.charAt(0) === '#' ? bgColor.substring(1) : bgColor;
-        const r = parseInt(color.substring(0, 2), 16);
-        const g = parseInt(color.substring(2, 4), 16);
-        const b = parseInt(color.substring(4, 6), 16);
-        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-        return luminance > 0.6 ? '#000000' : '#ffffff';
-      }
       let nodes = schema.nodeTables.map(n => {
         const fillColor = n.isPlaceholder ? this.getColor(PLACEHOLDER_NODE_TABLE) : this.getColor(n.name);
-        const labelColor = getReadableTextColor(fillColor);
+        const labelColor = G6Utils.getReadableTextColor(fillColor);
         let label = n.name;
         label = G6Utils.fittingString(label, 80, this.settingsStore.defaultNode.labelCfg.style.fontSize);
         const returnVal = {
@@ -642,10 +568,6 @@ export default {
           }]);
         }
       });
-
-      // Apply state changes
-      this.g6Graph.setElementState({ ...nodeStates, ...edgeStates });
-
       this.clickedLabel = null;
       this.clickedIsNode = false;
       this.clickedIsNewTable = false;
@@ -654,6 +576,7 @@ export default {
           this.$refs.editView.reset();
         }
       });
+      return this.setItemState({ ...nodeStates, ...edgeStates });
     },
 
     resetHover() {
@@ -720,22 +643,58 @@ export default {
       }, this.toolbarDebounceTimeout);
     },
 
-    async handleSettingsChange(rerender) {
-      if (this.settingChangePromise) {
-        await this.settingChangePromise;
+    async draw() {
+      if (!this.g6Graph) {
+        return
       }
+      if (this.drawPromise) {
+        await this.drawPromise;
+      }
+      this.drawPromise = this.g6Graph.draw();
+      await this.drawPromise;
+      this.drawPromise = null;
+    },
+
+    async render() {
+      if (!this.g6Graph) {
+        return;
+      }
+      if (this.drawPromise) {
+        await this.drawPromise;
+      }
+      this.drawPromise =
+        this.isRendering ?
+          this.g6Graph.draw() :
+          this.g6Graph.render();
+      this.isRendering = true;
+      await this.drawPromise;
+      this.drawPromise = null;
+      this.isRendering = false;
+    },
+
+    async setItemState(itemStates) {
+      if (!this.g6Graph) {
+        return;
+      }
+      if (this.drawPromise) {
+        await this.drawPromise;
+      }
+      this.drawPromise = this.g6Graph.setElementState(itemStates);
+      await this.drawPromise;
+      this.drawPromise = null;
+    },
+
+    redrawGraph(rerender) {
       const { nodes, edges, } = this.extractGraphFromSchema(this.schema);
       if (!this.g6Graph) {
         return;
       }
       this.g6Graph.setData({ nodes, edges, });
       if (rerender) {
-        this.settingChangePromise = this.g6Graph.render();
+        this.render();
       } else {
-        this.settingChangePromise = this.g6Graph.draw();
+        this.draw();
       }
-      await this.settingChangePromise;
-      this.settingChangePromise = null;
     },
 
     enterEditTableMode(tableName) {
@@ -746,7 +705,7 @@ export default {
       }
       this.clickedIsNode = isTableNode;
       this.clickedLabel = tableName;
-      this.handleSettingsChange();
+      this.redrawGraph();
     },
 
     enterAddNodeTableMode() {
@@ -760,7 +719,7 @@ export default {
       this.$emit("addPlaceholderNodeTable", newTableName);
       this.settingsStore.addNewNodeTable(PLACEHOLDER_NODE_TABLE);
       this.$nextTick(() => {
-        this.handleSettingsChange(true);
+        this.redrawGraph(true);
       });
       this.clickedLabel = newTableName;
       this.clickedIsNode = true;
@@ -782,11 +741,11 @@ export default {
       this.clickedIsNewTable = true;
     },
 
-    cancelAdd() {
+    async cancelAdd() {
       if (this.clickedIsNode) {
         this.settingsStore.removeNodeTable(PLACEHOLDER_NODE_TABLE);
       }
-      this.resetClick();
+      await this.resetClick();
       this.reloadSchema();
     },
 
@@ -836,8 +795,7 @@ export default {
       this.$emit("unsetPlaceholder", { originalLabel, isNode });
     },
 
-    updatePlaceholderNodeTableLabel(newLabel) {
-      console.log("Updating placeholder node table label to:", newLabel);
+    async updatePlaceholderNodeTableLabel(newLabel) {
       if (this.clickedLabel === newLabel) {
         return;
       }
@@ -853,7 +811,7 @@ export default {
         }]);
       }
       this.clickedLabel = newLabel;
-      this.g6Graph.draw();
+      this.draw();
     },
 
     updatePlaceholderRelTable(newTable) {
@@ -861,7 +819,7 @@ export default {
       this.clickedLabel = newTable.name;
       // Rerender the graph to update the edge
       this.$nextTick(() => {
-        this.handleSettingsChange();
+        this.redrawGraph();
       });
     },
 
@@ -898,6 +856,44 @@ export default {
         this.schema.nodeTables.find(t => t.name === this.clickedLabel) :
         this.schema.relTables.find(t => t.name === this.clickedLabel);
       return !this.modeStore.isReadWrite || (clickedItem && clickedItem.group);
+    },
+
+    async updateVisualSettings() {
+      if (!this.g6Graph) {
+        return;
+      }
+      const itemStates = {};
+      const nodes = this.g6Graph.getNodeData();
+      nodes.forEach(node => {
+        const newFill = node.data.isPlaceholder ? this.getColor(PLACEHOLDER_NODE_TABLE) : this.getColor(node.data._label);
+        if (node.style.fill === newFill) {
+          return;
+        }
+        node.style.fill = newFill;
+        node.style.stroke = G6Utils.shadeColor(node.style.fill);
+        node.style.labelColor = G6Utils.getReadableTextColor(node.style.fill);
+        this.g6Graph.updateNodeData({
+          id: node.id,
+          style: node.style,
+        });
+        itemStates[node.id] = node.states || [];
+      });
+      const edges = this.g6Graph.getEdgeData();
+      edges.forEach(edge => {
+        const newStroke = edge.data.isPlaceholder ? this.getColor(PLACEHOLDER_REL_TABLE) : this.getColor(edge.data._label);
+        edge.style.stroke = newStroke;
+        edge.style.labelColor = G6Utils.getReadableTextColor(edge.style.stroke);
+        edge.style.labelText = (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.ALWAYS || edge.states?.includes('active')) ?
+          this.getRelTableDisplayLabel(edge.data._label) :
+          "";
+        this.g6Graph.updateEdgeData({
+          id: edge.id,
+          style: edge.style,
+        });
+        itemStates[edge.id] = edge.states || [];
+      });
+      return this.setItemState(itemStates);
+
     },
 
     reloadSchema() {

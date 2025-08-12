@@ -403,7 +403,7 @@ export default {
     async reloadSchema() {
       await this.getSchema();
       this.handleSchemaReload(this.schema);
-      this.$refs.schemaView.handleSettingsChange(true);
+      this.$refs.schemaView.redrawGraph(true);
     },
     addPlaceholderNodeTable(tableName) {
       this.schema.nodeTables.push({
@@ -470,7 +470,7 @@ export default {
         this.unsetPlaceholderRelTable(originalLabel);
       }
       this.$nextTick(() => {
-        this.$refs.schemaView.handleSettingsChange();
+        this.$refs.schemaView.redrawGraph();
       });
     },
     hideAll() {
