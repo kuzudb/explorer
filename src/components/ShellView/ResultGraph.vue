@@ -223,6 +223,7 @@ export default {
     isResizing: false,
     minSidebarWidth: 350,
     maxSidebarWidth: 800,
+    isInitialRender: true,
   }),
   computed: {
     graphVizSettings() {
@@ -447,7 +448,11 @@ export default {
 
       // Fit the graph to view after rendering
       this.g6Graph.on(GraphEvent.AFTER_RENDER, () => {
+        if(!this.isInitialRender) {
+          return;
+        }
         g6Utils.fitToView(this.g6Graph);
+        this.isInitialRender = false;
       });
 
       // Show hover container on node and edge hover
@@ -513,10 +518,12 @@ export default {
         const isCurrentNodeExpanded = this.isNeighborExpanded(e.target);
         if (isCurrentNodeExpanded) {
           this.collapseNode(itemId);
+          this.deselectAll();
           return this.handleSettingsChange();
         }
         const nodeData = this.g6Graph.getNodeData(itemId);
         this.expandOnNode(nodeData);
+        this.deselectAll();
       });
 
       this.g6Graph.on('canvas:click', () => {
@@ -988,6 +995,9 @@ export default {
           // Do nothing, the node does not exist, we can add it
         }
         nodesToAdd.push(node);
+        if (!this.counters.node[node.data.properties._label]) {
+          this.counters.node[node.data.properties._label] = 0;
+        }
         this.counters.node[node.data.properties._label] += 1;
         this.counters.total.node += 1;
       }
@@ -1002,6 +1012,9 @@ export default {
           // Do nothing, the edge does not exist, we can add it
         }
         edgesToAdd.push(edge);
+        if (!this.counters.rel[edge.data.properties._label]) {
+          this.counters.rel[edge.data.properties._label] = 0;
+        }
         this.counters.rel[edge.data.properties._label] += 1;
         this.counters.total.rel += 1;
       }
