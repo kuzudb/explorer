@@ -1,123 +1,53 @@
 <template>
-  <div
-    ref="wrapper"
-    class="schema-view__wrapper"
-  >
-    <div
-      ref="toolsContainer"
-      class="schema-view__tools_container"
-      :style="{ minWidth: toolbarWidth + 'px' }"
-    >
+  <div ref="wrapper" class="schema-view__wrapper">
+    <div ref="toolsContainer" class="schema-view__tools_container" :style="{ minWidth: toolbarWidth + 'px' }">
       <div class="schema-view__tools_container--bottom">
         <div class="schema-view__button">
-          <i
-            class="fa-lg fa-solid fa-magnifying-glass-plus"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Zoom In"
-            @click="zoomIn()"
-          />
+          <i class="fa-lg fa-solid fa-magnifying-glass-plus" data-bs-toggle="tooltip" data-bs-placement="right"
+            title="Zoom In" @click="zoomIn()" />
         </div>
         <div class="schema-view__button">
-          <i
-            class="fa-lg fa-solid fa-magnifying-glass-minus"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Zoom Out"
-            @click="zoomOut()"
-          />
+          <i class="fa-lg fa-solid fa-magnifying-glass-minus" data-bs-toggle="tooltip" data-bs-placement="right"
+            title="Zoom Out" @click="zoomOut()" />
         </div>
         <div class="schema-view__button">
-          <i
-            class="fa-lg fa-solid fa-compress"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Fit to View"
-            @click="fitToView()"
-          />
+          <i class="fa-lg fa-solid fa-compress" data-bs-toggle="tooltip" data-bs-placement="right" title="Fit to View"
+            @click="fitToView()" />
         </div>
         <div class="schema-view__button">
-          <i
-            class="fa-lg fa-solid fa-expand"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title="Actual Size"
-            @click="actualSize()"
-          />
+          <i class="fa-lg fa-solid fa-expand" data-bs-toggle="tooltip" data-bs-placement="right" title="Actual Size"
+            @click="actualSize()" />
         </div>
       </div>
     </div>
-    <div
-      ref="graph"
-      class="schema_graph__wrapper"
-      :style="{ width: graphWidth + 'px' }"
-    />
-    <div
-      ref="sidePanel"
-      class="schema_side-panel__wrapper"
-    >
+    <div ref="graph" class="schema_graph__wrapper" :style="{ width: graphWidth + 'px' }" />
+    <div ref="sidePanel" class="schema_side-panel__wrapper">
       <div class="sidebar-content">
         <br>
-        <SchemaSidebarOverview
-          v-if="schema"
-          v-show="!hoveredLabel && clickedLabel === null"
-          ref="overview"
-          :schema="schema"
-          @drop-table="dropTable"
-          @edit-table="enterEditTableMode"
-          @add-node-table="enterAddNodeTableMode"
-          @add-rel-table="enterAddRelTableMode"
-        />
+        <SchemaSidebarOverview v-if="schema" v-show="!hoveredLabel && clickedLabel === null" ref="overview"
+          :schema="schema" @drop-table="dropTable" @edit-table="enterEditTableMode"
+          @add-node-table="enterAddNodeTableMode" @add-rel-table="enterAddRelTableMode" />
         <!-- Read only view for hovered label -->
         <!-- If edit view is shown, hovering over another label will not change the view -->
-        <SchemaSidebarReadOnlyView
-          v-if="hoveredLabel !== null && (clickedLabel === null || isClickedReadOnly())"
-          :schema="schema"
-          :label="hoveredLabel"
-          :is-node="hoveredIsNode"
-        />
+        <SchemaSidebarReadOnlyView v-if="hoveredLabel !== null && (clickedLabel === null || isClickedReadOnly())"
+          :schema="schema" :label="hoveredLabel" :is-node="hoveredIsNode" />
         <!-- Read only view for clicked label (if it cannot be edited) -->
-        <SchemaSidebarReadOnlyView
-          v-if="clickedLabel !== null && hoveredLabel === null && isClickedReadOnly()"
-          :schema="schema"
-          :label="clickedLabel"
-          :is-node="clickedIsNode"
-        />
+        <SchemaSidebarReadOnlyView v-if="clickedLabel !== null && hoveredLabel === null && isClickedReadOnly()"
+          :schema="schema" :label="clickedLabel" :is-node="clickedIsNode" />
         <!-- Edit view for clicked label -->
-        <SchemaSidebarEditView
-          v-if="clickedLabel !== null && !clickedIsNewTable && !isClickedReadOnly()"
-          ref="editView"
-          :schema="schema"
-          :label="clickedLabel"
-          :is-node="clickedIsNode"
-          @drop-property="dropProperty"
-          @back="resetClick"
-          @drop-table="dropTable"
-          @rename-property="renameProperty"
-          @rename-table="renameTable"
-          @add-property="addProperty"
-          @set-placeholder="setPlaceholder"
-          @unset-placeholder="unsetPlaceholder"
-          @set-placeholder-label="setPlaceholderLabelForEditView"
-        />
-        <SchemaSidebarAddView
-          v-if="clickedLabel !== null && clickedIsNewTable"
-          ref="addView"
-          :schema="schema"
-          :label="clickedLabel"
-          :is-node="clickedIsNode"
-          @discard="cancelAdd"
-          @save="addNewTable"
+        <SchemaSidebarEditView v-if="clickedLabel !== null && !clickedIsNewTable && !isClickedReadOnly()" ref="editView"
+          :schema="schema" :label="clickedLabel" :is-node="clickedIsNode" @drop-property="dropProperty"
+          @back="resetClick" @drop-table="dropTable" @rename-property="renameProperty" @rename-table="renameTable"
+          @add-property="addProperty" @set-placeholder="setPlaceholder" @unset-placeholder="unsetPlaceholder"
+          @set-placeholder-label="setPlaceholderLabelForEditView" />
+        <SchemaSidebarAddView v-if="clickedLabel !== null && clickedIsNewTable" ref="addView" :schema="schema"
+          :label="clickedLabel" :is-node="clickedIsNode" @discard="cancelAdd" @save="addNewTable"
           @update-node-table-label="updatePlaceholderNodeTableLabel"
-          @update-placeholder-rel-table="updatePlaceholderRelTable"
-        />
+          @update-placeholder-rel-table="updatePlaceholderRelTable" />
       </div>
     </div>
-    <SchemaActionDialog
-      ref="actionDialog"
-      @reload-schema="reloadSchema"
-      @action-completed="handleSchemaActionCompleted"
-    />
+    <SchemaActionDialog ref="actionDialog" @reload-schema="reloadSchema"
+      @action-completed="handleSchemaActionCompleted" />
   </div>
 </template>
 
@@ -174,7 +104,6 @@ export default {
     hoveredLabel: null,
     hoveredIsNode: false,
     clickedLabel: null,
-    clickedLabelDisplay: null,
     clickedIsNode: false,
     clickedIsNewTable: false,
     toolbarDebounceTimeout: 100,
@@ -295,7 +224,7 @@ export default {
               lineWidth: 10,
               stroke: '#1890FF',
             },
-            
+
           },
         },
         edge: {
@@ -321,18 +250,11 @@ export default {
           },
         },
         behaviors: [
-          'zoom-canvas', 
+          'zoom-canvas',
           'drag-canvas',
           {
             type: 'drag-element-force',
             fixed: true,
-          },
-          {
-            type: 'click-select',
-            key: 'click-select-element',
-            degree: 0,
-            state: 'active',
-            enable: true,
           },
         ],
       });
@@ -365,8 +287,10 @@ export default {
         const clickedId = e.target.config.id;
         const nodeData = this.g6Graph.getNodeData(clickedId);
         this.clickedLabel = nodeData.data._label;
-        this.clickedLabelDisplay = nodeData.data.label;
         this.clickedIsNode = true;
+        return this.g6Graph.setElementState({
+          [clickedId]: ['active'],
+        });
       });
 
       // Edge hover events
@@ -391,7 +315,7 @@ export default {
           const id = e.target.id;
           const currentSelectedEdges = this.g6Graph.getElementDataByState('edge', 'active');
           const isCurrentlySelected = currentSelectedEdges.some(edge => edge.id === id);
-          
+
           if (!isCurrentlySelected) {
             this.g6Graph.updateEdgeData([{
               id: id,
@@ -399,30 +323,36 @@ export default {
                 labelText: "",
               }
             }]);
-            this.g6Graph.draw();
           }
         }
       });
 
       // Edge click events
-      this.g6Graph.on('edge:click', (e) => {
+      this.g6Graph.on('edge:click', async (e) => {
         if (this.clickedIsNewTable) {
           return;
         }
         this.resetClick();
+        // Highlight all edges with the same label
         const clickedId = e.target.config.id;
-        const edgeData = this.g6Graph.getEdgeData(clickedId);
-        if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-          this.g6Graph.updateEdgeData([{
-            id: clickedId,
-            style: {
-              labelText: this.getRelTableDisplayLabel(edgeData.data._label),
-            }
-          }]);
+        const clickedEdgeData = this.g6Graph.getEdgeData(clickedId);
+        const clickedLabel = clickedEdgeData.data._label;
+        const edgesWithSameLabel = this.g6Graph.getEdgeData().filter(edge => edge.data._label === clickedLabel);
+        const activeIds = {};
+        for (const edge of edgesWithSameLabel) {
+          activeIds[edge.id] = ['active'];
+          if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
+            this.g6Graph.updateEdgeData([{
+              id: edge.id,
+              style: {
+                labelText: this.getRelTableDisplayLabel(edge.data._label),
+              }
+            }]);
+          }
         }
         this.clickedIsNode = false;
-        this.clickedLabel = edgeData.data._label;
-        this.clickedLabelDisplay = edgeData.data.label;
+        this.clickedLabel = clickedLabel;
+        await this.g6Graph.setElementState(activeIds);
       });
 
       // Canvas click events
@@ -441,7 +371,7 @@ export default {
       return `${src}-${dst}-${label}`;
     },
 
-    extractGraphFromSchema(schema) {
+    extractGraphFromSchema(schema, activeIds = null) {
       const overlapEdgeHash = {};
       function getReadableTextColor(bgColor) {
         const color = bgColor.charAt(0) === '#' ? bgColor.substring(1) : bgColor;
@@ -459,7 +389,6 @@ export default {
         const returnVal = {
           id: n.name,
           data: {
-            label: label,
             _label: n.name,
             isPlaceholder: Boolean(n.isPlaceholder),
           },
@@ -473,6 +402,9 @@ export default {
             labelFontWeight: this.settingsStore.defaultNode.labelCfg.style.fontWeight,
           },
         };
+        if (returnVal.data.isPlaceholder || returnVal.data._label === this.clickedLabel) {
+          returnVal.states = ['active'];
+        }
         return returnVal;
       });
 
@@ -503,20 +435,27 @@ export default {
         }
         for (const conn of r.connectivity) {
           const strokeColor = r.isPlaceholder ? this.getColor(PLACEHOLDER_REL_TABLE) : this.getColor(r.name);
-          const labelText = this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.ALWAYS ? G6Utils.fittingString(this.getRelTableDisplayLabel(r.name), 80, 12) : "";
+          const fittedLabel = G6Utils.fittingString(r.name, 80, 12);
+          const labelText = this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.ALWAYS ?
+            fittedLabel :
+            "";
           const edge = {
             id: this.getEdgeId(conn.src, conn.dst, r.name),
             source: conn.src,
             target: conn.dst,
             data: {
-              label: labelText,
               _label: r.name,
               isPlaceholder: Boolean(r.isPlaceholder),
             },
             style: {
+              labelText,
               stroke: strokeColor,
             },
           };
+          if (edge.data.isPlaceholder || edge.data._label === this.clickedLabel) {
+            edge.states = ['active'];
+            edge.style.labelText = fittedLabel;
+          }
           if (!edge.source || !edge.target) {
             continue;
           }
@@ -534,7 +473,7 @@ export default {
           else if (overlapEdgeHash[sortedHashKey] > 1) {
             edge.type = 'quadratic';
             edge.style.curveOffset = ARC_CURVE_OFFSETS[(overlapEdgeHash[sortedHashKey] - 1) % ARC_CURVE_OFFSETS.length];
-            edge.style.curvePosition = 0.5; 
+            edge.style.curvePosition = 0.5;
           } else {
             edge.type = 'line';
           }
@@ -593,14 +532,14 @@ export default {
       if (!this.g6Graph) {
         return;
       }
-      
+
       // Clear node selections
       const selectedNodes = this.g6Graph.getElementDataByState('node', 'active');
       const nodeStates = {};
       selectedNodes.forEach((node) => {
         nodeStates[node.id] = [];
       });
-      
+
       // Clear edge selections
       const selectedEdges = this.g6Graph.getElementDataByState('edge', 'active');
       const edgeStates = {};
@@ -615,12 +554,11 @@ export default {
           }]);
         }
       });
-      
+
       // Apply state changes
       this.g6Graph.setElementState({ ...nodeStates, ...edgeStates });
-      
+
       this.clickedLabel = null;
-      this.clickedLabelDisplay = null;
       this.clickedIsNode = false;
       this.clickedIsNewTable = false;
       this.$nextTick(() => {
@@ -701,9 +639,9 @@ export default {
       }
       this.g6Graph.setData({ nodes, edges, });
       if (rerender) {
-        this.g6Graph.render();
+        return this.g6Graph.render();
       } else {
-        this.g6Graph.draw();
+        return this.g6Graph.draw();
       }
     },
 
@@ -715,6 +653,7 @@ export default {
       }
       this.clickedIsNode = isTableNode;
       this.clickedLabel = tableName;
+      this.handleSettingsChange();
     },
 
     enterAddNodeTableMode() {
@@ -731,7 +670,6 @@ export default {
         this.handleSettingsChange(true);
       });
       this.clickedLabel = newTableName;
-      this.clickedLabelDisplay = newTableName;
       this.clickedIsNode = true;
       this.clickedIsNewTable = true;
     },
@@ -747,7 +685,6 @@ export default {
       this.$emit("addPlaceholderRelTable", newTableName);
       this.settingsStore.addNewRelTable(PLACEHOLDER_REL_TABLE);
       this.clickedLabel = newTableName;
-      this.clickedLabelDisplay = newTableName;
       this.clickedIsNode = false;
       this.clickedIsNewTable = true;
     },
@@ -765,34 +702,6 @@ export default {
     },
 
     setPlaceholder(label) {
-      if (!this.g6Graph) {
-        this.$emit("setPlaceholder", label);
-        return;
-      }
-      
-      if (this.clickedIsNode) {
-        const nodes = this.g6Graph.getNodeData();
-        const matchingNodes = nodes.filter(node => node.data._label === label);
-        const updatedNodes = matchingNodes.map(node => {
-          const updatedNode = { ...node };
-          updatedNode.data = { ...updatedNode.data, isPlaceholder: true };
-          return updatedNode;
-        });
-        if (updatedNodes.length > 0) {
-          this.g6Graph.updateData('node', updatedNodes);
-        }
-      } else {
-        const edges = this.g6Graph.getEdgeData();
-        const matchingEdges = edges.filter(edge => edge.data._label === label);
-        const updatedEdges = matchingEdges.map(edge => {
-          const updatedEdge = { ...edge };
-          updatedEdge.data = { ...updatedEdge.data, isPlaceholder: true };
-          return updatedEdge;
-        });
-        if (updatedEdges.length > 0) {
-          this.g6Graph.updateData('edge', updatedEdges);
-        }
-      }
       this.$emit("setPlaceholder", label);
     },
 
@@ -806,7 +715,6 @@ export default {
 
     unsetPlaceholder({ originalLabel, isNode }) {
       this.clickedLabel = originalLabel;
-      this.clickedLabelDisplay = originalLabel;
       this.$emit("unsetPlaceholder", { originalLabel, isNode });
     },
 
@@ -814,18 +722,18 @@ export default {
       if (this.clickedLabel === newLabel) {
         return;
       }
-      
-      if (this.g6Graph) {
-        const nodes = this.g6Graph.getNodeData();
-        const placeholderNode = nodes.find(node => node.data.isPlaceholder);
-        if (placeholderNode) {
-          const updatedNode = { ...placeholderNode };
-          updatedNode.data = { ...updatedNode.data, label: newLabel };
-          updatedNode.style = { ...updatedNode.style, labelText: newLabel };
-          this.g6Graph.updateData('node', [updatedNode]);
-        }
+
+      const nodes = this.g6Graph.getNodeData();
+      const placeholderNode = nodes.find(node => node.data.isPlaceholder);
+      if (placeholderNode) {
+        this.g6Graph.updateNodeData([{
+          id: placeholderNode.id,
+          style: {
+            labelText: newLabel,
+          }
+        }]);
       }
-      
+
       this.$emit("updatePlaceholderNodeTableLabel", newLabel);
       this.clickedLabel = newLabel;
     },
@@ -833,7 +741,6 @@ export default {
     updatePlaceholderRelTable(newTable) {
       this.$emit("updatePlaceholderRelTable", newTable);
       this.clickedLabel = newTable.name;
-      this.clickedLabelDisplay = newTable.name;
       // Rerender the graph to update the edge
       this.$nextTick(() => {
         this.handleSettingsChange();
@@ -894,14 +801,14 @@ export default {
   }
 
   .badge {
-      display: inline-block;
-      background-color: var(--bs-body-bg-accent) !important;
-      color: #fff !important;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      vertical-align: middle;
-    }
+    display: inline-block;
+    background-color: var(--bs-body-bg-accent) !important;
+    color: #fff !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
 
   .schema_side-panel__wrapper {
     width: 360px;
@@ -927,7 +834,9 @@ export default {
         overflow: hidden;
         background-color: var(--bs-body-bg);
         width: calc(100% - 1rem);
-        th, td {
+
+        th,
+        td {
           padding: 10px;
           max-width: 120px;
           word-break: break-word;
@@ -961,7 +870,7 @@ export default {
   .schema-view__tools_container--bottom {
     margin-top: auto;
     padding-bottom: 8px;
-  
+
     .schema-view__button {
       >i {
         color: (var(--bs-body-text));
