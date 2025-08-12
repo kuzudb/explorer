@@ -122,7 +122,7 @@
 </template>
 
 <script lang="js">
-import { Graph } from '@antv/g6';
+import { Graph, GraphEvent } from '@antv/g6';
 import {
   UI_SIZE, SHOW_REL_LABELS_OPTIONS, SCHEMA_ACTION_TYPES, PLACEHOLDER_NODE_TABLE,
   PLACEHOLDER_REL_TABLE, LOOP_POSITIONS, ARC_CURVE_OFFSETS
@@ -172,7 +172,6 @@ export default {
     graphHeight: 0,
     borderWidth: UI_SIZE.DEFAULT_BORDER_WIDTH,
     hoveredLabel: null,
-    hoveredLabelDisplay: null,
     hoveredIsNode: false,
     clickedLabel: null,
     clickedLabelDisplay: null,
@@ -212,7 +211,7 @@ export default {
         return;
       }
       this.resetClick();
-      this.handleSettingsChange();
+      this.handleSettingsChange(true);
     },
   },
   mounted() {
@@ -255,9 +254,15 @@ export default {
         width,
         height,
         layout: {
-          type: 'force-atlas2',
-          preventOverlap: true,
-          kr: edges.length * 15, // More relaxed repulsion with more edges
+          type: 'd3-force',
+          link: {
+            distance: edges.length * 15,
+            strength: 1,
+          },
+          collide: {
+            radius: 200,
+          },
+
         },
         plugins: [
           {
@@ -297,7 +302,6 @@ export default {
           style: {
             lineWidth: 5,
             endArrow: true,
-            labelText: (d) => d.data?.label || '',
             labelFontSize: 12,
             labelFontFamily: "Lexend,Helvetica Neue, Helvetica, Arial, sans-serif",
             labelFontWeight: 350,
@@ -306,6 +310,7 @@ export default {
             labelBackgroundPadding: [2, 2, 2, 2],
             labelBackgroundRadius: 2,
             labelAutoRotate: true,
+            labelTextBaseline: 'bottom',
           },
           state: {
             active: {
@@ -315,131 +320,118 @@ export default {
 
           },
         },
-        behaviors: ['drag-canvas', 'zoom-canvas', 'drag-node', {
-          type: 'hover-activate',
-          animation: true,
-          enable: (e) => {
-            switch (e.targetType) {
-              case 'node':
-                const nodeData = this.g6Graph.getNodeData(e.target.id);
-                this.handleHover(nodeData.data._label, nodeData.data.label, true);
-                break;
-              case 'edge':
-                const edgeData = this.g6Graph.getEdgeData(e.target.id);
-                if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-                  edgeData.style = edgeData.style || {};
-                  edgeData.data.label = this.getRelTableDisplayLabel(edgeData.data._label);
-                  this.g6Graph.updateEdgeData(edgeData);
-                }
-                this.handleHover(edgeData.data._label, edgeData.data.label, false);
-                break;
-              default:
-                break;
-            }
-            return true; 
+        behaviors: [
+          'zoom-canvas', 
+          'drag-canvas',
+          {
+            type: 'drag-element-force',
+            fixed: true,
           },
-        },
+          {
+            type: 'click-select',
+            key: 'click-select-element',
+            degree: 0,
+            state: 'active',
+            enable: true,
+          },
         ],
       });
 
       this.g6Graph.setData({ nodes, edges, });
       this.g6Graph.render();
 
+      // Fit the graph to view after rendering
+      this.g6Graph.on(GraphEvent.AFTER_RENDER, () => {
+        G6Utils.fitToView(this.g6Graph);
+      });
 
-      // this.g6Graph.on('node:pointerleave', (e) => {
-      //   const { itemId } = e;
-      //   this.g6Graph.setElementState(itemId, 'hover', false);
-      //   this.resetHover();
-      // });
+      // Node hover events
+      this.g6Graph.on('node:pointerenter', (e) => {
+        const id = e.target.id;
+        const nodeData = this.g6Graph.getNodeData(id);
+        this.handleHover(nodeData.data._label, true);
+      });
 
-      // this.g6Graph.on('node:click', (e) => {
-      //   if (this.clickedIsNewTable) {
-      //     return;
-      //   }
-      //   this.resetClick();
-      //   const { itemId } = e;
-      //   this.g6Graph.setItemState(itemId, 'click', true);
-      //   const nodeData = this.g6Graph.getNodeData(itemId);
-      //   this.clickedLabel = nodeData.data._label;
-      //   this.clickedLabelDisplay = nodeData.data.label;
-      //   this.clickedIsNode = true;
-      // });
+      this.g6Graph.on('node:pointerleave', () => {
+        this.resetHover();
+      });
 
-      // this.g6Graph.on('edge:pointerenter', (e) => {
-      //   const { itemId } = e;
-      //   this.g6Graph.setItemState(itemId, 'hover', true);
-      //   const edgeData = this.g6Graph.getEdgeData(itemId);
-      //   if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-      //     edgeData.style = edgeData.style || {};
-      //     edgeData.style.labelText = this.getRelTableDisplayLabel(edgeData.data._label);
-      //     this.g6Graph.updateData('edge', edgeData);
-      //   }
-      //   this.handleHover(edgeData.data._label, edgeData.data.label, false);
-      // });
+      // Node click events
+      this.g6Graph.on('node:click', (e) => {
+        if (this.clickedIsNewTable) {
+          return;
+        }
+        this.resetClick();
+        const clickedId = e.target.config.id;
+        const nodeData = this.g6Graph.getNodeData(clickedId);
+        this.clickedLabel = nodeData.data._label;
+        this.clickedLabelDisplay = nodeData.data.label;
+        this.clickedIsNode = true;
+      });
 
-      // this.g6Graph.on('edge:pointerleave', (e) => {
-      //   const { itemId } = e;
-      //   this.g6Graph.setItemState(itemId, 'hover', false);
-      //   this.resetHover();
-      //   if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-      //     const edges = this.g6Graph.getEdgeData();
-      //     const currentSelectedEdge = edges.find(edge => edge.states?.includes('click'));
-      //     if (currentSelectedEdge && currentSelectedEdge.id === itemId) {
-      //       return;
-      //     }
-      //     const edgeData = this.g6Graph.getEdgeData(itemId);
-      //     edgeData.style = edgeData.style || {};
-      //     edgeData.style.labelText = "";
-      //     this.g6Graph.updateData('edge', edgeData);
-      //   }
-      // });
+      // Edge hover events
+      this.g6Graph.on('edge:pointerenter', (e) => {
+        const id = e.target.id;
+        const edgeData = this.g6Graph.getEdgeData(id);
+        if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
+          this.g6Graph.updateEdgeData([{
+            id: id,
+            style: {
+              labelText: this.getRelTableDisplayLabel(edgeData.data._label),
+            }
+          }]);
+          this.g6Graph.frontElement(id);
+        }
+        this.handleHover(edgeData.data._label, false);
+      });
 
-      // this.g6Graph.on('edge:click', (e) => {
-      //   if (this.clickedIsNewTable) {
-      //     return;
-      //   }
-      //   this.resetClick();
-      //   const { itemId } = e;
-      //   this.g6Graph.setItemState(itemId, 'click', true);
-      //   const edgeData = this.g6Graph.getEdgeData(itemId);
-      //   if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-      //     edgeData.style = edgeData.style || {};
-      //     edgeData.style.labelText = this.getRelTableDisplayLabel(edgeData.data._label);
-      //     this.g6Graph.updateData('edge', edgeData);
-      //   }
-      //   this.clickedIsNode = false;
-      //   this.clickedLabel = edgeData.data._label;
-      //   this.clickedLabelDisplay = edgeData.data.label;
-      // });
+      this.g6Graph.on('edge:pointerleave', (e) => {
+        this.resetHover();
+        if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
+          const id = e.target.id;
+          const currentSelectedEdges = this.g6Graph.getElementDataByState('edge', 'active');
+          const isCurrentlySelected = currentSelectedEdges.some(edge => edge.id === id);
+          
+          if (!isCurrentlySelected) {
+            this.g6Graph.updateEdgeData([{
+              id: id,
+              style: {
+                labelText: "",
+              }
+            }]);
+            this.g6Graph.draw();
+          }
+        }
+      });
 
-      // this.g6Graph.on('canvas:click', () => {
-      //   if (this.clickedIsNewTable) {
-      //     return;
-      //   }
-      //   this.resetClick();
-      // });
+      // Edge click events
+      this.g6Graph.on('edge:click', (e) => {
+        if (this.clickedIsNewTable) {
+          return;
+        }
+        this.resetClick();
+        const clickedId = e.target.config.id;
+        const edgeData = this.g6Graph.getEdgeData(clickedId);
+        if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
+          this.g6Graph.updateEdgeData([{
+            id: clickedId,
+            style: {
+              labelText: this.getRelTableDisplayLabel(edgeData.data._label),
+            }
+          }]);
+        }
+        this.clickedIsNode = false;
+        this.clickedLabel = edgeData.data._label;
+        this.clickedLabelDisplay = edgeData.data.label;
+      });
 
-      // // Auto layout after drag
-      // this.g6Graph.on('node:dragstart', (e) => {
-      //   const { itemId } = e;
-      //   const nodeData = this.g6Graph.getNodeData(itemId);
-      //   nodeData.fx = e.canvas.x;
-      //   nodeData.fy = e.canvas.y;
-      // });
-
-      // this.g6Graph.on('node:drag', (e) => {
-      //   const { itemId } = e;
-      //   const nodeData = this.g6Graph.getNodeData(itemId);
-      //   nodeData.fx = e.canvas.x;
-      //   nodeData.fy = e.canvas.y;
-      // });
-
-      // this.g6Graph.on('node:dragend', (e) => {
-      //   const { itemId } = e;
-      //   const nodeData = this.g6Graph.getNodeData(itemId);
-      //   nodeData.fx = null;
-      //   nodeData.fy = null;
-      // });
+      // Canvas click events
+      this.g6Graph.on('canvas:click', () => {
+        if (this.clickedIsNewTable) {
+          return;
+        }
+        this.resetClick();
+      });
 
       // Render is already called after setData
       this.graphCreated = true;
@@ -528,7 +520,6 @@ export default {
           if (!edge.source || !edge.target) {
             continue;
           }
-          const hashKey = getEdgeKey(edge.source, edge.target);
           const sortedHashKey = getEdgeKey(edge.source, edge.target, true);
           if (!overlapEdgeHash[sortedHashKey]) {
             overlapEdgeHash[sortedHashKey] = 0;
@@ -536,14 +527,16 @@ export default {
           overlapEdgeHash[sortedHashKey] += 1;
 
           if (edge.source === edge.target) {
-            edge.type = 'loop';
-            edge.style.loopPosition = LOOP_POSITIONS[(overlapEdgeHash[sortedHashKey] - 1) % LOOP_POSITIONS.length];
+            // Self-loop (do not set type, otherwise it will not work)
             edge.style.loopDist = 100;
+            edge.style.loopPlacement = LOOP_POSITIONS[(overlapEdgeHash[sortedHashKey] - 1) % LOOP_POSITIONS.length];
           }
-          else {
+          else if (overlapEdgeHash[sortedHashKey] > 1) {
             edge.type = 'quadratic';
             edge.style.curveOffset = ARC_CURVE_OFFSETS[(overlapEdgeHash[sortedHashKey] - 1) % ARC_CURVE_OFFSETS.length];
             edge.style.curvePosition = 0.5; 
+          } else {
+            edge.type = 'line';
           }
           edges.push(edge);
         }
@@ -562,9 +555,8 @@ export default {
       });
     },
 
-    handleHover(label, labelDisplay, isNode) {
+    handleHover(label, isNode) {
       this.hoveredLabel = label;
-      this.hoveredLabelDisplay = labelDisplay;
       this.hoveredIsNode = isNode;
     },
 
@@ -601,23 +593,32 @@ export default {
       if (!this.g6Graph) {
         return;
       }
-      const nodes = this.g6Graph.getNodeData();
-      const edges = this.g6Graph.getEdgeData();
       
-      const currentSelectedNode = nodes.find(node => node.states?.includes('click'));
-      if (currentSelectedNode) {
-        this.g6Graph.setItemState(currentSelectedNode.id, 'click', false);
-      }
+      // Clear node selections
+      const selectedNodes = this.g6Graph.getElementDataByState('node', 'active');
+      const nodeStates = {};
+      selectedNodes.forEach((node) => {
+        nodeStates[node.id] = [];
+      });
       
-      const currentSelectedEdge = edges.find(edge => edge.states?.includes('click'));
-      if (currentSelectedEdge) {
-        this.g6Graph.setItemState(currentSelectedEdge.id, 'click', false);
+      // Clear edge selections
+      const selectedEdges = this.g6Graph.getElementDataByState('edge', 'active');
+      const edgeStates = {};
+      selectedEdges.forEach((edge) => {
+        edgeStates[edge.id] = [];
         if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-          currentSelectedEdge.style = currentSelectedEdge.style || {};
-          currentSelectedEdge.style.labelText = "";
-          this.g6Graph.updateData('edge', currentSelectedEdge);
+          this.g6Graph.updateEdgeData([{
+            id: edge.id,
+            style: {
+              labelText: "",
+            }
+          }]);
         }
-      }
+      });
+      
+      // Apply state changes
+      this.g6Graph.setElementState({ ...nodeStates, ...edgeStates });
+      
       this.clickedLabel = null;
       this.clickedLabelDisplay = null;
       this.clickedIsNode = false;
@@ -631,7 +632,6 @@ export default {
 
     resetHover() {
       this.hoveredLabel = null;
-      this.hoveredLabelDisplay = null;
       this.hoveredIsNode = false;
     },
 
@@ -694,13 +694,17 @@ export default {
       }, this.toolbarDebounceTimeout);
     },
 
-    handleSettingsChange() {
+    handleSettingsChange(rerender) {
       const { nodes, edges, } = this.extractGraphFromSchema(this.schema);
       if (!this.g6Graph) {
         return;
       }
       this.g6Graph.setData({ nodes, edges, });
-      this.g6Graph.render();
+      if (rerender) {
+        this.g6Graph.render();
+      } else {
+        this.g6Graph.draw();
+      }
     },
 
     enterEditTableMode(tableName) {
@@ -711,29 +715,6 @@ export default {
       }
       this.clickedIsNode = isTableNode;
       this.clickedLabel = tableName;
-    },
-
-    setG6Click(tableName) {
-      if (!this.g6Graph) return;
-      
-      if (this.clickedIsNode) {
-        const nodes = this.g6Graph.getNodeData();
-        const matchingNodes = nodes.filter(node => node.data._label === tableName);
-        matchingNodes.forEach(node => {
-          this.g6Graph.setItemState(node.id, 'click', true);
-        });
-      } else {
-        const edges = this.g6Graph.getEdgeData();
-        const matchingEdges = edges.filter(edge => edge.data._label === tableName);
-        matchingEdges.forEach(edge => {
-          this.g6Graph.setItemState(edge.id, 'click', true);
-          if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-            edge.style = edge.style || {};
-            edge.style.labelText = this.getRelTableDisplayLabel(tableName);
-            this.g6Graph.updateData('edge', edge);
-          }
-        });
-      }
     },
 
     enterAddNodeTableMode() {
@@ -747,7 +728,7 @@ export default {
       this.$emit("addPlaceholderNodeTable", newTableName);
       this.settingsStore.addNewNodeTable(PLACEHOLDER_NODE_TABLE);
       this.$nextTick(() => {
-        this.handleSettingsChange();
+        this.handleSettingsChange(true);
       });
       this.clickedLabel = newTableName;
       this.clickedLabelDisplay = newTableName;
@@ -792,17 +773,25 @@ export default {
       if (this.clickedIsNode) {
         const nodes = this.g6Graph.getNodeData();
         const matchingNodes = nodes.filter(node => node.data._label === label);
-        matchingNodes.forEach(node => {
-          node.data.isPlaceholder = true;
-          this.g6Graph.updateData('node', node);
+        const updatedNodes = matchingNodes.map(node => {
+          const updatedNode = { ...node };
+          updatedNode.data = { ...updatedNode.data, isPlaceholder: true };
+          return updatedNode;
         });
+        if (updatedNodes.length > 0) {
+          this.g6Graph.updateData('node', updatedNodes);
+        }
       } else {
         const edges = this.g6Graph.getEdgeData();
         const matchingEdges = edges.filter(edge => edge.data._label === label);
-        matchingEdges.forEach(edge => {
-          edge.data.isPlaceholder = true;
-          this.g6Graph.updateData('edge', edge);
+        const updatedEdges = matchingEdges.map(edge => {
+          const updatedEdge = { ...edge };
+          updatedEdge.data = { ...updatedEdge.data, isPlaceholder: true };
+          return updatedEdge;
         });
+        if (updatedEdges.length > 0) {
+          this.g6Graph.updateData('edge', updatedEdges);
+        }
       }
       this.$emit("setPlaceholder", label);
     },
@@ -830,10 +819,10 @@ export default {
         const nodes = this.g6Graph.getNodeData();
         const placeholderNode = nodes.find(node => node.data.isPlaceholder);
         if (placeholderNode) {
-          placeholderNode.data.label = newLabel;
-          placeholderNode.style = placeholderNode.style || {};
-          placeholderNode.style.labelText = newLabel;
-          this.g6Graph.updateData('node', placeholderNode);
+          const updatedNode = { ...placeholderNode };
+          updatedNode.data = { ...updatedNode.data, label: newLabel };
+          updatedNode.style = { ...updatedNode.style, labelText: newLabel };
+          this.g6Graph.updateData('node', [updatedNode]);
         }
       }
       
