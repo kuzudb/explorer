@@ -79,7 +79,7 @@ class G6Utils {
     return str;
   }
 
-  shadeColor(color, percent=-20) {
+  shadeColor(color, percent = -20) {
     if (this.colorShadeHash[color] && this.colorShadeHash[color][percent]) {
       return this.colorShadeHash[color][percent];
     }
@@ -110,6 +110,15 @@ class G6Utils {
     this.colorShadeHash[color][percent] = "#" + RR + GG + BB;
 
     return "#" + RR + GG + BB;
+  }
+
+  getReadableTextColor(bgColor) {
+    const color = bgColor.charAt(0) === '#' ? bgColor.substring(1) : bgColor;
+    const r = parseInt(color.substring(0, 2), 16);
+    const g = parseInt(color.substring(2, 4), 16);
+    const b = parseInt(color.substring(4, 6), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.6 ? '#000000' : '#ffffff';
   }
 }
 
