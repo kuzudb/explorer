@@ -1,53 +1,123 @@
 <template>
-  <div ref="wrapper" class="schema-view__wrapper">
-    <div ref="toolsContainer" class="schema-view__tools_container" :style="{ minWidth: toolbarWidth + 'px' }">
+  <div
+    ref="wrapper"
+    class="schema-view__wrapper"
+  >
+    <div
+      ref="toolsContainer"
+      class="schema-view__tools_container"
+      :style="{ minWidth: toolbarWidth + 'px' }"
+    >
       <div class="schema-view__tools_container--bottom">
         <div class="schema-view__button">
-          <i class="fa-lg fa-solid fa-magnifying-glass-plus" data-bs-toggle="tooltip" data-bs-placement="right"
-            title="Zoom In" @click="zoomIn()" />
+          <i
+            class="fa-lg fa-solid fa-magnifying-glass-plus"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Zoom In"
+            @click="zoomIn()"
+          />
         </div>
         <div class="schema-view__button">
-          <i class="fa-lg fa-solid fa-magnifying-glass-minus" data-bs-toggle="tooltip" data-bs-placement="right"
-            title="Zoom Out" @click="zoomOut()" />
+          <i
+            class="fa-lg fa-solid fa-magnifying-glass-minus"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Zoom Out"
+            @click="zoomOut()"
+          />
         </div>
         <div class="schema-view__button">
-          <i class="fa-lg fa-solid fa-compress" data-bs-toggle="tooltip" data-bs-placement="right" title="Fit to View"
-            @click="fitToView()" />
+          <i
+            class="fa-lg fa-solid fa-compress"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Fit to View"
+            @click="fitToView()"
+          />
         </div>
         <div class="schema-view__button">
-          <i class="fa-lg fa-solid fa-expand" data-bs-toggle="tooltip" data-bs-placement="right" title="Actual Size"
-            @click="actualSize()" />
+          <i
+            class="fa-lg fa-solid fa-expand"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Actual Size"
+            @click="actualSize()"
+          />
         </div>
       </div>
     </div>
-    <div ref="graph" class="schema_graph__wrapper" :style="{ width: graphWidth + 'px' }" />
-    <div ref="sidePanel" class="schema_side-panel__wrapper">
+    <div
+      ref="graph"
+      class="schema_graph__wrapper"
+      :style="{ width: graphWidth + 'px' }"
+    />
+    <div
+      ref="sidePanel"
+      class="schema_side-panel__wrapper"
+    >
       <div class="sidebar-content">
         <br>
-        <SchemaSidebarOverview v-if="schema" v-show="!hoveredLabel && clickedLabel === null" ref="overview"
-          :schema="schema" @drop-table="dropTable" @edit-table="enterEditTableMode"
-          @add-node-table="enterAddNodeTableMode" @add-rel-table="enterAddRelTableMode" />
+        <SchemaSidebarOverview
+          v-if="schema"
+          v-show="!hoveredLabel && clickedLabel === null"
+          ref="overview"
+          :schema="schema"
+          @drop-table="dropTable"
+          @edit-table="enterEditTableMode"
+          @add-node-table="enterAddNodeTableMode"
+          @add-rel-table="enterAddRelTableMode"
+        />
         <!-- Read only view for hovered label -->
         <!-- If edit view is shown, hovering over another label will not change the view -->
-        <SchemaSidebarReadOnlyView v-if="hoveredLabel !== null && (clickedLabel === null || isClickedReadOnly())"
-          :schema="schema" :label="hoveredLabel" :is-node="hoveredIsNode" />
+        <SchemaSidebarReadOnlyView
+          v-if="hoveredLabel !== null && (clickedLabel === null || isClickedReadOnly())"
+          :schema="schema"
+          :label="hoveredLabel"
+          :is-node="hoveredIsNode"
+        />
         <!-- Read only view for clicked label (if it cannot be edited) -->
-        <SchemaSidebarReadOnlyView v-if="clickedLabel !== null && hoveredLabel === null && isClickedReadOnly()"
-          :schema="schema" :label="clickedLabel" :is-node="clickedIsNode" />
+        <SchemaSidebarReadOnlyView
+          v-if="clickedLabel !== null && hoveredLabel === null && isClickedReadOnly()"
+          :schema="schema"
+          :label="clickedLabel"
+          :is-node="clickedIsNode"
+        />
         <!-- Edit view for clicked label -->
-        <SchemaSidebarEditView v-if="clickedLabel !== null && !clickedIsNewTable && !isClickedReadOnly()" ref="editView"
-          :schema="schema" :label="clickedLabel" :is-node="clickedIsNode" @drop-property="dropProperty"
-          @back="resetClick" @drop-table="dropTable" @rename-property="renameProperty" @rename-table="renameTable"
-          @add-property="addProperty" @set-placeholder="setPlaceholder" @unset-placeholder="unsetPlaceholder"
-          @set-placeholder-label="setPlaceholderLabelForEditView" />
-        <SchemaSidebarAddView v-if="clickedLabel !== null && clickedIsNewTable" ref="addView" :schema="schema"
-          :label="clickedLabel" :is-node="clickedIsNode" @discard="cancelAdd" @save="addNewTable"
+        <SchemaSidebarEditView
+          v-if="clickedLabel !== null && !clickedIsNewTable && !isClickedReadOnly()"
+          ref="editView"
+          :schema="schema"
+          :label="clickedLabel"
+          :is-node="clickedIsNode"
+          @drop-property="dropProperty"
+          @back="resetClick"
+          @drop-table="dropTable"
+          @rename-property="renameProperty"
+          @rename-table="renameTable"
+          @add-property="addProperty"
+          @set-placeholder="setPlaceholder"
+          @unset-placeholder="unsetPlaceholder"
+          @set-placeholder-label="setPlaceholderLabelForEditView"
+        />
+        <SchemaSidebarAddView
+          v-if="clickedLabel !== null && clickedIsNewTable"
+          ref="addView"
+          :schema="schema"
+          :label="clickedLabel"
+          :is-node="clickedIsNode"
+          @discard="cancelAdd"
+          @save="addNewTable"
           @update-node-table-label="updatePlaceholderNodeTableLabel"
-          @update-placeholder-rel-table="updatePlaceholderRelTable" />
+          @update-placeholder-rel-table="updatePlaceholderRelTable"
+        />
       </div>
     </div>
-    <SchemaActionDialog ref="actionDialog" @reload-schema="reloadSchema"
-      @action-completed="handleSchemaActionCompleted" />
+    <SchemaActionDialog
+      ref="actionDialog"
+      @reload-schema="reloadSchema"
+      @action-completed="handleSchemaActionCompleted"
+    />
   </div>
 </template>
 
@@ -83,6 +153,11 @@ export default {
     navbarHeight: {
       type: Number,
       required: true,
+    },
+    isVisible: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
   emits: [
@@ -129,6 +204,14 @@ export default {
     },
 
     async schema(value, oldValue) {
+      // Initialize graph if schema becomes available and view is visible
+      if (value && !oldValue && this.isVisible && !this.g6Graph) {
+        this.$nextTick(() => {
+          this.initializeGraph();
+        });
+        return;
+      }
+
       const oldNodes = oldValue ? oldValue.nodeTables.map(n => n.name) : [];
       const newNodes = value ? value.nodeTables.map(n => n.name) : [];
       const oldEdges = oldValue ? oldValue.relTables.map(n => n.name) : [];
@@ -138,17 +221,30 @@ export default {
       if (areSetsEqual(new Set(oldNodes), new Set(newNodes)) && areSetsEqual(new Set(oldEdges), new Set(newEdges))) {
         return;
       }
-      if (!this.graphCreated) {
+      if (!this.graphCreated || !this.isVisible) {
         return;
       }
       await this.resetClick();
       this.redrawGraph(true);
+    },
+
+    isVisible(newValue) {
+      if (newValue && !this.g6Graph && this.schema) {
+        this.initializeGraph();
+      }
     },
   },
   mounted() {
     this.computeGraphWidth();
     this.computeGraphHeight();
     window.addEventListener("resize", this.handleResize);
+    
+    // Initialize graph if visible on mount and schema exists
+    if (this.isVisible && this.schema && !this.g6Graph) {
+      this.$nextTick(() => {
+        this.initializeGraph();
+      });
+    }
   },
 
   beforeUnmount() {
@@ -158,6 +254,13 @@ export default {
     window.removeEventListener("resize", this.handleResize);
   },
   methods: {
+    initializeGraph() {
+      if (this.g6Graph || !this.schema) {
+        return;
+      }
+      this.drawGraph();
+    },
+    
     getColor(label) {
       return this.settingsStore.colorForLabel(label);
     },
@@ -685,10 +788,10 @@ export default {
     },
 
     redrawGraph(rerender) {
-      const { nodes, edges, } = this.extractGraphFromSchema(this.schema);
       if (!this.g6Graph) {
         return;
       }
+      const { nodes, edges, } = this.extractGraphFromSchema(this.schema);
       this.g6Graph.setData({ nodes, edges, });
       if (rerender) {
         this.render();
