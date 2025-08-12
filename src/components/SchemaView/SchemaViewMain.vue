@@ -84,6 +84,11 @@ export default {
       type: Number,
       required: true,
     },
+    isVisible: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
   emits: [
     "addPlaceholderNodeTable",
@@ -129,6 +134,14 @@ export default {
     },
 
     async schema(value, oldValue) {
+      // Initialize graph if schema becomes available and view is visible
+      if (value && !oldValue && this.isVisible && !this.g6Graph) {
+        this.$nextTick(() => {
+          this.initializeGraph();
+        });
+        return;
+      }
+
       const oldNodes = oldValue ? oldValue.nodeTables.map(n => n.name) : [];
       const newNodes = value ? value.nodeTables.map(n => n.name) : [];
       const oldEdges = oldValue ? oldValue.relTables.map(n => n.name) : [];
@@ -138,17 +151,30 @@ export default {
       if (areSetsEqual(new Set(oldNodes), new Set(newNodes)) && areSetsEqual(new Set(oldEdges), new Set(newEdges))) {
         return;
       }
-      if (!this.graphCreated) {
+      if (!this.graphCreated || !this.isVisible) {
         return;
       }
       await this.resetClick();
       this.redrawGraph(true);
+    },
+
+    isVisible(newValue) {
+      if (newValue && !this.g6Graph && this.schema) {
+        this.initializeGraph();
+      }
     },
   },
   mounted() {
     this.computeGraphWidth();
     this.computeGraphHeight();
     window.addEventListener("resize", this.handleResize);
+    
+    // Initialize graph if visible on mount and schema exists
+    if (this.isVisible && this.schema && !this.g6Graph) {
+      this.$nextTick(() => {
+        this.initializeGraph();
+      });
+    }
   },
 
   beforeUnmount() {
@@ -158,6 +184,13 @@ export default {
     window.removeEventListener("resize", this.handleResize);
   },
   methods: {
+    initializeGraph() {
+      if (this.g6Graph || !this.schema) {
+        return;
+      }
+      this.drawGraph();
+    },
+    
     getColor(label) {
       return this.settingsStore.colorForLabel(label);
     },
@@ -685,10 +718,10 @@ export default {
     },
 
     redrawGraph(rerender) {
-      const { nodes, edges, } = this.extractGraphFromSchema(this.schema);
       if (!this.g6Graph) {
         return;
       }
+      const { nodes, edges, } = this.extractGraphFromSchema(this.schema);
       this.g6Graph.setData({ nodes, edges, });
       if (rerender) {
         this.render();

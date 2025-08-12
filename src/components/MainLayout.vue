@@ -144,6 +144,7 @@
             ref="schemaView"
             :schema="schema"
             :navbar-height="0"
+            :is-visible="showSchema"
             @reload-schema="reloadSchema"
             @add-placeholder-node-table="addPlaceholderNodeTable"
             @add-placeholder-rel-table="addPlaceholderRelTable"
@@ -335,7 +336,6 @@ export default {
       storedSettings = this.loadSettingsFromLocalStorage();
     }
     this.initSettings(this.schema, storedSettings);
-    this.$refs.schemaView.drawGraph();
   },
   methods: {
     handleHashChange() {
