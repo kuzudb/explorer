@@ -442,7 +442,7 @@ export default {
 
       const container = this.$refs.graph;
       const width = container.offsetWidth;
-      const height = container.offsetHeight;
+      const height = this.containerHeight === "auto" ? container.offsetHeight : parseInt(this.containerHeight);
       const layoutConfig = await this.getLayoutConfig(edges);
 
 
