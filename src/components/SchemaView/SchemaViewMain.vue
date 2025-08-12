@@ -1,53 +1,123 @@
 <template>
-  <div ref="wrapper" class="schema-view__wrapper">
-    <div ref="toolsContainer" class="schema-view__tools_container" :style="{ minWidth: toolbarWidth + 'px' }">
+  <div
+    ref="wrapper"
+    class="schema-view__wrapper"
+  >
+    <div
+      ref="toolsContainer"
+      class="schema-view__tools_container"
+      :style="{ minWidth: toolbarWidth + 'px' }"
+    >
       <div class="schema-view__tools_container--bottom">
         <div class="schema-view__button">
-          <i class="fa-lg fa-solid fa-magnifying-glass-plus" data-bs-toggle="tooltip" data-bs-placement="right"
-            title="Zoom In" @click="zoomIn()" />
+          <i
+            class="fa-lg fa-solid fa-magnifying-glass-plus"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Zoom In"
+            @click="zoomIn()"
+          />
         </div>
         <div class="schema-view__button">
-          <i class="fa-lg fa-solid fa-magnifying-glass-minus" data-bs-toggle="tooltip" data-bs-placement="right"
-            title="Zoom Out" @click="zoomOut()" />
+          <i
+            class="fa-lg fa-solid fa-magnifying-glass-minus"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Zoom Out"
+            @click="zoomOut()"
+          />
         </div>
         <div class="schema-view__button">
-          <i class="fa-lg fa-solid fa-compress" data-bs-toggle="tooltip" data-bs-placement="right" title="Fit to View"
-            @click="fitToView()" />
+          <i
+            class="fa-lg fa-solid fa-compress"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Fit to View"
+            @click="fitToView()"
+          />
         </div>
         <div class="schema-view__button">
-          <i class="fa-lg fa-solid fa-expand" data-bs-toggle="tooltip" data-bs-placement="right" title="Actual Size"
-            @click="actualSize()" />
+          <i
+            class="fa-lg fa-solid fa-expand"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Actual Size"
+            @click="actualSize()"
+          />
         </div>
       </div>
     </div>
-    <div ref="graph" class="schema_graph__wrapper" :style="{ width: graphWidth + 'px' }" />
-    <div ref="sidePanel" class="schema_side-panel__wrapper">
+    <div
+      ref="graph"
+      class="schema_graph__wrapper"
+      :style="{ width: graphWidth + 'px' }"
+    />
+    <div
+      ref="sidePanel"
+      class="schema_side-panel__wrapper"
+    >
       <div class="sidebar-content">
         <br>
-        <SchemaSidebarOverview v-if="schema" v-show="!hoveredLabel && clickedLabel === null" ref="overview"
-          :schema="schema" @drop-table="dropTable" @edit-table="enterEditTableMode"
-          @add-node-table="enterAddNodeTableMode" @add-rel-table="enterAddRelTableMode" />
+        <SchemaSidebarOverview
+          v-if="schema"
+          v-show="!hoveredLabel && clickedLabel === null"
+          ref="overview"
+          :schema="schema"
+          @drop-table="dropTable"
+          @edit-table="enterEditTableMode"
+          @add-node-table="enterAddNodeTableMode"
+          @add-rel-table="enterAddRelTableMode"
+        />
         <!-- Read only view for hovered label -->
         <!-- If edit view is shown, hovering over another label will not change the view -->
-        <SchemaSidebarReadOnlyView v-if="hoveredLabel !== null && (clickedLabel === null || isClickedReadOnly())"
-          :schema="schema" :label="hoveredLabel" :is-node="hoveredIsNode" />
+        <SchemaSidebarReadOnlyView
+          v-if="hoveredLabel !== null && (clickedLabel === null || isClickedReadOnly())"
+          :schema="schema"
+          :label="hoveredLabel"
+          :is-node="hoveredIsNode"
+        />
         <!-- Read only view for clicked label (if it cannot be edited) -->
-        <SchemaSidebarReadOnlyView v-if="clickedLabel !== null && hoveredLabel === null && isClickedReadOnly()"
-          :schema="schema" :label="clickedLabel" :is-node="clickedIsNode" />
+        <SchemaSidebarReadOnlyView
+          v-if="clickedLabel !== null && hoveredLabel === null && isClickedReadOnly()"
+          :schema="schema"
+          :label="clickedLabel"
+          :is-node="clickedIsNode"
+        />
         <!-- Edit view for clicked label -->
-        <SchemaSidebarEditView v-if="clickedLabel !== null && !clickedIsNewTable && !isClickedReadOnly()" ref="editView"
-          :schema="schema" :label="clickedLabel" :is-node="clickedIsNode" @drop-property="dropProperty"
-          @back="resetClick" @drop-table="dropTable" @rename-property="renameProperty" @rename-table="renameTable"
-          @add-property="addProperty" @set-placeholder="setPlaceholder" @unset-placeholder="unsetPlaceholder"
-          @set-placeholder-label="setPlaceholderLabelForEditView" />
-        <SchemaSidebarAddView v-if="clickedLabel !== null && clickedIsNewTable" ref="addView" :schema="schema"
-          :label="clickedLabel" :is-node="clickedIsNode" @discard="cancelAdd" @save="addNewTable"
+        <SchemaSidebarEditView
+          v-if="clickedLabel !== null && !clickedIsNewTable && !isClickedReadOnly()"
+          ref="editView"
+          :schema="schema"
+          :label="clickedLabel"
+          :is-node="clickedIsNode"
+          @drop-property="dropProperty"
+          @back="resetClick"
+          @drop-table="dropTable"
+          @rename-property="renameProperty"
+          @rename-table="renameTable"
+          @add-property="addProperty"
+          @set-placeholder="setPlaceholder"
+          @unset-placeholder="unsetPlaceholder"
+          @set-placeholder-label="setPlaceholderLabelForEditView"
+        />
+        <SchemaSidebarAddView
+          v-if="clickedLabel !== null && clickedIsNewTable"
+          ref="addView"
+          :schema="schema"
+          :label="clickedLabel"
+          :is-node="clickedIsNode"
+          @discard="cancelAdd"
+          @save="addNewTable"
           @update-node-table-label="updatePlaceholderNodeTableLabel"
-          @update-placeholder-rel-table="updatePlaceholderRelTable" />
+          @update-placeholder-rel-table="updatePlaceholderRelTable"
+        />
       </div>
     </div>
-    <SchemaActionDialog ref="actionDialog" @reload-schema="reloadSchema"
-      @action-completed="handleSchemaActionCompleted" />
+    <SchemaActionDialog
+      ref="actionDialog"
+      @reload-schema="reloadSchema"
+      @action-completed="handleSchemaActionCompleted"
+    />
   </div>
 </template>
 
