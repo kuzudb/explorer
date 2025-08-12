@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import chroma, { random } from 'chroma-js';
+import chroma from 'chroma-js';
 import Axios from "@/utils/AxiosWrapper";
 import {
   SHOW_REL_LABELS_OPTIONS,
@@ -9,7 +9,6 @@ import {
   LLM_PROVIDERS,
 } from "../utils/Constants";
 import G6Utils from "../utils/G6Utils";
-import { Graph } from "@antv/g6";
 
 const COLOR_PALETTE = [
   "#76b7b2", // teal
