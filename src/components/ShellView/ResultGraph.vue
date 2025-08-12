@@ -479,6 +479,8 @@ export default {
             labelBackgroundRadius: 2,
             labelAutoRotate: true,
             labelTextBaseline: 'bottom',
+            endArrow: true,
+            labelAutoRotate: true,
           },
           state: {
             active: {
@@ -815,13 +817,7 @@ export default {
           style: {
             stroke: relSettings.g6Settings.style.stroke,
             lineWidth: relSettings.g6Settings.size || 3,
-            endArrow: true,
             labelText: relLabel,
-            labelBackground: true,
-            labelBackgroundFill: "#ffffff",
-            labelBackgroundPadding: [2, 2, 2, 2],
-            labelBackgroundRadius: 2,
-            labelAutoRotate: true,
           },
         };
 
