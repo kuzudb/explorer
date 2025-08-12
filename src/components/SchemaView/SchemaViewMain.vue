@@ -499,7 +499,7 @@ export default {
       });
 
       let edges = [];
-
+      const isNoPlaceholderRel = schema.relTables.every(r => !r.isPlaceholder);
       for (const r of schema.relTables) {
         if (!r.connectivity || r.connectivity.length === 0) {
           continue;
@@ -523,7 +523,7 @@ export default {
               stroke: strokeColor,
             },
           };
-          if (edge.data.isPlaceholder || edge.data._label === this.clickedLabel) {
+          if (edge.data.isPlaceholder || (isNoPlaceholderRel && edge.data._label === this.clickedLabel)) {
             edge.states = ['active'];
             edge.style.labelText = fittedLabel;
           }
