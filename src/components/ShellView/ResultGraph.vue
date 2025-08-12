@@ -1,86 +1,44 @@
 <template>
-  <div
-    ref="wrapper"
-    class="result-graph__wrapper"
-  >
-    <div
-      ref="graph"
-      class="result-graph__container"
-      :style="{ width: graphWidth + 'px' }"
-    />
+  <div ref="wrapper" class="result-graph__wrapper">
+    <div ref="graph" class="result-graph__container" :style="{ width: graphWidth + 'px' }" />
 
-    <HoverContainer
-      ref="hoverContainer"
-      :schema="schema"
-    />
+    <HoverContainer ref="hoverContainer" :schema="schema" />
 
-    <div
-      v-show="isSidePanelOpen"
-      ref="sidePanel"
-      class="result-graph__side-panel"
-      :style="{ width: sidebarWidth + 'px' }"
-    >
-      <div
-        class="resize-handle"
-        @mousedown="startResize"
-      />
+    <div v-show="isSidePanelOpen" ref="sidePanel" class="result-graph__side-panel"
+      :style="{ width: sidebarWidth + 'px' }">
+      <div class="resize-handle" @mousedown="startResize" />
       <div class="result-graph__side-panel-content">
-        <button
-          class="result-graph__sidebar-button--close"
-          @click="toggleSidePanel"
-        >
+        <button class="result-graph__sidebar-button--close" @click="toggleSidePanel">
           <i class="fa-solid fa-times" />
         </button>
 
-        <div
-          v-if="clickedIsNode"
-          class="result-graph__actions"
-        >
+        <div v-if="clickedIsNode" class="result-graph__actions">
           <br>
 
           <h5>Actions</h5>
-          <button
-            class="btn btn-sm btn-outline-secondary"
-            @click="hideNode()"
-          >
+          <button class="btn btn-sm btn-outline-secondary" @click="hideNode()">
             <i class="fa-solid fa-eye-slash" /> Hide Node
           </button>
 
           &nbsp;
 
-          <button
-            v-if="!isHighlightedMode"
-            class="btn btn-sm btn-outline-secondary"
-            @click="enableHighlightMode()"
-          >
+          <button v-if="!isHighlightedMode" class="btn btn-sm btn-outline-secondary" @click="enableHighlightMode()">
             <i class="fa-solid fa-arrows-to-circle" /> Highlight Mode
           </button>
 
-          <button
-            v-else
-            class="btn btn-sm btn-outline-primary"
-            @click="disableHighlightMode()"
-          >
+          <button v-else class="btn btn-sm btn-outline-primary" @click="disableHighlightMode()">
             <i class="fa-solid fa-arrows-to-circle" />
             Disable Highlight Mode
           </button>
 
           &nbsp;
 
-          <button
-            v-if="!isCurrentNodeExpanded"
-            class="btn btn-sm btn-outline-secondary"
-            @click="expandSelectedNode()"
-          >
+          <button v-if="!isCurrentNodeExpanded" class="btn btn-sm btn-outline-secondary" @click="expandSelectedNode()">
             <i class="fa-solid fa-up-down-left-right" />
             Expand Neighbors
           </button>
 
-          <button
-            v-else
-            class="btn btn-sm btn-outline-primary"
-            @click="collapseSelectedNode()"
-          >
+          <button v-else class="btn btn-sm btn-outline-primary" @click="collapseSelectedNode()">
             <i class="fa-solid fa-up-down-left-right" />
             Collapse Neighbors
           </button>
@@ -91,31 +49,21 @@
           <div class="result-graph__summary-section">
             <h5>{{ sidePanelPropertyTitlePrefix }} Properties</h5>
           </div>
-          <span
-            class="badge bg-primary"
-            :style="{
-              backgroundColor: `${getColor(displayLabel)} !important`,
-              color: `white !important`,
-              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-            }"
-          >
+          <span class="badge bg-primary" :style="{
+            backgroundColor: `${getColor(displayLabel)} !important`,
+            color: `white !important`,
+            textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+          }">
             {{ displayLabel }}</span>
           <hr>
           <table class="table table-sm table-borderless result-graph__result-table">
             <tbody>
-              <tr
-                v-for="property in displayProperties"
-                :key="property.name"
-              >
+              <tr v-for="property in displayProperties" :key="property.name">
                 <th scope="row">
                   {{ property.name }}
-                  <span
-                    v-if="property.isPrimaryKey"
-                    class="badge bg-primary"
-                    style="
+                  <span v-if="property.isPrimaryKey" class="badge bg-primary" style="
                       text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; 
-                      color: white !important;"
-                  >PK</span>
+                      color: white !important;">PK</span>
                 </th>
                 <td>{{ property.value }}</td>
               </tr>
@@ -132,11 +80,7 @@
                   {{ counters.total.node - numHiddenNodes }}/</span>{{ counters.total.node }} nodes
                 <span v-if="numHiddenNodes > 0"> ({{ numHiddenNodes }} hidden) </span>
               </p>
-              <button
-                v-if="numHiddenNodes > 0"
-                class="btn btn-sm btn-outline-secondary"
-                @click="showAllNodesRels()"
-              >
+              <button v-if="numHiddenNodes > 0" class="btn btn-sm btn-outline-secondary" @click="showAllNodesRels()">
                 <i class="fa-solid fa-eye" />
                 Show All
               </button>
@@ -144,17 +88,12 @@
             <hr>
             <table class="table table-sm table-borderless result-graph__overview-table">
               <tbody>
-                <tr
-                  v-for="label in Object.keys(counters.node)"
-                  :key="label"
-                >
+                <tr v-for="label in Object.keys(counters.node)" :key="label">
                   <th scope="row">
-                    <span
-                      class="badge bg-primary"
-                      :style="{ backgroundColor: ` ${getColor(label)} !important`, textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: 'white !important' }"
-                    >{{
-                      label
-                    }}</span>
+                    <span class="badge bg-primary"
+                      :style="{ backgroundColor: ` ${getColor(label)} !important`, textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: 'white !important' }">{{
+                        label
+                      }}</span>
                   </th>
                   <td>{{ counters.node[label] }}</td>
                 </tr>
@@ -173,19 +112,13 @@
             <hr>
             <table class="table table-sm table-borderless result-graph__overview-table">
               <tbody>
-                <tr
-                  v-for="label in Object.keys(counters.rel)"
-                  :key="label"
-                >
+                <tr v-for="label in Object.keys(counters.rel)" :key="label">
                   <th scope="row">
-                    <span
-                      class="badge bg-primary"
-                      :style="{
-                        backgroundColor: ` ${getColor(label)} !important`,
-                        color: 'white !important',
-                        textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-                      }"
-                    >
+                    <span class="badge bg-primary" :style="{
+                      backgroundColor: ` ${getColor(label)} !important`,
+                      color: 'white !important',
+                      textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+                    }">
                       {{ label }}
                     </span>
                   </th>
@@ -204,14 +137,8 @@
         </div>
       </div>
     </div>
-    <button
-      v-show="!isSidePanelOpen"
-      class="result-graph__sidebar-button--open"
-      data-bs-toggle="tooltip"
-      data-bs-placement="right"
-      data-bs-original-title="Open Sidebar"
-      @click="toggleSidePanel"
-    >
+    <button v-show="!isSidePanelOpen" class="result-graph__sidebar-button--open" data-bs-toggle="tooltip"
+      data-bs-placement="right" data-bs-original-title="Open Sidebar" @click="toggleSidePanel">
       <i class="fa-lg fa-solid fa-angle-left" />
     </button>
   </div>
@@ -450,12 +377,11 @@ export default {
         node: {
           type: 'circle',
           style: {
-            lineWidth: 0,
-            labelText: (d) => d.data?.label || '',
             labelFill: "#ffffff",
             labelFontSize: 14,
             labelFontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
             labelFontWeight: 300,
+            labelPlacement: 'center',
           },
           state: {
             active: {
@@ -466,12 +392,10 @@ export default {
           },
         },
         edge: {
-          type: 'line',
           style: {
             lineWidth: 5,
             stroke: "#e2e2e2",
             endArrow: true,
-            labelText: (d) => d.data?.label || '',
             labelFontSize: 12,
             labelFontFamily: "Lexend,Helvetica Neue, Helvetica, Arial, sans-serif",
             labelFontWeight: 350,
@@ -480,6 +404,7 @@ export default {
             labelBackgroundPadding: [2, 2, 2, 2],
             labelBackgroundRadius: 2,
             labelAutoRotate: true,
+            labelTextBaseline: 'bottom',
           },
           state: {
             active: {
@@ -751,9 +676,6 @@ export default {
             lineWidth: nodeSettings.g6Settings.style.lineWidth || 0,
             labelText: nodeLabel,
             labelFill: labelColor,
-            labelFontSize: nodeSettings.g6Settings.labelCfg.style.fontSize,
-            labelFontFamily: nodeSettings.g6Settings.labelCfg.style.fontFamily,
-            labelFontWeight: nodeSettings.g6Settings.labelCfg.style.fontWeight,
           },
         };
 
@@ -815,9 +737,6 @@ export default {
             lineWidth: relSettings.g6Settings.size || 3,
             endArrow: true,
             labelText: relLabel,
-            labelFontSize: relSettings.g6Settings.labelCfg.style.fontSize || 12,
-            labelFontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
-            labelFontWeight: 300,
             labelBackground: true,
             labelBackgroundFill: "#ffffff",
             labelBackgroundPadding: [2, 2, 2, 2],
@@ -828,12 +747,15 @@ export default {
 
         // Handle self-loops and overlapping edges
         if (g6Rel.source === g6Rel.target) {
-          g6Rel.type = "loop";
+          // Self-loop (do not set type, otherwise it will not work)
           g6Rel.style.loopDist = 50;
-          g6Rel.style.loopPosition = LOOP_POSITIONS[(numberOfOverlappingRels - 1) % LOOP_POSITIONS.length];
+          g6Rel.style.loopPlacement = LOOP_POSITIONS[(numberOfOverlappingRels - 1) % LOOP_POSITIONS.length];
         } else if (numberOfOverlappingRels > 1) {
-          g6Rel.type = 'cubic';
+          g6Rel.type = 'quadratic';
           g6Rel.style.curveOffset = ARC_CURVE_OFFSETS[(numberOfOverlappingRels - 1) % ARC_CURVE_OFFSETS.length];
+          g6Rel.style.curvePosition = 0.5;
+        } else {
+          g6Rel.type = 'line';
         }
 
         edges[relId] = g6Rel;
@@ -940,6 +862,7 @@ export default {
           rel: totalRelCount,
         },
       };
+      console.log(edges)
       return {
         counters,
         nodes: Object.values(nodes),
