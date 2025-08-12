@@ -38,7 +38,7 @@ class G6Utils {
     if (!graph) {
       return;
     }
-    graph.fitView([20, 20]);
+    return graph.fitView([20, 20]);
   }
 
   actualSize(graph) {

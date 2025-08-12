@@ -556,15 +556,11 @@ export default {
 
       this.g6Graph.setData({ nodes, edges, });
       await this.render();
+      this.fitToView();
 
       // Fit the graph to view after rendering
       this.g6Graph.on(GraphEvent.AFTER_RENDER, () => {
         console.timeEnd("G6 graph render");
-        if (!this.isInitialRender) {
-          return;
-        }
-        g6Utils.fitToView(this.g6Graph);
-        this.isInitialRender = false;
       });
 
       // Show hover container on node and edge hover
@@ -643,7 +639,6 @@ export default {
       });
 
       this.graphCreated = true;
-
     },
 
     hideNode() {
