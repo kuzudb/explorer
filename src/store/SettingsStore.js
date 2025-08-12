@@ -9,7 +9,7 @@ import {
   LLM_PROVIDERS,
 } from "../utils/Constants";
 import G6Utils from "../utils/G6Utils";
-import G6 from "@antv/g6";
+import { Graph } from "@antv/g6";
 
 const COLOR_PALETTE = [
   "#76b7b2", // teal
@@ -31,6 +31,7 @@ function randomChromaColor() {
 
 const NULL_COLOR = "#d9d9d9";
 const DEFAULT_NUMBER_OF_NODES_TO_EXPAND = 50;
+const DEFAULT_NUMBER_OF_NODES_WITH_LABELS = 200;
 
 export const useSettingsStore = defineStore("settings", {
   state: () => ({
@@ -56,7 +57,7 @@ export const useSettingsStore = defineStore("settings", {
           opacity: 1,
           style: {
             endArrow: {
-              path: G6.Arrow.triangle(),
+              path: 'M 0,0 L 8,4 L 8,-4 Z',
               fill: "#e2e2e2",
             },
             stroke: "#e2e2e2",
@@ -80,7 +81,8 @@ export const useSettingsStore = defineStore("settings", {
       rels: {},
     },
     performance: {
-      maxNumberOfNodes: 200,
+      maxNumberOfNodes: 500,
+      maxNumberOfNodesWithLabels: DEFAULT_NUMBER_OF_NODES_WITH_LABELS,
       maxNumberOfNodesToExpand: DEFAULT_NUMBER_OF_NODES_TO_EXPAND,
     },
     tableView: {
@@ -199,6 +201,10 @@ export const useSettingsStore = defineStore("settings", {
           storedSettingsCopy.performance.maxNumberOfNodesToExpand =
             DEFAULT_NUMBER_OF_NODES_TO_EXPAND;
         }
+        if(!storedSettingsCopy.performance.maxNumberOfNodesWithLabels) {
+          // Migrate old settings
+          storedSettingsCopy.performance.maxNumberOfNodesWithLabels = 200;
+        }
         this.performance = storedSettingsCopy.performance;
       }
       if (storedSettingsCopy.tableView) {
@@ -252,7 +258,7 @@ export const useSettingsStore = defineStore("settings", {
         // Migrate old settings
         if (!this.graphViz.rels[rel.name].g6Settings.style.endArrow) {
           this.graphViz.rels[rel.name].g6Settings.style.endArrow = {
-            path: G6.Arrow.triangle(),
+            path: 'M 0,0 L 8,4 L 8,-4 Z',
             fill: "transparent",
           };
         }

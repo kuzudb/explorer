@@ -14,7 +14,7 @@ class G6Utils {
     }
     const currentZoom = graph.getZoom();
     const ratioOut = 1 / (1 - this.delta * this.zoomSensitivity);
-    const maxZoom = graph.get("maxZoom");
+    const maxZoom = graph.getZoomRange()[1];
     if (ratioOut * currentZoom > maxZoom) {
       return;
     }
@@ -27,7 +27,7 @@ class G6Utils {
     }
     const currentZoom = graph.getZoom();
     const ratioIn = 1 - this.delta * this.zoomSensitivity;
-    const minZoom = graph.get("minZoom");
+    const minZoom = graph.getZoomRange()[0];
     if (ratioIn * currentZoom < minZoom) {
       return;
     }

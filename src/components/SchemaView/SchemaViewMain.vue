@@ -122,7 +122,7 @@
 </template>
 
 <script lang="js">
-import G6 from '@antv/g6';
+import { Graph, GraphEvent } from '@antv/g6';
 import {
   UI_SIZE, SHOW_REL_LABELS_OPTIONS, SCHEMA_ACTION_TYPES, PLACEHOLDER_NODE_TABLE,
   PLACEHOLDER_REL_TABLE, LOOP_POSITIONS, ARC_CURVE_OFFSETS
@@ -172,14 +172,13 @@ export default {
     graphHeight: 0,
     borderWidth: UI_SIZE.DEFAULT_BORDER_WIDTH,
     hoveredLabel: null,
-    hoveredLabelDisplay: null,
     hoveredIsNode: false,
     clickedLabel: null,
-    clickedLabelDisplay: null,
     clickedIsNode: false,
     clickedIsNewTable: false,
     toolbarDebounceTimeout: 100,
     toolbarDebounceTimer: null,
+    settingChangePromise: null,
   }),
   computed: {
     graphVizSettings() {
@@ -212,7 +211,7 @@ export default {
         return;
       }
       this.resetClick();
-      this.handleSettingsChange();
+      this.handleSettingsChange(true);
     },
   },
   mounted() {
@@ -238,18 +237,6 @@ export default {
       }
       return relTable.group ? relTable.group : relTableName;
     },
-    getLayoutConfig(edges) {
-      let nodeSpacing = edges.length * 8;
-      nodeSpacing = nodeSpacing < 80 ? 80 : nodeSpacing;
-      nodeSpacing = nodeSpacing > 500 ? 500 : nodeSpacing;
-      const config = {
-        nodeSpacing,
-        type: 'force',
-        preventOverlap: true,
-
-      };
-      return config;
-    },
     drawGraph() {
       if (this.graphCreated && this.g6Graph) {
         this.g6Graph.destroy();
@@ -262,171 +249,184 @@ export default {
       const width = container.offsetWidth;
       const height = container.offsetHeight;
 
-      // Add G6 Tooltip plugin for full label on hover
-      const tooltip = new G6.Tooltip({
-        offsetX: 10,
-        offsetY: 10,
-        itemTypes: ['node', 'edge'],
-        getContent: (e) => {
-          const model = e.item.getModel();
-          return `<div style="max-width:400px;white-space:normal;word-break:break-all;"><b>${model._label || model.label}</b></div>`;
-        },
-      });
-
-      this.g6Graph = new G6.Graph({
+      this.g6Graph = new Graph({
         container,
         width,
         height,
-        linkCenter: false,
-        groupByTypes: false,
-        layout: this.getLayoutConfig(edges),
-        plugins: [tooltip],
-        defaultNode: {
-          shape: "circle",
-          labelCfg: {
-            style: {
-              fontSize: 14,
-              fontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
-              fontWeight: 300,
-              fill: "#ffffff",
+        layout: {
+          type: 'd3-force',
+          link: {
+            distance: edges.length * 15,
+            strength: 1,
+          },
+          collide: {
+            radius: 200,
+          },
+
+        },
+        plugins: [
+          {
+            type: 'tooltip',
+            key: 'tooltip',
+            offsetX: 10,
+            offsetY: 10,
+            itemTypes: ['node', 'edge'],
+            getContent: (e) => {
+              const { itemId, itemType } = e;
+              const model = itemType === 'node' ? this.g6Graph.getNodeData(itemId) : this.g6Graph.getEdgeData(itemId);
+              const label = model?.data?._label || model?.data?.label || model?.label || '';
+              return `<div style="max-width:400px;white-space:normal;word-break:break-all;"><b>${label}</b></div>`;
             },
-          },
-          size: 100,
+          }
+        ],
+        node: {
+          type: 'circle',
           style: {
-            lineWidth: 0,
-            fill: "#FF0000",
+            labelPlacement: 'center',
+            size: 100,
+            labelFill: "#ffffff",
+            labelFontSize: 14,
+            labelFontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
+            labelFontWeight: 300,
+            lineWidth: 4,
+          },
+          state: {
+            active: {
+              lineWidth: 10,
+              stroke: '#1890FF',
+            },
+
           },
         },
-        nodeStateStyles: {
-          hover: {
-            lineWidth: 4,
-            stroke: '#1890FF',
-          },
-          click: {
-            lineWidth: 4,
-            stroke: '#1848FF',
-          },
-        },
-        defaultEdge: {
-          size: 5,
-          opacity: 1,
+        edge: {
           style: {
-            stroke: "#e2e2e2",
+            lineWidth: 5,
             endArrow: true,
-            // TODO: investigate why the endArrow causes rendering issues
-            // endArrow: {
-            //   path: G6.Arrow.triangle(),
-            //   fill: "#e2e2e2",
-            // }
+            labelFontSize: 12,
+            labelFontFamily: "Lexend,Helvetica Neue, Helvetica, Arial, sans-serif",
+            labelFontWeight: 350,
+            labelBackground: true,
+            labelBackgroundFill: "#ffffff",
+            labelBackgroundPadding: [2, 2, 2, 2],
+            labelBackgroundRadius: 2,
+            labelAutoRotate: true,
+            labelTextBaseline: 'bottom',
           },
-          labelCfg: {
-            style: {
-              fontSize: 12,
-              fontFamily: "Lexend,Helvetica Neue, Helvetica, Arial, sans-serif",
-              fontWeight: 350,
-              background: {
-                fill: "#ffffff",
-                padding: [2, 2, 2, 2],
-                radius: 2,
-              },
+          state: {
+            active: {
+              stroke: '#1890FF',
+              lineWidth: 10,
             },
-            refY: -14,
-            autoRotate: true,
-          },
 
-        },
-        edgeStateStyles: {
-          hover: {
-            stroke: '#1890FF',
-            // endArrow: {
-            //   path: G6.Arrow.triangle(),
-            //   fill: "#1890FF",
-            // },
-          },
-          click: {
-            stroke: '#1848FF',
-            // endArrow: {
-            //   path: G6.Arrow.triangle(),
-            //   fill: "#1848FF",
-            // },
           },
         },
-        modes: {
-          default: ['drag-canvas', 'zoom-canvas', 'drag-node']
-        },
+        behaviors: [
+          'zoom-canvas',
+          'drag-canvas',
+          {
+            type: 'drag-element-force',
+            fixed: true,
+          },
+        ],
       });
 
-      this.g6Graph.data({ nodes, edges, });
+      this.g6Graph.setData({ nodes, edges, });
+      this.g6Graph.render();
 
-      this.g6Graph.on('node:mouseenter', (e) => {
-        const nodeItem = e.item;
-        this.g6Graph.setItemState(nodeItem, 'hover', true);
-        this.handleHover(nodeItem._cfg.model._label, nodeItem._cfg.model.label, true);
+      // Fit the graph to view after rendering
+      this.g6Graph.on(GraphEvent.AFTER_RENDER, () => {
+        G6Utils.fitToView(this.g6Graph);
       });
 
-      this.g6Graph.on('node:mouseleave', (e) => {
-        const nodeItem = e.item;
-        this.g6Graph.setItemState(nodeItem, 'hover', false);
+      // Node hover events
+      this.g6Graph.on('node:pointerenter', (e) => {
+        const id = e.target.id;
+        const nodeData = this.g6Graph.getNodeData(id);
+        this.handleHover(nodeData.data._label, true);
+      });
+
+      this.g6Graph.on('node:pointerleave', () => {
         this.resetHover();
       });
 
+      // Node click events
       this.g6Graph.on('node:click', (e) => {
         if (this.clickedIsNewTable) {
           return;
         }
         this.resetClick();
-        const nodeItem = e.item;
-        this.g6Graph.setItemState(nodeItem, 'click', true);
-        this.clickedLabel = nodeItem._cfg.model._label;
-        this.clickedLabelDisplay = nodeItem._cfg.model.label;
+        const clickedId = e.target.config.id;
+        const nodeData = this.g6Graph.getNodeData(clickedId);
+        this.clickedLabel = nodeData.data._label;
         this.clickedIsNode = true;
+        return this.g6Graph.setElementState({
+          [clickedId]: ['active'],
+        });
       });
 
-      this.g6Graph.on('edge:mouseenter', (e) => {
-        const edgeItem = e.item;
-        this.g6Graph.setItemState(edgeItem, 'hover', true);
+      // Edge hover events
+      this.g6Graph.on('edge:pointerenter', (e) => {
+        const id = e.target.id;
+        const edgeData = this.g6Graph.getEdgeData(id);
         if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-          this.g6Graph.updateItem(edgeItem, {
-            label: this.getRelTableDisplayLabel(edgeItem._cfg.model._label)
-          });
-          edgeItem.toFront();
+          this.g6Graph.updateEdgeData([{
+            id: id,
+            style: {
+              labelText: this.getRelTableDisplayLabel(edgeData.data._label),
+            }
+          }]);
+          this.g6Graph.frontElement(id);
         }
-        this.handleHover(edgeItem._cfg.model._label, edgeItem._cfg.model.label, false);
+        this.handleHover(edgeData.data._label, false);
       });
 
-      this.g6Graph.on('edge:mouseleave', (e) => {
-        const edgeItem = e.item;
-        this.g6Graph.setItemState(edgeItem, 'hover', false);
+      this.g6Graph.on('edge:pointerleave', (e) => {
         this.resetHover();
         if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-          const currentSelectedEdge = this.g6Graph.findAllByState('edge', 'click')[0];
-          if (currentSelectedEdge && currentSelectedEdge._cfg.id === edgeItem._cfg.id) {
-            return;
+          const id = e.target.id;
+          const currentSelectedEdges = this.g6Graph.getElementDataByState('edge', 'active');
+          const isCurrentlySelected = currentSelectedEdges.some(edge => edge.id === id);
+
+          if (!isCurrentlySelected) {
+            this.g6Graph.updateEdgeData([{
+              id: id,
+              style: {
+                labelText: "",
+              }
+            }]);
           }
-          this.g6Graph.updateItem(edgeItem, {
-            label: ""
-          });
         }
       });
 
-      this.g6Graph.on('edge:click', (e) => {
+      // Edge click events
+      this.g6Graph.on('edge:click', async (e) => {
         if (this.clickedIsNewTable) {
           return;
         }
         this.resetClick();
-        const edgeItem = e.item;
-        this.g6Graph.setItemState(edgeItem, 'click', true);
-        if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-          this.g6Graph.updateItem(edgeItem, {
-            label: this.getRelTableDisplayLabel(edgeItem._cfg.model._label)
-          });
-          edgeItem.toFront();
+        // Highlight all edges with the same label
+        const clickedId = e.target.config.id;
+        const clickedEdgeData = this.g6Graph.getEdgeData(clickedId);
+        const clickedLabel = clickedEdgeData.data._label;
+        const edgesWithSameLabel = this.g6Graph.getEdgeData().filter(edge => edge.data._label === clickedLabel);
+        const activeIds = {};
+        for (const edge of edgesWithSameLabel) {
+          activeIds[edge.id] = ['active'];
+          if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
+            this.g6Graph.updateEdgeData([{
+              id: edge.id,
+              style: {
+                labelText: this.getRelTableDisplayLabel(edge.data._label),
+              }
+            }]);
+          }
         }
         this.clickedIsNode = false;
-        this.clickedLabel = edgeItem._cfg.model._label;
-        this.clickedLabelDisplay = edgeItem._cfg.model.label;
+        this.clickedLabel = clickedLabel;
+        await this.g6Graph.setElementState(activeIds);
       });
 
+      // Canvas click events
       this.g6Graph.on('canvas:click', () => {
         if (this.clickedIsNewTable) {
           return;
@@ -434,22 +434,7 @@ export default {
         this.resetClick();
       });
 
-      // Auto layout after drag
-      this.g6Graph.on('node:dragstart', (e) => {
-        this.refreshDraggedNodePosition(e);
-      });
-
-      this.g6Graph.on('node:drag', (e) => {
-        this.g6Graph.layout();
-        this.refreshDraggedNodePosition(e);
-      });
-
-      this.g6Graph.on('node:dragend', (e) => {
-        e.item.get('model').fx = null;
-        e.item.get('model').fy = null;
-      });
-
-      this.g6Graph.render();
+      // Render is already called after setData
       this.graphCreated = true;
     },
 
@@ -457,7 +442,7 @@ export default {
       return `${src}-${dst}-${label}`;
     },
 
-    extractGraphFromSchema(schema) {
+    extractGraphFromSchema(schema, activeIds = null) {
       const overlapEdgeHash = {};
       function getReadableTextColor(bgColor) {
         const color = bgColor.charAt(0) === '#' ? bgColor.substring(1) : bgColor;
@@ -467,30 +452,30 @@ export default {
         const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
         return luminance > 0.6 ? '#000000' : '#ffffff';
       }
-      const nodes = schema.nodeTables.map(n => {
+      let nodes = schema.nodeTables.map(n => {
         const fillColor = n.isPlaceholder ? this.getColor(PLACEHOLDER_NODE_TABLE) : this.getColor(n.name);
         const labelColor = getReadableTextColor(fillColor);
         let label = n.name;
-        // Match ResultGraph: Truncate node label to max width 100px
         label = G6Utils.fittingString(label, 80, this.settingsStore.defaultNode.labelCfg.style.fontSize);
         const returnVal = {
           id: n.name,
-          label: label,
-          _label: n.name,
-          isPlaceholder: Boolean(n.isPlaceholder),
+          data: {
+            _label: n.name,
+            isPlaceholder: Boolean(n.isPlaceholder),
+          },
           style: {
             fill: fillColor,
-            lineWidth: 4,
             stroke: G6Utils.shadeColor(fillColor),
-          },
-          labelCfg: {
-            style: {
-              ...this.settingsStore.defaultNode.labelCfg.style,
-              fill: labelColor,
-              lineWidth: 2,
-            },
+            labelText: label,
+            labelFill: labelColor,
+            labelFontSize: this.settingsStore.defaultNode.labelCfg.style.fontSize,
+            labelFontFamily: this.settingsStore.defaultNode.labelCfg.style.fontFamily,
+            labelFontWeight: this.settingsStore.defaultNode.labelCfg.style.fontWeight,
           },
         };
+        if (returnVal.data.isPlaceholder || returnVal.data._label === this.clickedLabel) {
+          returnVal.states = ['active'];
+        }
         return returnVal;
       });
 
@@ -521,34 +506,30 @@ export default {
         }
         for (const conn of r.connectivity) {
           const strokeColor = r.isPlaceholder ? this.getColor(PLACEHOLDER_REL_TABLE) : this.getColor(r.name);
+          const fittedLabel = G6Utils.fittingString(r.name, 80, 12);
+          const labelText = this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.ALWAYS ?
+            fittedLabel :
+            "";
           const edge = {
             id: this.getEdgeId(conn.src, conn.dst, r.name),
             source: conn.src,
             target: conn.dst,
-            label: this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.ALWAYS ? G6Utils.fittingString(this.getRelTableDisplayLabel(r.name), 80, 12) : "",
-            _label: r.name,
-            isPlaceholder: Boolean(r.isPlaceholder),
+            data: {
+              _label: r.name,
+              isPlaceholder: Boolean(r.isPlaceholder),
+            },
             style: {
+              labelText,
               stroke: strokeColor,
             },
-            labelCfg: {
-              style: {
-                background: { 
-                  fill: "#ffffff",
-                  padding: [2, 2, 2, 2],
-                  radius: 2,
-                 },
-                fill: "#000000",
-                fontSize: 12,
-                fontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
-                fontWeight: 300,
-              },
-            },
           };
+          if (edge.data.isPlaceholder || edge.data._label === this.clickedLabel) {
+            edge.states = ['active'];
+            edge.style.labelText = fittedLabel;
+          }
           if (!edge.source || !edge.target) {
             continue;
           }
-          const hashKey = getEdgeKey(edge.source, edge.target);
           const sortedHashKey = getEdgeKey(edge.source, edge.target, true);
           if (!overlapEdgeHash[sortedHashKey]) {
             overlapEdgeHash[sortedHashKey] = 0;
@@ -556,30 +537,16 @@ export default {
           overlapEdgeHash[sortedHashKey] += 1;
 
           if (edge.source === edge.target) {
-            edge.type = 'loop';
-            edge.loopCfg = {
-              position: LOOP_POSITIONS[(overlapEdgeHash[sortedHashKey] - 1) % LOOP_POSITIONS.length],
-              dist: 100,
-            };
+            // Self-loop (do not set type, otherwise it will not work)
+            edge.style.loopDist = 100;
+            edge.style.loopPlacement = LOOP_POSITIONS[(overlapEdgeHash[sortedHashKey] - 1) % LOOP_POSITIONS.length];
           }
-          else {
+          else if (overlapEdgeHash[sortedHashKey] > 1) {
             edge.type = 'quadratic';
-            edge.curveOffset = ARC_CURVE_OFFSETS[(overlapEdgeHash[sortedHashKey] - 1) % ARC_CURVE_OFFSETS.length];
-            if (sortedHashKey !== hashKey) {
-              // There is a second edge between the same nodes, but in the opposite direction
-              // In this case, G6 by default draws the second edge with a slightly different start and end point
-              // Which looks weird, so we add a workaround
-
-              // Exchange source and target
-              const temp = edge.source;
-              edge.source = edge.target;
-              edge.target = temp;
-
-              // Set start arrow to true
-              edge.style.startArrow = true;
-              // Set end arrow to false
-              edge.style.endArrow = false;
-            }
+            edge.style.curveOffset = ARC_CURVE_OFFSETS[(overlapEdgeHash[sortedHashKey] - 1) % ARC_CURVE_OFFSETS.length];
+            edge.style.curvePosition = 0.5;
+          } else {
+            edge.type = 'line';
           }
           edges.push(edge);
         }
@@ -593,16 +560,13 @@ export default {
         const width = this.computeGraphWidth();
         const height = this.computeGraphHeight();
         if (this.g6Graph) {
-          this.g6Graph.changeSize(width, height);
-          this.layoutGraph();
-          this.g6Graph.fitCenter();
+          this.g6Graph.resize(width, height);
         }
       });
     },
 
-    handleHover(label, labelDisplay, isNode) {
+    handleHover(label, isNode) {
       this.hoveredLabel = label;
-      this.hoveredLabelDisplay = labelDisplay;
       this.hoveredIsNode = isNode;
     },
 
@@ -639,21 +603,33 @@ export default {
       if (!this.g6Graph) {
         return;
       }
-      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
-      if (currentSelectedNode) {
-        this.g6Graph.setItemState(currentSelectedNode, 'click', false);
-      }
-      const currentSelectedEdge = this.g6Graph.findAllByState('edge', 'click')[0];
-      if (currentSelectedEdge) {
-        this.g6Graph.setItemState(currentSelectedEdge, 'click', false);
+
+      // Clear node selections
+      const selectedNodes = this.g6Graph.getElementDataByState('node', 'active');
+      const nodeStates = {};
+      selectedNodes.forEach((node) => {
+        nodeStates[node.id] = [];
+      });
+
+      // Clear edge selections
+      const selectedEdges = this.g6Graph.getElementDataByState('edge', 'active');
+      const edgeStates = {};
+      selectedEdges.forEach((edge) => {
+        edgeStates[edge.id] = [];
         if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-          this.g6Graph.updateItem(currentSelectedEdge, {
-            label: ""
-          });
+          this.g6Graph.updateEdgeData([{
+            id: edge.id,
+            style: {
+              labelText: "",
+            }
+          }]);
         }
-      }
+      });
+
+      // Apply state changes
+      this.g6Graph.setElementState({ ...nodeStates, ...edgeStates });
+
       this.clickedLabel = null;
-      this.clickedLabelDisplay = null;
       this.clickedIsNode = false;
       this.clickedIsNewTable = false;
       this.$nextTick(() => {
@@ -665,7 +641,6 @@ export default {
 
     resetHover() {
       this.hoveredLabel = null;
-      this.hoveredLabelDisplay = null;
       this.hoveredIsNode = false;
     },
 
@@ -674,19 +649,6 @@ export default {
       this.$nextTick(() => {
         this.handleResize();
       });
-    },
-
-    layoutGraph() {
-      if (!this.g6Graph) {
-        return;
-      }
-      this.g6Graph.layout();
-    },
-
-    refreshDraggedNodePosition(e) {
-      const model = e.item.get('model');
-      model.fx = e.x;
-      model.fy = e.y;
     },
 
     computeGraphWidth() {
@@ -741,14 +703,22 @@ export default {
       }, this.toolbarDebounceTimeout);
     },
 
-    handleSettingsChange() {
+    async handleSettingsChange(rerender) {
+      if (this.settingChangePromise) {
+        await this.settingChangePromise;
+      }
       const { nodes, edges, } = this.extractGraphFromSchema(this.schema);
       if (!this.g6Graph) {
         return;
       }
-      this.g6Graph.changeData({ nodes, edges, });
-      const layoutConfig = this.getLayoutConfig(edges);
-      this.g6Graph.updateLayout(layoutConfig);
+      this.g6Graph.setData({ nodes, edges, });
+      if (rerender) {
+        this.settingChangePromise = this.g6Graph.render();
+      } else {
+        this.settingChangePromise = this.g6Graph.draw();
+      }
+      await this.settingChangePromise;
+      this.settingChangePromise = null;
     },
 
     enterEditTableMode(tableName) {
@@ -759,22 +729,7 @@ export default {
       }
       this.clickedIsNode = isTableNode;
       this.clickedLabel = tableName;
-    },
-
-    setG6Click(tableName) {
-      const g6Items = this.g6Graph ? this.g6Graph.findAll(
-        this.clickedIsNode ? 'node' : 'edge',
-        item => item._cfg.model._label === tableName
-      ) : [];
-      g6Items.forEach(g6Item => {
-        this.g6Graph.setItemState(g6Item, 'click', true);
-        if (this.settingsStore.schemaView.showRelLabels === SHOW_REL_LABELS_OPTIONS.HOVER) {
-          this.g6Graph.updateItem(g6Item, {
-            label: this.getRelTableDisplayLabel(tableName),
-          });
-          g6Item.toFront();
-        }
-      });
+      this.handleSettingsChange();
     },
 
     enterAddNodeTableMode() {
@@ -788,10 +743,9 @@ export default {
       this.$emit("addPlaceholderNodeTable", newTableName);
       this.settingsStore.addNewNodeTable(PLACEHOLDER_NODE_TABLE);
       this.$nextTick(() => {
-        this.handleSettingsChange();
+        this.handleSettingsChange(true);
       });
       this.clickedLabel = newTableName;
-      this.clickedLabelDisplay = newTableName;
       this.clickedIsNode = true;
       this.clickedIsNewTable = true;
     },
@@ -807,7 +761,6 @@ export default {
       this.$emit("addPlaceholderRelTable", newTableName);
       this.settingsStore.addNewRelTable(PLACEHOLDER_REL_TABLE);
       this.clickedLabel = newTableName;
-      this.clickedLabelDisplay = newTableName;
       this.clickedIsNode = false;
       this.clickedIsNewTable = true;
     },
@@ -825,17 +778,6 @@ export default {
     },
 
     setPlaceholder(label) {
-      const g6Items = this.g6Graph.findAll(
-        this.clickedIsNode ? 'node' : 'edge',
-        item => item._cfg.model._label === label
-      );
-      if (g6Items.length > 0) {
-        for (const g6Item of g6Items) {
-          this.g6Graph.updateItem(g6Item, {
-            isPlaceholder: true,
-          });
-        }
-      }
       this.$emit("setPlaceholder", label);
     },
 
@@ -849,7 +791,6 @@ export default {
 
     unsetPlaceholder({ originalLabel, isNode }) {
       this.clickedLabel = originalLabel;
-      this.clickedLabelDisplay = originalLabel;
       this.$emit("unsetPlaceholder", { originalLabel, isNode });
     },
 
@@ -857,20 +798,25 @@ export default {
       if (this.clickedLabel === newLabel) {
         return;
       }
-      const g6Item = this.g6Graph ? this.g6Graph.find('node', node => node._cfg.model.isPlaceholder) : null;
-      if (g6Item) {
-        this.g6Graph.updateItem(g6Item, {
-          label: newLabel,
-        });
-      }
       this.$emit("updatePlaceholderNodeTableLabel", newLabel);
+      const nodes = this.g6Graph.getNodeData();
+      const placeholderNode = nodes.find(node => node.data.isPlaceholder);
+      if (placeholderNode) {
+        this.g6Graph.updateNodeData([{
+          id: placeholderNode.id,
+          style: {
+            labelText: newLabel,
+          }
+        }]);
+      }
+
       this.clickedLabel = newLabel;
+
     },
 
     updatePlaceholderRelTable(newTable) {
       this.$emit("updatePlaceholderRelTable", newTable);
       this.clickedLabel = newTable.name;
-      this.clickedLabelDisplay = newTable.name;
       // Rerender the graph to update the edge
       this.$nextTick(() => {
         this.handleSettingsChange();
@@ -931,14 +877,14 @@ export default {
   }
 
   .badge {
-      display: inline-block;
-      background-color: var(--bs-body-bg-accent) !important;
-      color: #fff !important;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      vertical-align: middle;
-    }
+    display: inline-block;
+    background-color: var(--bs-body-bg-accent) !important;
+    color: #fff !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
 
   .schema_side-panel__wrapper {
     width: 360px;
@@ -964,7 +910,9 @@ export default {
         overflow: hidden;
         background-color: var(--bs-body-bg);
         width: calc(100% - 1rem);
-        th, td {
+
+        th,
+        td {
           padding: 10px;
           max-width: 120px;
           word-break: break-word;
@@ -998,7 +946,7 @@ export default {
   .schema-view__tools_container--bottom {
     margin-top: auto;
     padding-bottom: 8px;
-  
+
     .schema-view__button {
       >i {
         color: (var(--bs-body-text));

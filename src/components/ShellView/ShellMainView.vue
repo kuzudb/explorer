@@ -80,9 +80,7 @@ export default {
       // Ignore
     }
     this.$nextTick(() => {
-      if (this.isDemo) {
         this.loadDemoCell();
-      }
       this.updateContainerHeight();
     });
     window.addEventListener("resize", this.updateContainerHeight);

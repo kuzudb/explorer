@@ -402,7 +402,7 @@ export default {
     async reloadSchema() {
       await this.getSchema();
       this.handleSchemaReload(this.schema);
-      this.$refs.schemaView.handleSettingsChange();
+      this.$refs.schemaView.handleSettingsChange(true);
     },
     addPlaceholderNodeTable(tableName) {
       this.schema.nodeTables.push({
