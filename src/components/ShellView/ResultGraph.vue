@@ -982,8 +982,15 @@ export default {
       this.$nextTick(() => {
         if (this.g6Graph) {
           const width = this.$refs.graph.offsetWidth;
-          this.g6Graph.resize(width, parseInt(this.containerHeight));
-          this.g6Graph.fitCenter();
+    
+          // Set graph size based on sidebar state
+          if (this.isSidePanelOpen) {
+            this.g6Graph.setSize(width - this.sidebarWidth, parseInt(this.containerHeight));
+          } else {
+            this.g6Graph.setSize(width, parseInt(this.containerHeight));
+            this.g6Graph.fitCenter();
+          }
+
         }
       });
     },
