@@ -988,7 +988,6 @@ export default {
             this.g6Graph.setSize(width - this.sidebarWidth, parseInt(this.containerHeight));
           } else {
             this.g6Graph.setSize(width, parseInt(this.containerHeight));
-            this.g6Graph.fitCenter();
           }
 
         }
