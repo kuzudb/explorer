@@ -661,6 +661,27 @@ export default {
       this.g6Graph.updateBehavior({ key: 'click-select-element', enable: false });
       this.g6Graph.updateBehavior({ key: 'click-highlight', enable: true });
       this.isHighlightedMode = true;
+      
+      if (!this.clickedId) return;
+
+      const combined = {};
+      const activeNodes = new Set([this.clickedId]); 
+
+      // Mark active edges and connected nodes
+      this.g6Graph.getEdgeData().forEach(edge => {
+        const isConnected = edge.source === this.clickedId || edge.target === this.clickedId;
+        combined[edge.id] = isConnected ? ['active'] : ['inactive'];
+
+        if (isConnected) {
+          activeNodes.add(edge.source);
+          activeNodes.add(edge.target);
+        }
+      });
+      this.g6Graph.getNodeData().forEach(node => {
+        combined[node.id] = activeNodes.has(node.id) ? ['active'] : ['inactive'];
+      });
+      this.setElementState(combined);
+
     },
 
     disableHighlightMode() {
