@@ -304,9 +304,6 @@ export default {
           if (this.$refs.resultGraph) {
             this.$refs.resultGraph.handleResize();
           }
-          if (this.showTable && this.$refs.resultTable) {
-            this.$refs.resultTable.renderTable();
-          }
         });
       }, this.windowResizeDebounceMs);
     },
