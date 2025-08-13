@@ -204,14 +204,6 @@ export default {
     },
 
     async schema(value, oldValue) {
-      // Initialize graph if schema becomes available and view is visible
-      if (value && !oldValue && this.isVisible && !this.g6Graph) {
-        this.$nextTick(() => {
-          this.initializeGraph();
-        });
-        return;
-      }
-
       const oldNodes = oldValue ? oldValue.nodeTables.map(n => n.name) : [];
       const newNodes = value ? value.nodeTables.map(n => n.name) : [];
       const oldEdges = oldValue ? oldValue.relTables.map(n => n.name) : [];

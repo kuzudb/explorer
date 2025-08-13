@@ -336,6 +336,12 @@ export default {
       storedSettings = this.loadSettingsFromLocalStorage();
     }
     this.initSettings(this.schema, storedSettings);
+    if (this.$refs.schemaView && this.showSchema) {
+      this.$nextTick(() => {
+        this.$refs.schemaView.initializeGraph();
+      });
+    }
+
   },
   methods: {
     handleHashChange() {
