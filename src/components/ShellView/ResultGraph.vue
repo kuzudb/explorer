@@ -661,6 +661,33 @@ export default {
       this.g6Graph.updateBehavior({ key: 'click-select-element', enable: false });
       this.g6Graph.updateBehavior({ key: 'click-highlight', enable: true });
       this.isHighlightedMode = true;
+      
+      // Immediately highlight the currently selected node and its neighbors
+      if (this.clickedId) {
+        const edges = this.g6Graph.getEdgeData();
+        const nodes = this.g6Graph.getNodeData();
+        
+        // Find connected elements
+        const connectedEdges = edges.filter(edge => 
+          edge.source === this.clickedId || edge.target === this.clickedId
+        );
+        const connectedNodeIds = new Set();
+        connectedEdges.forEach(edge => {
+          if (edge.source !== this.clickedId) connectedNodeIds.add(edge.source);
+          if (edge.target !== this.clickedId) connectedNodeIds.add(edge.target);
+        });
+        
+        // Apply states
+        const combined = {};
+        nodes.forEach(node => {
+          combined[node.id] = connectedNodeIds.has(node.id) || node.id === this.clickedId ? ['active'] : ['inactive'];
+        });
+        edges.forEach(edge => {
+          combined[edge.id] = connectedEdges.some(ce => ce.id === edge.id) ? ['active'] : ['inactive'];
+        });
+        
+        this.setElementState(combined);
+      }
     },
 
     disableHighlightMode() {
