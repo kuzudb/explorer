@@ -492,11 +492,13 @@ export default {
             labelFontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
             labelFontWeight: 300,
             labelPlacement: 'center',
+            zIndex: 10,
           },
           state: {
             active: {
               lineWidth: 10,
               stroke: '#1890FF',
+              zIndex: 10,
             },
 
           },
@@ -517,11 +519,13 @@ export default {
             labelTextBaseline: 'bottom',
             endArrow: true,
             labelAutoRotate: true,
+            zIndex: 1,
           },
           state: {
             active: {
               lineWidth: 10,
               stroke: '#1890FF',
+              zIndex: 1,
             },
 
           },
