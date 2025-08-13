@@ -211,6 +211,8 @@ export default {
     startHeight: 0,
     startY: 0,
     graphSidebarOpen: false,
+    windowResizeDebounceTimer: null,
+    windowResizeDebounceMs: 100,
   }),
   computed: {
     ...mapStores(useModeStore),
@@ -236,10 +238,12 @@ export default {
   mounted() {
     window.addEventListener('mousemove', this.handleResize);
     window.addEventListener('mouseup', this.stopResize);
+    window.addEventListener('resize', this.handleWindowResize);
   },
   beforeUnmount() {
     window.removeEventListener('mousemove', this.handleResize);
     window.removeEventListener('mouseup', this.stopResize);
+    window.removeEventListener('resize', this.handleWindowResize);
   },
   methods: {
     handleDataChange(schema, queryResult, errorMessage) {
@@ -289,6 +293,22 @@ export default {
     },
     handleGraphResize() {
       this.$refs.resultGraph.handleResize();
+    },
+    handleWindowResize() {
+      if (this.windowResizeDebounceTimer) {
+        clearTimeout(this.windowResizeDebounceTimer);
+      }
+      this.windowResizeDebounceTimer = setTimeout(() => {
+        this.updateContainerHeight();
+        this.$nextTick(() => {
+          if (this.$refs.resultGraph) {
+            this.$refs.resultGraph.handleResize();
+          }
+          if (this.showTable && this.$refs.resultTable) {
+            this.$refs.resultTable.renderTable();
+          }
+        });
+      }, this.windowResizeDebounceMs);
     },
     updateContainerHeight() {
       if (this.errorMessage) {
