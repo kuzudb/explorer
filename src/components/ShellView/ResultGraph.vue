@@ -498,7 +498,6 @@ export default {
             active: {
               lineWidth: 10,
               stroke: '#1890FF',
-              zIndex: 10,
             },
 
           },
@@ -525,7 +524,6 @@ export default {
             active: {
               lineWidth: 10,
               stroke: '#1890FF',
-              zIndex: 1,
             },
 
           },
