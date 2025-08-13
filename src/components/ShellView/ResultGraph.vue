@@ -1268,8 +1268,9 @@ export default {
 
   .result-graph__summary-section {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.5rem;
 
     p {
       display: inline-block;
@@ -1278,7 +1279,8 @@ export default {
 
     button {
       padding: 5px;
-      margin-right: 20px;
+      margin-right: 0;
+      margin-top: 0.25rem;
     }
   }
 
