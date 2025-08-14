@@ -563,21 +563,10 @@ export default {
 }
 
 /* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bs-body-bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--bs-body-inactive);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--bs-body-bg-accent);
+body {
+  scrollbar-gutter: stable both-edges;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bs-body-bg-accent) var(--bs-body-bg);
 }
 
 .main-layout__sidebar,

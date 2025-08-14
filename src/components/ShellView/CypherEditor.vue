@@ -342,7 +342,7 @@ $margin: 1rem;
     align-items: center;
     padding: 0.5rem 0;
     min-width: 48px;
-    background-color: var(--bs-body-bg-secondary);
+    background-color: var(--bs-body-inactive);
 
     ul {
       display: flex;

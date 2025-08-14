@@ -380,7 +380,19 @@ export default {
     isSidePanelOpen(newVal) {
       this.$nextTick(() => {
         this.handleResize();
+        // Update copy buttons when side panel opens/closes
+        if (newVal) {
+          setTimeout(() => {
+            this.addCopyButtonsToOverflowingCells();
+          }, 200);
+        }
       });
+    },
+    clickedProperties() {
+      // Add copy buttons when properties change
+      setTimeout(() => {
+        this.addCopyButtonsToOverflowingCells();
+      }, 100);
     },
   },
   mounted() {
@@ -393,6 +405,10 @@ export default {
         this.handleResize();
       });
     }
+    // Add copy buttons to overflowing cells
+    this.$nextTick(() => {
+      this.addCopyButtonsToOverflowingCells();
+    });
   },
   beforeUnmount() {
     if (this.g6Graph) {
@@ -403,6 +419,48 @@ export default {
     window.removeEventListener("mouseup", this.stopResize);
   },
   methods: {
+    addCopyButtonsToOverflowingCells() {
+      setTimeout(() => {
+        this.$el.querySelectorAll('td, th').forEach(cell => {
+          if (cell.scrollWidth > cell.clientWidth || cell.textContent?.length > 20) {
+            this.addCopyButton(cell);
+          }
+        });
+      }, 300);
+    },
+
+    addCopyButton(cell) {
+      const existingButton = cell.querySelector('.copy-button');
+      if (existingButton) existingButton.remove();
+
+      const button = document.createElement('button');
+      button.className = 'copy-button';
+      button.innerHTML = '<i class="fa-solid fa-copy"></i>';
+      button.style.cssText = `
+        position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+        background: var(--bs-body-bg-accent); color: white; border: none; border-radius: 4px;
+        width: 24px; height: 24px; font-size: 12px; cursor: pointer; opacity: 0;
+        transition: opacity 0.2s; z-index: 1000; display: flex; align-items: center; justify-content: center;
+      `;
+
+      cell.addEventListener('mouseenter', () => button.style.opacity = '1');
+      cell.addEventListener('mouseleave', () => button.style.opacity = '0');
+      button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        navigator.clipboard?.writeText(cell.textContent).catch(() => {
+          document.execCommand('copy', false, cell.textContent);
+        });
+        button.innerHTML = '<i class="fa-solid fa-check"></i>';
+        button.style.background = '#28a745';
+        setTimeout(() => {
+          button.innerHTML = '<i class="fa-solid fa-copy"></i>';
+          button.style.background = 'var(--bs-body-bg-accent)';
+        }, 1000);
+      });
+
+      cell.style.cssText += 'position: relative; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 30px;';
+      cell.appendChild(button);
+    },
     async setElementVisibility(elements) {
       if (!this.g6Graph) {
         return;
@@ -453,10 +511,16 @@ export default {
           strength: 2,
         },
         collide: {
-          radius: 40,
+          radius: 120,
         },
-        alphaMin: 0.2,
+        manyBody: {
+          strength: -100,
+        },
+        alpha: 1,
+        alphaMin: 0.02,
         alphaDecay: 0.03,
+        velocityDecay: 0.6,
+    
       };
 
       return config;
@@ -487,7 +551,6 @@ export default {
         node: {
           type: 'circle',
           style: {
-            labelFill: "#ffffff",
             labelFontSize: 14,
             labelFontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
             labelFontWeight: 300,
@@ -512,12 +575,13 @@ export default {
             labelFontWeight: 350,
             labelBackground: true,
             labelBackgroundFill: "#ffffff",
-            labelBackgroundPadding: [2, 2, 2, 2],
+            labelPadding: [4, 8],
             labelBackgroundRadius: 2,
             labelAutoRotate: true,
             labelTextBaseline: 'bottom',
             endArrow: true,
             labelAutoRotate: true,
+            labelOffsetY: -8,
             zIndex: 1,
           },
           state: {
@@ -1401,9 +1465,10 @@ export default {
       th,
       td {
         white-space: nowrap;
-        overflow-x: auto;
-        text-overflow: hidden;
+        overflow: hidden;
+        text-overflow: ellipsis;
         max-width: none;
+        position: relative;
       }
 
       th {
@@ -1431,24 +1496,12 @@ export default {
         font-family: "Lexend", Lexend, sans-serif;
 
         td {
-          word-break: break-all;
-
+          word-break: normal;
         }
       }
 
-      // Add thin scrollbar for horizontal overflow
-      &::-webkit-scrollbar {
-        height: 2px;
-        background: var(--bs-body-bg-accent);
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background: var(--bs-body-bg-accent);
-        border-radius: 3px;
-      }
-
-      scrollbar-width: thin;
-      scrollbar-color: var(--bs-body-bg-accent) var(--bs-body-bg-secondary);
+      scrollbar-width: none;
+      scrollbar-color: transparent transparent;
     }
 
     h5 {
