@@ -68,7 +68,7 @@ class G6Utils {
   // This function is copied from http://g6-v3-2.antv.vision/en/examples/shape/label
   fittingString(str, maxWidth, fontSize) {
     maxWidth = maxWidth * 2;
-    const fontWidth = fontSize * 1.3;
+    const fontWidth = fontSize * 1.5;
     const width = this.calcTextWidth(str, fontSize);
     const ellipsis = "…";
     if (width > maxWidth) {

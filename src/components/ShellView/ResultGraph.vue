@@ -107,7 +107,7 @@
                 v-for="property in displayProperties"
                 :key="property.name"
               >
-                <th scope="row">
+                <th scope="row" class="copyable-cell">
                   {{ property.name }}
                   <span
                     v-if="property.isPrimaryKey"
@@ -116,8 +116,26 @@
                       text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; 
                       color: white !important;"
                   >PK</span>
+                  <button 
+                    class="copy-button" 
+                    @click="copyToClipboard(property.name)"
+                    @mouseenter="showCopyButton($event)"
+                    @mouseleave="hideCopyButton($event)"
+                  >
+                    <i class="fa-solid fa-copy"></i>
+                  </button>
                 </th>
-                <td>{{ property.value }}</td>
+                <td class="copyable-cell">
+                  {{ property.value }}
+                  <button 
+                    class="copy-button" 
+                    @click="copyToClipboard(property.value)"
+                    @mouseenter="showCopyButton($event)"
+                    @mouseleave="hideCopyButton($event)"
+                  >
+                    <i class="fa-solid fa-copy"></i>
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -377,7 +395,7 @@ export default {
       this.redrawGraph();
     },
 
-    isSidePanelOpen(newVal) {
+    isSidePanelOpen() {
       this.$nextTick(() => {
         this.handleResize();
       });
@@ -403,6 +421,42 @@ export default {
     window.removeEventListener("mouseup", this.stopResize);
   },
   methods: {
+    copyToClipboard(text) {
+      navigator.clipboard?.writeText(text).catch(() => {
+        document.execCommand('copy', false, text);
+      });
+      
+      // Find the button that was clicked and show success state
+      const event = window.event;
+      if (event && event.target) {
+        const button = event.target.closest('.copy-button');
+        if (button) {
+          const icon = button.querySelector('i');
+          if (icon) {
+            icon.className = 'fa-solid fa-check';
+            button.style.background = '#28a745';
+            setTimeout(() => {
+              icon.className = 'fa-solid fa-copy';
+              button.style.background = 'var(--bs-body-bg-accent)';
+            }, 1000);
+          }
+        }
+      }
+    },
+
+    showCopyButton(event) {
+      const button = event.target.closest('.copyable-cell').querySelector('.copy-button');
+      if (button) {
+        button.style.opacity = '1';
+      }
+    },
+
+    hideCopyButton(event) {
+      const button = event.target.closest('.copyable-cell').querySelector('.copy-button');
+      if (button) {
+        button.style.opacity = '0';
+      }
+    },
     async setElementVisibility(elements) {
       if (!this.g6Graph) {
         return;
@@ -453,10 +507,16 @@ export default {
           strength: 2,
         },
         collide: {
-          radius: 40,
+          radius: 120,
         },
+        manyBody: {
+          strength: -300,
+        },
+        alpha: 1,
         alphaMin: 0.2,
         alphaDecay: 0.03,
+        velocityDecay: 0.45,
+    
       };
 
       return config;
@@ -487,7 +547,6 @@ export default {
         node: {
           type: 'circle',
           style: {
-            labelFill: "#ffffff",
             labelFontSize: 14,
             labelFontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
             labelFontWeight: 300,
@@ -512,12 +571,13 @@ export default {
             labelFontWeight: 350,
             labelBackground: true,
             labelBackgroundFill: "#ffffff",
-            labelBackgroundPadding: [2, 2, 2, 2],
+            labelPadding: [4, 8],
             labelBackgroundRadius: 2,
             labelAutoRotate: true,
             labelTextBaseline: 'bottom',
             endArrow: true,
             labelAutoRotate: true,
+            labelOffsetY: -8,
             zIndex: 1,
           },
           state: {
@@ -1401,9 +1461,43 @@ export default {
       th,
       td {
         white-space: nowrap;
-        overflow-x: auto;
-        text-overflow: hidden;
+        overflow: hidden;
+        text-overflow: ellipsis;
         max-width: none;
+        position: relative;
+        padding-right: 30px;
+      }
+
+      .copyable-cell {
+        position: relative;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .copy-button {
+        position: absolute;
+        right: 4px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--bs-body-bg-accent);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          opacity: 1;
+        }
       }
 
       th {
@@ -1431,24 +1525,12 @@ export default {
         font-family: "Lexend", Lexend, sans-serif;
 
         td {
-          word-break: break-all;
-
+          word-break: normal;
         }
       }
 
-      // Add thin scrollbar for horizontal overflow
-      &::-webkit-scrollbar {
-        height: 2px;
-        background: var(--bs-body-bg-accent);
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background: var(--bs-body-bg-accent);
-        border-radius: 3px;
-      }
-
-      scrollbar-width: thin;
-      scrollbar-color: var(--bs-body-bg-accent) var(--bs-body-bg-secondary);
+      scrollbar-width: none;
+      scrollbar-color: transparent transparent;
     }
 
     h5 {

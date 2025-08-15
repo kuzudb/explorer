@@ -290,10 +290,7 @@ export default {
           collide: {
             radius: (d) => {
               const degree = d.data.degree || 0;
-              if (degree === 0) {
-                return 10;
-              }
-              return 200;
+              return degree === 0 ? 20 : 200;
             }
           },
           manyBody: {
@@ -326,7 +323,6 @@ export default {
           style: {
             labelPlacement: 'center',
             size: 100,
-            labelFill: "#ffffff",
             labelFontSize: 14,
             labelFontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
             labelFontWeight: 300,
@@ -349,10 +345,11 @@ export default {
             labelFontWeight: 350,
             labelBackground: true,
             labelBackgroundFill: "#ffffff",
-            labelBackgroundPadding: [2, 2, 2, 2],
+            labelPadding: [4, 8],
             labelBackgroundRadius: 2,
             labelAutoRotate: true,
             labelTextBaseline: 'bottom',
+            labelOffsetY: -8,
           },
           state: {
             active: {
