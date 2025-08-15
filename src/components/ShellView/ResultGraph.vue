@@ -107,7 +107,7 @@
                 v-for="property in displayProperties"
                 :key="property.name"
               >
-                <th scope="row">
+                <th scope="row" class="copyable-cell">
                   {{ property.name }}
                   <span
                     v-if="property.isPrimaryKey"
@@ -116,8 +116,26 @@
                       text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; 
                       color: white !important;"
                   >PK</span>
+                  <button 
+                    class="copy-button" 
+                    @click="copyToClipboard(property.name)"
+                    @mouseenter="showCopyButton($event)"
+                    @mouseleave="hideCopyButton($event)"
+                  >
+                    <i class="fa-solid fa-copy"></i>
+                  </button>
                 </th>
-                <td>{{ property.value }}</td>
+                <td class="copyable-cell">
+                  {{ property.value }}
+                  <button 
+                    class="copy-button" 
+                    @click="copyToClipboard(property.value)"
+                    @mouseenter="showCopyButton($event)"
+                    @mouseleave="hideCopyButton($event)"
+                  >
+                    <i class="fa-solid fa-copy"></i>
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -377,22 +395,10 @@ export default {
       this.redrawGraph();
     },
 
-    isSidePanelOpen(newVal) {
+    isSidePanelOpen() {
       this.$nextTick(() => {
         this.handleResize();
-        // Update copy buttons when side panel opens/closes
-        if (newVal) {
-          setTimeout(() => {
-            this.addCopyButtonsToOverflowingCells();
-          }, 200);
-        }
       });
-    },
-    clickedProperties() {
-      // Add copy buttons when properties change
-      setTimeout(() => {
-        this.addCopyButtonsToOverflowingCells();
-      }, 100);
     },
   },
   mounted() {
@@ -405,10 +411,6 @@ export default {
         this.handleResize();
       });
     }
-    // Add copy buttons to overflowing cells
-    this.$nextTick(() => {
-      this.addCopyButtonsToOverflowingCells();
-    });
   },
   beforeUnmount() {
     if (this.g6Graph) {
@@ -419,47 +421,41 @@ export default {
     window.removeEventListener("mouseup", this.stopResize);
   },
   methods: {
-    addCopyButtonsToOverflowingCells() {
-      setTimeout(() => {
-        this.$el.querySelectorAll('td, th').forEach(cell => {
-          if (cell.scrollWidth > cell.clientWidth || cell.textContent?.length > 20) {
-            this.addCopyButton(cell);
+    copyToClipboard(text) {
+      navigator.clipboard?.writeText(text).catch(() => {
+        document.execCommand('copy', false, text);
+      });
+      
+      // Find the button that was clicked and show success state
+      const event = window.event;
+      if (event && event.target) {
+        const button = event.target.closest('.copy-button');
+        if (button) {
+          const icon = button.querySelector('i');
+          if (icon) {
+            icon.className = 'fa-solid fa-check';
+            button.style.background = '#28a745';
+            setTimeout(() => {
+              icon.className = 'fa-solid fa-copy';
+              button.style.background = 'var(--bs-body-bg-accent)';
+            }, 1000);
           }
-        });
-      }, 300);
+        }
+      }
     },
 
-    addCopyButton(cell) {
-      const existingButton = cell.querySelector('.copy-button');
-      if (existingButton) existingButton.remove();
+    showCopyButton(event) {
+      const button = event.target.closest('.copyable-cell').querySelector('.copy-button');
+      if (button) {
+        button.style.opacity = '1';
+      }
+    },
 
-      const button = document.createElement('button');
-      button.className = 'copy-button';
-      button.innerHTML = '<i class="fa-solid fa-copy"></i>';
-      button.style.cssText = `
-        position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
-        background: var(--bs-body-bg-accent); color: white; border: none; border-radius: 4px;
-        width: 24px; height: 24px; font-size: 12px; cursor: pointer; opacity: 0;
-        transition: opacity 0.2s; z-index: 1000; display: flex; align-items: center; justify-content: center;
-      `;
-
-      cell.addEventListener('mouseenter', () => button.style.opacity = '1');
-      cell.addEventListener('mouseleave', () => button.style.opacity = '0');
-      button.addEventListener('click', (e) => {
-        e.stopPropagation();
-        navigator.clipboard?.writeText(cell.textContent).catch(() => {
-          document.execCommand('copy', false, cell.textContent);
-        });
-        button.innerHTML = '<i class="fa-solid fa-check"></i>';
-        button.style.background = '#28a745';
-        setTimeout(() => {
-          button.innerHTML = '<i class="fa-solid fa-copy"></i>';
-          button.style.background = 'var(--bs-body-bg-accent)';
-        }, 1000);
-      });
-
-      cell.style.cssText += 'position: relative; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 30px;';
-      cell.appendChild(button);
+    hideCopyButton(event) {
+      const button = event.target.closest('.copyable-cell').querySelector('.copy-button');
+      if (button) {
+        button.style.opacity = '0';
+      }
     },
     async setElementVisibility(elements) {
       if (!this.g6Graph) {
@@ -514,12 +510,12 @@ export default {
           radius: 120,
         },
         manyBody: {
-          strength: -100,
+          strength: -300,
         },
         alpha: 1,
-        alphaMin: 0.02,
+        alphaMin: 0.2,
         alphaDecay: 0.03,
-        velocityDecay: 0.6,
+        velocityDecay: 0.45,
     
       };
 
@@ -1469,6 +1465,39 @@ export default {
         text-overflow: ellipsis;
         max-width: none;
         position: relative;
+        padding-right: 30px;
+      }
+
+      .copyable-cell {
+        position: relative;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .copy-button {
+        position: absolute;
+        right: 4px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--bs-body-bg-accent);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          opacity: 1;
+        }
       }
 
       th {
