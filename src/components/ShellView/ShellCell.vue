@@ -198,6 +198,7 @@ export default {
       if (isSchemaChanged) {
         this.$emit("reloadSchema");
       }
+
     },
     generateAndEvaluateQuery(question) {
       this.queryResults = null;

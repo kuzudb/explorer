@@ -4,35 +4,6 @@
     class="shell-editor__wrapper"
     :style="{ maxHeight: isMaximized ? '550px' : '100%' }"
   >
-    <!-- Topbar -->
-    <header class="shell-editor__topbar">
-      <div>
-        <ul class="nav nav-tabs border-0">
-          <li class="nav-item text-[var(--bs-body-text)]">
-            <a
-              href="#"
-              :class="[
-                !isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
-              ]"
-              class="text-decoration-none"
-              @click.prevent="isQueryGenerationMode = false"
-            >Cypher Query</a>
-          </li>
-          <li class="nav-item">
-            <a
-              v-if="!modeStore.isWasm"
-              href="#"
-              :class="[
-                isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
-              ]"
-              class="text-decoration-none"
-              @click.prevent="isQueryGenerationMode = true"
-            >AI Query</a>
-          </li>
-        </ul>
-      </div>
-    </header>
-
     <!-- Layout -->
     <div class="shell-editor__layout">
       <!-- Sidebar -->
@@ -63,23 +34,55 @@
         </ul>
       </aside>
 
-      <!-- Main Content -->
-      <main>
-        <div
-          v-show="!isQueryGenerationMode"
-          ref="editor"        
-        />
-        <div
-          v-if="!modeStore.isWasm"
-          v-show="isQueryGenerationMode"
-        >
-          <textarea
-            ref="gptQuestionTextArea"
-            v-model="gptQuestion"
-            placeholder="Type your question here..."
+      <!-- Content Area -->
+      <div class="shell-editor__content">
+        <!-- Topbar -->
+        <header class="shell-editor__topbar">
+          <div>
+            <ul class="nav nav-tabs border-0">
+              <li class="nav-item text-[var(--bs-body-text)]">
+                <a
+                  href="#"
+                  :class="[
+                    !isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
+                  ]"
+                  class="text-decoration-none"
+                  @click.prevent="isQueryGenerationMode = false"
+                >Cypher Query</a>
+              </li>
+              <li class="nav-item">
+                <a
+                  v-if="!modeStore.isWasm"
+                  href="#"
+                  :class="[
+                    isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
+                  ]"
+                  class="text-decoration-none"
+                  @click.prevent="isQueryGenerationMode = true"
+                >AI Query</a>
+              </li>
+            </ul>
+          </div>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+          <div
+            v-show="!isQueryGenerationMode"
+            ref="editor"        
           />
-        </div>
-      </main>
+          <div
+            v-if="!modeStore.isWasm"
+            v-show="isQueryGenerationMode"
+          >
+            <textarea
+              ref="gptQuestionTextArea"
+              v-model="gptQuestion"
+              placeholder="Type your question here..."
+            />
+          </div>
+        </main>
+      </div>
     </div>
   </div>
 </template>
@@ -224,7 +227,6 @@ export default {
       
       const editorContainer = this.$refs.editor;
       this.editor = window.Monaco.editor.create(editorContainer, {
-        value: "// Query to retrieve 5 relationships from the graph. \n// ▶️ Run this query by clicking the play button or pressing Shift + Enter. \nMATCH (a)-[r]->(b) RETURN * LIMIT 5;",
         language: "cypher",
         theme,
         automaticLayout: true,
@@ -294,7 +296,7 @@ $margin: 1rem;
 
 .shell-editor__topbar {
   width: 100%;
-  padding: 0.5rem 3rem;
+  padding: 0.5rem 1rem;
   border-bottom: 1px solid var(--bs-body-inactive);
   background-color: var(--bs-body-bg-secondary);
   color: var(--bs-body-text);
@@ -354,6 +356,7 @@ $margin: 1rem;
       font-size: 0.875rem;
       font-weight: 500;
       text-decoration: none;
+      padding-top: 2.5rem;
 
       button {
         padding: 0px;
@@ -361,6 +364,12 @@ $margin: 1rem;
         border: 0px;
       }
     }  
+  }
+
+  .shell-editor__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 }
 

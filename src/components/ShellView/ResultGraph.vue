@@ -8,29 +8,12 @@
       class="result-graph__container"
       :style="{ width: graphWidth + 'px' }"
     />
-    <!-- Loading Overlay -->
-    <div
-      v-if="isGraphLoading"
-      class="result-graph__loading-overlay"
-    >
-      <div
-        class="spinner-border"
-        role="status"
-      >
-        <span class="visually-hidden">Loading...</span>
-      </div>
-      <div class="result-graph__loading-text">
-        Rendering Graph...
-      </div>
-    </div>
-    
+
     <HoverContainer
-      v-if="g6Graph"
       ref="hoverContainer"
-      :g6-graph="g6Graph"
       :schema="schema"
     />
-    
+
     <div
       v-show="isSidePanelOpen"
       ref="sidePanel"
@@ -124,7 +107,10 @@
                 v-for="property in displayProperties"
                 :key="property.name"
               >
-                <th scope="row">
+                <th
+                  scope="row"
+                  class="copyable-cell"
+                >
                   {{ property.name }}
                   <span
                     v-if="property.isPrimaryKey"
@@ -133,8 +119,26 @@
                       text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; 
                       color: white !important;"
                   >PK</span>
+                  <button 
+                    class="copy-button" 
+                    @click="copyToClipboard(property.name)"
+                    @mouseenter="showCopyButton($event)"
+                    @mouseleave="hideCopyButton($event)"
+                  >
+                    <i class="fa-solid fa-copy" />
+                  </button>
                 </th>
-                <td>{{ property.value }}</td>
+                <td class="copyable-cell">
+                  {{ property.value }}
+                  <button 
+                    class="copy-button" 
+                    @click="copyToClipboard(property.value)"
+                    @mouseenter="showCopyButton($event)"
+                    @mouseleave="hideCopyButton($event)"
+                  >
+                    <i class="fa-solid fa-copy" />
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -169,7 +173,8 @@
                     <span
                       class="badge bg-primary"
                       :style="{ backgroundColor: ` ${getColor(label)} !important`, textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: 'white !important' }"
-                    >{{ label
+                    >{{
+                      label
                     }}</span>
                   </th>
                   <td>{{ counters.node[label] }}</td>
@@ -234,7 +239,7 @@
 </template>
 
 <script lang="js">
-import G6 from '@antv/g6';
+import { Graph, GraphEvent } from '@antv/g6';
 import G6Utils from "../../utils/G6Utils";
 import {
   DATA_TYPES, UI_SIZE, LOOP_POSITIONS, ARC_CURVE_OFFSETS
@@ -245,6 +250,7 @@ import { useModeStore } from "../../store/ModeStore";
 import { mapStores } from 'pinia'
 import ValueFormatter from "../../utils/ValueFormatter";
 import HoverContainer from "./HoverContainer.vue";
+import g6Utils from '../../utils/G6Utils';
 
 export default {
   name: "ResultGraph",
@@ -283,9 +289,12 @@ export default {
     sidebarWidth: 350,
     graphWidth: 0,
     borderWidth: UI_SIZE.DEFAULT_BORDER_WIDTH,
-    numHiddenNodes: 0,
-    numHiddenRels: 0,
+    hiddenElements: {
+      nodes: {},
+      edges: {}
+    },
     clickedProperties: [],
+    clickedId: null,
     clickedLabel: "",
     clickedIsNode: false,
     isCurrentNodeExpanded: false,
@@ -306,7 +315,8 @@ export default {
     isResizing: false,
     minSidebarWidth: 350,
     maxSidebarWidth: 800,
-    isGraphLoading: false, // Added loading state
+    isInitialRender: true,
+    drawPromise: null
   }),
   computed: {
     graphVizSettings() {
@@ -347,12 +357,21 @@ export default {
         return isNode ? "#ffffff" : "#ffffff";
       };
     },
+    numHiddenNodes() {
+      return Object.keys(this.hiddenElements.nodes).length;
+    },
+    numHiddenRels() {
+      return Object.keys(this.hiddenElements.edges).length;
+    },
   },
   watch: {
     performanceSettings: {
       handler(newVal, oldVal) {
         if (newVal.maxNumberOfNodes !== oldVal.maxNumberOfNodes) {
-          this.handleSettingsChange();
+          return this.redrawGraph();
+        }
+        if (newVal.maxNumberOfNodesWithLabels !== oldVal.maxNumberOfNodesWithLabels) {
+          return this.redrawGraph();
         }
       },
       deep: true,
@@ -376,10 +395,10 @@ export default {
       if (!isRerenderNeeded) {
         return;
       }
-      this.handleSettingsChange();
+      this.redrawGraph();
     },
 
-    isSidePanelOpen(newVal) {
+    isSidePanelOpen() {
       this.$nextTick(() => {
         this.handleResize();
       });
@@ -405,6 +424,77 @@ export default {
     window.removeEventListener("mouseup", this.stopResize);
   },
   methods: {
+    copyToClipboard(text) {
+      navigator.clipboard?.writeText(text).catch(() => {
+        document.execCommand('copy', false, text);
+      });
+      
+      // Find the button that was clicked and show success state
+      const event = window.event;
+      if (event && event.target) {
+        const button = event.target.closest('.copy-button');
+        if (button) {
+          const icon = button.querySelector('i');
+          if (icon) {
+            icon.className = 'fa-solid fa-check';
+            button.style.background = '#28a745';
+            setTimeout(() => {
+              icon.className = 'fa-solid fa-copy';
+              button.style.background = 'var(--bs-body-bg-accent)';
+            }, 1000);
+          }
+        }
+      }
+    },
+
+    showCopyButton(event) {
+      const button = event.target.closest('.copyable-cell').querySelector('.copy-button');
+      if (button) {
+        button.style.opacity = '1';
+      }
+    },
+
+    hideCopyButton(event) {
+      const button = event.target.closest('.copyable-cell').querySelector('.copy-button');
+      if (button) {
+        button.style.opacity = '0';
+      }
+    },
+    async setElementVisibility(elements) {
+      if (!this.g6Graph) {
+        return;
+      }
+      if (this.drawPromise) {
+        await this.drawPromise;
+      }
+      this.drawPromise = this.g6Graph.setElementVisibility(elements);
+      await this.drawPromise;
+      this.drawPromise = null;
+    },
+    async render() {
+      if (!this.g6Graph) {
+        return;
+      }
+      if (this.drawPromise) {
+        await this.drawPromise;
+      }
+      console.time("G6 graph render");
+      this.drawPromise = this.g6Graph.render();
+      await this.drawPromise;
+      console.timeEnd("G6 graph render");
+      this.drawPromise = null;
+    },
+    async setElementState(elements) {
+      if (!this.g6Graph) {
+        return;
+      }
+      if (this.drawPromise) {
+        await this.drawPromise;
+      }
+      this.drawPromise = this.g6Graph.setElementState(elements);
+      await this.drawPromise;
+      this.drawPromise = null;
+    },
     getColor(label) {
       return this.settingsStore.colorForLabel(label);
     },
@@ -412,141 +502,168 @@ export default {
       let nodeSpacing = edges.length * 8;
       nodeSpacing = nodeSpacing < 80 ? 80 : nodeSpacing;
       nodeSpacing = nodeSpacing > 500 ? 500 : nodeSpacing;
-      const config = {
-        nodeSpacing,
-        type: 'force',
-        preventOverlap: true,
 
+      const config = {
+        type: 'd3-force',
+        link: {
+          distance: 300,
+          strength: 2,
+        },
+        collide: {
+          radius: 120,
+        },
+        manyBody: {
+          strength: -300,
+        },
+        alpha: 1,
+        alphaMin: 0.2,
+        alphaDecay: 0.03,
+        velocityDecay: 0.45,
+    
       };
+
       return config;
     },
-    drawGraph() {
-      this.isGraphLoading = true; // Show loading overlay
+    async drawGraph() {
       if (this.graphCreated && this.g6Graph) {
         this.g6Graph.destroy();
       }
       if (!this.queryResult) {
         return;
       }
-      const { counters, nodes, edges, } = this.extractGraphFromQueryResult(this.queryResult);
+      let { counters, nodes, edges, } = this.extractGraphFromQueryResult(this.queryResult);
       this.counters = counters;
       if (nodes.length === 0) {
         this.$emit("graphEmpty");
       }
-      console.log("Nodes data sent to G6:", nodes);
-      console.log("Edges data sent to G6:", edges);
+
       const container = this.$refs.graph;
       const width = container.offsetWidth;
-      const height = container.offsetHeight;
+      const height = this.containerHeight === "auto" ? container.offsetHeight : parseInt(this.containerHeight);
+      const layoutConfig = this.getLayoutConfig(edges);
 
-      this.g6Graph = new G6.Graph({
+      this.g6Graph = new Graph({
         container,
         width,
         height,
-        linkCenter: false,
-        groupByTypes: false,
-        layout: this.getLayoutConfig(edges),
-        defaultNode: {
-          shape: "circle",
-          labelCfg: {
-            style: {
-              fontSize: 14,
-              fontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
-              fontWeight: 300,
-              fill: "#ffffff",
+        layout: layoutConfig,
+        node: {
+          type: 'circle',
+          style: {
+            labelFontSize: 14,
+            labelFontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
+            labelFontWeight: 300,
+            labelPlacement: 'center',
+            zIndex: 10,
+          },
+          state: {
+            active: {
+              lineWidth: 10,
+              stroke: '#1890FF',
             },
-          },
-          size: 100,
-          style: {
-            lineWidth: 0,
-            fill: "#FF0000",
+
           },
         },
-        nodeStateStyles: {
-          hover: {
-            lineWidth: 4,
-            stroke: '#1890FF',
-          },
-          click: {
-            lineWidth: 4,
-            stroke: '#1848FF',
-          },
-        },
-        defaultEdge: {
-          size: 5,
-          opacity: 1,
+        edge: {
           style: {
+            lineWidth: 5,
             stroke: "#e2e2e2",
             endArrow: true,
-            // TODO: investigate why the endArrow causes rendering issues
-            // endArrow: {
-            //   path: G6.Arrow.triangle(),
-            //   fill: "#e2e2e2",
-            // }
+            labelFontSize: 12,
+            labelFontFamily: "Lexend,Helvetica Neue, Helvetica, Arial, sans-serif",
+            labelFontWeight: 350,
+            labelBackground: true,
+            labelBackgroundFill: "#ffffff",
+            labelPadding: [4, 8],
+            labelBackgroundRadius: 2,
+            labelAutoRotate: true,
+            labelTextBaseline: 'bottom',
+            endArrow: true,
+            labelAutoRotate: true,
+            labelOffsetY: -8,
+            zIndex: 1,
           },
-          labelCfg: {
-            style: {
-              fontSize: 12,
-              fontFamily: "Lexend,Helvetica Neue, Helvetica, Arial, sans-serif",
-              fontWeight: 350,
-              background: {
-                fill: "#ffffff",
-                padding: [2, 2, 2, 2],
-                radius: 2,
-              },
+          state: {
+            active: {
+              lineWidth: 10,
+              stroke: '#1890FF',
             },
-            refY: -14,
-            autoRotate: true,
-          },
 
-        },
-        edgeStateStyles: {
-          hover: {
-            stroke: '#1890FF',
-            // endArrow: {
-            //   path: G6.Arrow.triangle(),
-            //   fill: "#1890FF",
-            // },
-          },
-          click: {
-            stroke: '#1848FF',
-            // endArrow: {
-            //   path: G6.Arrow.triangle(),
-            //   fill: "#1848FF",
-            // },
           },
         },
-        modes: {
-          default: ['drag-canvas', 'zoom-canvas', 'drag-node']
-        },
+        behaviors: ['zoom-canvas', 'drag-canvas',
+          {
+            type: 'optimize-viewport-transform',
+            debounce: 300,
+          },
+          {
+            type: 'drag-element-force',
+            fixed: true,
+          },
+          {
+            type: 'click-select',
+            key: 'click-select-element',
+            degree: 0,
+            state: 'active',
+            enable: true,
+          },
+          {
+            type: 'click-select',
+            key: 'click-highlight',
+            degree: 1,
+            state: 'active',
+            unselectedState: 'inactive',
+            enable: false,
+            neighborState: 'active',
+          },
+        ],
       });
 
-      this.g6Graph.data({ nodes, edges, });
+      this.g6Graph.setData({ nodes, edges, });
+      await this.render();
+      this.fitToView();
 
-      this.g6Graph.on('node:mouseenter', (e) => {
-        const nodeItem = e.item;
-        this.g6Graph.setItemState(nodeItem, 'hover', true);
-        this.$refs.hoverContainer.handleHover(nodeItem.getModel(), e);
+      // Fit the graph to view after rendering
+      this.g6Graph.on(GraphEvent.AFTER_RENDER, () => {
+        console.timeEnd("G6 graph render");
       });
 
-      this.g6Graph.on('node:mouseleave', (e) => {
-        const nodeItem = e.item;
-        this.g6Graph.setItemState(nodeItem, 'hover', false);
+      // Show hover container on node and edge hover
+      this.g6Graph.on('node:pointerenter', (e) => {
+        const id = e.target.id;
+        const nodeData = this.g6Graph.getNodeData(id);
+        this.$refs.hoverContainer.handleHover(nodeData, e);
+      });
+
+      this.g6Graph.on('node:pointerleave', (e) => {
         this.$refs.hoverContainer.resetHover();
       });
 
-      this.g6Graph.on('node:mousemove', (e) => {
-        if (this.$refs.hoverContainer.currentHoveredModel) {
-          this.$refs.hoverContainer.updateTooltipPosition(e);
-        }
+      this.g6Graph.on('node:pointermove', (e) => {
+        this.$refs.hoverContainer.showTooltip(e);
       });
 
+      this.g6Graph.on('edge:pointerenter', (e) => {
+        const id = e.target.id;
+        const edgeData = this.g6Graph.getEdgeData(id);
+        this.$refs.hoverContainer.handleHover(edgeData, e);
+      });
+
+      this.g6Graph.on('edge:pointerleave', (e) => {
+        this.$refs.hoverContainer.resetHover();
+      });
+
+      this.g6Graph.on('edge:pointermove', (e) => {
+        this.$refs.hoverContainer.showTooltip(e);
+      });
+      // End of hover container setup
+
+      // Click node and edge to select it and open side panel
       this.g6Graph.on('node:click', (e) => {
-        const nodeItem = e.item;
-        const nodeModel = nodeItem.getModel();
-        this.deselectAll();
-        this.g6Graph.setItemState(nodeItem, 'click', true);
-        this.handleClick(nodeModel);
+        this.$refs.hoverContainer.resetHover();
+        const clickedId = e.target.config.id;
+        const nodeData = this.g6Graph.getNodeData(clickedId);
+        this.handleClick(nodeData);
         if (!this.isSidePanelOpen) {
           // Add a small delay to avoid conflicting with double click
           window.setTimeout(() => {
@@ -558,159 +675,110 @@ export default {
         }
       });
 
-      this.g6Graph.on('node:dblclick', (e) => {
-        const nodeItem = e.item;
-        const nodeModel = nodeItem.getModel();
-        this.expandOnNode(nodeModel);
-      });
-
-      // Auto layout after drag
-      this.g6Graph.on('node:dragstart', (e) => {
-        this.refreshDraggedNodePosition(e);
-      });
-
-      this.g6Graph.on('node:drag', (e) => {
-        this.refreshDraggedNodePosition(e);
-      });
-
-      this.g6Graph.on('node:dragend', (e) => {
-        this.refreshDraggedNodePosition(e);
-        this.g6Graph.layout();
-      });
-
-      this.g6Graph.on('edge:mouseenter', (e) => {
-        const edgeItem = e.item;
-        this.g6Graph.setItemState(edgeItem, 'hover', true);
-        this.$refs.hoverContainer.handleHover(edgeItem.getModel(), e);
-      });
-
-      this.g6Graph.on('edge:mouseleave', (e) => {
-        const edgeItem = e.item;
-        this.g6Graph.setItemState(edgeItem, 'hover', false);
-        this.$refs.hoverContainer.resetHover();
-      });
-
-      this.g6Graph.on('edge:mousemove', (e) => {
-        if (this.$refs.hoverContainer.currentHoveredModel) {
-          this.$refs.hoverContainer.updateTooltipPosition(e);
-        }
-      });
-
       this.g6Graph.on('edge:click', (e) => {
-        const edgeItem = e.item;
-        const edgeModel = edgeItem.getModel();
-        this.deselectAll();
-        this.unhighlightEverything();
-        this.g6Graph.setItemState(edgeItem, 'click', true);
-        this.handleClick(edgeModel);
+        this.$refs.hoverContainer.resetHover();
+        const clickedId = e.target.config.id;
+        const edgeData = this.g6Graph.getEdgeData(clickedId);
+        this.handleClick(edgeData);
         if (!this.isSidePanelOpen) {
-          this.toggleSidePanel();
+          this.isSidePanelOpen = true;
         }
+      });
+      // End of click to select node and edge
+
+      this.g6Graph.on('node:dblclick', (e) => {
+        const itemId = e.target.id;
+        const isCurrentNodeExpanded = this.isNeighborExpanded(e.target);
+        if (isCurrentNodeExpanded) {
+          this.collapseNode(itemId);
+          this.deselectAll();
+          return this.redrawGraph();
+        }
+        const nodeData = this.g6Graph.getNodeData(itemId);
+        this.expandOnNode(nodeData);
+        this.deselectAll();
       });
 
       this.g6Graph.on('canvas:click', () => {
         this.deselectAll();
-        this.unhighlightEverything();
       });
 
-      this.g6Graph.render();
       this.graphCreated = true;
-
-      // Fit the graph to view after rendering
-      this.g6Graph.once('afterrender', () => {
-        this.fitToView();
-        this.isGraphLoading = false; // Hide loading overlay after fit to view
-      });
-
-      this.g6Graph.on('node:mouseenter', (e) => {
-        const nodeItem = e.item;
-        this.g6Graph.setItemState(nodeItem, 'hover', true);
-        this.$refs.hoverContainer.handleHover(nodeItem.getModel(), e);
-      });
-    },
-
-    refreshDraggedNodePosition(e) {
-      const model = e.item.get('model');
-      model.fx = e.x;
-      model.fy = e.y;
-      model.x = e.x;
-      model.y = e.y;
     },
 
     hideNode() {
-      if (!this.g6Graph) {
-        console.error('Graph not initialized');
-        return;
-      }
+      this.hiddenElements.nodes[this.clickedId] = 'hidden';
+      const nodeId = this.clickedId;
+      this.deselectAll();
 
-      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
-      if (!currentSelectedNode) {
-        console.error('No node selected');
-        return;
-      }
-
-      try {
-        const nodeId = currentSelectedNode.getModel().id;
-        this.numHiddenNodes += 1;
-        currentSelectedNode.hide();
-        this.deselectAll();
-
-        const relatedEdges = this.g6Graph.getEdges().filter((edge) => {
-          try {
-            const edgeModel = edge.getModel();
-            return edgeModel.source === nodeId || edgeModel.target === nodeId;
-          } catch (e) {
-            console.error('Error processing edge:', e);
-            return false;
-          }
-        });
-
-        relatedEdges.forEach((edge) => {
-          try {
-            this.numHiddenRels += 1;
-            edge.hide();
-          } catch (e) {
-            console.error('Error hiding edge:', e);
-          }
-        });
-      } catch (e) {
-        console.error('Error hiding node:', e);
-      }
+      const edges = this.g6Graph.getEdgeData();
+      const relatedEdges = edges.filter((edge) => {
+        return edge.source === nodeId || edge.target === nodeId;
+      });
+      relatedEdges.forEach((edge) => this.hiddenElements.edges[edge.id] = 'hidden');
+      const combined = { ...this.hiddenElements.nodes, ...this.hiddenElements.edges };
+      return this.setElementVisibility(combined);
     },
 
     enableHighlightMode() {
+      this.g6Graph.updateBehavior({ key: 'click-select-element', enable: false });
+      this.g6Graph.updateBehavior({ key: 'click-highlight', enable: true });
       this.isHighlightedMode = true;
-      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
-      if (currentSelectedNode) {
-        this.highlightNode(currentSelectedNode.getModel());
-      }
+      
+      if (!this.clickedId) return;
+
+      const combined = {};
+      const activeNodes = new Set([this.clickedId]); 
+
+      // Mark active edges and connected nodes
+      this.g6Graph.getEdgeData().forEach(edge => {
+        const isConnected = edge.source === this.clickedId || edge.target === this.clickedId;
+        combined[edge.id] = isConnected ? ['active'] : ['inactive'];
+
+        if (isConnected) {
+          activeNodes.add(edge.source);
+          activeNodes.add(edge.target);
+        }
+      });
+      this.g6Graph.getNodeData().forEach(node => {
+        combined[node.id] = activeNodes.has(node.id) ? ['active'] : ['inactive'];
+      });
+      this.setElementState(combined);
+
     },
 
     disableHighlightMode() {
-      this.unhighlightEverything();
+      this.g6Graph.updateBehavior({ key: 'click-select-element', enable: true });
+      this.g6Graph.updateBehavior({ key: 'click-highlight', enable: false });
       this.isHighlightedMode = false;
+      const inactiveNodes = this.g6Graph.getElementDataByState('node', 'inactive');
+      const inactiveEdges = this.g6Graph.getElementDataByState('edge', 'inactive');
+      const combined = {};
+      inactiveNodes.forEach((node) => {
+        combined[node.id] = [];
+      });
+      inactiveEdges.forEach((edge) => {
+        combined[edge.id] = [];
+      });
+      this.setElementState(combined);
+      this.deselectAll();
     },
 
     showAllNodesRels() {
-      this.g6Graph.getNodes().forEach((node) => {
-        if (!node.isVisible()) {
-          node.show();
-        }
+      const combined = { ...this.hiddenElements.nodes, ...this.hiddenElements.edges };
+      Object.keys(combined).forEach((key) => {
+        combined[key] = 'visible';
       });
-      this.g6Graph.getEdges().forEach((edge) => {
-        if (!edge.isVisible()) {
-          edge.show();
-        }
+      return this.setElementVisibility(combined).then(() => {
+        this.hiddenElements = { nodes: {}, edges: {} };
       });
-      this.numHiddenNodes = 0;
-      this.numHiddenRels = 0;
     },
 
     encodeId(id) {
       return `${id.table}_${id.offset}`;
     },
 
-    extractGraphFromQueryResult(queryResult, linkDistance = 200) {
+    extractGraphFromQueryResult(queryResult) {
       const rows = queryResult.rows;
       const dataTypes = queryResult.dataTypes;
       const nodes = {};
@@ -742,129 +810,134 @@ export default {
         currentMap[sortedNodeInfo[3]] += 1;
         return currentMap[sortedNodeInfo[3]];
       }
-
-      function getReadableTextColor(bgColor) {
-        // Remove hash if present
-        const color = bgColor.charAt(0) === '#' ? bgColor.substring(1) : bgColor;
-        const r = parseInt(color.substring(0, 2), 16);
-        const g = parseInt(color.substring(2, 4), 16);
-        const b = parseInt(color.substring(4, 6), 16);
-        // Calculate luminance
-        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-        return luminance > 0.6 ? '#000000' : '#ffffff';
-      }
-
       const processNode = (rawNode) => {
+        if (!rawNode || !rawNode._id || !rawNode._label) {
+          console.warn('Invalid node data:', rawNode);
+          return;
+        }
+
         const nodeId = this.encodeId(rawNode._id);
         nodeLabels[rawNode._id.table] = rawNode._label;
         const nodeSettings = this.settingsStore.settingsForLabel(rawNode._label);
         const nodeFill = nodeSettings.g6Settings.style.fill;
-        const labelColor = getReadableTextColor(nodeFill);
-        const g6Node = {
-          id: nodeId,
-          properties: rawNode,
-          ...nodeSettings.g6Settings,
-          labelCfg: {
-            ...nodeSettings.g6Settings.labelCfg,
-            style: {
-              ...nodeSettings.g6Settings.labelCfg.style,
-              fill: labelColor,
-              lineWidth: 1,
-            }
-          }
-        }
+        const labelColor = G6Utils.getReadableTextColor(nodeFill);
+
         if (nodes[nodeId]) {
           return;
         }
+
         const expectedPropertiesType = {};
-        const expectedProperties = this.schema.nodeTables.find((table) => table.name === rawNode._label).properties;
+        const nodeTable = this.schema.nodeTables.find((table) => table.name === rawNode._label);
+        if (!nodeTable) {
+          console.warn('Node table not found for label:', rawNode._label);
+          return;
+        }
+        const expectedProperties = nodeTable.properties;
         expectedProperties.forEach((property) => {
           expectedPropertiesType[property.name] = property.type;
         });
+
+        let nodeLabel = "";
         const nodeLabelProp = nodeSettings.label;
-        if (!nodeLabelProp) {
-          g6Node.label = "";
-        } else {
-          g6Node.label = rawNode[nodeLabelProp];
+        if (nodeLabelProp) {
+          nodeLabel = rawNode[nodeLabelProp];
           if (nodeLabelProp in expectedPropertiesType) {
-            g6Node.label = ValueFormatter.beautifyValue(rawNode[nodeLabelProp], expectedPropertiesType[nodeLabelProp]);
+            nodeLabel = ValueFormatter.beautifyValue(rawNode[nodeLabelProp], expectedPropertiesType[nodeLabelProp]);
           }
-          g6Node.label = String(g6Node.label);
+          nodeLabel = String(nodeLabel);
           const nodeSize = nodeSettings.g6Settings.size;
           const fontSize = nodeSettings.g6Settings.labelCfg.style.fontSize;
-          g6Node.label = G6Utils.fittingString(g6Node.label, nodeSize - 6, fontSize);
+          nodeLabel = G6Utils.fittingString(nodeLabel, nodeSize - 6, fontSize);
         }
-        g6Node.style.stroke = G6Utils.shadeColor(g6Node.style.fill);
+
+        const g6Node = {
+          id: nodeId,
+          data: {
+            properties: rawNode,
+            ...nodeSettings.g6Settings,
+          },
+          style: {
+            size: nodeSettings.g6Settings.size,
+            fill: nodeFill,
+            stroke: G6Utils.shadeColor(nodeFill),
+            lineWidth: nodeSettings.g6Settings.style.lineWidth || 0,
+            labelText: nodeLabel,
+            labelFill: labelColor,
+          },
+        };
+
         nodes[nodeId] = g6Node;
       };
 
       const processRel = (rawRel) => {
+        if (!rawRel || !rawRel._id || !rawRel._label || !rawRel._src || !rawRel._dst) {
+          console.warn('Invalid rel data:', rawRel);
+          return;
+        }
+
         const relSettings = this.settingsStore.settingsForLabel(rawRel._label);
         const relId = this.encodeId(rawRel._id);
         const numberOfOverlappingRels = increaseRelCounter(rawRel._src, rawRel._dst);
-        const g6Rel = {
-          id: relId,
-          properties: rawRel,
-          source: this.encodeId(rawRel._src),
-          target: this.encodeId(rawRel._dst),
-          ...relSettings.g6Settings,
-          labelCfg: {
-            ...relSettings.g6Settings.labelCfg,
-            style: {
-              background: { 
-                  fill: "#ffffff",
-                  padding: [2, 2, 2, 2],
-                  radius: 2,
-                 },
-                fontSize: 12,
-                fontFamily: "Lexend, Helvetica Neue, Helvetica, Arial, sans-serif",
-                fontWeight: 300,
-                fill: "#000000",
-                
-            }
-          },
-          style: {
-            ...relSettings.g6Settings.style,
-            endArrow: true,
-            startArrow: false,
-          },
-        }
-        if (g6Rel.source === g6Rel.target) {
-          g6Rel.type = "loop";
-          g6Rel.loopCfg = {
-            dist: 50,
-            position: LOOP_POSITIONS[(numberOfOverlappingRels - 1) % LOOP_POSITIONS.length],
-          };
-        } else if (numberOfOverlappingRels > 1) {
-          g6Rel.type = 'quadratic';
-          g6Rel.curveOffset = ARC_CURVE_OFFSETS[(numberOfOverlappingRels - 1) % ARC_CURVE_OFFSETS.length];
+
+        if (edges[relId]) {
+          return;
         }
 
         const expectedPropertiesType = {};
         const relTable = this.schema.relTables.find((table) => table.name === rawRel._label);
-        const expectedProperties = this.schema.relTables.find((table) => table.name === rawRel._label).properties;
+        if (!relTable) {
+          console.warn('Rel table not found for label:', rawRel._label);
+          return;
+        }
+        const expectedProperties = relTable.properties;
         expectedProperties.forEach((property) => {
           expectedPropertiesType[property.name] = property.type;
         });
+
+        let relLabel = "";
         const relLabelProp = relSettings.label;
-        if (!relLabelProp) {
-          g6Rel.label = "";
-        } else {
-          g6Rel.label = rawRel[relLabelProp];
+        if (relLabelProp) {
+          relLabel = rawRel[relLabelProp];
           if (relLabelProp === '_label' && relTable.group) {
-            g6Rel.label = relTable.group;
+            relLabel = relTable.group;
           }
           if (relLabelProp in expectedPropertiesType) {
-            g6Rel.label = ValueFormatter.beautifyValue(rawRel[relLabelProp], expectedPropertiesType[relLabelProp]);
+            relLabel = ValueFormatter.beautifyValue(rawRel[relLabelProp], expectedPropertiesType[relLabelProp]);
           }
-          g6Rel.label = String(g6Rel.label);
+          relLabel = String(relLabel);
           const fontSize = relSettings.g6Settings.labelCfg.style.fontSize;
           // Truncate edge label to max width 80px
-          g6Rel.label = G6Utils.fittingString(g6Rel.label, 80, fontSize);
+          relLabel = G6Utils.fittingString(relLabel, 80, fontSize);
         }
-        if (edges[relId]) {
-          return;
+
+        const g6Rel = {
+          id: relId,
+          source: this.encodeId(rawRel._src),
+          target: this.encodeId(rawRel._dst),
+          data: {
+            properties: rawRel,
+            ...relSettings.g6Settings,
+          },
+          style: {
+            stroke: relSettings.g6Settings.style.stroke,
+            lineWidth: relSettings.g6Settings.size || 3,
+            labelText: relLabel,
+          },
+        };
+
+        // Handle self-loops and overlapping edges
+        if (g6Rel.source === g6Rel.target) {
+          // Self-loop (do not set type, otherwise it will not work)
+          g6Rel.style.loopDist = 50;
+          g6Rel.style.loopPlacement = LOOP_POSITIONS[(numberOfOverlappingRels - 1) % LOOP_POSITIONS.length];
+        } else if (numberOfOverlappingRels > 1) {
+          g6Rel.type = 'quadratic';
+          g6Rel.style.curveOffset = ARC_CURVE_OFFSETS[(numberOfOverlappingRels - 1) % ARC_CURVE_OFFSETS.length];
+          g6Rel.style.curvePosition = 0.5;
+        } else {
+          g6Rel.type = 'line';
         }
+
         edges[relId] = g6Rel;
       }
       // Deduplicate nodes and edges
@@ -889,32 +962,38 @@ export default {
             }
             case DATA_TYPES.RECURSIVE_REL: {
               const recursiveRel = { ...row[key] };
-              recursiveRel._nodes.forEach((node) => {
-                node = { ...node };
-                const nodeId = this.encodeId(node._id);
-                if (nodes[nodeId]) {
-                  return;
-                }
-                for (let key in node) {
-                  if (node[key] === null || node[key] === undefined) {
-                    delete node[key];
+              if (recursiveRel._nodes && Array.isArray(recursiveRel._nodes)) {
+                recursiveRel._nodes.forEach((node) => {
+                  if (!node || !node._id) return;
+                  node = { ...node };
+                  const nodeId = this.encodeId(node._id);
+                  if (nodes[nodeId]) {
+                    return;
                   }
-                }
-                processNode(node);
-              });
-              recursiveRel._rels.forEach((rel) => {
-                rel = { ...rel };
-                const relId = this.encodeId(rel._id);
-                if (edges[relId]) {
-                  return;
-                }
-                for (let key in rel) {
-                  if (rel[key] === null || rel[key] === undefined) {
-                    delete rel[key];
+                  for (let key in node) {
+                    if (node[key] === null || node[key] === undefined) {
+                      delete node[key];
+                    }
                   }
-                }
-                processRel(rel);
-              });
+                  processNode(node);
+                });
+              }
+              if (recursiveRel._rels && Array.isArray(recursiveRel._rels)) {
+                recursiveRel._rels.forEach((rel) => {
+                  if (!rel || !rel._id) return;
+                  rel = { ...rel };
+                  const relId = this.encodeId(rel._id);
+                  if (edges[relId]) {
+                    return;
+                  }
+                  for (let key in rel) {
+                    if (rel[key] === null || rel[key] === undefined) {
+                      delete rel[key];
+                    }
+                  }
+                  processRel(rel);
+                });
+              }
               break;
             }
             default:
@@ -937,19 +1016,17 @@ export default {
           }
         }
       }
-      const nodeCounters = {
-      };
+      const nodeCounters = {};
       for (let key in nodes) {
-        const label = nodes[key].properties._label;
+        const label = nodes[key].data.properties._label;
         if (!nodeCounters[label]) {
           nodeCounters[label] = 0;
         }
         nodeCounters[label] += 1;
       }
-      const relCounters = {
-      };
+      const relCounters = {};
       for (let key in edges) {
-        const label = edges[key].properties._label;
+        const label = edges[key].data.properties._label;
         if (!relCounters[label]) {
           relCounters[label] = 0;
         }
@@ -965,6 +1042,17 @@ export default {
           rel: totalRelCount,
         },
       };
+      if (totalNodeCount > this.settingsStore.performance.maxNumberOfNodesWithLabels) {
+        for (let key in nodes) {
+          const node = nodes[key];
+          delete node.style.labelText;
+        }
+        for (let key in edges) {
+          const edge = edges[key];
+          delete edge.style.labelText;
+        }
+      }
+
       return {
         counters,
         nodes: Object.values(nodes),
@@ -978,97 +1066,38 @@ export default {
       this.$nextTick(() => {
         if (this.g6Graph) {
           const width = this.$refs.graph.offsetWidth;
-          this.g6Graph.changeSize(width, parseInt(this.containerHeight));
-          this.g6Graph.fitCenter();
+    
+          // Set graph size based on sidebar state
+          if (this.isSidePanelOpen) {
+            this.g6Graph.setSize(width - this.sidebarWidth, parseInt(this.containerHeight));
+          } else {
+            this.g6Graph.setSize(width, parseInt(this.containerHeight));
+          }
+
         }
       });
     },
 
     handleClick(model) {
-      const label = model.properties._label;
+      const properties = model.data.properties;
+      const label = properties._label;
       this.clickedLabel = label;
-      this.clickedProperties = ValueFormatter.filterAndBeautifyProperties(model.properties, this.schema);
-      this.clickedIsNode = !(model.properties._src && model.properties._dst);
-      this.highlightNode(model);
+      this.clickedId = model.id;
+      this.clickedProperties = ValueFormatter.filterAndBeautifyProperties(properties, this.schema);
+      this.clickedIsNode = !(properties._src && properties._dst);
       if (this.clickedIsNode) {
-         this.isCurrentNodeExpanded = this.isNeighborExpanded(model);
+        this.isCurrentNodeExpanded = this.isNeighborExpanded(model);
       }
-      if (!this.isSidePanelOpen) {
-        // Add a small delay to avoid conflicting with double click
-        window.setTimeout(() => {
-          this.isSidePanelOpen = true;
-          this.$nextTick(() => {
-            this.handleResize();
-          });
-        }, 200);
-      }
-    },
-
-    highlightNode(model) {
-      if (!this.isHighlightedMode) {
-        return;
-      }
-      if (model.properties._src || model.properties._dst) {
-        return;
-      }
-      const srcDstSet = new Set();
-      this.g6Graph.getEdges().forEach((edge) => {
-        const sourceNode = edge.getModel().source;
-        const targetNode = edge.getModel().target;
-        if (!edge.getModel().labelBackup) {
-          edge.getModel().labelBackup = edge.getModel().label;
-        }
-        if (sourceNode !== model.id && targetNode !== model.id) {
-          this.g6Graph.setItemState(edge, 'opaque', true);
-          this.g6Graph.setItemState(edge, 'click', false);
-          edge.getModel().label = "";
-          this.g6Graph.refreshItem(edge);
-        } else {
-          this.g6Graph.setItemState(edge, 'opaque', false);
-          this.g6Graph.setItemState(edge, 'click', true);
-          srcDstSet.add(sourceNode);
-          srcDstSet.add(targetNode);
-          if (edge.getModel().labelBackup) {
-            edge.getModel().label = edge.getModel().labelBackup;
-            delete edge.getModel().labelBackup;
-            this.g6Graph.refreshItem(edge);
-          }
-        }
-      });
-      this.g6Graph.getNodes().forEach((node) => {
-        if (node.getModel().id !== model.id && !srcDstSet.has(node.getModel().id)) {
-          this.g6Graph.setItemState(node, 'opaque', true);
-        } else {
-          this.g6Graph.setItemState(node, 'opaque', false);
-        }
-      });
-    },
-
-    unhighlightEverything() {
-      if (!this.isHighlightedMode) {
-        return;
-      }
-      this.g6Graph.getNodes().forEach((node) => {
-        this.g6Graph.setItemState(node, 'opaque', false);
-      });
-      this.g6Graph.getEdges().forEach((edge) => {
-        this.g6Graph.setItemState(edge, 'opaque', false);
-        this.g6Graph.setItemState(edge, 'click', false);
-        if (edge.getModel().labelBackup) {
-          edge.getModel().label = edge.getModel().labelBackup;
-          delete edge.getModel().labelBackup;
-          this.g6Graph.refreshItem(edge);
-        }
-      });
     },
 
     getInfoForExpansion(model) {
-      const tableName = model.properties._label;
+      const properties = model.data.properties;
+      const tableName = properties._label;
       const primaryKey = this.schema.nodeTables
         .find((table) => table.name === tableName)
         .properties
         .find((prop) => prop.isPrimaryKey);
-      const primaryKeyValue = model.properties[primaryKey.name];
+      const primaryKeyValue = properties[primaryKey.name];
       const primaryKeyName = primaryKey.name;
       return { tableName, primaryKey, primaryKeyValue, primaryKeyName };
     },
@@ -1088,6 +1117,7 @@ export default {
       } catch (e) {
         // Ignore error for now. Just don't expand if the core does not execute the query.
         console.error(e);
+        return;
       }
       if (!neighbors) {
         return;
@@ -1096,6 +1126,7 @@ export default {
       this.expansions.push({
         id: model.id, neighbors
       });
+      this.deselectAll();
     },
 
     isNeighborExpanded(model) {
@@ -1106,12 +1137,8 @@ export default {
     },
 
     expandSelectedNode() {
-      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
-      if (!currentSelectedNode) {
-        return;
-      }
-      this.expandOnNode(currentSelectedNode.getModel());
-      this.deselectAll();
+      const nodeData = this.g6Graph.getNodeData(this.clickedId);
+      this.expandOnNode(nodeData);
     },
 
     collapseNode(id) {
@@ -1131,13 +1158,8 @@ export default {
     },
 
     collapseSelectedNode() {
-      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
-      if (!currentSelectedNode) {
-        return;
-      }
-      const id = currentSelectedNode.getModel().id;
-      this.collapseNode(id);
-      this.handleSettingsChange();
+      this.collapseNode(this.clickedId);
+      this.redrawGraph();
       this.isCurrentNodeExpanded = false;
       this.deselectAll();
     },
@@ -1154,45 +1176,60 @@ export default {
       const nodesToAdd = [];
       for (let key in nodes) {
         const node = nodes[key];
-        if (this.g6Graph.findById(node.id)) {
+        try {
+          this.g6Graph.getNodeData(node.id);
+          // Node already exists, skip it
           continue;
+        } catch (error) {
+          // Do nothing, the node does not exist, we can add it
         }
         nodesToAdd.push(node);
-        this.counters.node[node.properties._label] += 1;
+        if (!this.counters.node[node.data.properties._label]) {
+          this.counters.node[node.data.properties._label] = 0;
+        }
+        this.counters.node[node.data.properties._label] += 1;
         this.counters.total.node += 1;
       }
       const edgesToAdd = [];
       for (let key in edges) {
         const edge = edges[key];
-        if (this.g6Graph.findById(edge.id)) {
+        try {
+          this.g6Graph.getEdgeData(edge.id);
+          // Edge already exists, skip it
           continue;
+        } catch (error) {
+          // Do nothing, the edge does not exist, we can add it
         }
         edgesToAdd.push(edge);
-        this.counters.rel[edge.properties._label] += 1;
+        if (!this.counters.rel[edge.data.properties._label]) {
+          this.counters.rel[edge.data.properties._label] = 0;
+        }
+        this.counters.rel[edge.data.properties._label] += 1;
         this.counters.total.rel += 1;
       }
-      const currentNodes = this.g6Graph.getNodes().map((node) => node.getModel());
-      const currentEdges = this.g6Graph.getEdges().map((edge) => edge.getModel());
+      const currentNodes = this.g6Graph.getNodeData() || [];
+      const currentEdges = this.g6Graph.getEdgeData() || [];
       const newData = {
         nodes: currentNodes.concat(nodesToAdd),
         edges: currentEdges.concat(edgesToAdd),
       };
-      this.g6Graph.changeData(newData);
+      this.g6Graph.setData(newData);
+      this.render();
     },
 
     deselectAll() {
-      if (!this.g6Graph) {
-        return;
-      }
-      const currentSelectedNode = this.g6Graph.findAllByState('node', 'click')[0];
-      if (currentSelectedNode) {
-        this.g6Graph.setItemState(currentSelectedNode, 'click', false);
-      }
-      const currentSelectedEdge = this.g6Graph.findAllByState('edge', 'click')[0];
-      if (currentSelectedEdge) {
-        this.g6Graph.setItemState(currentSelectedEdge, 'click', false);
-      }
+      const selectedNodes = this.g6Graph.getElementDataByState('node', 'active');
+      const selectedEdges = this.g6Graph.getElementDataByState('edge', 'active');
+      const combined = {};
+      selectedNodes.forEach((node) => {
+        combined[node.id] = [];
+      });
+      selectedEdges.forEach((edge) => {
+        combined[edge.id] = [];
+      });
+      this.setElementState(combined);
       this.clickedLabel = "";
+      this.clickedId = null;
       this.clickedProperties = [];
       this.clickedIsNode = false;
     },
@@ -1249,12 +1286,14 @@ export default {
       }, this.toolbarDebounceTimeout);
     },
 
-    handleSettingsChange() {
+    async redrawGraph() {
+      await new Promise((resolve) => setTimeout(resolve, 300));
       const { nodes, edges, counters } = this.extractGraphFromQueryResult(this.queryResult);
       if (!this.g6Graph) {
         return;
       }
-      this.g6Graph.changeData({ nodes, edges });
+      this.g6Graph.setData({ nodes, edges });
+      this.render();
       this.counters = counters;
       this.expansions.forEach(e => this.addDataWithQueryResult(e.neighbors));
     },
@@ -1266,7 +1305,7 @@ export default {
 
     handleResizeMove(e) {
       if (!this.isResizing) return;
-      
+
       const newWidth = window.innerWidth - e.clientX;
       if (newWidth >= this.minSidebarWidth && newWidth <= this.maxSidebarWidth) {
         this.sidebarWidth = newWidth;
@@ -1309,7 +1348,8 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 10; /* Ensure it's above the graph */
+    z-index: 10;
+    /* Ensure it's above the graph */
     color: var(--bs-body-text);
 
     .spinner-border {
@@ -1320,8 +1360,9 @@ export default {
 
   .result-graph__summary-section {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.5rem;
 
     p {
       display: inline-block;
@@ -1330,7 +1371,8 @@ export default {
 
     button {
       padding: 5px;
-      margin-right: 20px;
+      margin-right: 0;
+      margin-top: 0.25rem;
     }
   }
 
@@ -1357,7 +1399,8 @@ export default {
       z-index: 3;
       pointer-events: auto;
 
-      &:hover, &:active {
+      &:hover,
+      &:active {
         background-color: var(--bs-body-bg-accent);
       }
 
@@ -1374,7 +1417,8 @@ export default {
         transition: opacity 0.2s;
       }
 
-      &:hover::after, &:active::after {
+      &:hover::after,
+      &:active::after {
         opacity: 1;
       }
     }
@@ -1403,13 +1447,13 @@ export default {
       }
     }
 
-    .result-graph__actions{
-      
+    .result-graph__actions {
+
       gap: 3px;
     }
 
     table {
-      
+
       table-layout: auto;
       border-collapse: collapse;
       border-radius: 1rem;
@@ -1417,11 +1461,46 @@ export default {
       background-color: var(--bs-body-bg);
       margin-bottom: 1rem;
 
-      th, td {
+      th,
+      td {
         white-space: nowrap;
-        overflow-x: auto;
-        text-overflow: hidden;
+        overflow: hidden;
+        text-overflow: ellipsis;
         max-width: none;
+        position: relative;
+        padding-right: 30px;
+      }
+
+      .copyable-cell {
+        position: relative;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .copy-button {
+        position: absolute;
+        right: 4px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--bs-body-bg-accent);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          opacity: 1;
+        }
       }
 
       th {
@@ -1449,22 +1528,12 @@ export default {
         font-family: "Lexend", Lexend, sans-serif;
 
         td {
-          word-break: break-all;
-          
+          word-break: normal;
         }
       }
 
-      // Add thin scrollbar for horizontal overflow
-      &::-webkit-scrollbar {
-        height: 2px;
-        background: var(--bs-body-bg-accent);
-      }
-      &::-webkit-scrollbar-thumb {
-        background: var(--bs-body-bg-accent);
-        border-radius: 3px;
-      }
-      scrollbar-width: thin;
-      scrollbar-color: var(--bs-body-bg-accent) var(--bs-body-bg-secondary);
+      scrollbar-width: none;
+      scrollbar-color: transparent transparent;
     }
 
     h5 {

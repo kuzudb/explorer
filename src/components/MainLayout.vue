@@ -28,7 +28,7 @@
                   @click="accessModeModal.show()"
                 >Instructions</span>
               </li>
-            </ul> 
+            </ul>
             <div class="main-layout__sidebar-header flex justify-between items-center">
               <a
                 class="navbar-brand hide-on-collapse"
@@ -42,7 +42,7 @@
                   class="main-layout__sidebar-logo"
                 >
               </a>
-              
+
               <a
                 class="menu-toggle"
                 @click="toggleSidebar"
@@ -51,8 +51,8 @@
                   :class="['fa-solid', isSidebarCollapsed ? 'fa-angle-right' : 'fa-angle-left']"
                   aria-hidden="true"
                 />
-              </a>           
-            </div>             
+              </a>
+            </div>
             <hr>
           </li>
 
@@ -102,7 +102,7 @@
               <span class="hide-on-collapse">Import</span>
             </a>
           </li>
-          
+
           <li class="nav-item">
             <a
               aria-hidden="true"
@@ -144,6 +144,7 @@
             ref="schemaView"
             :schema="schema"
             :navbar-height="0"
+            :is-visible="showSchema"
             @reload-schema="reloadSchema"
             @add-placeholder-node-table="addPlaceholderNodeTable"
             @add-placeholder-rel-table="addPlaceholderRelTable"
@@ -199,7 +200,8 @@
           <div class="modal-body">
             <div v-if="modeStore.isDemo">
               <p>
-                This WebAssembly-powered demo of <a href="https://kuzudb.com/">Kuzu</a> lets you import and query graph data using 
+                This WebAssembly-powered demo of <a href="https://kuzudb.com/">Kuzu</a> lets you import and query graph
+                data using
                 <a
                   href="https://docs.kuzudb.com/cypher/"
                   target="_blank"
@@ -334,7 +336,12 @@ export default {
       storedSettings = this.loadSettingsFromLocalStorage();
     }
     this.initSettings(this.schema, storedSettings);
-    this.$refs.schemaView.drawGraph();
+    if (this.$refs.schemaView && this.showSchema) {
+      this.$nextTick(() => {
+        this.$refs.schemaView.initializeGraph();
+      });
+    }
+
   },
   methods: {
     handleHashChange() {
@@ -359,7 +366,7 @@ export default {
         default:
           // If no valid hash, default to shell view
           if (!this.showSchema && !this.showImporter && !this.showLoader && !this.showSettings) {
-             this.toggleShell();
+            this.toggleShell();
           }
           break;
       }
@@ -384,12 +391,12 @@ export default {
         // show the modal and set the cookie.
         const wasmModalSeen = this.getCookie('wasmModalSeen');
         if (this.modeStore.isDemo && !wasmModalSeen) {
-           this.accessModeModal.show();
-           this.setCookie('wasmModalSeen', 'true', 365); // Set cookie for 365 days
-           this.toggleImporter(true);
+          this.accessModeModal.show();
+          this.setCookie('wasmModalSeen', 'true', 365); // Set cookie for 365 days
+          this.toggleImporter(true);
         } else if (this.modeStore.isDemo) {
           // If in demo mode but WASM modal has been seen, still go to importer view
-           this.toggleImporter(true);
+          this.toggleImporter(true);
         }
       });
     },
@@ -402,7 +409,7 @@ export default {
     async reloadSchema() {
       await this.getSchema();
       this.handleSchemaReload(this.schema);
-      this.$refs.schemaView.handleSettingsChange();
+      this.$refs.schemaView.redrawGraph(true);
     },
     addPlaceholderNodeTable(tableName) {
       this.schema.nodeTables.push({
@@ -436,17 +443,20 @@ export default {
         table.connectivity = newTable.connectivity;
       }
     },
-    setPlaceholder(name) {
-      let table = this.schema.nodeTables.find((t) => t.name === name);
-      if (table) {
-        table.isPlaceholder = true;
-        this.setPlaceholderNodeTable(name);
-        return;
-      }
-      table = this.schema.relTables.find((t) => t.name === name);
-      if (table) {
-        table.isPlaceholder = true;
-        this.setPlaceholderRelTable(name);
+    setPlaceholder({ name, isNode }) {
+      if (isNode) {
+        const table = this.schema.nodeTables.find((t) => t.name === name);
+        if (table) {
+          table.isPlaceholder = true;
+          this.setPlaceholderNodeTable(name);
+          return;
+        }
+      } else {
+        const table = this.schema.relTables.find((t) => t.name === name);
+        if (table) {
+          table.isPlaceholder = true;
+          this.setPlaceholderRelTable(name);
+        }
       }
     },
     unsetPlaceholder({ originalLabel, isNode }) {
@@ -466,7 +476,7 @@ export default {
         this.unsetPlaceholderRelTable(originalLabel);
       }
       this.$nextTick(() => {
-        this.$refs.schemaView.handleSettingsChange();
+        this.$refs.schemaView.redrawGraph();
       });
     },
     hideAll() {
@@ -528,7 +538,7 @@ export default {
     getCookie(name) {
       const nameEQ = name + "=";
       const ca = document.cookie.split(';');
-      for(let i = 0; i < ca.length; i++) {
+      for (let i = 0; i < ca.length; i++) {
         let c = ca[i];
         while (c.charAt(0) === ' ') c = c.substring(1, c.length);
         if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
@@ -553,21 +563,10 @@ export default {
 }
 
 /* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bs-body-bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--bs-body-inactive);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--bs-body-bg-accent);
+body {
+  scrollbar-gutter: stable both-edges;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bs-body-bg-accent) var(--bs-body-bg);
 }
 
 .main-layout__sidebar,
@@ -581,9 +580,10 @@ export default {
 body {
   overflow-x: hidden;
 }
+
 .main-layout__sidebar-logo {
-    height: 28px;
-    image-rendering: crisp-edges;
+  height: 28px;
+  image-rendering: crisp-edges;
 }
 
 .wrapper {
@@ -628,7 +628,7 @@ body {
   }
 }
 
-.nav-item{
+.nav-item {
   padding-left: 10px;
   padding-top: 4px;
 }
@@ -680,7 +680,7 @@ body {
     padding: 10px 0;
 
     .nav-item {
-       padding-left: 14px;
+      padding-left: 14px;
     }
   }
 }
@@ -698,26 +698,26 @@ body {
 }
 
 .wrapper.toggled .main-layout__sidebar-nav li a {
-    justify-content: center;
-    padding: 8px 0;
+  justify-content: center;
+  padding: 8px 0;
 }
 
 .wrapper.toggled .main-layout__sidebar-nav li i {
-    margin-right: 0;
+  margin-right: 0;
 }
 
 .wrapper.toggled .menu-toggle {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 .wrapper.toggled .main-layout__sidebar-header .navbar-brand {
-    display: none;
+  display: none;
 }
 
-.badge { 
+.badge {
   margin-left: 4px;
   margin-top: 4px;
   background-color: var(--bs-body-bg-accent);
@@ -740,14 +740,14 @@ body {
     display: flex;
     align-items: center;
     cursor: pointer;
-    
+
     button {
       background: none;
       border: none;
       color: var(--bs-body-text);
       padding: 0;
       transition: transform 0.3s ease;
-      
+
       &:hover {
         opacity: 0.7;
       }

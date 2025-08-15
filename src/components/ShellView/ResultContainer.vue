@@ -141,9 +141,9 @@
           :container-height="containerHeight"
         />
         <ResultCode
-          v-if="queryResultString && showCode"
+          v-if="queryResult && showCode"
           ref="resultCode"
-          :query-result-string="queryResultString"
+          :query-result="queryResult"
           :schema="schema"
           :container-height="containerHeight"
         />
@@ -204,7 +204,6 @@ export default {
     isGraphEmpty: false,
     schema: null,
     queryResult: null,
-    queryResultString: "",
     errorMessage: "",
     emptyResultMessage: "The query executed successfully but the result is empty.",
     containerHeight: "auto",
@@ -212,6 +211,8 @@ export default {
     startHeight: 0,
     startY: 0,
     graphSidebarOpen: false,
+    windowResizeDebounceTimer: null,
+    windowResizeDebounceMs: 100,
   }),
   computed: {
     ...mapStores(useModeStore),
@@ -237,27 +238,22 @@ export default {
   mounted() {
     window.addEventListener('mousemove', this.handleResize);
     window.addEventListener('mouseup', this.stopResize);
+    window.addEventListener('resize', this.handleWindowResize);
   },
   beforeUnmount() {
     window.removeEventListener('mousemove', this.handleResize);
     window.removeEventListener('mouseup', this.stopResize);
+    window.removeEventListener('resize', this.handleWindowResize);
   },
   methods: {
     handleDataChange(schema, queryResult, errorMessage) {
-      const int128Replacer = (_, value) => {
-        if (typeof value === "bigint") {
-          return value.toString();
-        }
-        return value;
-      };
+
       this.isGraphEmpty = false;
       this.schema = schema;
       this.queryResult = queryResult;
-      this.queryResultString = JSON.stringify(queryResult, int128Replacer, 2);
       this.errorMessage = errorMessage;
       if (this.queryResult && this.queryResult.rows.length === 0) {
         this.queryResult = null;
-        this.queryResultString = "";
         this.errorMessage = this.emptyResultMessage;
       }
       this.updateContainerHeight();
@@ -298,6 +294,19 @@ export default {
     handleGraphResize() {
       this.$refs.resultGraph.handleResize();
     },
+    handleWindowResize() {
+      if (this.windowResizeDebounceTimer) {
+        clearTimeout(this.windowResizeDebounceTimer);
+      }
+      this.windowResizeDebounceTimer = setTimeout(() => {
+        this.updateContainerHeight();
+        this.$nextTick(() => {
+          if (this.$refs.resultGraph) {
+            this.$refs.resultGraph.handleResize();
+          }
+        });
+      }, this.windowResizeDebounceMs);
+    },
     updateContainerHeight() {
       if (this.errorMessage) {
         this.containerHeight = "auto";
@@ -305,7 +314,7 @@ export default {
       else if (this.queryResult) {
         const editorHeight = this.$parent.getEditorHeight();
         if (this.isMaximized) {
-          this.containerHeight = window.innerHeight - this.navbarHeight - editorHeight - 2 * UI_SIZE.DEFAULT_MARGIN - 50+ 'px';
+          this.containerHeight = window.innerHeight - this.navbarHeight - editorHeight - 2 * UI_SIZE.DEFAULT_MARGIN - 50 + 'px';
         }
         else {
           this.containerHeight = this.queryResultDefaultHeight + 'px';

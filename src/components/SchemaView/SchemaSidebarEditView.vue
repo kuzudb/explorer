@@ -145,7 +145,8 @@
                 v-if="property.isPrimaryKey"
                 class="badge bg-[var(--bs-body-accent)]"
                 :style="{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: '#FFFFFF', }"
-              > PK </span>
+              >
+                PK </span>
             </td>
             <td v-if="i !== editingPropertyIndex">
               {{ property.type }}
@@ -260,7 +261,7 @@ export default {
         if (!this.isEditingLabel && newLabel !== this.label) {
           this.isEditingLabel = true;
           this.oldLabel = this.label;
-          this.$emit("setPlaceholder", this.label);
+          this.$emit("setPlaceholder", { label: this.label, isNode: this.isNode });
         }
         if (this.isEditingLabel) {
           if (newLabel === this.oldLabel) {
@@ -397,10 +398,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 .schema-side-panel__edit-table-name-container {
   max-width: 50px;
 }
+
 .schema_side-panel__edit-table-actions-container {
   width: 100%;
 }

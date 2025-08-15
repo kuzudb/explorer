@@ -17,10 +17,10 @@
 export default {
   name: "ResultCode",
   props: {
-    queryResultString: {
-      type: String,
+    queryResult: {
+      type: Object,
       required: false,
-      default: "",
+      default: () => ({}),
     },
     containerHeight: {
       type: String,
@@ -43,11 +43,19 @@ export default {
     }
   },
   methods: {
+
     initMonacoEditor() {
       const Monaco = window.Monaco;
       const theme = document.documentElement.getAttribute('data-bs-theme') === 'dark'
       ? 'vs-dark'
-      : 'vs-light';
+        : 'vs-light';
+      const int128Replacer = (_, value) => {
+        if (typeof value === "bigint") {
+          return value.toString();
+        }
+        return value;
+      };
+      const queryResultString = JSON.stringify(this.queryResult, int128Replacer, 2);
       // The query result should only be displayed after a query is executed.
       // This means the editor for Cypher query should have been initialized.
       // If not, there is something wrong with the app. The Monaco editor should
@@ -56,7 +64,7 @@ export default {
         throw new Error("Monaco is not initialized.");
       }
       this.editor = Monaco.editor.create(this.$refs.editor, {
-        value: this.queryResultString,
+        value: queryResultString,
         language: "json",
         theme,
         readOnly: true,

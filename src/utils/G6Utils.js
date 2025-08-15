@@ -14,7 +14,7 @@ class G6Utils {
     }
     const currentZoom = graph.getZoom();
     const ratioOut = 1 / (1 - this.delta * this.zoomSensitivity);
-    const maxZoom = graph.get("maxZoom");
+    const maxZoom = graph.getZoomRange()[1];
     if (ratioOut * currentZoom > maxZoom) {
       return;
     }
@@ -27,7 +27,7 @@ class G6Utils {
     }
     const currentZoom = graph.getZoom();
     const ratioIn = 1 - this.delta * this.zoomSensitivity;
-    const minZoom = graph.get("minZoom");
+    const minZoom = graph.getZoomRange()[0];
     if (ratioIn * currentZoom < minZoom) {
       return;
     }
@@ -38,7 +38,7 @@ class G6Utils {
     if (!graph) {
       return;
     }
-    graph.fitView([20, 20]);
+    return graph.fitView([20, 20]);
   }
 
   actualSize(graph) {
@@ -68,7 +68,7 @@ class G6Utils {
   // This function is copied from http://g6-v3-2.antv.vision/en/examples/shape/label
   fittingString(str, maxWidth, fontSize) {
     maxWidth = maxWidth * 2;
-    const fontWidth = fontSize * 1.3;
+    const fontWidth = fontSize * 1.5;
     const width = this.calcTextWidth(str, fontSize);
     const ellipsis = "…";
     if (width > maxWidth) {
@@ -79,7 +79,7 @@ class G6Utils {
     return str;
   }
 
-  shadeColor(color, percent=-20) {
+  shadeColor(color, percent = -20) {
     if (this.colorShadeHash[color] && this.colorShadeHash[color][percent]) {
       return this.colorShadeHash[color][percent];
     }
@@ -110,6 +110,15 @@ class G6Utils {
     this.colorShadeHash[color][percent] = "#" + RR + GG + BB;
 
     return "#" + RR + GG + BB;
+  }
+
+  getReadableTextColor(bgColor) {
+    const color = bgColor.charAt(0) === '#' ? bgColor.substring(1) : bgColor;
+    const r = parseInt(color.substring(0, 2), 16);
+    const g = parseInt(color.substring(2, 4), 16);
+    const b = parseInt(color.substring(4, 6), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.6 ? '#000000' : '#ffffff';
   }
 }
 
