@@ -107,7 +107,10 @@
                 v-for="property in displayProperties"
                 :key="property.name"
               >
-                <th scope="row" class="copyable-cell">
+                <th
+                  scope="row"
+                  class="copyable-cell"
+                >
                   {{ property.name }}
                   <span
                     v-if="property.isPrimaryKey"
@@ -122,7 +125,7 @@
                     @mouseenter="showCopyButton($event)"
                     @mouseleave="hideCopyButton($event)"
                   >
-                    <i class="fa-solid fa-copy"></i>
+                    <i class="fa-solid fa-copy" />
                   </button>
                 </th>
                 <td class="copyable-cell">
@@ -133,7 +136,7 @@
                     @mouseenter="showCopyButton($event)"
                     @mouseleave="hideCopyButton($event)"
                   >
-                    <i class="fa-solid fa-copy"></i>
+                    <i class="fa-solid fa-copy" />
                   </button>
                 </td>
               </tr>
