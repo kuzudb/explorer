@@ -50,7 +50,6 @@
     <div
       ref="graph"
       class="schema_graph__wrapper"
-      :style="{ width: graphWidth + 'px' }"
     />
     <div
       ref="sidePanel"
@@ -592,7 +591,7 @@ export default {
 
     handleResize() {
       this.$nextTick(() => {
-        const width = this.computeGraphWidth();
+        const width = this.$refs.graph.offsetWidth;
         const height = this.computeGraphHeight();
         if (this.g6Graph) {
           this.g6Graph.resize(width, height);
@@ -688,6 +687,15 @@ export default {
       width -= this.sidebarWidth;
       width -= UI_SIZE.DEFAULT_BORDER_WIDTH * 2;
       width -= this.toolbarWidth;
+      
+      // Detect sidebar collapse state and adjust width accordingly
+      const wrapper = document.querySelector('.wrapper');
+      if (wrapper) {
+        const isSidebarCollapsed = wrapper.classList.contains('toggled');
+        const sidebarWidth = isSidebarCollapsed ? 60 : 180; // CSS variables: --sidebar-collapsed-width: 60px, --sidebar-width: 180px
+        width -= sidebarWidth;
+      }
+      
       this.graphWidth = width;
       return width;
     },
@@ -1004,6 +1012,8 @@ export default {
 
   .schema_graph__wrapper {
     height: 100%;
+    flex: 1 1 0%;
+    min-width: 0;
   }
 
   .badge {
