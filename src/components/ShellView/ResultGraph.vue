@@ -107,10 +107,7 @@
                 v-for="property in displayProperties"
                 :key="property.name"
               >
-                <th
-                  scope="row"
-                  class="copyable-cell"
-                >
+                <th scope="row" class="copyable-cell">
                   {{ property.name }}
                   <span
                     v-if="property.isPrimaryKey"
@@ -125,7 +122,7 @@
                     @mouseenter="showCopyButton($event)"
                     @mouseleave="hideCopyButton($event)"
                   >
-                    <i class="fa-solid fa-copy" />
+                    <i class="fa-solid fa-copy"></i>
                   </button>
                 </th>
                 <td class="copyable-cell">
@@ -136,7 +133,7 @@
                     @mouseenter="showCopyButton($event)"
                     @mouseleave="hideCopyButton($event)"
                   >
-                    <i class="fa-solid fa-copy" />
+                    <i class="fa-solid fa-copy"></i>
                   </button>
                 </td>
               </tr>
@@ -506,14 +503,40 @@ export default {
       const config = {
         type: 'd3-force',
         link: {
-          distance: 300,
+          // Dynamic distance: 
+          // Fixed distance for nodes with large nunmber of neighbors will cause mass collision (a large circle)
+          // Variable distance with multiple layer of variation will display the nodes in a spaced out manner (multiple circles around node)
+          distance: (d) => {
+            // Get the source and target node degrees
+            const sourceDegree = d.source.data?.degree || 1;
+            const targetDegree = d.target.data?.degree || 1;
+            
+            // Base distance for nodes with few connections
+            const baseDistance = 150;
+            
+            // For high-degree nodes (hubs), vary the distance based on connection index
+            if (sourceDegree > 5 || targetDegree > 5) {
+              // Use a hash of the edge ID to create pseudo-random but consistent distances
+              const edgeHash = d.id ? d.id.split('').reduce((a, b) => a + b.charCodeAt(0), 0) : 0;
+              const variation = (edgeHash % 6) * 100 + 100; 
+              return baseDistance + variation;
+            }
+            
+            // For regular nodes, use standard distance
+            return baseDistance;
+          },
           strength: 2,
         },
         collide: {
-          radius: 120,
+          radius: (d) => d.size / 2 + 20, // Add padding for better collision detection
+          strength: 1, // Positive strength for stronger collision avoidance
         },
         manyBody: {
-          strength: -300,
+          strength: -1200,
+        },
+        radial: { 
+          radius: 200,
+         
         },
         alpha: 1,
         alphaMin: 0.2,
@@ -574,7 +597,7 @@ export default {
             labelFontWeight: 350,
             labelBackground: true,
             labelBackgroundFill: "#ffffff",
-            labelPadding: [4, 8],
+            labelPadding: [0, 8],
             labelBackgroundRadius: 2,
             labelAutoRotate: true,
             labelTextBaseline: 'bottom',
@@ -697,6 +720,15 @@ export default {
         const nodeData = this.g6Graph.getNodeData(itemId);
         this.expandOnNode(nodeData);
         this.deselectAll();
+      });
+
+      // Ensure force simulation continues after node dragging
+      this.g6Graph.on('node:dragend', () => {
+        // Restart the force simulation to ensure proper collision detection
+        const layout = this.g6Graph.getLayout();
+        if (layout && layout.simulation) {
+          layout.simulation.alpha(0.3).restart();
+        }
       });
 
       this.g6Graph.on('canvas:click', () => {
@@ -1042,6 +1074,18 @@ export default {
           rel: totalRelCount,
         },
       };
+      // Calculate node degrees for dynamic distance
+      const nodeDegrees = {};
+      Object.values(edges).forEach(edge => {
+        nodeDegrees[edge.source] = (nodeDegrees[edge.source] || 0) + 1;
+        nodeDegrees[edge.target] = (nodeDegrees[edge.target] || 0) + 1;
+      });
+      
+      // Add degree information to node data
+      Object.values(nodes).forEach(node => {
+        node.data.degree = nodeDegrees[node.id] || 0;
+      });
+
       if (totalNodeCount > this.settingsStore.performance.maxNumberOfNodesWithLabels) {
         for (let key in nodes) {
           const node = nodes[key];
