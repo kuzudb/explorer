@@ -344,7 +344,7 @@ export default {
             labelFontWeight: 350,
             labelBackground: true,
             labelBackgroundFill: "#ffffff",
-            labelPadding: [4, 8],
+            labelPadding: [0, 8],
             labelBackgroundRadius: 2,
             labelAutoRotate: true,
             labelTextBaseline: 'bottom',
