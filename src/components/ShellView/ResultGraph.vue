@@ -507,7 +507,7 @@ export default {
         type: 'd3-force',
         link: {
           // Dynamic distance: 
-          // Fixed distance for nodes with large nunmber of neighbors will cause mass collision (a large circle)
+          // Fixed distance for nodes with large number of neighbors will cause mass collision (a large circle)
           // Variable distance with multiple layer of variation will display the nodes in a spaced out manner (multiple circles around node)
           distance: (d) => {
             // Get the source and target node degrees
