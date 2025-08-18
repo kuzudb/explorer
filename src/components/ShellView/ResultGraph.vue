@@ -535,7 +535,7 @@ export default {
           strength: 1, // Positive strength for stronger collision avoidance
         },
         manyBody: {
-          strength: -1200,
+          strength: -1200,  // Negative strength indicates repulsion
         },
         radial: { 
           radius: 200,
