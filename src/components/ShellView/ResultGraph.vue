@@ -144,6 +144,120 @@
           </table>
         </div>
         <div v-else>
+          <!-- Query Metrics Section -->
+          <div v-if="queryResult && hasQueryMetrics">
+            <h5>Query Metrics</h5>
+            <hr />
+            <table class="table table-sm table-borderless result-graph__metrics-table">
+              <tbody>
+                <tr>
+                  <th scope="row">
+                    <i
+                      class="fa-solid fa-code"
+                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
+                    />
+                    Compile Time
+                  </th>
+                  <td v-if="queryMetrics.compileTime !== null && queryMetrics.compileTime !== undefined">
+                    {{ formatTime(queryMetrics.compileTime) }}
+                  </td>
+                  <td v-else>
+                    <span class="text-muted small">
+                      <i class="fa-solid fa-info-circle" /> Not available
+                    </span>
+                  </td>
+                </tr>
+                <tr v-if="queryMetrics.executionTime != null">
+                  <th scope="row">
+                    <i
+                      class="fa-solid fa-play"
+                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
+                    />
+                    Execution Time
+                  </th>
+                  <td>{{ formatTime(queryMetrics.executionTime) }}</td>
+                </tr>
+                <tr v-if="queryMetrics.totalTime != null">
+                  <th scope="row">
+                    <i
+                      class="fa-solid fa-clock"
+                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
+                    />
+                    Total Time
+                  </th>
+                  <td>{{ formatTime(queryMetrics.totalTime) }}</td>
+                </tr>
+                <tr v-if="queryMetrics.rows != null">
+                  <th scope="row">
+                    <i
+                      class="fa-solid fa-list"
+                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
+                    />
+                    Rows
+                  </th>
+                  <td>{{ queryMetrics.rows.toLocaleString() }}</td>
+                </tr>
+                <tr v-if="queryMetrics.nodes != null">
+                  <th scope="row">
+                    <i
+                      class="fa-solid fa-circle"
+                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
+                    />
+                    Nodes
+                  </th>
+                  <td>{{ queryMetrics.nodes.toLocaleString() }}</td>
+                </tr>
+                <tr v-if="queryMetrics.relationships != null">
+                  <th scope="row">
+                    <i
+                      class="fa-solid fa-arrow-right"
+                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
+                    />
+                    Relationships
+                  </th>
+                  <td>{{ queryMetrics.relationships.toLocaleString() }}</td>
+                </tr>
+
+                <tr v-if="queryMetrics.memoryUsed != null">
+                  <th scope="row">
+                    <i
+                      class="fa-solid fa-database"
+                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
+                    />
+                    Memory Used
+                  </th>
+                  <td>{{ formatBytes(queryMetrics.memoryUsed) }}</td>
+                </tr>
+                <tr v-if="queryMetrics.memoryLimit != null">
+                  <th scope="row">
+                    <i
+                      class="fa-solid fa-hdd"
+                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
+                    />
+                    Memory Limit
+                  </th>
+                  <td>{{ formatBytes(queryMetrics.memoryLimit) }}</td>
+                </tr>
+                <tr v-if="queryMetrics.memoryUsage != null">
+                  <th scope="row">
+                    <i
+                      class="fa-solid fa-percentage"
+                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
+                    />
+                    Memory Usage
+                  </th>
+                  <td>
+                    <span :class="getMemoryUsageClass(queryMetrics.memoryUsage)">
+                      {{ queryMetrics.memoryUsage.toFixed(1) }}%
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            
+          </div>
+          <br />
+
           <h5>Overview</h5>
           <div v-if="counters.total.node > 0">
             <div class="result-graph__summary-section">
@@ -302,6 +416,7 @@ export default {
     zoomSensitivity: 2, // used for zooming, copied from G6
     toolbarDebounceTimeout: 100,
     toolbarDebounceTimer: null,
+    bufferManagerStats: null, // Store real buffer manager stats
     counters: {
       node: {},
       rel: {},
@@ -363,6 +478,62 @@ export default {
     numHiddenRels() {
       return Object.keys(this.hiddenElements.edges).length;
     },
+    queryMetrics() {
+      // Extract metrics from query result
+      if (!this.queryResult) {
+        return {};
+      }
+      
+      const metrics = {};
+      
+      try {
+        // Timing information from query summary
+        if (this.queryResult.querySummary) {
+          metrics.compileTime = this.queryResult.querySummary.compilingTime || null;
+          metrics.executionTime = this.queryResult.querySummary.executionTime || null;
+          
+          // Handle total time calculation
+          if (metrics.executionTime !== null) {
+            if (metrics.compileTime !== null && metrics.compileTime > 0) {
+              metrics.totalTime = metrics.compileTime + metrics.executionTime;
+            } else {
+              // If compile time is not available (Node.js API), just use execution time
+              metrics.totalTime = metrics.executionTime;
+            }
+          }
+        }
+        
+        // Get row count 
+        if (this.queryResult.rows && Array.isArray(this.queryResult.rows)) {
+          metrics.rows = this.queryResult.rows.length;
+        }
+        
+        // Get node and relationship counts from counters
+        if (this.counters && this.counters.total) {
+          metrics.nodes = this.counters.total.node || 0;
+          metrics.relationships = this.counters.total.rel || 0;
+        }
+        
+        // Buffer Manager Statistics
+        if (this.bufferManagerStats) {
+          metrics.memoryUsed = this.bufferManagerStats.mem_usage;
+          metrics.memoryLimit = this.bufferManagerStats.mem_limit;
+          metrics.memoryUsage = (this.bufferManagerStats.mem_usage / this.bufferManagerStats.mem_limit) * 100;
+        }
+      } catch (error) {
+        console.warn('Error extracting query metrics:', error);
+        return {};
+      }
+      
+      return metrics;
+    },
+    hasQueryMetrics() {
+      if (!this.queryMetrics || typeof this.queryMetrics !== 'object') {
+        return false;
+      }
+      
+      return Object.keys(this.queryMetrics).length > 0;
+    },
   },
   watch: {
     performanceSettings: {
@@ -402,6 +573,15 @@ export default {
       this.$nextTick(() => {
         this.handleResize();
       });
+    },
+    queryResult: {
+      handler(newVal) {
+        if (newVal) {
+          // Update buffer manager stats when query result changes
+          this.updateBufferManagerStats();
+        }
+      },
+      immediate: true
     },
   },
   mounted() {
@@ -1365,6 +1545,95 @@ export default {
     stopResize() {
       this.isResizing = false;
     },
+
+    formatTime(milliseconds) {
+      if (milliseconds == null || isNaN(milliseconds)) {
+        return 'N/A';
+      }
+      const seconds = milliseconds / 1000;
+      if (seconds < 1) {
+        return `${milliseconds.toFixed(2)}ms`;
+      }
+      if (seconds < 60) {
+        return `${seconds.toFixed(2)}s`;
+      }
+      const minutes = seconds / 60;
+      if (minutes < 60) {
+        return `${minutes.toFixed(2)}m`;
+      }
+      const hours = minutes / 60;
+      return `${hours.toFixed(2)}h`;
+    },
+
+    formatBytes(bytes) {
+      if (bytes == null || isNaN(bytes)) {
+        return 'N/A';
+      }
+      const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+      let size = bytes;
+      let unitIndex = 0;
+      
+      while (size >= 1024 && unitIndex < units.length - 1) {
+        size /= 1024;
+        unitIndex++;
+      }
+      
+      return `${size.toFixed(2)} ${units[unitIndex]}`;
+    },
+
+    getMemoryUsageClass(percentage) {
+      if (percentage == null || isNaN(percentage)) {
+        return 'badge bg-secondary';
+      }
+      if (percentage >= 90) {
+        return 'badge bg-danger';
+      } else if (percentage >= 75) {
+        return 'badge bg-warning';
+      } else if (percentage >= 50) {
+        return 'badge bg-info';
+      } else {
+        return 'badge bg-success';
+      }
+    },
+
+    // Get actual buffer manager statistics using bm_info() function
+    async getBufferManagerStats() {
+      const response = await fetch('/api/cypher', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: 'call bm_info() return *;'
+        })
+      });
+      
+      if (!response.ok) {
+        console.warn('Failed to get buffer manager stats:', response.statusText);
+        return null;
+      }
+      
+      const data = await response.json();
+      
+      // Extract the first row from the result
+      if (data?.rows?.length > 0) {
+        const row = data.rows[0];
+        return {
+          mem_limit: row.mem_limit || row[0], // Handle different column access patterns
+          mem_usage: row.mem_usage || row[1]
+        };
+      }
+      
+      return null;
+    },
+    
+    // Update buffer manager stats asynchronously
+    async updateBufferManagerStats() {
+      const stats = await this.getBufferManagerStats();
+      if (stats) {
+        this.bufferManagerStats = stats;
+      }
+    },
   },
 };
 </script>
@@ -1566,15 +1835,54 @@ export default {
       &.result-graph__overview-table {
         table-layout: fixed;
 
+        th {
+          width: 50%;
+          font-weight: 500;
+          color: var(--bs-body-text);
+        }
+
         td {
-          width: 120px;
+          width: 50%;
+        }
+      }
+
+      &.result-graph__metrics-table {
+        table-layout: fixed;
+
+        th {
+          width: 50%;
+          font-weight: 500;
+          color: var(--bs-body-text);
+        }
+
+        td {
+          width: 50%;
+          font-family: "Lexend", sans-serif;
+        }
+
+        i {
+          width: 16px;
+          text-align: center;
+        }
+
+        .badge {
+          font-size: 0.75rem;
+          padding: 0.25rem 0.5rem;
         }
       }
 
       &.result-graph__result-table {
+        table-layout: fixed;
         font-family: "Lexend", Lexend, sans-serif;
 
+        th {
+          width: 50%;
+          font-weight: 500;
+          color: var(--bs-body-text);
+        }
+
         td {
+          width: 50%;
           word-break: normal;
         }
       }
