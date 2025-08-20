@@ -147,7 +147,7 @@
           <!-- Query Metrics Section -->
           <div v-if="queryResult && hasQueryMetrics">
             <h5>Query Metrics</h5>
-            <hr />
+            <hr>
             <table class="table table-sm table-borderless result-graph__metrics-table">
               <tbody>
                 <tr>
@@ -254,9 +254,8 @@
                 </tr>
               </tbody>
             </table>
-            
           </div>
-          <br />
+          <br>
 
           <h5>Overview</h5>
           <div v-if="counters.total.node > 0">
