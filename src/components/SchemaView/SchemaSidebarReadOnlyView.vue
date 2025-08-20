@@ -2,55 +2,40 @@
   <div>
     <div>
       <h5>
-        <span
-          class="badge bg-[var(--bs-body-accent)]"
-          :style="{
-            backgroundColor: ` ${getColor(label)} !important`,
-            color:'#ffffff',
-            textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-          }"
-        >
+        <span class="badge bg-[var(--bs-body-accent)]" :style="{
+          backgroundColor: ` ${getColor(label)} !important`,
+          color: '#ffffff',
+          textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+        }">
           {{ label }}
         </span>
       </h5>
       <hr>
 
       <div v-if="!isNode">
-        <h6
-          v-for="conn in connectivity"
-          :key="conn"
-        >
-          <span
-            class="badge bg-[var(--bs-body-accent)]"
-            :style="{
-              backgroundColor: ` ${getColor(conn.src)} !important`,
-              color: '#FFFFFF',
-              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-            }"
-          >
+        <h6 v-for="conn in connectivity" :key="conn">
+          <span class="badge bg-[var(--bs-body-accent)]" :style="{
+            backgroundColor: ` ${getColor(conn.src)} !important`,
+            color: '#FFFFFF',
+            textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+          }">
             {{ conn.src }}
           </span>
           &nbsp;
           <i class="fa-solid fa-arrow-right" />
           &nbsp;
-          <span
-            class="badge bg-[var(--bs-body-accent)]"
-            :style="{
-              backgroundColor: ` ${getColor(conn.dst)} !important`,
-              color: '#FFFFFF',
-              textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-            }"
-          >
+          <span class="badge bg-[var(--bs-body-accent)]" :style="{
+            backgroundColor: ` ${getColor(conn.dst)} !important`,
+            color: '#FFFFFF',
+            textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+          }">
             {{ conn.dst }}
           </span>
         </h6>
         <br>
       </div>
 
-      <table
-        v-if="schema"
-        class="table table-sm table-borderless schema_side-panel__overview-table"
-      >
+      <table v-if="schema" class="table table-sm table-borderless schema_side-panel__overview-table">
         <thead>
           <tr v-if="tableProperties.length > 0">
             <th scope="col">
@@ -67,17 +52,12 @@
           </tr>
         </thead>
         <tbody v-if="tableProperties.length > 0">
-          <tr
-            v-for="property in tableProperties"
-            :key="property.name"
-          >
+          <tr v-for="property in tableProperties" :key="property.name">
             <td scope="row">
               {{ property.name }}
-              <span
-                v-if="property.isPrimaryKey"
-                class="badge bg-[var(--bs-body-accent)]"
-                :style="{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: '#FFFFFF', }"
-              > PK </span>
+              <span v-if="property.isPrimaryKey" class="badge bg-[var(--bs-body-accent)]"
+                :style="{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: '#FFFFFF', }">
+                PK </span>
             </td>
             <td>
               {{ property.type }}

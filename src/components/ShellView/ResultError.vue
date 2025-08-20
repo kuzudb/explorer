@@ -1,13 +1,6 @@
 <template>
-  <div
-    ref="wrapper"
-    class="result-error__wrapper"
-  >
-    <div
-      v-if="!isInfo"
-      class="alert alert-danger"
-      role="alert"
-    >
+  <div ref="wrapper" class="result-error__wrapper">
+    <div v-if="!isInfo" class="alert alert-danger" role="alert">
       <div>
         <i class="fa-solid fa-circle-exclamation" />
         The evaluation of this query failed with the following error:
@@ -16,11 +9,7 @@
       </div>
     </div>
 
-    <div
-      v-if="isInfo"
-      class="alert alert-info"
-      role="alert"
-    >
+    <div v-if="isInfo" class="alert alert-info" role="alert">
       <div>
         <i class="fa-solid fa-circle-info" />
         The evaluation of this query succeeded with the following message:

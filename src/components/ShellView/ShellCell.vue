@@ -1,41 +1,17 @@
 <template>
   <div class="shell-cell__wrapper">
-    <CypherEditor
-      ref="editor"
-      :schema="schema"
-      :navbar-height="navbarHeight"
-      :is-maximizable="isMaximizable"
-      :is-loading="isLoading"
-      @evaluate-cypher="evaluateCypher"
-      @generate-and-evaluate-query="generateAndEvaluateQuery"
-      @remove="removeCell"
-      @toggle-maximize="toggleMaximize"
-      @editor-resize="handleEditorResize"
-    />
-    <ResultContainer
-      v-for="(_, index) in queryResults"
-      :key="index"
-      :ref="getRefName(index)"
-      :is-maximized="isMaximized"
-      :navbar-height="navbarHeight"
-    />
-    <ResultContainer
-      v-if="errorMessage"
-      ref="resultErrorContainer"
-      :is-maximized="false"
-      :navbar-height="navbarHeight"
-    />
-    <div
-      v-if="isLoading"
-      class="d-flex align-items-center"
-    >
+    <CypherEditor ref="editor" :schema="schema" :navbar-height="navbarHeight" :is-maximizable="isMaximizable"
+      :is-loading="isLoading" @evaluate-cypher="evaluateCypher" @generate-and-evaluate-query="generateAndEvaluateQuery"
+      @remove="removeCell" @toggle-maximize="toggleMaximize" @editor-resize="handleEditorResize" />
+    <ResultContainer v-for="(_, index) in queryResults" :key="index" :ref="getRefName(index)"
+      :is-maximized="isMaximized" :navbar-height="navbarHeight" />
+    <ResultContainer v-if="errorMessage" ref="resultErrorContainer" :is-maximized="false"
+      :navbar-height="navbarHeight" />
+    <div v-if="isLoading" class="d-flex align-items-center">
       <strong class="text-secondary">{{
         loadingText ? loadingText : "Loading..."
-      }}</strong>
-      <div
-        class="spinner-border text-secondary ms-auto"
-        role="status"
-      />
+        }}</strong>
+      <div class="spinner-border text-secondary ms-auto" role="status" />
     </div>
   </div>
 </template>
@@ -174,7 +150,7 @@ export default {
             clearInterval(intervalId);
             this.isLoading = false;
           });
-        
+
       }
       this.isEvaluated = true;
     },
@@ -235,7 +211,7 @@ export default {
         uuid: this.cellId,
         isQueryGenerationMode: this.$refs.editor.isQueryGenerationMode
       };
-      if(!isOpenAI) {
+      if (!isOpenAI) {
         data.baseUrl = baseUrl;
       }
       data.llmProvider = this.settingsStore.gpt.llmProvider;
@@ -309,6 +285,7 @@ export default {
 <style lang="scss" scoped>
 .shell-cell__wrapper {
   display: block;
+
   &:last-child {
     padding-bottom: 10px;
   }

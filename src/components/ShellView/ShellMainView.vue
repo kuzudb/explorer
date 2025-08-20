@@ -1,37 +1,18 @@
 <template>
-  <div
-    class="shell-main-view__wrapper"
-    :class="{'is-maximized': maximizedCellIndex !== -1}"
-    :style="{ height: `${containerHeight}px` }"
-  >
-    <div
-      v-if="maximizedCellIndex < 0"  
-    >
+  <div class="shell-main-view__wrapper" :class="{ 'is-maximized': maximizedCellIndex !== -1 }"
+    :style="{ height: `${containerHeight}px` }">
+    <div v-if="maximizedCellIndex < 0">
       <div class="d-flex align-items-center gap-3 m-4">
-        <button
-          type="button"
-          class="btn btn-link text-body p-0 text-decoration-none"
-          @click="addCell"
-        >
+        <button type="button" class="btn btn-link text-body p-0 text-decoration-none" @click="addCell">
           + Click here to add a new cell
         </button>
         <div class="flex-grow-1 border-top border-secondary" />
       </div>
     </div>
-    <ShellCell
-      v-for="(cell, index) in shellCell"
-      v-show="index === maximizedCellIndex || maximizedCellIndex < 0"
-      :ref="getCellRef(index)"
-      :key="cell.cellId"
-      :schema="schema"
-      :navbar-height="navbarHeight"
-      :cell-id="cell.cellId"
-      @remove="removeCell(index)"
-      @add-cell="addCell()"
-      @maximize="maximize(index)"
-      @minimize="minimize()"
-      @reload-schema="reloadSchema()"
-    />
+    <ShellCell v-for="(cell, index) in shellCell" v-show="index === maximizedCellIndex || maximizedCellIndex < 0"
+      :ref="getCellRef(index)" :key="cell.cellId" :schema="schema" :navbar-height="navbarHeight" :cell-id="cell.cellId"
+      @remove="removeCell(index)" @add-cell="addCell()" @maximize="maximize(index)" @minimize="minimize()"
+      @reload-schema="reloadSchema()" />
   </div>
 </template>
 
@@ -80,7 +61,7 @@ export default {
       // Ignore
     }
     this.$nextTick(() => {
-        this.loadDemoCell();
+      this.loadDemoCell();
       this.updateContainerHeight();
     });
     window.addEventListener("resize", this.updateContainerHeight);
@@ -215,13 +196,12 @@ MATCH (a)-[r]->(b) RETURN * LIMIT 5;`,
 </script>
 
 <style lang="scss" scoped>
-
 .shell-main-view__wrapper {
   width: 100%;
-  overflow-y: scroll; 
-  
+  overflow-y: scroll;
+
   &.is-maximized {
-    overflow-y: hidden; 
+    overflow-y: hidden;
     margin-bottom: 2px;
   }
 

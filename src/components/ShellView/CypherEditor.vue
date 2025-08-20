@@ -1,34 +1,18 @@
 <template>
-  <div
-    ref="wrapper"
-    class="shell-editor__wrapper"
-    :style="{ maxHeight: isMaximized ? '550px' : '100%' }"
-  >
+  <div ref="wrapper" class="shell-editor__wrapper" :style="{ maxHeight: isMaximized ? '550px' : '100%' }">
     <!-- Layout -->
     <div class="shell-editor__layout">
       <!-- Sidebar -->
       <aside :style="{ width: toolbarWidth + 'px' }">
         <ul>
           <button @click="evaluateCell">
-            <i
-              class="fa-solid fa-play"
-              data-bs-toggle="tooltip"
-              data-bs-placement="right"
-              title="Run"
-            />
+            <i class="fa-solid fa-play" data-bs-toggle="tooltip" data-bs-placement="right" title="Run" />
           </button>
           <button @click="toggleMaximize">
-            <i
-              :class="maximizeButtonClass"
-              data-bs-toggle="tooltip"
-              data-bs-placement="right"
-              :data-bs-original-title="maximizeButtonTitle"
-            />
+            <i :class="maximizeButtonClass" data-bs-toggle="tooltip" data-bs-placement="right"
+              :data-bs-original-title="maximizeButtonTitle" />
           </button>
-          <button
-            v-if="!isMaximized"
-            @click="removeCell"
-          >
+          <button v-if="!isMaximized" @click="removeCell">
             <i class="fa-solid fa-times" />
           </button>
         </ul>
@@ -41,25 +25,14 @@
           <div>
             <ul class="nav nav-tabs border-0">
               <li class="nav-item text-[var(--bs-body-text)]">
-                <a
-                  href="#"
-                  :class="[
-                    !isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
-                  ]"
-                  class="text-decoration-none"
-                  @click.prevent="isQueryGenerationMode = false"
-                >Cypher Query</a>
+                <a href="#" :class="[
+                  !isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
+                ]" class="text-decoration-none" @click.prevent="isQueryGenerationMode = false">Cypher Query</a>
               </li>
               <li class="nav-item">
-                <a
-                  v-if="!modeStore.isWasm"
-                  href="#"
-                  :class="[
-                    isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
-                  ]"
-                  class="text-decoration-none"
-                  @click.prevent="isQueryGenerationMode = true"
-                >AI Query</a>
+                <a v-if="!modeStore.isWasm" href="#" :class="[
+                  isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
+                ]" class="text-decoration-none" @click.prevent="isQueryGenerationMode = true">AI Query</a>
               </li>
             </ul>
           </div>
@@ -67,19 +40,9 @@
 
         <!-- Main Content -->
         <main>
-          <div
-            v-show="!isQueryGenerationMode"
-            ref="editor"        
-          />
-          <div
-            v-if="!modeStore.isWasm"
-            v-show="isQueryGenerationMode"
-          >
-            <textarea
-              ref="gptQuestionTextArea"
-              v-model="gptQuestion"
-              placeholder="Type your question here..."
-            />
+          <div v-show="!isQueryGenerationMode" ref="editor" />
+          <div v-if="!modeStore.isWasm" v-show="isQueryGenerationMode">
+            <textarea ref="gptQuestionTextArea" v-model="gptQuestion" placeholder="Type your question here..." />
           </div>
         </main>
       </div>
@@ -189,8 +152,8 @@ export default {
   methods: {
     initMonacoEditor() {
       const theme = document.documentElement.getAttribute('data-bs-theme') === 'dark'
-      ? 'vs-dark'
-      : 'vs-light';
+        ? 'vs-dark'
+        : 'vs-light';
       // Set the Monaco editor to the global window object to make sure it is
       // only initialized once.
       // TODO: Create a singleton class wrapper for Monaco instead.
@@ -205,13 +168,13 @@ export default {
                   callback({
                     conf: MonacoCypherLanguage.languageConfiguration,
                     language: MonacoCypherLanguage.language,
-                  });                
+                  });
                 },
               };
             };
           }
-        }); 
-              
+        });
+
 
         Monaco.languages.registerCompletionItemProvider("cypher", {
           provideCompletionItems: (model, position) => {
@@ -224,7 +187,7 @@ export default {
         });
         window.Monaco = Monaco;
       }
-      
+
       const editorContainer = this.$refs.editor;
       this.editor = window.Monaco.editor.create(editorContainer, {
         language: "cypher",
@@ -235,7 +198,7 @@ export default {
         },
         fontSize: 16,
         scrollBeyondLastLine: false,
-      });     
+      });
     },
     toggleMaximize() {
       this.$emit("toggleMaximize");
@@ -291,7 +254,7 @@ $margin: 1rem;
   margin-right: 1rem;
   border-radius: 1rem 1rem 0 0;
   overflow: hidden;
-  
+
 }
 
 .shell-editor__topbar {
@@ -300,27 +263,32 @@ $margin: 1rem;
   border-bottom: 1px solid var(--bs-body-inactive);
   background-color: var(--bs-body-bg-secondary);
   color: var(--bs-body-text);
+
   div {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
   }
+
   ul {
     display: flex;
     font-size: 0.875rem;
     font-weight: 500;
     text-align: center;
     background-color: var(--bs-body-bg-secondary);
+
     .nav-item {
       margin: 0;
       padding: 0;
     }
   }
+
   a {
     padding: 1rem;
     border-top-left-radius: 0.5rem;
     border-top-right-radius: 0.5rem;
     color: var(--bs-body-inactive);
+
     &.active-tab {
       font-weight: bold;
       color: var(--bs-body-text);
@@ -330,7 +298,7 @@ $margin: 1rem;
     &.inactive-tab {
       &:hover {
         color: var(--bs-body-text);
-        background-color: var(--bs-body-inactive); 
+        background-color: var(--bs-body-inactive);
       }
     }
   }
@@ -339,6 +307,7 @@ $margin: 1rem;
 .shell-editor__layout {
   display: flex;
   min-height: 132px;
+
   aside {
     display: flex;
     flex-direction: column;
@@ -363,7 +332,7 @@ $margin: 1rem;
         background: transparent;
         border: 0px;
       }
-    }  
+    }
   }
 
   .shell-editor__content {
@@ -378,9 +347,12 @@ main {
   background-color: var(--bs-body-shell);
   padding: 1rem;
   /* Ensure main takes up available space and handles overflow */
-  overflow: hidden; /* Prevent content overflow from affecting layout */
-  display: flex; /* Use flexbox for inner layout */
-  flex-direction: column; /* Stack inner divs vertically */
+  overflow: hidden;
+  /* Prevent content overflow from affecting layout */
+  display: flex;
+  /* Use flexbox for inner layout */
+  flex-direction: column;
+  /* Stack inner divs vertically */
 
   div {
     height: 100%;
@@ -394,6 +366,7 @@ main {
     &::-webkit-scrollbar {
       display: none;
     }
+
     -ms-overflow-style: none;
     scrollbar-width: none;
 
@@ -409,5 +382,4 @@ main {
     }
   }
 }
-
 </style>

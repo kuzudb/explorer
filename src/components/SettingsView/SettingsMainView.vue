@@ -1,15 +1,8 @@
 <template>
-  <div
-    ref="modal"
-    class="modal"
-    tabindex="-1"
-  >
+  <div ref="modal" class="modal" tabindex="-1">
     <div class="modal-dialog modal-xl">
       <div class="modal-content bg-transparent border-0 border-transparent">
-        <div
-          v-if="Object.keys(currentSettings).length > 0"
-          class="modal-body settings-body"
-        >
+        <div v-if="Object.keys(currentSettings).length > 0" class="modal-body settings-body">
           <!-- Viewing Options -->
           <h2> Viewing Options </h2>
           <hr>
@@ -38,41 +31,21 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  v-for="(node, key, index) in currentSettings.graphViz.nodes"
-                  :key="index"
-                >
+                <tr v-for="(node, key, index) in currentSettings.graphViz.nodes" :key="index">
                   <td>
                     {{ node.name === placeholderNodeTable ? getPlaceholderNodeLabel() : node.name }}
                   </td>
                   <td>
-                    <input
-                      v-model="node.g6Settings.style.fill"
-                      type="color"
-                      class="form-control form-control-color"
-                      title="Choose color for node"
-                    >
+                    <input v-model="node.g6Settings.style.fill" type="color" class="form-control form-control-color"
+                      title="Choose color for node">
                   </td>
                   <td>
-                    <input
-                      v-model="node.g6Settings.size"
-                      type="number"
-                      class="form-control"
-                      min="10"
-                      max="200"
-                      title="Choose size for node"
-                    >
+                    <input v-model="node.g6Settings.size" type="number" class="form-control" min="10" max="200"
+                      title="Choose size for node">
                   </td>
                   <td>
-                    <select
-                      v-model="node.label"
-                      class="form-select"
-                    >
-                      <option
-                        v-for="option in getCaptionOptions(node, true)"
-                        :key="option.text"
-                        :value="option.value"
-                      >
+                    <select v-model="node.label" class="form-select">
+                      <option v-for="option in getCaptionOptions(node, true)" :key="option.text" :value="option.value">
                         {{ option.text }}
                       </option>
                     </select>
@@ -103,42 +76,21 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  v-for="(rel, key, index) in currentSettings.graphViz.rels"
-                  :key="index"
-                >
+                <tr v-for="(rel, key, index) in currentSettings.graphViz.rels" :key="index">
                   <td>
                     {{ rel.name === placeholderRelTable ? getPlaceholderRelLabel() : rel.name }}
                   </td>
                   <td>
-                    <input
-                      v-model="rel.g6Settings.style.stroke"
-                      type="color"
-                      class="form-control form-control-color"
-                      title="Choose color for rel"
-                      @change="syncRelFill(rel)"
-                    >
+                    <input v-model="rel.g6Settings.style.stroke" type="color" class="form-control form-control-color"
+                      title="Choose color for rel" @change="syncRelFill(rel)">
                   </td>
                   <td>
-                    <input
-                      v-model="rel.g6Settings.size"
-                      type="number"
-                      class="form-control"
-                      min="1"
-                      max="20"
-                      title="Choose size for rel"
-                    >
+                    <input v-model="rel.g6Settings.size" type="number" class="form-control" min="1" max="20"
+                      title="Choose size for rel">
                   </td>
                   <td>
-                    <select
-                      v-model="rel.label"
-                      class="form-select"
-                    >
-                      <option
-                        v-for="option in getCaptionOptions(rel, false)"
-                        :key="option.text"
-                        :value="option.value"
-                      >
+                    <select v-model="rel.label" class="form-select">
+                      <option v-for="option in getCaptionOptions(rel, false)" :key="option.text" :value="option.value">
                         {{ option.text }}
                       </option>
                     </select>
@@ -154,43 +106,22 @@
             <h4>
               Max number of nodes to draw for graph visualization
             </h4>
-            <input
-              v-model="currentSettings.performance.maxNumberOfNodes"
-              type="number"
-              min="1"
-              max="2000"
-              class="settings-input"
-              placeholder="500"
-              required
-            >
+            <input v-model="currentSettings.performance.maxNumberOfNodes" type="number" min="1" max="2000"
+              class="settings-input" placeholder="500" required>
           </div>
           <div class="settings-row">
             <h4>
               Max number of nodes to display labels
             </h4>
-            <input
-              v-model="currentSettings.performance.maxNumberOfNodesWithLabels"
-              type="number"
-              min="1"
-              max="2000"
-              class="settings-input"
-              placeholder="200"
-              required
-            >
+            <input v-model="currentSettings.performance.maxNumberOfNodesWithLabels" type="number" min="1" max="2000"
+              class="settings-input" placeholder="200" required>
           </div>
           <div class="settings-row">
             <h4>
               Max number of nodes to expand on double click
             </h4>
-            <input
-              v-model="currentSettings.performance.maxNumberOfNodesToExpand"
-              type="number"
-              min="5"
-              max="1000"
-              class="settings-input"
-              placeholder="50"
-              required
-            >
+            <input v-model="currentSettings.performance.maxNumberOfNodesToExpand" type="number" min="5" max="1000"
+              class="settings-input" placeholder="50" required>
           </div>
           <hr>
 
@@ -199,22 +130,16 @@
           <div class="settings-row">
             <h4> Show relationship labels </h4>
             <div>
-              <button
-                :class="{
-                  'active-btn': currentSettings.schemaView.showRelLabels === showRelLabelsOptions.HOVER,
-                  'inactive-btn': currentSettings.schemaView.showRelLabels !== showRelLabelsOptions.HOVER
-                }"
-                @click="currentSettings.schemaView.showRelLabels = showRelLabelsOptions.HOVER"
-              >
+              <button :class="{
+                'active-btn': currentSettings.schemaView.showRelLabels === showRelLabelsOptions.HOVER,
+                'inactive-btn': currentSettings.schemaView.showRelLabels !== showRelLabelsOptions.HOVER
+              }" @click="currentSettings.schemaView.showRelLabels = showRelLabelsOptions.HOVER">
                 On hover or click
               </button>
-              <button
-                :class="{
-                  'active-btn': currentSettings.schemaView.showRelLabels === showRelLabelsOptions.ALWAYS,
-                  'inactive-btn': currentSettings.schemaView.showRelLabels !== showRelLabelsOptions.ALWAYS
-                }"
-                @click="currentSettings.schemaView.showRelLabels = showRelLabelsOptions.ALWAYS"
-              >
+              <button :class="{
+                'active-btn': currentSettings.schemaView.showRelLabels === showRelLabelsOptions.ALWAYS,
+                'inactive-btn': currentSettings.schemaView.showRelLabels !== showRelLabelsOptions.ALWAYS
+              }" @click="currentSettings.schemaView.showRelLabels = showRelLabelsOptions.ALWAYS">
                 Always
               </button>
             </div>
@@ -225,180 +150,98 @@
           <h2> Table View Options </h2>
           <div class="settings-row">
             <h4> Number of rows per page </h4>
-            <input
-              v-model="currentSettings.tableView.rowsPerPage"
-              type="number"
-              min="1"
-              max="500"
-              class="settings-input"
-              placeholder="10"
-              required
-            >
+            <input v-model="currentSettings.tableView.rowsPerPage" type="number" min="1" max="500"
+              class="settings-input" placeholder="10" required>
           </div>
           <hr>
 
           <!-- Query Generation Options -->
           <div v-if="!modeStore.isWasm">
             <h2> Query Generation Options </h2>
-            
+
             <div class="settings-row">
               <h4> LLM provider </h4>
-              <select
-                v-model="currentSettings.gpt.llmProvider"
-                class="settings-input form-select"
-                @change="handleLlmProviderChange"
-              >
-                <option
-                  v-for="(value, key) in llmProviderOptions"
-                  :key="key"
-                  :value="key"
-                >
+              <select v-model="currentSettings.gpt.llmProvider" class="settings-input form-select"
+                @change="handleLlmProviderChange">
+                <option v-for="(value, key) in llmProviderOptions" :key="key" :value="key">
                   {{ value.text }}
                 </option>
               </select>
             </div>
 
-            <div
-              v-if="isOpenAIApi"
-              class="settings-row"
-            >
+            <div v-if="isOpenAIApi" class="settings-row">
               <span v-if="currentSettings.gpt.llmProvider === llmProviderOptions.OPENAI.key">OpenAI model</span>
               <span v-else-if="currentSettings.gpt.llmProvider === llmProviderOptions.GEMINI.key">Gemini model</span>
-              <select
-                v-if="currentSettings.gpt.llmProvider === llmProviderOptions.OPENAI.key"
-                v-model="currentSettings.gpt.model"
-                class="settings-input form-select"
-              >
-                <option
-                  v-for="option in gptModelOptions"
-                  :key="option"
-                  :value="option"
-                >
+              <select v-if="currentSettings.gpt.llmProvider === llmProviderOptions.OPENAI.key"
+                v-model="currentSettings.gpt.model" class="settings-input form-select">
+                <option v-for="option in gptModelOptions" :key="option" :value="option">
                   {{ option }}
                 </option>
               </select>
-              <input
-                v-else-if="currentSettings.gpt.llmProvider === llmProviderOptions.GEMINI.key"
-                v-model="currentSettings.gpt.model"
-                class="settings-input form-control"
-                type="text"
-                readonly
-              >
+              <input v-else-if="currentSettings.gpt.llmProvider === llmProviderOptions.GEMINI.key"
+                v-model="currentSettings.gpt.model" class="settings-input form-control" type="text" readonly>
             </div>
-            <div
-              v-else
-              class="settings-row"
-            >
+            <div v-else class="settings-row">
               <span>Model name</span>
-              <input
-                v-model="currentSettings.gpt.model"
-                type="text"
-                class="settings-input form-control"
-                title="Enter the custom model name"
-              >
+              <input v-model="currentSettings.gpt.model" type="text" class="settings-input form-control"
+                title="Enter the custom model name">
             </div>
-            <div
-              v-if="!isOpenAIApi"
-              class="settings-row"
-            >
+            <div v-if="!isOpenAIApi" class="settings-row">
               <span>API endpoint</span>
-              <input
-                v-model="currentSettings.gpt.url"
-                type="text"
-                class="settings-input form-control"
+              <input v-model="currentSettings.gpt.url" type="text" class="settings-input form-control"
                 :readonly="currentSettings.gpt.llmProvider === llmProviderOptions.GEMINI.key"
-                :title="currentSettings.gpt.llmProvider === llmProviderOptions.GEMINI.key ? 'Google Gemini OpenAI-compatible endpoint' : 'Enter the API endpoint'"
-              >
+                :title="currentSettings.gpt.llmProvider === llmProviderOptions.GEMINI.key ? 'Google Gemini OpenAI-compatible endpoint' : 'Enter the API endpoint'">
             </div>
             <div class="settings-row">
               <span>
 
                 {{ isOpenAIApi ? 'OpenAI' : 'API' }} key
               </span>
-              <input
-                v-model="currentSettings.gpt.apiToken"
-                :type="showPassword ? 'text' : 'password'"
-                class="settings-input form-control"
-                :title="isOpenAIApi ? 'Enter the OpenAI API key' : 'Enter API key'"
-              >
-              <button
-                type="button"
-                class="btn ml-3"
-                @click="togglePasswordVisibility"
-              >
+              <input v-model="currentSettings.gpt.apiToken" :type="showPassword ? 'text' : 'password'"
+                class="settings-input form-control" :title="isOpenAIApi ? 'Enter the OpenAI API key' : 'Enter API key'">
+              <button type="button" class="btn ml-3" @click="togglePasswordVisibility">
                 <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'" />
               </button>
             </div>
-            <small
-              v-if="currentSettings.gpt.llmProvider === llmProviderOptions.OPENAI.key"
-              class="form-text text-muted"
-            >
+            <small v-if="currentSettings.gpt.llmProvider === llmProviderOptions.OPENAI.key"
+              class="form-text text-muted">
               The OpenAI API key is used to generate Cypher queries from natural language using the specified model.
               It can be obtained from
-              <a
-                href="https://platform.openai.com/"
-                target="_blank"
-              >OpenAI</a>. We only
+              <a href="https://platform.openai.com/" target="_blank">OpenAI</a>. We only
               store the API key in your browser. Click
-              <a
-                href="#"
-                @click="clearGptToken()"
-              >here</a> to clear the API key from the
+              <a href="#" @click="clearGptToken()">here</a> to clear the API key from the
               browser.
             </small>
-            <small
-              v-else-if="currentSettings.gpt.llmProvider === llmProviderOptions.GEMINI.key"
-              class="form-text text-muted"
-            >
-              The Google Gemini API key is used to generate Cypher queries from natural language using the specified model.
+            <small v-else-if="currentSettings.gpt.llmProvider === llmProviderOptions.GEMINI.key"
+              class="form-text text-muted">
+              The Google Gemini API key is used to generate Cypher queries from natural language using the specified
+              model.
               You can obtain a Gemini API key from
-              <a
-                href="https://aistudio.google.com/app/apikey"
-                target="_blank"
-              >Google AI Studio</a>
-              or from the <a
-                href="https://console.cloud.google.com/apis/credentials"
-                target="_blank"
-              >Google Cloud Console</a> (ensure the Gemini API is enabled for your project).
+              <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>
+              or from the <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud
+                Console</a> (ensure the Gemini API is enabled for your project).
               We only store the API key in your browser. Click
-              <a
-                href="#"
-                @click="clearGptToken()"
-              >here</a> to clear the API key from the
+              <a href="#" @click="clearGptToken()">here</a> to clear the API key from the
               browser.
             </small>
-            <small
-              v-else
-              class="form-text text-muted"
-            >
+            <small v-else class="form-text text-muted">
               The API key may not be required for some deployments, such as the locally hosted version of Ollama.
               Please refer to the documentation for your model
               provider.
               If not required, leave this field empty and we automatically fill it with "IGNORED".
               We only
               store the API key in your browser. Click
-              <a
-                href="#"
-                @click="clearGptToken()"
-              >here</a> to clear the API key from the
+              <a href="#" @click="clearGptToken()">here</a> to clear the API key from the
               browser.
             </small>
           </div>
         </div>
 
         <div class="modal-footer settings-footer d-flex justify-content-end">
-          <button
-            type="button"
-            class="btn btn-outline-secondary rounded-pill px-4 py-2"
-            @click="hideModal()"
-          >
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-4 py-2" @click="hideModal()">
             Close
           </button>
-          <button
-            type="button"
-            class="btn-save rounded-pill"
-            @click="saveAndHideModal()"
-          >
+          <button type="button" class="btn-save rounded-pill" @click="saveAndHideModal()">
             Save
           </button>
         </div>
@@ -588,52 +431,60 @@ span.pull-left {
   overflow-y: auto;
 
   h2 {
-    font-weight: 500; 
+    font-weight: 500;
     font-size: 1.5rem;
   }
 
   h3 {
     font-weight: 500;
-    font-size: 0.875rem; 
+    font-size: 0.875rem;
     padding: 0.5rem;
   }
+
   h4 {
-      font-weight: 300;
-      font-size: 0.875rem;
+    font-weight: 300;
+    font-size: 0.875rem;
   }
+
   span {
-      font-weight: 300;
-      font-size: 0.875rem;
+    font-weight: 300;
+    font-size: 0.875rem;
   }
+
   table {
     width: 100%;
     table-layout: auto;
     border-collapse: collapse;
   }
+
   th {
     padding: 0.5rem 1rem;
   }
+
   td {
     padding: 0.5rem 1rem;
   }
-  hr{
+
+  hr {
     height: 1px;
     margin: 1rem 0;
     background-color: var(--bs-body-inactive);
     border: none;
   }
-  
+
 }
 
 .settings-toggle {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  label { 
+
+  label {
     color: var(--bs-body-text);
     font-size: 0.875rem;
     cursor: pointer;
   }
+
   input {
     appearance: none;
     width: 2.75rem;
@@ -655,7 +506,7 @@ span.pull-left {
   display: inline-block;
   width: 2.75rem;
   height: 1.25rem;
-  
+
 }
 
 .settings-group {
@@ -668,8 +519,8 @@ span.pull-left {
   padding: 0.5rem 1rem;
   width: 100%;
   background-color: var(--bs-body-bg);
-  }
-  
+}
+
 .switch-slider {
   position: absolute;
   top: 0;
@@ -679,11 +530,11 @@ span.pull-left {
   background-color: var(--bs-body-inactive);
   border: 1px solid var(--bs-body-inactive);
   border-radius: 9999px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   cursor: pointer;
   transition: transform 0.3s;
 
-  .switch-input:checked + & {
+  .switch-input:checked+& {
     transform: translateX(1.5rem);
   }
 }
@@ -704,7 +555,7 @@ span.pull-left {
   font-size: 0.875rem;
   border-radius: 0.5rem;
   padding: 0.5rem 2rem;
-  
+
 }
 
 .active-btn {

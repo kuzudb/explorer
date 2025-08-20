@@ -1,47 +1,21 @@
 <template>
-  <div
-    class="result-table__wrapper"
-    :style="{ height: containerHeight }"
-  >
-    <div
-      v-if="totalPages > 1"
-      class="result-table__pagination__wrapper"
-    >
+  <div class="result-table__wrapper" :style="{ height: containerHeight }">
+    <div v-if="totalPages > 1" class="result-table__pagination__wrapper">
       <nav>
         <ul class="pagination">
           <li :class="['page-item', { disabled: isPrevDisabled }]">
-            <a
-              class="page-link"
-              href="#"
-              @click="page -= 1"
-            >
+            <a class="page-link" href="#" @click="page -= 1">
               <span>&laquo;</span>
             </a>
           </li>
-          <li
-            v-for="currPage in pageList"
-            :key="currPage"
-            :class="['page-item', { active: currPage === page }]"
-          >
-            <a
-              v-if="currPage > 0"
-              class="page-link"
-              href="#"
-              @click="page = currPage"
-            >
+          <li v-for="currPage in pageList" :key="currPage" :class="['page-item', { active: currPage === page }]">
+            <a v-if="currPage > 0" class="page-link" href="#" @click="page = currPage">
               {{ currPage }}
             </a>
-            <span
-              v-else
-              class="page-link"
-            >...</span>
+            <span v-else class="page-link">...</span>
           </li>
           <li :class="['page-item', { disabled: isNextDisabled }]">
-            <a
-              class="page-link"
-              href="#"
-              @click="page += 1"
-            >
+            <a class="page-link" href="#" @click="page += 1">
               <span>&raquo;</span>
             </a>
           </li>
@@ -53,55 +27,25 @@
       <table class="table table-hover">
         <thead class="fixed-top">
           <tr>
-            <th
-              v-for="header in tableHeaders"
-              :key="header.text"
-            >
+            <th v-for="header in tableHeaders" :key="header.text">
               {{ header.text }}
               <span class="badge bg-[var(--bs-body-accent)]">{{ header.type }}</span>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="(row, i) in rows"
-            :key="i"
-          >
-            <td
-              v-for="(cell, j) in row"
-              :key="j"
-              :style="{ 'white-space': 'pre-wrap' }"
-            >
-              <ul
-                v-if="Array.isArray(cell)"
-                class="list-group"
-              >
-                <li
-                  v-for="(item, k) in cell"
-                  :key="k"
-                  class="list-group-item"
-                >
+          <tr v-for="(row, i) in rows" :key="i">
+            <td v-for="(cell, j) in row" :key="j" :style="{ 'white-space': 'pre-wrap' }">
+              <ul v-if="Array.isArray(cell)" class="list-group">
+                <li v-for="(item, k) in cell" :key="k" class="list-group-item">
                   <b>{{ item.name }}:</b> {{ item.value }}
                 </li>
               </ul>
-              <div
-                v-else-if="isColumnRecursiveRel(j)"
-                class="result-table__recursive-rel__wrapper"
-              >
-                <div
-                  v-for="(subcolumn, subcolumnId) in cell"
-                  :key="subcolumnId"
-                >
-                  <div
-                    v-for="(item, k) in subcolumn"
-                    :key="k"
-                  >
+              <div v-else-if="isColumnRecursiveRel(j)" class="result-table__recursive-rel__wrapper">
+                <div v-for="(subcolumn, subcolumnId) in cell" :key="subcolumnId">
+                  <div v-for="(item, k) in subcolumn" :key="k">
                     <ul class="list-group">
-                      <li
-                        v-for="(field, m) in item"
-                        :key="m"
-                        class="list-group-item"
-                      >
+                      <li v-for="(field, m) in item" :key="m" class="list-group-item">
                         <b>{{ m === 0 ? field.value : field.name + ":" }}</b>
                         <span v-if="m > 0">{{ field.value }}</span>
                       </li>
@@ -261,8 +205,8 @@ export default {
 
     computeTableWidth() {
       let mainContainerWidth = document.documentElement.clientWidth;
-      mainContainerWidth -= UI_SIZE.DEFAULT_MARGIN * 2; 
-      mainContainerWidth -= UI_SIZE.SHELL_TOOL_BAR_WIDTH; 
+      mainContainerWidth -= UI_SIZE.DEFAULT_MARGIN * 2;
+      mainContainerWidth -= UI_SIZE.SHELL_TOOL_BAR_WIDTH;
 
       this.tableWidth = mainContainerWidth;
 
@@ -275,7 +219,8 @@ export default {
 <style lang="scss" scoped>
 .result-table__wrapper {
   /* Width is set by style binding from tableWidth */
-  width: v-bind(tableWidth)px; /* Use v-bind to link to the data property */
+  width: v-bind(tableWidth)px;
+  /* Use v-bind to link to the data property */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -299,13 +244,14 @@ export default {
 .result-table__table__wrapper {
   flex: 1;
   overflow-y: scroll;
-  overflow-x: auto; 
+  overflow-x: auto;
   border-top: 1px solid (var(--bs-body-inactive));
   border-bottom: 1px solid (var(--bs-body-inactive));
   border-radius: 10px;
 
   table {
-    width: 100%; 
+    width: 100%;
+
     thead {
       position: sticky;
       border: 0;
@@ -328,7 +274,7 @@ export default {
     .result-table__recursive-rel__wrapper {
       display: flex;
 
-      > div {
+      >div {
         flex: 1;
 
         &:not(:last-child) {
