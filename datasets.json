@@ -14,24 +14,6 @@
       "path": "tinysnb",
       "isProduction": false,
       "description": "Internal dataset used for testing. Covers most data types but is very small."
-    },
-    {
-      "name": "LDBC SNB Scale Factor 0.1",
-      "path": "ldbc-sf01",
-      "isProduction": true,
-      "description": "A standard benchmark dataset for social network analysis. Learn more at https://ldbcouncil.org/benchmarks/snb/"
-    },
-    {
-      "name": "SNAP Amazon",
-      "path": "snap/amazon0601/csv",
-      "isProduction": false,
-      "description": "Amazon product co-purchasing network dataset (visit https://snap.stanford.edu/data/com-Amazon.html for more information)."
-    },
-    {
-      "name": "Twitter Social Circles",
-      "path": "snap/twitter/csv",
-      "isProduction": true,
-      "description": "Anonymized real-world social network dataset from Twitter. Learn more at https://snap.stanford.edu/data/ego-Twitter.html"
     }
   ]
 }
