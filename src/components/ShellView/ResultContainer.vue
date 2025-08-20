@@ -1,9 +1,19 @@
 <template>
-  <div class="result-container" :class="{ maximized: isMaximized, 'is-error-container': errorMessage }">
-    <div ref="wrapper" class="result-container__wrapper" :class="{ 'is-error': errorMessage }"
-      :style="errorMessage ? { height: 'auto', flex: 'unset' } : { height: containerHeight }">
+  <div
+    class="result-container"
+    :class="{ maximized: isMaximized, 'is-error-container': errorMessage }"
+  >
+    <div
+      ref="wrapper"
+      class="result-container__wrapper"
+      :class="{ 'is-error': errorMessage }"
+      :style="errorMessage ? { height: 'auto', flex: 'unset' } : { height: containerHeight }"
+    >
       <!-- Left Sidebar -->
-      <aside v-show="!errorMessage" class="result-container__tools">
+      <aside
+        v-show="!errorMessage"
+        class="result-container__tools"
+      >
         <!-- Removed button to close sidebar when open in graph view -->
         <!--
         <ul v-if="showGraph && graphSidebarOpen" class="result-container__button-group">
@@ -23,54 +33,135 @@
 
         <!-- Top Tool Buttons -->
         <ul class="result-container__button-group">
-          <button class="button " @click="toggleGraphView">
-            <i class="fa-lg fa-solid fa-circle-nodes" data-bs-toggle="tooltip" data-bs-placement="right"
-              title="Graph View" />
+          <button
+            class="button "
+            @click="toggleGraphView"
+          >
+            <i
+              class="fa-lg fa-solid fa-circle-nodes"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Graph View"
+            />
           </button>
-          <button class="button" @click="toggleTableView">
-            <i class="fa-lg fa-solid fa-table" data-bs-toggle="tooltip" data-bs-placement="right" title="Table View" />
+          <button
+            class="button"
+            @click="toggleTableView"
+          >
+            <i
+              class="fa-lg fa-solid fa-table"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Table View"
+            />
           </button>
-          <button class="button" @click="toggleCodeView">
-            <i class="fa-lg fa-solid fa-code" data-bs-toggle="tooltip" data-bs-placement="right" title="JSON View" />
+          <button
+            class="button"
+            @click="toggleCodeView"
+          >
+            <i
+              class="fa-lg fa-solid fa-code"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="JSON View"
+            />
           </button>
         </ul>
 
         <!-- Bottom Tool Buttons -->
-        <ul v-show="showGraph" class="result-container__button-group result-container__tools--bottom">
-          <button class="button" @click="$refs.resultGraph.zoomIn()">
-            <i class="fa-lg fa-solid fa-magnifying-glass-plus" data-bs-toggle="tooltip" data-bs-placement="right"
-              title="Zoom In" />
+        <ul
+          v-show="showGraph"
+          class="result-container__button-group result-container__tools--bottom"
+        >
+          <button
+            class="button"
+            @click="$refs.resultGraph.zoomIn()"
+          >
+            <i
+              class="fa-lg fa-solid fa-magnifying-glass-plus"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Zoom In"
+            />
           </button>
-          <button class="button" @click="$refs.resultGraph.zoomOut()">
-            <i class="fa-lg fa-solid fa-magnifying-glass-minus" data-bs-toggle="tooltip" data-bs-placement="right"
-              title="Zoom Out" />
+          <button
+            class="button"
+            @click="$refs.resultGraph.zoomOut()"
+          >
+            <i
+              class="fa-lg fa-solid fa-magnifying-glass-minus"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Zoom Out"
+            />
           </button>
-          <button class="button" @click="$refs.resultGraph.fitToView()">
-            <i class="fa-lg fa-solid fa-compress" data-bs-toggle="tooltip" data-bs-placement="right"
-              title="Fit to View" />
+          <button
+            class="button"
+            @click="$refs.resultGraph.fitToView()"
+          >
+            <i
+              class="fa-lg fa-solid fa-compress"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Fit to View"
+            />
           </button>
-          <button class="button" @click="$refs.resultGraph.actualSize()">
-            <i class="fa-lg fa-solid fa-expand" data-bs-toggle="tooltip" data-bs-placement="right"
-              title="Actual Size" />
+          <button
+            class="button"
+            @click="$refs.resultGraph.actualSize()"
+          >
+            <i
+              class="fa-lg fa-solid fa-expand"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Actual Size"
+            />
           </button>
         </ul>
       </aside>
 
       <main class="result-container__main">
-        <ResultGraph v-if="queryResult" v-show="showGraph" ref="resultGraph" :query-result="queryResult"
-          :schema="schema" :container-height="containerHeight" :is-maximized="isMaximized"
-          :is-side-panel-open="graphSidebarOpen" @graph-empty="handleGraphEmpty"
-          @request-sidebar-toggle="toggleGraphSidebar" />
-        <ResultTable v-if="queryResult && showTable" ref="resultTable" :query-result="queryResult" :schema="schema"
-          :container-height="containerHeight" />
-        <ResultCode v-if="queryResult && showCode" ref="resultCode" :query-result="queryResult" :schema="schema"
-          :container-height="containerHeight" />
-        <ResultError v-if="errorMessage" ref="resultError" :error-message="errorMessage"
-          :is-info="errorMessage === emptyResultMessage" />
+        <ResultGraph
+          v-if="queryResult"
+          v-show="showGraph"
+          ref="resultGraph"
+          :query-result="queryResult"
+          :schema="schema"
+          :container-height="containerHeight"
+          :is-maximized="isMaximized"
+          :is-side-panel-open="graphSidebarOpen"
+          @graph-empty="handleGraphEmpty"
+          @request-sidebar-toggle="toggleGraphSidebar"
+        />
+        <ResultTable
+          v-if="queryResult && showTable"
+          ref="resultTable"
+          :query-result="queryResult"
+          :schema="schema"
+          :container-height="containerHeight"
+        />
+        <ResultCode
+          v-if="queryResult && showCode"
+          ref="resultCode"
+          :query-result="queryResult"
+          :schema="schema"
+          :container-height="containerHeight"
+        />
+        <ResultError
+          v-if="errorMessage"
+          ref="resultError"
+          :error-message="errorMessage"
+          :is-info="errorMessage === emptyResultMessage"
+        />
       </main>
 
       <!-- Resize Handle -->
-      <div v-if="!isMaximized" ref="resizeHandle" class="result-container__resize-handle" @mousedown="startResize" />
+      <div
+        v-if="!isMaximized"
+        ref="resizeHandle"
+        class="result-container__resize-handle"
+        @mousedown="startResize"
+      />
     </div>
   </div>
 </template>

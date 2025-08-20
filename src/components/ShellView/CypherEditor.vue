@@ -1,18 +1,34 @@
 <template>
-  <div ref="wrapper" class="shell-editor__wrapper" :style="{ maxHeight: isMaximized ? '550px' : '100%' }">
+  <div
+    ref="wrapper"
+    class="shell-editor__wrapper"
+    :style="{ maxHeight: isMaximized ? '550px' : '100%' }"
+  >
     <!-- Layout -->
     <div class="shell-editor__layout">
       <!-- Sidebar -->
       <aside :style="{ width: toolbarWidth + 'px' }">
         <ul>
           <button @click="evaluateCell">
-            <i class="fa-solid fa-play" data-bs-toggle="tooltip" data-bs-placement="right" title="Run" />
+            <i
+              class="fa-solid fa-play"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              title="Run"
+            />
           </button>
           <button @click="toggleMaximize">
-            <i :class="maximizeButtonClass" data-bs-toggle="tooltip" data-bs-placement="right"
-              :data-bs-original-title="maximizeButtonTitle" />
+            <i
+              :class="maximizeButtonClass"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              :data-bs-original-title="maximizeButtonTitle"
+            />
           </button>
-          <button v-if="!isMaximized" @click="removeCell">
+          <button
+            v-if="!isMaximized"
+            @click="removeCell"
+          >
             <i class="fa-solid fa-times" />
           </button>
         </ul>
@@ -25,14 +41,25 @@
           <div>
             <ul class="nav nav-tabs border-0">
               <li class="nav-item text-[var(--bs-body-text)]">
-                <a href="#" :class="[
-                  !isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
-                ]" class="text-decoration-none" @click.prevent="isQueryGenerationMode = false">Cypher Query</a>
+                <a
+                  href="#"
+                  :class="[
+                    !isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
+                  ]"
+                  class="text-decoration-none"
+                  @click.prevent="isQueryGenerationMode = false"
+                >Cypher Query</a>
               </li>
               <li class="nav-item">
-                <a v-if="!modeStore.isWasm" href="#" :class="[
-                  isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
-                ]" class="text-decoration-none" @click.prevent="isQueryGenerationMode = true">AI Query</a>
+                <a
+                  v-if="!modeStore.isWasm"
+                  href="#"
+                  :class="[
+                    isQueryGenerationMode ? 'active-tab' : 'inactive-tab'
+                  ]"
+                  class="text-decoration-none"
+                  @click.prevent="isQueryGenerationMode = true"
+                >AI Query</a>
               </li>
             </ul>
           </div>
@@ -40,9 +67,19 @@
 
         <!-- Main Content -->
         <main>
-          <div v-show="!isQueryGenerationMode" ref="editor" />
-          <div v-if="!modeStore.isWasm" v-show="isQueryGenerationMode">
-            <textarea ref="gptQuestionTextArea" v-model="gptQuestion" placeholder="Type your question here..." />
+          <div
+            v-show="!isQueryGenerationMode"
+            ref="editor"
+          />
+          <div
+            v-if="!modeStore.isWasm"
+            v-show="isQueryGenerationMode"
+          >
+            <textarea
+              ref="gptQuestionTextArea"
+              v-model="gptQuestion"
+              placeholder="Type your question here..."
+            />
           </div>
         </main>
       </div>

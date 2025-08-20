@@ -1,72 +1,135 @@
 <template>
   <div class="main-layout">
-    <div class="wrapper" :class="{ 'toggled': isSidebarCollapsed }">
+    <div
+      class="wrapper"
+      :class="{ 'toggled': isSidebarCollapsed }"
+    >
       <div class="main-layout__sidebar">
         <ul class="main-layout__sidebar-nav">
           <li>
-            <ul v-if="modeStore.isReadOnly" class="navbar-nav hide-on-collapse">
+            <ul
+              v-if="modeStore.isReadOnly"
+              class="navbar-nav hide-on-collapse"
+            >
               <li class="nav-item">
-                <span class="badge" @click="accessModeModal.show()">Read-only Mode</span>
+                <span
+                  class="badge"
+                  @click="accessModeModal.show()"
+                >Read-only Mode</span>
               </li>
             </ul>
-            <ul v-if="modeStore.isDemo" class="navbar-nav hide-on-collapse">
+            <ul
+              v-if="modeStore.isDemo"
+              class="navbar-nav hide-on-collapse"
+            >
               <li class="nav-item">
-                <span class="badge" @click="accessModeModal.show()">Instructions</span>
+                <span
+                  class="badge"
+                  @click="accessModeModal.show()"
+                >Instructions</span>
               </li>
             </ul>
             <div class="main-layout__sidebar-header flex justify-between items-center">
-              <a class="navbar-brand hide-on-collapse" href="//kuzudb.com" target="_blank">
-                <img :key="logoUrl" :src="logoUrl" alt="Logo" class="main-layout__sidebar-logo">
+              <a
+                class="navbar-brand hide-on-collapse"
+                href="//kuzudb.com"
+                target="_blank"
+              >
+                <img
+                  :key="logoUrl"
+                  :src="logoUrl"
+                  alt="Logo"
+                  class="main-layout__sidebar-logo"
+                >
               </a>
 
-              <a class="menu-toggle" @click="toggleSidebar">
-                <button :class="['fa-solid', isSidebarCollapsed ? 'fa-angle-right' : 'fa-angle-left']"
-                  aria-hidden="true" />
+              <a
+                class="menu-toggle"
+                @click="toggleSidebar"
+              >
+                <button
+                  :class="['fa-solid', isSidebarCollapsed ? 'fa-angle-right' : 'fa-angle-left']"
+                  aria-hidden="true"
+                />
               </a>
             </div>
             <hr>
           </li>
 
           <li :class="['nav-item', { active: showShell }]">
-            <a aria-hidden="true" href="#query" @click="toggleShell()">
+            <a
+              aria-hidden="true"
+              href="#query"
+              @click="toggleShell()"
+            >
               <i class="fa-solid fa-terminal" />
               <span class="hide-on-collapse">Query</span>
             </a>
           </li>
           <li :class="['nav-item', { active: showSchema }]">
-            <a aria-hidden="true" href="#schema" @click="toggleSchema()">
+            <a
+              aria-hidden="true"
+              href="#schema"
+              @click="toggleSchema()"
+            >
               <i class="fa-solid fa-circle-nodes" />
               <span class="hide-on-collapse">Schema</span>
             </a>
           </li>
-          <li :class="['nav-item', { active: showLoader }]" hidden>
-            <a aria-hidden="true" href="#datasets" @click="toggleLoader()">
+          <li
+            :class="['nav-item', { active: showLoader }]"
+            hidden
+          >
+            <a
+              aria-hidden="true"
+              href="#datasets"
+              @click="toggleLoader()"
+            >
               <i class="fa-solid fa-database" />
               <span class="hide-on-collapse">Datasets</span>
             </a>
           </li>
-          <li v-if="!modeStore.isReadOnly" :class="['nav-item', { active: showImporter || showLoader }]">
-            <a aria-hidden="true" href="#importer" @click="toggleImporter()">
+          <li
+            v-if="!modeStore.isReadOnly"
+            :class="['nav-item', { active: showImporter || showLoader }]"
+          >
+            <a
+              aria-hidden="true"
+              href="#importer"
+              @click="toggleImporter()"
+            >
               <i class="fa-solid fa-upload" />
               <span class="hide-on-collapse">Import</span>
             </a>
           </li>
 
           <li class="nav-item">
-            <a aria-hidden="true" href="https://docs.kuzudb.com" target="_blank">
+            <a
+              aria-hidden="true"
+              href="https://docs.kuzudb.com"
+              target="_blank"
+            >
               <i class="fa-solid fa-book" />
               <span class="hide-on-collapse">Docs</span>
             </a>
           </li>
           <div class="main-layout__sidebar-bottom">
             <li class="nav-item">
-              <a aria-hidden="true" href="#settings" @click="showSettingsModal()">
+              <a
+                aria-hidden="true"
+                href="#settings"
+                @click="showSettingsModal()"
+              >
                 <i class="fa-solid fa-cog" />
                 <span class="hide-on-collapse">Settings</span>
               </a>
             </li>
             <li class="nav-item">
-              <a aria-hidden="true" href="#" @click.prevent="handleThemeToggle()">
+              <a
+                aria-hidden="true"
+                href="#"
+                @click.prevent="handleThemeToggle()"
+              >
                 <i :class="['fa-solid', modeStore.theme === 'vs-dark' ? 'fa-sun' : 'fa-moon']" />
                 <span class="hide-on-collapse">{{ modeStore.theme === 'vs-dark' ? 'Light' : 'Dark' }}</span>
               </a>
@@ -76,26 +139,60 @@
       </div>
       <div class="main-layout__main-container">
         <div class="container-fluid">
-          <SchemaViewMain v-show="showSchema" ref="schemaView" :schema="schema" :navbar-height="0"
-            :is-visible="showSchema" @reload-schema="reloadSchema" @add-placeholder-node-table="addPlaceholderNodeTable"
+          <SchemaViewMain
+            v-show="showSchema"
+            ref="schemaView"
+            :schema="schema"
+            :navbar-height="0"
+            :is-visible="showSchema"
+            @reload-schema="reloadSchema"
+            @add-placeholder-node-table="addPlaceholderNodeTable"
             @add-placeholder-rel-table="addPlaceholderRelTable"
             @update-placeholder-node-table-label="updatePlaceholderNodeTable"
-            @update-placeholder-rel-table="updatePlaceholderRelTable" @set-placeholder="setPlaceholder"
-            @unset-placeholder="unsetPlaceholder" />
-          <ShellMainView v-show="showShell" ref="shellView" :schema="schema" @reload-schema="reloadSchema" />
-          <SettingsMainView v-if="showSettings" ref="settings" :schema="schema" />
-          <DatasetMainView v-show="showLoader" :schema="schema" :navbar-height="0" @reload-schema="reloadSchema"
-            @back="toggleImporter(true)" @jump-to-shell-view="toggleShell(true)" />
-          <ImporterMainView v-show="showImporter" :schema="schema" @reload-schema="reloadSchema"
-            @load-bundled-dataset="toggleLoader" />
+            @update-placeholder-rel-table="updatePlaceholderRelTable"
+            @set-placeholder="setPlaceholder"
+            @unset-placeholder="unsetPlaceholder"
+          />
+          <ShellMainView
+            v-show="showShell"
+            ref="shellView"
+            :schema="schema"
+            @reload-schema="reloadSchema"
+          />
+          <SettingsMainView
+            v-if="showSettings"
+            ref="settings"
+            :schema="schema"
+          />
+          <DatasetMainView
+            v-show="showLoader"
+            :schema="schema"
+            :navbar-height="0"
+            @reload-schema="reloadSchema"
+            @back="toggleImporter(true)"
+            @jump-to-shell-view="toggleShell(true)"
+          />
+          <ImporterMainView
+            v-show="showImporter"
+            :schema="schema"
+            @reload-schema="reloadSchema"
+            @load-bundled-dataset="toggleLoader"
+          />
         </div>
       </div>
     </div>
 
-    <div ref="modal" class="modal" tabindex="-1">
+    <div
+      ref="modal"
+      class="modal"
+      tabindex="-1"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
-          <div v-if="modeStore.isDemo" class="modal-header">
+          <div
+            v-if="modeStore.isDemo"
+            class="modal-header"
+          >
             <h5 class="modal-title">
               Welcome to Kuzu Explorer!
             </h5>
@@ -105,18 +202,35 @@
               <p>
                 This WebAssembly-powered demo of <a href="https://kuzudb.com/">Kuzu</a> lets you import and query graph
                 data using
-                <a href="https://docs.kuzudb.com/cypher/" target="_blank">openCypher.</a>
-                See the <a href="https://docs.kuzudb.com/visualization/kuzu-explorer/" target="_blank">docs</a> or <a
-                  href="https://www.youtube.com/watch?v=yKcVV_bhBTo" target="_blank">video tutorial</a> for help.
+                <a
+                  href="https://docs.kuzudb.com/cypher/"
+                  target="_blank"
+                >openCypher.</a>
+                See the <a
+                  href="https://docs.kuzudb.com/visualization/kuzu-explorer/"
+                  target="_blank"
+                >docs</a> or <a
+                  href="https://www.youtube.com/watch?v=yKcVV_bhBTo"
+                  target="_blank"
+                >video tutorial</a> for help.
                 <br><br>
                 Note: Data is not saved between sessions.
               </p>
               <hr>
-              <div v-if="!isKuzuWasmInitialized" class="d-flex align-items-center">
+              <div
+                v-if="!isKuzuWasmInitialized"
+                class="d-flex align-items-center"
+              >
                 <strong class="text-primary">Initializing WebAssembly module...</strong>
-                <div class="spinner-border text-primary ms-auto" role="status" />
+                <div
+                  class="spinner-border text-primary ms-auto"
+                  role="status"
+                />
               </div>
-              <div v-else class="d-flex align-items-center">
+              <div
+                v-else
+                class="d-flex align-items-center"
+              >
                 <strong class="text-success">
                   <i class="fa-solid fa-check" />&nbsp; WebAssembly is ready—start exploring!
                 </strong>
@@ -130,7 +244,11 @@
             </p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" @click="accessModeModal.hide()">
+            <button
+              type="button"
+              class="btn btn-primary"
+              @click="accessModeModal.hide()"
+            >
               OK
             </button>
           </div>
