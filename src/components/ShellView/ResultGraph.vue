@@ -119,8 +119,8 @@
                       text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; 
                       color: white !important;"
                   >PK</span>
-                  <button 
-                    class="copy-button" 
+                  <button
+                    class="copy-button"
                     @click="copyToClipboard(property.name)"
                     @mouseenter="showCopyButton($event)"
                     @mouseleave="hideCopyButton($event)"
@@ -130,8 +130,8 @@
                 </th>
                 <td class="copyable-cell">
                   {{ property.value }}
-                  <button 
-                    class="copy-button" 
+                  <button
+                    class="copy-button"
                     @click="copyToClipboard(property.value)"
                     @mouseenter="showCopyButton($event)"
                     @mouseleave="hideCopyButton($event)"
@@ -428,7 +428,7 @@ export default {
       navigator.clipboard?.writeText(text).catch(() => {
         document.execCommand('copy', false, text);
       });
-      
+
       // Find the button that was clicked and show success state
       const event = window.event;
       if (event && event.target) {
@@ -513,18 +513,18 @@ export default {
             // Get the source and target node degrees
             const sourceDegree = d.source.data?.degree || 1;
             const targetDegree = d.target.data?.degree || 1;
-            
+
             // Base distance for nodes with few connections
             const baseDistance = 150;
-            
+
             // For high-degree nodes (hubs), vary the distance based on connection index
             if (sourceDegree > 5 || targetDegree > 5) {
               // Use a hash of the edge ID to create pseudo-random but consistent distances
               const edgeHash = d.id ? d.id.split('').reduce((a, b) => a + b.charCodeAt(0), 0) : 0;
-              const variation = (edgeHash % 6) * 100 + 100; 
+              const variation = (edgeHash % 6) * 100 + 100;
               return baseDistance + variation;
             }
-            
+
             // For regular nodes, use standard distance
             return baseDistance;
           },
@@ -537,15 +537,15 @@ export default {
         manyBody: {
           strength: -1200,  // Negative strength indicates repulsion
         },
-        radial: { 
+        radial: {
           radius: 200,
-         
+
         },
         alpha: 1,
         alphaMin: 0.2,
         alphaDecay: 0.03,
         velocityDecay: 0.45,
-    
+
       };
 
       return config;
@@ -759,11 +759,11 @@ export default {
       this.g6Graph.updateBehavior({ key: 'click-select-element', enable: false });
       this.g6Graph.updateBehavior({ key: 'click-highlight', enable: true });
       this.isHighlightedMode = true;
-      
+
       if (!this.clickedId) return;
 
       const combined = {};
-      const activeNodes = new Set([this.clickedId]); 
+      const activeNodes = new Set([this.clickedId]);
 
       // Mark active edges and connected nodes
       this.g6Graph.getEdgeData().forEach(edge => {
@@ -1083,7 +1083,7 @@ export default {
         nodeDegrees[edge.source] = (nodeDegrees[edge.source] || 0) + 1;
         nodeDegrees[edge.target] = (nodeDegrees[edge.target] || 0) + 1;
       });
-      
+
       // Add degree information to node data
       Object.values(nodes).forEach(node => {
         node.data.degree = nodeDegrees[node.id] || 0;
@@ -1113,7 +1113,7 @@ export default {
       this.$nextTick(() => {
         if (this.g6Graph) {
           const width = this.$refs.graph.offsetWidth;
-    
+
           // Set graph size based on sidebar state
           if (this.isSidePanelOpen) {
             this.g6Graph.setSize(width - this.sidebarWidth, parseInt(this.containerHeight));

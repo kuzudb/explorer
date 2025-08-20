@@ -1,12 +1,10 @@
 <template>
   <div
     class="shell-main-view__wrapper"
-    :class="{'is-maximized': maximizedCellIndex !== -1}"
+    :class="{ 'is-maximized': maximizedCellIndex !== -1 }"
     :style="{ height: `${containerHeight}px` }"
   >
-    <div
-      v-if="maximizedCellIndex < 0"  
-    >
+    <div v-if="maximizedCellIndex < 0">
       <div class="d-flex align-items-center gap-3 m-4">
         <button
           type="button"
@@ -80,7 +78,7 @@ export default {
       // Ignore
     }
     this.$nextTick(() => {
-        this.loadDemoCell();
+      this.loadDemoCell();
       this.updateContainerHeight();
     });
     window.addEventListener("resize", this.updateContainerHeight);
@@ -215,13 +213,12 @@ MATCH (a)-[r]->(b) RETURN * LIMIT 5;`,
 </script>
 
 <style lang="scss" scoped>
-
 .shell-main-view__wrapper {
   width: 100%;
-  overflow-y: scroll; 
-  
+  overflow-y: scroll;
+
   &.is-maximized {
-    overflow-y: hidden; 
+    overflow-y: hidden;
     margin-bottom: 2px;
   }
 

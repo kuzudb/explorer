@@ -65,7 +65,7 @@ class ValueFormatter {
       if (isNaN(number)) {
         return value;
       }
-      if(!Number.isFinite(number)){
+      if (!Number.isFinite(number)) {
         return value;
       }
       if (number > 1e8 || number < 1e-8) {

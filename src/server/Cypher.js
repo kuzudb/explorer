@@ -7,7 +7,7 @@ let sessionDb;
 const queryMap = new Map();
 try {
   sessionDb = require("./utils/SessionDatabase");
-} catch (err) {}
+} catch (err) { }
 
 const DEMO_MODE = MODES.DEMO;
 
@@ -72,16 +72,16 @@ router.post("/", async (req, res) => {
   if (params && !typeof params === "object") {
     return res.status(400).send({ error: "Params must be an object" });
   }
-    const progressCallback = (pipelineProgress, numPipelinesFinished, numPipelines) => {  
-        queryMap.set(req.body.uuid, {
-          pipelineProgress: pipelineProgress,
-          numPipelinesFinished: numPipelinesFinished,
-          numPipelines: numPipelines
-      });
+  const progressCallback = (pipelineProgress, numPipelinesFinished, numPipelines) => {
+    queryMap.set(req.body.uuid, {
+      pipelineProgress: pipelineProgress,
+      numPipelinesFinished: numPipelinesFinished,
+      numPipelines: numPipelines
+    });
   }
   try {
     let result;
-      if (!params || Object.keys(params).length === 0) {
+    if (!params || Object.keys(params).length === 0) {
       result = req.body.progress ? await conn.query(query, progressCallback) : await conn.query(query);
       if (req.body.progress) {
         queryMap.delete(req.body.uuid);
@@ -136,12 +136,12 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/progress/:uuid", (req, res) => {
-    let progress = queryMap.get(req.params.uuid);
-    if (progress) {
-        return res.send(progress);
-    } else {
-        return res.status(404).end();
-    }
+  let progress = queryMap.get(req.params.uuid);
+  if (progress) {
+    return res.send(progress);
+  } else {
+    return res.status(404).end();
+  }
 });
 
 module.exports = router;

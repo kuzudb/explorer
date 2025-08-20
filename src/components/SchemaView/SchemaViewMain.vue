@@ -229,7 +229,7 @@ export default {
     this.computeGraphWidth();
     this.computeGraphHeight();
     window.addEventListener("resize", this.handleResize);
-    
+
     // Initialize graph if visible on mount and schema exists
     if (this.isVisible && this.schema && !this.g6Graph) {
       this.$nextTick(() => {
@@ -251,7 +251,7 @@ export default {
       }
       this.drawGraph();
     },
-    
+
     getColor(label) {
       return this.settingsStore.colorForLabel(label);
     },
@@ -687,7 +687,7 @@ export default {
       width -= this.sidebarWidth;
       width -= UI_SIZE.DEFAULT_BORDER_WIDTH * 2;
       width -= this.toolbarWidth;
-      
+
       // Detect sidebar collapse state and adjust width accordingly
       const wrapper = document.querySelector('.wrapper');
       if (wrapper) {
@@ -695,7 +695,7 @@ export default {
         const sidebarWidth = isSidebarCollapsed ? 60 : 180; // CSS variables: --sidebar-collapsed-width: 60px, --sidebar-width: 180px
         width -= sidebarWidth;
       }
-      
+
       this.graphWidth = width;
       return width;
     },

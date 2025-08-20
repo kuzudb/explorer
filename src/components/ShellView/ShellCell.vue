@@ -174,7 +174,7 @@ export default {
             clearInterval(intervalId);
             this.isLoading = false;
           });
-        
+
       }
       this.isEvaluated = true;
     },
@@ -235,7 +235,7 @@ export default {
         uuid: this.cellId,
         isQueryGenerationMode: this.$refs.editor.isQueryGenerationMode
       };
-      if(!isOpenAI) {
+      if (!isOpenAI) {
         data.baseUrl = baseUrl;
       }
       data.llmProvider = this.settingsStore.gpt.llmProvider;
@@ -309,6 +309,7 @@ export default {
 <style lang="scss" scoped>
 .shell-cell__wrapper {
   display: block;
+
   &:last-child {
     padding-bottom: 10px;
   }

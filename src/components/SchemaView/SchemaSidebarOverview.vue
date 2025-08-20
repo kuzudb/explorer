@@ -21,13 +21,12 @@
             v-for="nodeTable in schema.nodeTables"
             :key="nodeTable.name"
           >
-            <td
-              scope="row"
-            >
+            <td scope="row">
               <span
                 class="badge bg-[var(--bs-body-accent)]"
-                :style="{ backgroundColor: `${getColor(nodeTable.name)} !important`, textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' , color: '#FFFFFF',}"
-              >{{ nodeTable.name }}</span>
+                :style="{ backgroundColor: `${getColor(nodeTable.name)} !important`, textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: '#FFFFFF', }"
+              >{{
+                nodeTable.name }}</span>
               <br>
               <small>
                 {{ nodeTable.properties.length }} properties
@@ -110,8 +109,7 @@
               <br>
               <small>
                 {{ relTable.properties.length }}
-                {{ relTable.properties.length <= 1 ? "property" : "properties" }}
-              </small>
+                {{ relTable.properties.length <= 1 ? "property" : "properties" }} </small>
               <small v-if="relTable.group">
                 &nbsp;&nbsp; <b>{{ relTable.group }} </b> group
               </small>
@@ -170,7 +168,7 @@ export default {
       required: true,
     },
   },
-  emits: ["dropTable", "editTable", "addNodeTable", "addRelTable", ],
+  emits: ["dropTable", "editTable", "addNodeTable", "addRelTable",],
   computed: {
     ...mapStores(useSettingsStore, useModeStore)
   },
@@ -198,6 +196,7 @@ export default {
     width: 50px;
   }
 }
+
 .schema_side-panel__overview-table {
 
   border-radius: 1rem;
@@ -215,13 +214,14 @@ small {
 ul {
   margin-bottom: 4px;
 }
+
 .badge {
-      display: inline-block;
-      max-width: 150px;
-      color: #fff !important;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      vertical-align: middle;
-    }
+  display: inline-block;
+  max-width: 150px;
+  color: #fff !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
 </style>

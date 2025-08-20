@@ -240,7 +240,7 @@
           <!-- Query Generation Options -->
           <div v-if="!modeStore.isWasm">
             <h2> Query Generation Options </h2>
-            
+
             <div class="settings-row">
               <h4> LLM provider </h4>
               <select
@@ -350,7 +350,8 @@
               v-else-if="currentSettings.gpt.llmProvider === llmProviderOptions.GEMINI.key"
               class="form-text text-muted"
             >
-              The Google Gemini API key is used to generate Cypher queries from natural language using the specified model.
+              The Google Gemini API key is used to generate Cypher queries from natural language using the specified
+              model.
               You can obtain a Gemini API key from
               <a
                 href="https://aistudio.google.com/app/apikey"
@@ -359,7 +360,8 @@
               or from the <a
                 href="https://console.cloud.google.com/apis/credentials"
                 target="_blank"
-              >Google Cloud Console</a> (ensure the Gemini API is enabled for your project).
+              >Google Cloud
+                Console</a> (ensure the Gemini API is enabled for your project).
               We only store the API key in your browser. Click
               <a
                 href="#"
@@ -588,52 +590,60 @@ span.pull-left {
   overflow-y: auto;
 
   h2 {
-    font-weight: 500; 
+    font-weight: 500;
     font-size: 1.5rem;
   }
 
   h3 {
     font-weight: 500;
-    font-size: 0.875rem; 
+    font-size: 0.875rem;
     padding: 0.5rem;
   }
+
   h4 {
-      font-weight: 300;
-      font-size: 0.875rem;
+    font-weight: 300;
+    font-size: 0.875rem;
   }
+
   span {
-      font-weight: 300;
-      font-size: 0.875rem;
+    font-weight: 300;
+    font-size: 0.875rem;
   }
+
   table {
     width: 100%;
     table-layout: auto;
     border-collapse: collapse;
   }
+
   th {
     padding: 0.5rem 1rem;
   }
+
   td {
     padding: 0.5rem 1rem;
   }
-  hr{
+
+  hr {
     height: 1px;
     margin: 1rem 0;
     background-color: var(--bs-body-inactive);
     border: none;
   }
-  
+
 }
 
 .settings-toggle {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  label { 
+
+  label {
     color: var(--bs-body-text);
     font-size: 0.875rem;
     cursor: pointer;
   }
+
   input {
     appearance: none;
     width: 2.75rem;
@@ -655,7 +665,7 @@ span.pull-left {
   display: inline-block;
   width: 2.75rem;
   height: 1.25rem;
-  
+
 }
 
 .settings-group {
@@ -668,8 +678,8 @@ span.pull-left {
   padding: 0.5rem 1rem;
   width: 100%;
   background-color: var(--bs-body-bg);
-  }
-  
+}
+
 .switch-slider {
   position: absolute;
   top: 0;
@@ -679,11 +689,11 @@ span.pull-left {
   background-color: var(--bs-body-inactive);
   border: 1px solid var(--bs-body-inactive);
   border-radius: 9999px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   cursor: pointer;
   transition: transform 0.3s;
 
-  .switch-input:checked + & {
+  .switch-input:checked+& {
     transform: translateX(1.5rem);
   }
 }
@@ -704,7 +714,7 @@ span.pull-left {
   font-size: 0.875rem;
   border-radius: 0.5rem;
   padding: 0.5rem 2rem;
-  
+
 }
 
 .active-btn {

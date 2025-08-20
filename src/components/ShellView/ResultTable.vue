@@ -261,8 +261,8 @@ export default {
 
     computeTableWidth() {
       let mainContainerWidth = document.documentElement.clientWidth;
-      mainContainerWidth -= UI_SIZE.DEFAULT_MARGIN * 2; 
-      mainContainerWidth -= UI_SIZE.SHELL_TOOL_BAR_WIDTH; 
+      mainContainerWidth -= UI_SIZE.DEFAULT_MARGIN * 2;
+      mainContainerWidth -= UI_SIZE.SHELL_TOOL_BAR_WIDTH;
 
       this.tableWidth = mainContainerWidth;
 
@@ -275,7 +275,8 @@ export default {
 <style lang="scss" scoped>
 .result-table__wrapper {
   /* Width is set by style binding from tableWidth */
-  width: v-bind(tableWidth)px; /* Use v-bind to link to the data property */
+  width: v-bind(tableWidth)px;
+  /* Use v-bind to link to the data property */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -299,13 +300,14 @@ export default {
 .result-table__table__wrapper {
   flex: 1;
   overflow-y: scroll;
-  overflow-x: auto; 
+  overflow-x: auto;
   border-top: 1px solid (var(--bs-body-inactive));
   border-bottom: 1px solid (var(--bs-body-inactive));
   border-radius: 10px;
 
   table {
-    width: 100%; 
+    width: 100%;
+
     thead {
       position: sticky;
       border: 0;
@@ -328,7 +330,7 @@ export default {
     .result-table__recursive-rel__wrapper {
       display: flex;
 
-      > div {
+      >div {
         flex: 1;
 
         &:not(:last-child) {

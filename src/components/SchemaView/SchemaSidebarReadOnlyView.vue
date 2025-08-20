@@ -6,7 +6,7 @@
           class="badge bg-[var(--bs-body-accent)]"
           :style="{
             backgroundColor: ` ${getColor(label)} !important`,
-            color:'#ffffff',
+            color: '#ffffff',
             textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
           }"
         >
@@ -77,7 +77,8 @@
                 v-if="property.isPrimaryKey"
                 class="badge bg-[var(--bs-body-accent)]"
                 :style="{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000', color: '#FFFFFF', }"
-              > PK </span>
+              >
+                PK </span>
             </td>
             <td>
               {{ property.type }}

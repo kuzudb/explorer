@@ -47,7 +47,7 @@ export default {
     initMonacoEditor() {
       const Monaco = window.Monaco;
       const theme = document.documentElement.getAttribute('data-bs-theme') === 'dark'
-      ? 'vs-dark'
+        ? 'vs-dark'
         : 'vs-light';
       const int128Replacer = (_, value) => {
         if (typeof value === "bigint") {
@@ -88,6 +88,7 @@ export default {
   overflow: hidden;
   border-bottom: 1px solid (var(--bs-body-inactive));
   border-radius: 10px;
+
   .result-code__editor {
     width: 100%;
     height: 100%;

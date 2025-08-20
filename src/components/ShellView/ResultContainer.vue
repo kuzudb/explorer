@@ -1,12 +1,12 @@
 <template>
-  <div 
+  <div
     class="result-container"
     :class="{ maximized: isMaximized, 'is-error-container': errorMessage }"
   >
     <div
       ref="wrapper"
       class="result-container__wrapper"
-      :class="{'is-error': errorMessage}"
+      :class="{ 'is-error': errorMessage }"
       :style="errorMessage ? { height: 'auto', flex: 'unset' } : { height: containerHeight }"
     >
       <!-- Left Sidebar -->
@@ -119,7 +119,7 @@
           </button>
         </ul>
       </aside>
-  
+
       <main class="result-container__main">
         <ResultGraph
           v-if="queryResult"
@@ -156,7 +156,7 @@
       </main>
 
       <!-- Resize Handle -->
-      <div 
+      <div
         v-if="!isMaximized"
         ref="resizeHandle"
         class="result-container__resize-handle"
@@ -331,14 +331,14 @@ export default {
     },
     handleResize(e) {
       if (!this.isResizing) return;
-      
+
       const deltaY = e.clientY - this.startY;
       const newHeight = Math.max(this.queryResultDefaultHeight, this.startHeight + deltaY);
-      
+
       requestAnimationFrame(() => {
         this.containerHeight = `${newHeight}px`;
         this.$refs.wrapper.style.height = this.containerHeight;
-        
+
         if (this.$refs.resultGraph) {
           this.$refs.resultGraph.handleResize();
         }
@@ -346,12 +346,12 @@ export default {
     },
     stopResize() {
       if (!this.isResizing) return;
-      
+
       this.isResizing = false;
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
       document.body.style.overflow = '';
-  
+
       this.$nextTick(() => {
         if (this.$refs.resultGraph) {
           this.$refs.resultGraph.handleResize();
@@ -370,9 +370,11 @@ export default {
   margin-left: 1rem;
   margin-right: 1rem;
   margin-bottom: 1rem;
+
   &.maximized {
     margin-bottom: 14px;
   }
+
   border-bottom: 1px solid var(--bs-body-shell);
   border-left: 1px solid var(--bs-body-shell);
   border-right: 1px solid var(--bs-body-shell);
@@ -400,13 +402,15 @@ export default {
   }
 
   :deep(table) {
-    td, th {
+
+    td,
+    th {
       position: relative;
       padding-left: 4px;
       padding-top: 4px;
       padding-right: 8px;
       padding-bottom: 8px;
-      
+
       .badge {
         position: absolute;
         top: 40%;
