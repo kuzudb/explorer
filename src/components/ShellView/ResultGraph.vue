@@ -1499,7 +1499,7 @@ export default {
     },
 
     formatTime(milliseconds) {
-      if (!milliseconds) {
+      if (typeof milliseconds !== 'number' || isNaN(milliseconds) || milliseconds < 0) {
         return 'N/A';
       }
       return `${milliseconds.toFixed(2)}ms`;
