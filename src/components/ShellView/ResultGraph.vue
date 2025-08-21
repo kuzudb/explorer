@@ -184,7 +184,7 @@
                     </span>
                   </td>
                 </tr>
-                <tr v-if="queryMetrics.totalTime">
+                <tr v-if="queryMetrics.totalTime !== undefined && queryMetrics.totalTime !== null">
                   <th scope="row">
                     <i
                       class="fa-solid fa-clock"
