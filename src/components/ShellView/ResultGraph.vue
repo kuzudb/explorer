@@ -206,7 +206,7 @@
                   </th>
                   <td>{{ queryMetrics.rows.toLocaleString() }}</td>
                 </tr>
-                <tr v-if="queryMetrics.nodes">
+                <tr v-if="queryMetrics.nodes !== undefined && queryMetrics.nodes !== null">
                   <th scope="row">
                     <i
                       class="fa-solid fa-circle"
@@ -216,7 +216,7 @@
                   </th>
                   <td>{{ queryMetrics.nodes.toLocaleString() }}</td>
                 </tr>
-                <tr v-if="queryMetrics.relationships">
+                <tr v-if="queryMetrics.relationships !== undefined && queryMetrics.relationships !== null">
                   <th scope="row">
                     <i
                       class="fa-solid fa-arrow-right"
