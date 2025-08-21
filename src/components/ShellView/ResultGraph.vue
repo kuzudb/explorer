@@ -470,7 +470,7 @@ export default {
           }
         }
         
-        // Get row count 
+        // Calculate row count from result data
         if (this.queryResult.rows && Array.isArray(this.queryResult.rows)) {
           metrics.rows = this.queryResult.rows.length;
         }
