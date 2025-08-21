@@ -38,10 +38,9 @@ const processSingleResult = async (result) => {
   
   // Create query summary with timing information
   let querySummary = null;
-  try {
-    if (result.getQuerySummary) {
-      querySummary = result.getQuerySummary();
-    }
+  try {  
+    querySummary = await result.getQuerySummary();
+    
   } catch (error) {
     logger.warn('Could not get query summary:', error);
   }

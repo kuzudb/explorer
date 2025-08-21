@@ -112,9 +112,7 @@ class Kuzu {
     // Extract query summary information (timing)
     let querySummary = null;
     try {
-      if (result.getQuerySummary) {
-        querySummary = await result.getQuerySummary();
-      }
+      querySummary = await result.getQuerySummary();
     } catch (error) {
       console.warn('Could not get query summary:', error);
     }

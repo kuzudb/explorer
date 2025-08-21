@@ -158,7 +158,7 @@
                     />
                     Compile Time
                   </th>
-                  <td v-if="queryMetrics.compileTime !== null && queryMetrics.compileTime !== undefined">
+                  <td v-if="queryMetrics.compileTime">
                     {{ formatTime(queryMetrics.compileTime) }}
                   </td>
                   <td v-else>
@@ -175,7 +175,7 @@
                     />
                     Execution Time
                   </th>
-                  <td v-if="queryMetrics.executionTime != null">
+                  <td v-if="queryMetrics.executionTime">
                     {{ formatTime(queryMetrics.executionTime) }}
                   </td>
                   <td v-else>
@@ -184,7 +184,7 @@
                     </span>
                   </td>
                 </tr>
-                <tr v-if="queryMetrics.totalTime != null">
+                <tr v-if="queryMetrics.totalTime">
                   <th scope="row">
                     <i
                       class="fa-solid fa-clock"
@@ -196,7 +196,7 @@
                     {{ formatTime(queryMetrics.totalTime) }}
                   </td>
                 </tr>
-                <tr v-if="queryMetrics.rows != null">
+                <tr v-if="queryMetrics.rows">
                   <th scope="row">
                     <i
                       class="fa-solid fa-list"
@@ -206,7 +206,7 @@
                   </th>
                   <td>{{ queryMetrics.rows.toLocaleString() }}</td>
                 </tr>
-                <tr v-if="queryMetrics.nodes != null">
+                <tr v-if="queryMetrics.nodes">
                   <th scope="row">
                     <i
                       class="fa-solid fa-circle"
@@ -216,7 +216,7 @@
                   </th>
                   <td>{{ queryMetrics.nodes.toLocaleString() }}</td>
                 </tr>
-                <tr v-if="queryMetrics.relationships != null">
+                <tr v-if="queryMetrics.relationships">
                   <th scope="row">
                     <i
                       class="fa-solid fa-arrow-right"
@@ -465,10 +465,8 @@ export default {
           metrics.executionTime = this.queryResult.querySummary.executionTime || null;
           
           // Handle total time calculation
-          if (metrics.executionTime !== null) {
-            if (metrics.compileTime !== null && metrics.compileTime > 0) {
-              metrics.totalTime = metrics.compileTime + metrics.executionTime;
-            } 
+          if (metrics.executionTime  && metrics.compileTime) {
+            metrics.totalTime = metrics.compileTime + metrics.executionTime;
           }
         }
         
@@ -1501,7 +1499,7 @@ export default {
     },
 
     formatTime(milliseconds) {
-      if (milliseconds == null || isNaN(milliseconds)) {
+      if (!milliseconds) {
         return 'N/A';
       }
       return `${milliseconds.toFixed(2)}ms`;
