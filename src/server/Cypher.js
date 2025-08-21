@@ -18,7 +18,7 @@ if (querySizeLimit) {
 }
 let schema = null;
 
-const processSingleResult = async (result, executionTimeMs = null) => {
+const processSingleResult = async (result) => {
   let rows;
   const resultSize = result.getNumTuples();
   if (!querySizeLimit || resultSize <= querySizeLimit) {
@@ -39,26 +39,11 @@ const processSingleResult = async (result, executionTimeMs = null) => {
   // Create query summary with timing information
   let querySummary = null;
   try {
-    if (result.getQuerySummary && typeof result.getQuerySummary === 'function') {
+    if (result.getQuerySummary) {
       querySummary = result.getQuerySummary();
-      // Fallback to JavaScript timing if querySummary is invalid
-      if (!querySummary || (querySummary.compilingTime === 0 && querySummary.executionTime === 0)) {
-        querySummary = {
-          compilingTime: 0,
-          executionTime: executionTimeMs || 0
-        };
-      }
     }
   } catch (error) {
     logger.warn('Could not get query summary:', error);
-  }
-  
-  // Fallback to JavaScript timing if no valid querySummary
-  if (!querySummary && executionTimeMs !== null) {
-    querySummary = {
-      compilingTime: 0,
-      executionTime: executionTimeMs
-    };
   }
   
   return { 
@@ -109,10 +94,7 @@ router.post("/", async (req, res) => {
       numPipelines: numPipelines
     });
   }
-  
-  // Start timing
-  const startTime = process.hrtime.bigint();
-  
+
   try {
     let result;
     if (!params || Object.keys(params).length === 0) {
@@ -124,10 +106,7 @@ router.post("/", async (req, res) => {
       const preparedStatement = await conn.prepare(query);
       result = await conn.execute(preparedStatement, params);
     }
-    
-    // End timing
-    const endTime = process.hrtime.bigint();
-    const executionTimeMs = Number(endTime - startTime) / 1000000;
+
     let isSchemaChanged = false;
     if (mode === MODES.READ_WRITE) {
       const currentSchema = await database.getSchema();
@@ -148,7 +127,7 @@ router.post("/", async (req, res) => {
     }
     let responseBody;
     if (!Array.isArray(result)) {
-      responseBody = await processSingleResult(result, executionTimeMs);
+      responseBody = await processSingleResult(result);
       result.close();
       responseBody.isSchemaChanged = isSchemaChanged;
       responseBody.isMultiStatement = false;
@@ -159,7 +138,7 @@ router.post("/", async (req, res) => {
         results: [],
       };
       for (const singleResult of result) {
-        const singleResultBody = await processSingleResult(singleResult, executionTimeMs);
+        const singleResultBody = await processSingleResult(singleResult);
         responseBody.results.push(singleResultBody);
       }
       result.forEach((singleResult) => singleResult.close());

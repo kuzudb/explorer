@@ -167,7 +167,7 @@
                     </span>
                   </td>
                 </tr>
-                <tr v-if="queryMetrics.executionTime != null">
+                <tr>
                   <th scope="row">
                     <i
                       class="fa-solid fa-play"
@@ -175,7 +175,14 @@
                     />
                     Execution Time
                   </th>
-                  <td>{{ formatTime(queryMetrics.executionTime) }}</td>
+                  <td v-if="queryMetrics.executionTime != null">
+                    {{ formatTime(queryMetrics.executionTime) }}
+                  </td>
+                  <td v-else>
+                    <span class="text-muted small">
+                      <i class="fa-solid fa-info-circle" /> Not available
+                    </span>
+                  </td>
                 </tr>
                 <tr v-if="queryMetrics.totalTime != null">
                   <th scope="row">
@@ -185,7 +192,9 @@
                     />
                     Total Time
                   </th>
-                  <td>{{ formatTime(queryMetrics.totalTime) }}</td>
+                  <td>
+                    {{ formatTime(queryMetrics.totalTime) }}
+                  </td>
                 </tr>
                 <tr v-if="queryMetrics.rows != null">
                   <th scope="row">
@@ -216,41 +225,6 @@
                     Relationships
                   </th>
                   <td>{{ queryMetrics.relationships.toLocaleString() }}</td>
-                </tr>
-
-                <tr v-if="queryMetrics.memoryUsed != null">
-                  <th scope="row">
-                    <i
-                      class="fa-solid fa-database"
-                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
-                    />
-                    Memory Used
-                  </th>
-                  <td>{{ formatBytes(queryMetrics.memoryUsed) }}</td>
-                </tr>
-                <tr v-if="queryMetrics.memoryLimit != null">
-                  <th scope="row">
-                    <i
-                      class="fa-solid fa-hdd"
-                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
-                    />
-                    Memory Limit
-                  </th>
-                  <td>{{ formatBytes(queryMetrics.memoryLimit) }}</td>
-                </tr>
-                <tr v-if="queryMetrics.memoryUsage != null">
-                  <th scope="row">
-                    <i
-                      class="fa-solid fa-percentage"
-                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
-                    />
-                    Memory Usage
-                  </th>
-                  <td>
-                    <span :class="getMemoryUsageClass(queryMetrics.memoryUsage)">
-                      {{ queryMetrics.memoryUsage.toFixed(1) }}%
-                    </span>
-                  </td>
                 </tr>
               </tbody>
             </table>
@@ -415,7 +389,6 @@ export default {
     zoomSensitivity: 2, // used for zooming, copied from G6
     toolbarDebounceTimeout: 100,
     toolbarDebounceTimer: null,
-    bufferManagerStats: null, // Store real buffer manager stats
     counters: {
       node: {},
       rel: {},
@@ -495,10 +468,7 @@ export default {
           if (metrics.executionTime !== null) {
             if (metrics.compileTime !== null && metrics.compileTime > 0) {
               metrics.totalTime = metrics.compileTime + metrics.executionTime;
-            } else {
-              // If compile time is not available (Node.js API), just use execution time
-              metrics.totalTime = metrics.executionTime;
-            }
+            } 
           }
         }
         
@@ -512,13 +482,7 @@ export default {
           metrics.nodes = this.counters.total.node || 0;
           metrics.relationships = this.counters.total.rel || 0;
         }
-        
-        // Buffer Manager Statistics
-        if (this.bufferManagerStats) {
-          metrics.memoryUsed = this.bufferManagerStats.mem_usage;
-          metrics.memoryLimit = this.bufferManagerStats.mem_limit;
-          metrics.memoryUsage = (this.bufferManagerStats.mem_usage / this.bufferManagerStats.mem_limit) * 100;
-        }
+
       } catch (error) {
         console.warn('Error extracting query metrics:', error);
         return {};
@@ -572,15 +536,6 @@ export default {
       this.$nextTick(() => {
         this.handleResize();
       });
-    },
-    queryResult: {
-      handler(newVal) {
-        if (newVal) {
-          // Update buffer manager stats when query result changes
-          this.updateBufferManagerStats();
-        }
-      },
-      immediate: true
     },
   },
   mounted() {
@@ -1549,89 +1504,7 @@ export default {
       if (milliseconds == null || isNaN(milliseconds)) {
         return 'N/A';
       }
-      const seconds = milliseconds / 1000;
-      if (seconds < 1) {
-        return `${milliseconds.toFixed(2)}ms`;
-      }
-      if (seconds < 60) {
-        return `${seconds.toFixed(2)}s`;
-      }
-      const minutes = seconds / 60;
-      if (minutes < 60) {
-        return `${minutes.toFixed(2)}m`;
-      }
-      const hours = minutes / 60;
-      return `${hours.toFixed(2)}h`;
-    },
-
-    formatBytes(bytes) {
-      if (bytes == null || isNaN(bytes)) {
-        return 'N/A';
-      }
-      const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-      let size = bytes;
-      let unitIndex = 0;
-      
-      while (size >= 1024 && unitIndex < units.length - 1) {
-        size /= 1024;
-        unitIndex++;
-      }
-      
-      return `${size.toFixed(2)} ${units[unitIndex]}`;
-    },
-
-    getMemoryUsageClass(percentage) {
-      if (percentage == null || isNaN(percentage)) {
-        return 'badge bg-secondary';
-      }
-      if (percentage >= 90) {
-        return 'badge bg-danger';
-      } else if (percentage >= 75) {
-        return 'badge bg-warning';
-      } else if (percentage >= 50) {
-        return 'badge bg-info';
-      } else {
-        return 'badge bg-success';
-      }
-    },
-
-    // Get actual buffer manager statistics using bm_info() function
-    async getBufferManagerStats() {
-      const response = await fetch('/api/cypher', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: 'call bm_info() return *;'
-        })
-      });
-      
-      if (!response.ok) {
-        console.warn('Failed to get buffer manager stats:', response.statusText);
-        return null;
-      }
-      
-      const data = await response.json();
-      
-      // Extract the first row from the result
-      if (data?.rows?.length > 0) {
-        const row = data.rows[0];
-        return {
-          mem_limit: row.mem_limit || row[0], // Handle different column access patterns
-          mem_usage: row.mem_usage || row[1]
-        };
-      }
-      
-      return null;
-    },
-    
-    // Update buffer manager stats asynchronously
-    async updateBufferManagerStats() {
-      const stats = await this.getBufferManagerStats();
-      if (stats) {
-        this.bufferManagerStats = stats;
-      }
+      return `${milliseconds.toFixed(2)}ms`;
     },
   },
 };
@@ -1864,10 +1737,6 @@ export default {
           text-align: center;
         }
 
-        .badge {
-          font-size: 0.75rem;
-          padding: 0.25rem 0.5rem;
-        }
       }
 
       &.result-graph__result-table {
