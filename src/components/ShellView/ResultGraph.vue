@@ -144,6 +144,93 @@
           </table>
         </div>
         <div v-else>
+          <!-- Query Metrics Section -->
+          <div v-if="queryResult && hasQueryMetrics">
+            <h5>Query Metrics</h5>
+            <hr>
+            <table class="table table-sm table-borderless result-graph__metrics-table">
+              <tbody>
+                <tr>
+                  <th scope="row">
+                    <i
+                      class="fa-solid fa-code"
+                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
+                    />
+                    Compile Time
+                  </th>
+                  <td v-if="queryMetrics.compileTime">
+                    {{ formatTime(queryMetrics.compileTime) }}
+                  </td>
+                  <td v-else>
+                    <span class="text-muted small">
+                      <i class="fa-solid fa-info-circle" /> Not available
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                    <i
+                      class="fa-solid fa-play"
+                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
+                    />
+                    Execution Time
+                  </th>
+                  <td v-if="queryMetrics.executionTime">
+                    {{ formatTime(queryMetrics.executionTime) }}
+                  </td>
+                  <td v-else>
+                    <span class="text-muted small">
+                      <i class="fa-solid fa-info-circle" /> Not available
+                    </span>
+                  </td>
+                </tr>
+                <tr v-if="queryMetrics.totalTime !== undefined && queryMetrics.totalTime !== null">
+                  <th scope="row">
+                    <i
+                      class="fa-solid fa-clock"
+                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
+                    />
+                    Total Time
+                  </th>
+                  <td>
+                    {{ formatTime(queryMetrics.totalTime) }}
+                  </td>
+                </tr>
+                <tr v-if="queryMetrics.rows">
+                  <th scope="row">
+                    <i
+                      class="fa-solid fa-list"
+                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
+                    />
+                    Rows
+                  </th>
+                  <td>{{ queryMetrics.rows.toLocaleString() }}</td>
+                </tr>
+                <tr v-if="queryMetrics.nodes !== undefined && queryMetrics.nodes !== null">
+                  <th scope="row">
+                    <i
+                      class="fa-solid fa-circle"
+                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
+                    />
+                    Nodes
+                  </th>
+                  <td>{{ queryMetrics.nodes.toLocaleString() }}</td>
+                </tr>
+                <tr v-if="queryMetrics.relationships !== undefined && queryMetrics.relationships !== null">
+                  <th scope="row">
+                    <i
+                      class="fa-solid fa-arrow-right"
+                      style="margin-right: 0.5rem; color: var(--bs-body-bg-accent);"
+                    />
+                    Relationships
+                  </th>
+                  <td>{{ queryMetrics.relationships.toLocaleString() }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <br>
+
           <h5>Overview</h5>
           <div v-if="counters.total.node > 0">
             <div class="result-graph__summary-section">
@@ -362,6 +449,51 @@ export default {
     },
     numHiddenRels() {
       return Object.keys(this.hiddenElements.edges).length;
+    },
+    queryMetrics() {
+      // Extract metrics from query result
+      if (!this.queryResult) {
+        return {};
+      }
+      
+      const metrics = {};
+      
+      try {
+        // Timing information from query summary
+        if (this.queryResult.querySummary) {
+          metrics.compileTime = this.queryResult.querySummary.compilingTime || null;
+          metrics.executionTime = this.queryResult.querySummary.executionTime || null;
+          
+          // Handle total time calculation
+          if (metrics.executionTime && metrics.compileTime) {
+            metrics.totalTime = metrics.compileTime + metrics.executionTime;
+          }
+        }
+        
+        // Calculate row count from result data
+        if (this.queryResult.rows && Array.isArray(this.queryResult.rows)) {
+          metrics.rows = this.queryResult.rows.length;
+        }
+        
+        // Get node and relationship counts from counters
+        if (this.counters && this.counters.total) {
+          metrics.nodes = this.counters.total.node || 0;
+          metrics.relationships = this.counters.total.rel || 0;
+        }
+
+      } catch (error) {
+        console.warn('Error extracting query metrics:', error);
+        return {};
+      }
+      
+      return metrics;
+    },
+    hasQueryMetrics() {
+      if (!this.queryMetrics || typeof this.queryMetrics !== 'object') {
+        return false;
+      }
+      
+      return Object.keys(this.queryMetrics).length > 0;
     },
   },
   watch: {
@@ -1365,6 +1497,13 @@ export default {
     stopResize() {
       this.isResizing = false;
     },
+
+    formatTime(milliseconds) {
+      if (typeof milliseconds !== 'number' || isNaN(milliseconds) || milliseconds < 0) {
+        return 'N/A';
+      }
+      return `${milliseconds.toFixed(2)}ms`;
+    },
   },
 };
 </script>
@@ -1566,15 +1705,50 @@ export default {
       &.result-graph__overview-table {
         table-layout: fixed;
 
+        th {
+          width: 50%;
+          font-weight: 500;
+          color: var(--bs-body-text);
+        }
+
         td {
-          width: 120px;
+          width: 50%;
         }
       }
 
-      &.result-graph__result-table {
-        font-family: "Lexend", Lexend, sans-serif;
+      &.result-graph__metrics-table {
+        table-layout: fixed;
+
+        th {
+          width: 50%;
+          font-weight: 500;
+          color: var(--bs-body-text);
+        }
 
         td {
+          width: 50%;
+          font-family: "Lexend", sans-serif;
+        }
+
+        i {
+          width: 16px;
+          text-align: center;
+        }
+
+      }
+
+      &.result-graph__result-table {
+        table-layout: fixed;
+        font-family: "Lexend", Lexend, sans-serif;
+
+        th {
+          width: 50%;
+          font-weight: 500;
+          color: var(--bs-body-text);
+        }
+
+        td {
+          width: 50%;
           word-break: normal;
         }
       }

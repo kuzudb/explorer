@@ -35,7 +35,21 @@ const processSingleResult = async (result) => {
   columnNames.forEach((name, i) => {
     dataTypes[name] = columnTypes[i];
   });
-  return { rows, dataTypes };
+  
+  // Create query summary with timing information
+  let querySummary = null;
+  try {  
+    querySummary = await result.getQuerySummary();
+    
+  } catch (error) {
+    logger.warn('Could not get query summary:', error);
+  }
+  
+  return { 
+    rows, 
+    dataTypes,
+    querySummary 
+  };
 };
 
 // This is a workaround for the JSON stringify issue with BigInt values.
@@ -79,6 +93,7 @@ router.post("/", async (req, res) => {
       numPipelines: numPipelines
     });
   }
+
   try {
     let result;
     if (!params || Object.keys(params).length === 0) {
@@ -90,6 +105,7 @@ router.post("/", async (req, res) => {
       const preparedStatement = await conn.prepare(query);
       result = await conn.execute(preparedStatement, params);
     }
+
     let isSchemaChanged = false;
     if (mode === MODES.READ_WRITE) {
       const currentSchema = await database.getSchema();

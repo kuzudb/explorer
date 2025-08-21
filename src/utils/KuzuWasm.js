@@ -108,7 +108,20 @@ class Kuzu {
     columnNames.forEach((name, i) => {
       dataTypes[name] = columnTypes[i];
     });
-    return { rows, dataTypes };
+    
+    // Extract query summary information (timing)
+    let querySummary = null;
+    try {
+      querySummary = await result.getQuerySummary();
+    } catch (error) {
+      console.warn('Could not get query summary:', error);
+    }
+    
+    return { 
+      rows, 
+      dataTypes,
+      querySummary 
+    };
   };
 
   async query(statement, params = null) {
