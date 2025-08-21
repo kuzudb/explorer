@@ -465,7 +465,7 @@ export default {
           metrics.executionTime = this.queryResult.querySummary.executionTime || null;
           
           // Handle total time calculation
-          if (metrics.executionTime  && metrics.compileTime) {
+          if (metrics.executionTime && metrics.compileTime) {
             metrics.totalTime = metrics.compileTime + metrics.executionTime;
           }
         }
