@@ -1,54 +1,29 @@
 <template>
   <div class="system-stats">    
     <div class="system-stats__content">
+      <!-- Buffer Manager Usage -->
       <div 
         class="stat-item"
         data-bs-toggle="tooltip"
         data-bs-placement="right"
-        :title="`RAM Usage: ${ramUsage.percentage}% (${formatBytes(ramUsage.used)} / ${formatBytes(ramUsage.total)})`"
+        :title="`Buffer Pool: ${bufferManagerUsage.percentage}% (${formatBytes(bufferManagerUsage.used)} / ${formatBytes(bufferManagerUsage.total)})`"
       >
         <div class="stat-label">
-          <i class="fa-solid fa-memory"></i>
-          <span class="hide-on-collapse">RAM</span>
+          <i class="fa-solid fa-database"></i>
+          <span class="hide-on-collapse">Buffer Pool</span>
         </div>
         <div class="stat-value hide-on-collapse">
-          {{ formatBytes(ramUsage.used) }} / {{ formatBytes(ramUsage.total) }}
+          {{ formatBytes(bufferManagerUsage.used) }} / {{ formatBytes(bufferManagerUsage.total) }}
         </div>
         <div class="stat-progress">
           <div 
             class="stat-progress-bar" 
-            :style="{ width: ramUsage.percentage + '%' }"
-            :class="{ 'warning': ramUsage.percentage > 80, 'danger': ramUsage.percentage > 90 }"
+            :style="{ width: bufferManagerUsage.percentage + '%' }"
+            :class="{ 'warning': bufferManagerUsage.percentage > 80, 'danger': bufferManagerUsage.percentage > 90 }"
           ></div>
         </div>
         <div class="stat-percentage hide-on-collapse">
-          {{ ramUsage.percentage }}%
-        </div>
-      </div>
-
-      <!-- Disk Usage -->
-      <div 
-        class="stat-item"
-        data-bs-toggle="tooltip"
-        data-bs-placement="right"
-        :title="`Disk Usage: ${diskUsage.percentage}% (${formatBytes(diskUsage.used)} / ${formatBytes(diskUsage.total)})`"
-      >
-        <div class="stat-label">
-          <i class="fa-solid fa-hdd"></i>
-          <span class="hide-on-collapse">Disk</span>
-        </div>
-        <div class="stat-value hide-on-collapse">
-          {{ formatBytes(diskUsage.used) }} / {{ formatBytes(diskUsage.total) }}
-        </div>
-        <div class="stat-progress">
-          <div 
-            class="stat-progress-bar" 
-            :style="{ width: diskUsage.percentage + '%' }"
-            :class="{ 'warning': diskUsage.percentage > 80, 'danger': diskUsage.percentage > 90 }"
-          ></div>
-        </div>
-        <div class="stat-percentage hide-on-collapse">
-          {{ diskUsage.percentage }}%
+          {{ bufferManagerUsage.percentage }}%
         </div>
       </div>
     </div>
@@ -56,16 +31,13 @@
 </template>
 
 <script>
+import SystemMetricsService from '../utils/SystemMetricsService';
+
 export default {
   name: 'SystemStats',
   data() {
     return {
-      ramUsage: {
-        used: 0,
-        total: 0,
-        percentage: 0
-      },
-      diskUsage: {
+      bufferManagerUsage: {
         used: 0,
         total: 0,
         percentage: 0
@@ -78,19 +50,21 @@ export default {
   beforeUnmount() {
   },
   methods: {
-    updateStats() {
-        // Mock data 
-        this.ramUsage = {
-        used: 2 * 1024 * 1024 * 1024, 
-        total: 8 * 1024 * 1024 * 1024, 
-        percentage: 25
+    
+    async updateStats() {
+      try {
+        const metrics = await SystemMetricsService.getMetrics();
+        
+        this.bufferManagerUsage = {
+          used: parseInt(metrics.used) || 0,
+          total: parseInt(metrics.total) || 0,
+          percentage: parseFloat(metrics.percentage).toFixed(1) || 0
         };
-        this.diskUsage = {
-          used: 75 * 1024 * 1024 * 1024, 
-          total: 500 * 1024 * 1024 * 1024, 
-          percentage: 15
-        };
-     
+        
+        console.log('Updated Buffer Manager Usage:', this.bufferManagerUsage);
+      } catch (error) {
+        console.warn('Failed to update system stats:', error);
+      }
     },
     formatBytes(bytes) {
       if (bytes === 0) return '0 KB';

@@ -36,7 +36,9 @@ if (!isWasmMode) {
 // APIs that are available in both backend and wasm mode
 const datasets = require("./Datasets");
 const mode = require("./Mode");
+const systemMetrics = require("./SystemMetrics");
 router.use("/datasets", datasets);
 router.use("/mode", mode);
+router.use("/system/metrics", systemMetrics);
 
 module.exports = router;
