@@ -114,6 +114,7 @@
             </a>
           </li>
           <div class="main-layout__sidebar-bottom">
+            <SystemStats />
             <li class="nav-item">
               <a
                 aria-hidden="true"
@@ -264,6 +265,7 @@ import ShellMainView from "./ShellView/ShellMainView.vue";
 import SettingsMainView from "./SettingsView/SettingsMainView.vue"
 import DatasetMainView from "./DatasetView/DatasetMainView.vue"
 import ImporterMainView from "./ImporterView/ImporterMainView.vue";
+import SystemStats from "./SystemStats.vue";
 import Axios from "@/utils/AxiosWrapper";
 import { useSettingsStore } from "../store/SettingsStore";
 import { useModeStore } from "../store/ModeStore";
@@ -281,6 +283,7 @@ export default {
     SettingsMainView,
     DatasetMainView,
     ImporterMainView,
+    SystemStats,
   },
   data: () => ({
     accessModeModal: null,
