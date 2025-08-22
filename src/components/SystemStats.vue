@@ -60,8 +60,7 @@ export default {
           total: parseInt(metrics.total) || 0,
           percentage: parseFloat(metrics.percentage).toFixed(1) || 0
         };
-        
-        console.log('Updated Buffer Manager Usage:', this.bufferManagerUsage);
+
       } catch (error) {
         console.warn('Failed to update system stats:', error);
       }
