@@ -3,10 +3,6 @@ import Kuzu from "./KuzuWasm";
 import { MODES } from "./Constants";
 
 class SystemMetricsService {
-  constructor() {
-    this.pendingPromise = null;
-  }
-
   async getBMInfoFromKuzu() {
     const modeResponse = await Axios.get("/api/mode");
     const isWasm = modeResponse.data.mode === MODES.WASM || modeResponse.data.mode === MODES.DEMO;
@@ -20,7 +16,6 @@ class SystemMetricsService {
         const used = parseInt(row.mem_usage) || 0;
         const free = Math.max(0, total - used);
         const percentage = total > 0 ? (used / total) * 100 : 0;
-        console.log('Buffer manager stats from WASM');
         return {
           total: total,
           used: used,
@@ -41,7 +36,6 @@ class SystemMetricsService {
         const used = parseInt(row.mem_usage) || 0;
         const free = Math.max(0, total - used);
         const percentage = total > 0 ? (used / total) * 100 : 0;
-        console.log('Buffer manager stats from docker');
         return {
           total: total,
           used: used,
@@ -51,21 +45,6 @@ class SystemMetricsService {
       }
       
       throw new Error('No buffer manager data returned from docker');
-    }
-  }
-
-  async getMetrics() {
-    // Pending request, return promise
-    if (this.pendingPromise) {
-      return this.pendingPromise;
-    }
-    // New promise
-    this.pendingPromise = this.getBMInfoFromKuzu();    
-    try {
-      const result = await this.pendingPromise;
-      return result;
-    } finally {
-      this.pendingPromise = null;
     }
   }
 }

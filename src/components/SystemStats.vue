@@ -1,26 +1,32 @@
 <template>
-  <div class="system-stats">    
+  <div class="system-stats">
     <div class="system-stats__content">
       <!-- Buffer Manager Usage -->
-      <div 
+      <div
         class="stat-item"
         data-bs-toggle="tooltip"
         data-bs-placement="right"
         :title="`Buffer Pool: ${bufferManagerUsage.percentage}% (${formatBytes(bufferManagerUsage.used)} / ${formatBytes(bufferManagerUsage.total)})`"
       >
-        <div class="stat-label">
-          <i class="fa-solid fa-database"></i>
+        <div
+          class="stat-label"
+          @mouseover="updateStatsWithDebounce()"
+        >
+          <i class="fa-solid fa-database" />
           <span class="hide-on-collapse">Buffer Pool</span>
         </div>
-        <div class="stat-value hide-on-collapse">
+        <div
+          class="stat-value hide-on-collapse"
+          @mouseover="updateStatsWithDebounce()"
+        >
           {{ formatBytes(bufferManagerUsage.used) }} / {{ formatBytes(bufferManagerUsage.total) }}
         </div>
         <div class="stat-progress">
-          <div 
-            class="stat-progress-bar" 
+          <div
+            class="stat-progress-bar"
             :style="{ width: bufferManagerUsage.percentage + '%' }"
             :class="{ 'warning': bufferManagerUsage.percentage > 80, 'danger': bufferManagerUsage.percentage > 90 }"
-          ></div>
+          />
         </div>
         <div class="stat-percentage hide-on-collapse">
           {{ bufferManagerUsage.percentage }}%
@@ -46,15 +52,26 @@ export default {
   },
   mounted() {
     this.updateStats();
+    this.updateInterval = window.setInterval(async () => {
+      if (this.updateStatsPromise) {
+        return;
+      }
+      this.updateStatsPromise = this.updateStats();
+      try {
+        await this.updateStatsPromise;
+      } finally {
+        this.updateStatsPromise = null;
+      }
+    }, 3000);
   },
   beforeUnmount() {
+    window.clearInterval(this.updateInterval);
   },
   methods: {
-    
     async updateStats() {
       try {
-        const metrics = await SystemMetricsService.getMetrics();
-        
+        const metrics = await SystemMetricsService.getBMInfoFromKuzu();
+
         this.bufferManagerUsage = {
           used: parseInt(metrics.used) || 0,
           total: parseInt(metrics.total) || 0,
@@ -62,15 +79,32 @@ export default {
         };
 
       } catch (error) {
-        console.warn('Failed to update system stats:', error);
+        console.error('Failed to update system stats:', error);
       }
+    },
+
+    updateStatsWithDebounce() {
+      if (this.updateStatsPromise) {
+        return;
+      }
+      if (this.updateStatsDebounceTimeout) {
+        window.clearTimeout(this.updateStatsDebounceTimeout);
+      }
+      this.updateStatsDebounceTimeout = window.setTimeout(async () => {
+        this.updateStatsPromise = this.updateStats();
+        try {
+          await this.updateStatsPromise;
+        } finally {
+          this.updateStatsPromise = null;
+        }
+      }, 500);
     },
     formatBytes(bytes) {
       if (bytes === 0) return '0 KB';
       const k = 1024;
       const mb = k * k;
       const gb = mb * k;
-      
+
       if (bytes >= gb) {
         return (bytes / gb).toFixed(1) + ' GB';
       } else if (bytes >= mb) {
@@ -157,7 +191,7 @@ export default {
 .wrapper.toggled .system-stats {
   .system-stats__header {
     justify-content: center;
-    
+
     span {
       display: none;
     }
@@ -165,7 +199,7 @@ export default {
 
   .stat-label {
     justify-content: center;
-    
+
     span {
       display: none;
     }
