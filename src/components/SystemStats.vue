@@ -6,19 +6,13 @@
         class="stat-item"
         data-bs-toggle="tooltip"
         data-bs-placement="right"
-        :title="`Buffer Pool: ${bufferManagerUsage.percentage}% (${formatBytes(bufferManagerUsage.used)} / ${formatBytes(bufferManagerUsage.total)})`"
+        :data-bs-title="tooltipTitle"
       >
-        <div
-          class="stat-label"
-          @mouseover="updateStatsWithDebounce()"
-        >
+        <div class="stat-label">
           <i class="fa-solid fa-database" />
           <span class="hide-on-collapse">Buffer Pool</span>
         </div>
-        <div
-          class="stat-value hide-on-collapse"
-          @mouseover="updateStatsWithDebounce()"
-        >
+        <div class="stat-value hide-on-collapse">
           {{ formatBytes(bufferManagerUsage.used) }} / {{ formatBytes(bufferManagerUsage.total) }}
         </div>
         <div class="stat-progress">
@@ -38,6 +32,7 @@
 
 <script>
 import SystemMetricsService from '../utils/SystemMetricsService';
+import { Tooltip } from 'bootstrap';
 
 export default {
   name: 'SystemStats',
@@ -47,7 +42,29 @@ export default {
         used: 0,
         total: 0,
         percentage: 0
-      },
+      }
+    }
+  },
+  computed: {
+    tooltipTitle() {
+      return `Buffer Pool: ${this.bufferManagerUsage.percentage}% (${this.formatBytes(this.bufferManagerUsage.used)} / ${this.formatBytes(this.bufferManagerUsage.total)})`;
+    }
+  },
+  watch: {
+    tooltipTitle() {
+      this.$nextTick(() => {
+        const element = this.$el.querySelector('[data-bs-toggle="tooltip"]');
+        if (element) {
+          const tooltipInstance = Tooltip.getInstance(element);
+
+          if (tooltipInstance) {
+            tooltipInstance.dispose();
+            new Tooltip(element);
+          } else {
+            new Tooltip(element);
+          }
+        }
+      });
     }
   },
   mounted() {
@@ -81,23 +98,6 @@ export default {
       } catch (error) {
         console.error('Failed to update system stats:', error);
       }
-    },
-
-    updateStatsWithDebounce() {
-      if (this.updateStatsPromise) {
-        return;
-      }
-      if (this.updateStatsDebounceTimeout) {
-        window.clearTimeout(this.updateStatsDebounceTimeout);
-      }
-      this.updateStatsDebounceTimeout = window.setTimeout(async () => {
-        this.updateStatsPromise = this.updateStats();
-        try {
-          await this.updateStatsPromise;
-        } finally {
-          this.updateStatsPromise = null;
-        }
-      }, 500);
     },
     formatBytes(bytes) {
       if (bytes === 0) return '0 KB';
