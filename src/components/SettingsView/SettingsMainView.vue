@@ -312,14 +312,14 @@
             </div>
             <div class="settings-row">
               <span>
-
-                {{ isOpenAIApi ? 'OpenAI' : 'API' }} key
+                <span v-if="currentSettings.gpt.llmProvider === llmProviderOptions.OPENAI.key">OpenAI key</span>
+                <span v-else>API key</span>
               </span>
               <input
                 v-model="currentSettings.gpt.apiToken"
                 :type="showPassword ? 'text' : 'password'"
                 class="settings-input form-control"
-                :title="isOpenAIApi ? 'Enter the OpenAI API key' : 'Enter API key'"
+                :title="currentSettings.gpt.llmProvider === llmProviderOptions.OPENAI.key ? 'Enter the OpenAI API key' : 'Enter API key'"
               >
               <button
                 type="button"
